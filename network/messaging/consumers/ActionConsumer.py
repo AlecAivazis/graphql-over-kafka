@@ -2,7 +2,7 @@
 import json
 import logging
 # local imports
-from nautilus.network.consumers import BasicConsumer
+from nautilus.network.messaging.consumers import BasicConsumer
 
 LOGGER = logging.getLogger(__name__)
 

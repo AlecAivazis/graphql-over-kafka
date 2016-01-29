@@ -3,6 +3,27 @@
     source: http://pika.readthedocs.org/en/latest/examples/asynchronous_consumer_example.html
 """
 
+# I need some sort of wait for the connection to come alive like:
+# while True:
+#         # if more than 10 seconds have passed
+#         if datetime.now() - startTime > timedelta(seconds=10):
+#             print("rabbitMQ timed out")
+#             return
+
+#         # attempt to
+#         try:
+#             # connect to the message queue
+#             connection = pika.BlockingConnection(pika.ConnectionParameters(host=server))
+#         # if it failed
+#         except pika.exceptions.ConnectionClosed as error:
+#             # wait a bit
+#             sleep(0.1)
+#         # if it succeeds
+#         else:
+#             print('connected!')
+#             # leave the loop
+#             break
+
 import logging
 import pika
 
