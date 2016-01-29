@@ -39,21 +39,3 @@ class ActionConsumer(BasicConsumer):
         # otherwise its an invalid action
         else:
             LOGGER.warning('Encountered invalid action: {}'.format(bodyString) )
-
-
-
-def main():
-
-    def actionHandler(type, payload):
-        print(type)
-
-
-    example = ActionConsumer(actionHandler)
-    try:
-        example.run()
-    except KeyboardInterrupt:
-        example.stop()
-
-
-if __name__ == '__main__':
-    main()
