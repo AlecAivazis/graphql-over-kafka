@@ -10,7 +10,7 @@ def dispatch(body, exchange, routing_key = ''):
     # open a channel
     channel = connection.channel()
     # make sure the exchange matches our expectations
-    channel.exchange_declare(**exchange)
+    channel.exchange_declare(exchange=exchange['name'], type=exchange['type'], durable=exchange['durable'])
     # send the message over the exchange
     channel.basic_publish(exchange=exchange['name'], routing_key=routing_key, body=body)
     # close the connection

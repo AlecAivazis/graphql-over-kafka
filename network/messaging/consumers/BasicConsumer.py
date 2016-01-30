@@ -27,11 +27,6 @@
 import logging
 import pika
 
-LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
-              '-35s %(lineno) -5d: %(message)s')
-
-logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-
 LOGGER = logging.getLogger(__name__)
 
 class BasicConsumer:
@@ -300,7 +295,7 @@ class BasicConsumer:
         """
         LOGGER.info('Received message # %s from %s: %s',
                     method.delivery_tag, properties.app_id, body[:50])
-        self.acknowledge_message(method.delivery_tag)
+        # self.acknowledge_message(method.delivery_tag)
 
     def acknowledge_message(self, delivery_tag):
         """Acknowledge the message delivery from RabbitMQ by sending a
