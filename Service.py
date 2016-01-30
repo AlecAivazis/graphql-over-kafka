@@ -4,18 +4,20 @@ from flask import Flask
 from flask_graphql import GraphQLView, GraphQL
 from flask_login import LoginManager
 # local imports
-from nautilus.network.messaging.consumers import ActionConsumer
+from .network.messaging.consumers import ActionConsumer
 
 class Service:
 
-    def __init__(self, schema, actionHandler = None):
+    def __init__(self, schema = None, actionHandler = None):
 
         # argument definitions
         parser = argparse.ArgumentParser(description='Run the api server.')
-        parser.add_argument('--port', type=int, nargs='?', default=8000,
+        parser.add_argument('--port', type=int, nargs='?', default=8000, const=8000,
                             help='The port for the application server' )
         parser.add_argument('--debug', action='store_true',
                             help='Wether or not to run in debug mode')
+        parser.add_argument('--secret', nargs='?', default='supersecret', const='supersecret',
+                            help='The secret key to use for various crypto bits.')
 
         # parse the args and save it in the app config
         args = parser.parse_args()
@@ -27,10 +29,10 @@ class Service:
         # save command line arguments
         self.app.config['DEBUG'] = args.debug
         self.app.config['PORT'] = args.port
+        self.app.config['SECRET_KEY'] = args.secret
 
         self.setupAuth()
         self.setupApi(schema)
-
 
 
     def run(self):
@@ -58,6 +60,9 @@ class Service:
         setupAuth(self)
 
 
-    def setupApi(self, schema):
-        from .api import setupApi
-        setupApi(self, schema=schema)
+    def setupApi(self, schema = None):
+        # if there is a schema for the service
+        if schema:
+            # configure the service api with the schema
+            from .api import setupApi
+            setupApi(self, schema=schema)
