@@ -1,0 +1,1 @@
+from .hasPassword import HasPassword
