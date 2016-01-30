@@ -24,4 +24,5 @@ def dispatchAction(action):
         'type': 'fanout',
         'durable': True,
     }
+    # dispatch a stringified version of the action over the exchange
     dispatch(body = json.dumps(action), exchange = exchange)
