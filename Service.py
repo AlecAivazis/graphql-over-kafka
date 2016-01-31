@@ -20,10 +20,12 @@ class Service:
         self.setupApi(schema)
 
 
-    def run(self):
+    def run(self, port = 8000, debug = False, secretKey = 'supersecret'):
 
         # save command line arguments
-        self.app.config['SECRET_KEY'] = 'secretKey'
+        self.app.config['DEBUG'] = debug
+        self.app.config['PORT'] = port
+        self.app.config['SECRET_KEY'] = secretKey
 
         # if we need to spin up an action consumer
         if self.actionConsumer:

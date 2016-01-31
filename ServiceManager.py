@@ -21,6 +21,10 @@ class ServiceManager:
             # notify the user
             print("Successfully created database entries.")
 
+        @self.commandManager.command
+        def runserver(port = 8000, debug = False, secretKey = 'supersecret'):
+            """ Start the service. """
+            service.run(port, debug, secretKey)
 
     def run(self):
         """ run the command manager """
