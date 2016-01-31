@@ -12,7 +12,7 @@ class ServiceManager:
         self.commandManager = Manager(service.app)
 
         @self.commandManager.command
-        def createdb():
+        def syncdb():
             """ Create the database entries. """
             # import the db module
             from nautilus.ext import db
