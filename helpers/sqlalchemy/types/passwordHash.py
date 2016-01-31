@@ -9,46 +9,47 @@ class PasswordHash(Mutable):
     def __init__(self, hash_, rounds = None):
         # make sure the hash is valid
         assert len(hash_) == 60, 'bcrypt hash should be 60 chars.'
-        assert hash_.count('$'), 'bcrypt hash should have 3x "$".'
+        assert hash_.count('$'.encode('utf-8')) == 3, 'bcrypt hash should have 3x "$".'
 
         # save the required instance variables
-        self.hash = str(hash_)
+        self.hash = hash_
         # figure out the current strength based on the saved hash
-        self.rounds = int(self.hash.split('$')[2])
+        self.rounds = int(str(self.hash).split('$')[2])
         self.desired_rounds = rounds or self.rounds
+
 
     # this allows us to easily check if a candidate password matches the hash
     # using: hash == 'foo'
     def __eq__(self, candidate):
         """Hashes the candidate string and compares it to the stored hash."""
-        if isinstance(candidate, basestring):
-            # if the candidate is a unicode
-            if isinstance(candidate, unicode):
-                candidate = candidate.encode('utf8')
-            # if the candidate matches the saved hash
-            if self.hash == bcrypt.hashpw(candidate, self.hash):
-                # if the computed number of rounds is less than the designated one
-                if self.rounds < self.desired_rounds:
-                    # rehash the password
-                    self._rehash(candidate)
 
-                # return true since the passwords matched
-                return True
+        if isinstance(candidate, str):
+            # convert it to a byte string
+            candidate = candidate.encode('utf-8')
 
-        # we did not return true while checked equality so the candidate doesn't match
-        return False
+        # if the candidate matches the saved hash
+        if self.hash == bcrypt.hashpw(candidate, self.hash):
+            # if the computed number of rounds is less than the designated one
+            if self.rounds < self.desired_rounds:
+                # rehash the password
+                self.rehash(candidate)
+
+            return True
+        # otherwise the password doesn't match
+        else:
+            return False
 
 
     def __repr__(self):
         """Simple object representation."""
-        return '<{}>'.format(type(self).__name__)
+        return '<{}: {}>'.format(type(self).__name__, self.hash)
 
 
     @classmethod
     def new(cls, password, rounds):
         """Creates a PasswordHash from the given password."""
-        if isinstance(password, unicode):
-            password = password.encode('utf8')
+        if isinstance(password, str):
+            password = password.encode('utf-8')
         return cls(cls._new(password, rounds))
 
 
@@ -69,7 +70,7 @@ class PasswordHash(Mutable):
         return bcrypt.hashpw(password, bcrypt.gensalt(rounds))
 
 
-    def _rehash(self, password):
+    def rehash(self, password):
         """Recreates the internal hash."""
         self.hash = self._new(password, self.desired_rounds)
         self.rounds = self.desired_rounds

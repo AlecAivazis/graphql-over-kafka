@@ -34,10 +34,16 @@ class Password(TypeDecorator):
         Strings will be hashed and the resulting PasswordHash returned.
         Any other input will result in a TypeError.
         """
+        # if the value is already a password hash
         if isinstance(value, PasswordHash):
+            # then don't do anything
             return value
-        elif isinstance(value, basestring):
+        # or if the value is a string
+        elif isinstance(value, str):
+            # convert it to a password hash
             return PasswordHash.new(value, self.rounds)
+        # otherwise the value is something we can't convert
         elif value is not None:
+            # fail loudly
             raise TypeError(
                 'Cannot convert {} to a PasswordHash'.format(type(value)))
