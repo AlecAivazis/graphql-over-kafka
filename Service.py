@@ -5,6 +5,7 @@ from flask_graphql import GraphQLView, GraphQL
 from flask_login import LoginManager
 # local imports
 from .network.messaging.consumers import ActionConsumer
+from .ext import db
 
 class Service:
 
@@ -14,28 +15,15 @@ class Service:
         # if there is an action consumer, create a wrapper for it
         self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
         # setup various functionalities
+        db.init_app(self.app)
         self.setupAuth()
         self.setupApi(schema)
 
 
     def run(self):
 
-        # command line argument definitions
-        self.argumentParser = argparse.ArgumentParser(description='Run the api server.')
-        self.argumentParser.add_argument('--port', type=int, nargs='?', default=8000, const=8000,
-                            help='The port for the application server' )
-        self.argumentParser.add_argument('--debug', action='store_true',
-                            help='Wether or not to run in debug mode')
-        self.argumentParser.add_argument('--secret', nargs='?', default='supersecret', const='supersecret',
-                            help='The secret key to use for various crypto bits.')
-
-        # parse the args and save it in the app config
-        args = self.argumentParser.parse_args()
-
         # save command line arguments
-        self.app.config['DEBUG'] = args.debug
-        self.app.config['PORT'] = args.port
-        self.app.config['SECRET_KEY'] = args.secret
+        self.app.config['SECRET_KEY'] = 'secretKey'
 
         # if we need to spin up an action consumer
         if self.actionConsumer:
@@ -44,7 +32,7 @@ class Service:
             # start the thread
             actionThread.start()
 
-        # run the service at the designated port
+        #run the service at the designated port
         self.app.run(port = self.app.config['PORT'])
 
 
@@ -56,13 +44,13 @@ class Service:
 
 
     def setupAuth(self):
-        from .auth import setupAuth
-        setupAuth(self)
+        from .auth import init_service
+        init_service(self)
 
 
     def setupApi(self, schema = None):
         # if there is a schema for the service
         if schema:
             # configure the service api with the schema
-            from .api import setupApi
-            setupApi(self, schema=schema)
+            from .api import init_service
+            init_service(self, schema=schema)

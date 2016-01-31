@@ -8,5 +8,5 @@ from flask.ext.login import (
 from .decorators import *
 from .backend import init_app
 
-def setupAuth(service):
+def init_service(service):
     init_app(service.app)

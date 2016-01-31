@@ -1,6 +1,6 @@
 # third party imports
 import nautilus
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, Text
 from sqlalchemy.ext.declarative import declared_attr
 # local imports
 from .typeDecorators import Password

@@ -1,7 +1,7 @@
 # third party imports
 from flask_graphql import GraphQLView, GraphQL
 
-def setupApi(service, schema):
+def init_service(service, schema):
     """ Add GraphQL support to the given Flask app """
     # add default graphql endpoints
     GraphQL(service.app, schema=schema)
