@@ -9,33 +9,33 @@ from .network.messaging.consumers import ActionConsumer
 class Service:
 
     def __init__(self, schema = None, actionHandler = None):
-
-        # argument definitions
-        parser = argparse.ArgumentParser(description='Run the api server.')
-        parser.add_argument('--port', type=int, nargs='?', default=8000, const=8000,
-                            help='The port for the application server' )
-        parser.add_argument('--debug', action='store_true',
-                            help='Wether or not to run in debug mode')
-        parser.add_argument('--secret', nargs='?', default='supersecret', const='supersecret',
-                            help='The secret key to use for various crypto bits.')
-
-        # parse the args and save it in the app config
-        args = parser.parse_args()
-
-        # instantiate a flask server
+        # base the service on a flask app
         self.app = Flask(__name__)
+        # if there is an action consumer, create a wrapper for it
         self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
-
-        # save command line arguments
-        self.app.config['DEBUG'] = args.debug
-        self.app.config['PORT'] = args.port
-        self.app.config['SECRET_KEY'] = args.secret
-
+        # setup various functionalities
         self.setupAuth()
         self.setupApi(schema)
 
 
     def run(self):
+
+        # command line argument definitions
+        self.argumentParser = argparse.ArgumentParser(description='Run the api server.')
+        self.argumentParser.add_argument('--port', type=int, nargs='?', default=8000, const=8000,
+                            help='The port for the application server' )
+        self.argumentParser.add_argument('--debug', action='store_true',
+                            help='Wether or not to run in debug mode')
+        self.argumentParser.add_argument('--secret', nargs='?', default='supersecret', const='supersecret',
+                            help='The secret key to use for various crypto bits.')
+
+        # parse the args and save it in the app config
+        args = self.argumentParser.parse_args()
+
+        # save command line arguments
+        self.app.config['DEBUG'] = args.debug
+        self.app.config['PORT'] = args.port
+        self.app.config['SECRET_KEY'] = args.secret
 
         # if we need to spin up an action consumer
         if self.actionConsumer:
