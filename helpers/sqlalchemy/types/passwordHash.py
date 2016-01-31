@@ -15,6 +15,7 @@ class PasswordHash(Mutable):
         self.hash = hash_
         # figure out the current strength based on the saved hash
         self.rounds = int(str(self.hash).split('$')[2])
+        # the intended number of rounds (in case there is an upgrade)
         self.desired_rounds = rounds or self.rounds
 
 
