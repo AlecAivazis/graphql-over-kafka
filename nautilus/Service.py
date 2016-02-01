@@ -5,19 +5,29 @@ from flask_graphql import GraphQLView, GraphQL
 from flask_login import LoginManager
 # local imports
 from .network.messaging.consumers import ActionConsumer
-from .ext import db
 
 class Service:
 
     name = 'Nautilus Service'
 
-    def __init__(self, schema = None, actionHandler = None):
+    def __init__(self, schema = None, actionHandler = None, configObject = None):
         # base the service on a flask app
         self.app = Flask(__name__)
+
+        # apply any necessary flask app config
+        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+        # if there is a configObject
+        if configObject:
+            # apply the config object to the flask app
+            self.app.config.from_object(configObject)
+
         # if there is an action consumer, create a wrapper for it
         self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
-        # setup various functionalities
+
+        from .ext import db
         db.init_app(self.app)
+
+        # setup various functionalities
         self.setupAdmin()
         self.setupAuth()
         self.setupApi(schema)
