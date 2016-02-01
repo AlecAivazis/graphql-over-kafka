@@ -12,5 +12,4 @@ def init_service(service):
     admin.init_app(service.app)
 
 def add_model(model):
-    """ add a model to the service's admin instance """
     admin.add_view(ModelView(model, db.session))

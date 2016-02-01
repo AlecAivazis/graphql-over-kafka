@@ -23,7 +23,7 @@ class ServiceManager:
         @self.commandManager.command
         def runserver(port = 8000, debug = False, secretKey = 'supersecret'):
             """ Start the service. """
-            service.run(port, debug, secretKey)
+            service.run(int(port), debug, secretKey)
 
     def run(self):
         """ run the command manager """
