@@ -12,10 +12,6 @@ JsonBase = declarative_base(cls=(JsonSerializableBase,))
 
 
 class BaseModel(JsonBase, db.Model):
-    """Convenience base DB model class. Makes sure tables in MySQL are created as InnoDB.
-    This is to enforce foreign key constraints (MyISAM doesn't support constraints) outside of production. Tables are
-    also named to avoid collisions.
-    """
 
     def __init__(self, **kwargs):
         """ treat kwargs as attribute assignment """
