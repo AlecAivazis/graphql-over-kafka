@@ -4,7 +4,7 @@
 from sqlalchemy import Column, Integer, Text, TypeDecorator
 from sqlalchemy.orm import validates
 # local imports
-from nautilus.helpers.sqlalchemy.types import PasswordHash
+from ..types import PasswordHash
 
 class Password(TypeDecorator):
     """Allows storing and retrieving password hashes using PasswordHash."""

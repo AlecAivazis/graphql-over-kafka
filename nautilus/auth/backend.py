@@ -1,5 +1,5 @@
 # third party imports
-from flask_login import LoginManager
+from flask.ext.login import LoginManager
 # local imports
 from .models import User
 

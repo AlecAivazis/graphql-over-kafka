@@ -1,5 +1,5 @@
 # third party imports
-import argparse, threading
+import threading
 from flask import Flask
 from flask_graphql import GraphQLView, GraphQL
 from flask_login import LoginManager
