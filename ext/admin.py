@@ -4,10 +4,11 @@ from flask.ext.admin.contrib.sqla import ModelView
 # local imports
 from . import db
 
-admin = Admin(name='Nautilus Admin', template_mode='bootstrap3')
+admin = Admin(template_mode='bootstrap3')
 
 def init_service(service):
     """ create the flask admin instance """
+    admin.name = service.name + ' Admin'
     admin.init_app(service.app)
 
 def add_model(model):
