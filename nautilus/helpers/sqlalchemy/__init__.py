@@ -17,6 +17,13 @@ class BaseModel(JsonBase, db.Model):
     also named to avoid collisions.
     """
 
+    def __init__(self, **kwargs):
+        """ treat kwargs as attribute assignment """
+        # loop over the given kwargs
+        for key, value in kwargs.items():
+            # treat them like attribute assignments
+            setattr(self, key, value)
+
     def save(self):
         # add the entry to the db session
         db.session.add(self)
