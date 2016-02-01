@@ -9,6 +9,8 @@ from .ext import db
 
 class Service:
 
+    name = 'Nautilus Service'
+
     def __init__(self, schema = None, actionHandler = None):
         # base the service on a flask app
         self.app = Flask(__name__)
@@ -16,6 +18,7 @@ class Service:
         self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
         # setup various functionalities
         db.init_app(self.app)
+        self.setupAdmin()
         self.setupAuth()
         self.setupApi(schema)
 
@@ -50,9 +53,20 @@ class Service:
         init_service(self)
 
 
+    def setupAdmin(self):
+        from .ext.admin import init_service
+        init_service(self)
+
+
     def setupApi(self, schema = None):
         # if there is a schema for the service
         if schema:
             # configure the service api with the schema
-            from .api import init_service
+            from .ext.api import init_service
             init_service(self, schema=schema)
+
+
+    def addModelToAdmin(self, model):
+        from nautilus.ext.admin import add_model
+        add_model(model)
+

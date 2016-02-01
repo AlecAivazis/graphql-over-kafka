@@ -1,7 +1,6 @@
 """
-    This module manages the commands made availible when the command file is ran.
+    This module manages the commands of the manage file.
 """
-
 
 from flask.ext.script import Manager
 
