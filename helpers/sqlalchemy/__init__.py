@@ -1,10 +1,9 @@
 # third party imports
 import nautilus
-from sqlalchemy import Column, Integer, Text
 from sqlalchemy.ext.declarative import declared_attr
 # local imports
 from .typeDecorators import Password
-from .mixins import HasPassword
+from .mixins import *
 
 class BaseModel(nautilus.ext.db.Model):
     """Convenience base DB model class. Makes sure tables in MySQL are created as InnoDB.
@@ -18,4 +17,3 @@ class BaseModel(nautilus.ext.db.Model):
 
     __abstract__ = True
     __table_args__ = dict(mysql_charset='utf8')
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
