@@ -8,8 +8,6 @@ from .typeDecorators import Password
 from .mixins import *
 from ...ext import db, admin
 
-JsonBase = declarative_base(cls=(JsonSerializableBase,))
-
 class Meta(type):
     """
         The base metaclass for the nautilus models. Currently, it's primary use is to
@@ -44,6 +42,8 @@ class MixedMeta(Meta, type(db.Model)):
             # admin.add_model(self)
             self.onCreation()
 
+
+JsonBase = declarative_base(cls=(JsonSerializableBase,))
 
 class BaseModel(db.Model, JsonBase, metaclass=MixedMeta):
 
