@@ -31,12 +31,6 @@ class Meta(type):
         # create the next class record
         return super().__new__(cls, name, bases, attributes, **kwds)
 
-    def __init__(self, name, bases, attributes, **kwds):
-            super().__init__(name, bases, attributes, **kwds)
-
-            # self.alec_foo = name
-            return
-
 
 class MixedMeta(Meta, type(db.Model)):
     """
