@@ -23,8 +23,7 @@ class CRUDNotificationCreator:
     def onCreation(cls):
         # perform the intended behavior
         super().onCreation()
-
+        # add the crud action emitters
         cls.addListener('after_insert', 'create_success')
         cls.addListener('after_delete', 'delete_success')
         cls.addListener('after_update', 'update_success')
-        cls.addListener('after_rollback', 'failure')
