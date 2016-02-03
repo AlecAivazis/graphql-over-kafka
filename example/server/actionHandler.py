@@ -1,5 +1,5 @@
 """
-    The action handler for the Recipe service
+    This file decribes the way in which this service can respond to actions.
 """
 
 from .models import Recipe

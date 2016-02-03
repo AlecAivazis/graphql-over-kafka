@@ -1,5 +1,5 @@
 """
-    This service maintains sensors registered with Synca.
+    This service maintains a list of recipes
 """
 
 # third party imports
