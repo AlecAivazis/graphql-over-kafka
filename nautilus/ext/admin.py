@@ -1,5 +1,5 @@
 # third party imports
-from flask.ext.admin import Admin
+from flask.ext.admin import Admin, expose
 from flask.ext.admin.contrib.sqla import ModelView as Flask_ModelView
 # local imports
 from . import db
@@ -7,7 +7,7 @@ from . import db
 admin = Admin(template_mode='bootstrap3')
 
 class ModelView(Flask_ModelView):
-    column_display_pk = True # shows private key columns
+    column_display_pk = True # shows private key
 
 def init_service(service):
     """ create the flask admin instance """
