@@ -14,38 +14,27 @@ class Meta(type):
         automatically register a model class with the admin after it is created.
     """
 
-    def __new__(cls, name, bases, attributes, **kwds):
-        """ Called after the class record is created. """
+    def __init__(self, name, bases, attributes, **kwds):
+        # create the super class
+        super().__init__(name, bases, attributes, **kwds)
+        # if the class is not a nautilus base class
+        if 'nautilus_base' not in attributes or not attributes['nautilus_base']:
+            # perform the necessary functions
+            self.onCreation()
 
-        # if the cls doesn't have the attribute yet, then it must be the first
-        if not hasattr(cls, 'is_base'):
-            # mark the initial class
-            cls.is_base = True
-            attributes['is_base'] = True
-        # otherwise we are a sub class
-        else:
-            attributes['is_base'] = False
-
-        # create the next class record
-        return super().__new__(cls, name, bases, attributes, **kwds)
-
+        return
 
 class MixedMeta(Meta, type(db.Model)):
     """
         This meta class mixes the sqlalchemy model meta class and the nautilus one.
     """
-    def __init__(self, name, bases, attributes, **kwds):
-        super().__init__(name, bases, attributes, **kwds)
-        # if we are the sub class of a derived one
-        if not attributes['is_base']:
-            # let the user handle
-            # admin.add_model(self)
-            self.onCreation()
 
 
 JsonBase = declarative_base(cls=(JsonSerializableBase,))
 
 class BaseModel(db.Model, JsonBase, metaclass=MixedMeta):
+
+    nautilus_base = True # necessary to prevent meta class behavior on this model
 
     def __init__(self, **kwargs):
         """ treat kwargs as attribute assignment """
@@ -66,6 +55,11 @@ class BaseModel(db.Model, JsonBase, metaclass=MixedMeta):
         # commit the entry
         db.session.commit()
 
+    @declared_attr
+    def __tablename__(self):
+        return '{}_{}'.format(self.__module__.split('.')[-1], self.__name__.lower())
 
     __abstract__ = True
     __table_args__ = dict(mysql_charset='utf8')
+
+
