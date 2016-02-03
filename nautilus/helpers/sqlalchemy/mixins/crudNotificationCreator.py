@@ -24,3 +24,21 @@ class CRUDNotificationCreator:
                 'type': 'user_created',
                 'payload': target.__json__(),
             })
+
+        # on delete, send an action with type <model>_deleted
+        @event.listens_for(cls, 'after_delete')
+        def dispatchDeleteAction(mapper, connection, target):
+            """ notifies the network of the deleted user model """
+            dispatchAction({
+                'type': 'user_deleted',
+                'payload': target.__json__(),
+            })
+
+        # on delete, send an action with type <model>_updated
+        @event.listens_for(cls, 'after_update')
+        def dispatchUPdateAction(mapper, connection, target):
+            """ notifies the network of the updated model """
+            dispatchAction({
+                'type': 'user_updated',
+                'payload': target.__json__(),
+            })
