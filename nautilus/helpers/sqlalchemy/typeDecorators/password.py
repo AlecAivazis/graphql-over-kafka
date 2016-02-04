@@ -1,8 +1,8 @@
 # from: http://variable-scope.com/posts/storing-and-verifying-passwords-with-sqlalchemy
 
 # third party imports
-from sqlalchemy import Column, Integer, Text, TypeDecorator
-from sqlalchemy.orm import validates
+from sqlalchemy import Text, TypeDecorator
+from graphene.contrib.sqlalchemy.converter import convert_sqlalchemy_type
 # local imports
 from ..types import PasswordHash
 
@@ -47,3 +47,11 @@ class Password(TypeDecorator):
             # fail loudly
             raise TypeError(
                 'Cannot convert {} to a PasswordHash'.format(type(value)))
+
+
+# Graphene Support
+
+@convert_sqlalchemy_type.register(Password)
+def convert_column_to_string(type, column):
+    """ Make sure the password is never included in a schema. """
+    raise Exception("Passwords cannot be included in a schema. Make sure to explcitly ignore any password fields in models.")
