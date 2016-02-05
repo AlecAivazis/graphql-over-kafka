@@ -1,2 +1,2 @@
 # nautilus
-A library for orchestrating microservice applications based around GraphQL calls
+A framework for building flux-influenced microservice applications 
