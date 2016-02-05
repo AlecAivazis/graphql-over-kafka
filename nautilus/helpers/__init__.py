@@ -1,4 +1,5 @@
 from flask.ext.jsontools import DynamicJSONEncoder
+from graphene.contrib.sqlalchemy.converter import convert_sqlalchemy_type
 
 class JSONEncoder(DynamicJSONEncoder):
     def default(self, o):

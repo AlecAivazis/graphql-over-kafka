@@ -2,7 +2,7 @@
 
 # third party imports
 from sqlalchemy import Text, TypeDecorator
-from graphene.contrib.sqlalchemy.converter import convert_sqlalchemy_type
+from nautilus.helpers import convert_sqlalchemy_type
 # local imports
 from ..types import PasswordHash
 

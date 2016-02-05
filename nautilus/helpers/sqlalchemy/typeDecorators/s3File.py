@@ -1,7 +1,7 @@
 # third party imports
 from sqlalchemy import Text, TypeDecorator
 import boto3
-from graphene.contrib.sqlalchemy.converter import convert_sqlalchemy_type
+from nautilus.helpers import convert_sqlalchemy_type
 from graphene.core.types.scalars import String
 # local imports
 from nautilus.ext import app
