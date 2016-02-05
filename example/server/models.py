@@ -4,7 +4,7 @@
 
 # third party imports
 from sqlalchemy import Column, Text
-from nautilus.helpers.sqlalchemy import BaseModel, HasID, CRUDNotificationCreator
+from nautilus.models import BaseModel, HasID, CRUDNotificationCreator
 
 # CRUDNotificationCreator - automatically dispatches appropriate actions when records are C*UDed
 # HasID - adds an auto-incrementing, primary_key field called `id` to the model
