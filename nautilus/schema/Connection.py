@@ -1,4 +1,4 @@
-# third party imports
+# external imports
 from graphene import Field, List
 
 def Connection(target, **args):

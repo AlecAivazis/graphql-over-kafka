@@ -1,8 +1,8 @@
-#  third party imports
+# external imports
 from sqlalchemy import Column
 from sqlalchemy.orm import validates
 # local imports
-from ..typeDecorators import Password
+from ..types import Password
 
 class HasPassword(object):
     password = Column(Password)

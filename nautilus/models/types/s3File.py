@@ -1,10 +1,7 @@
-# third party imports
+# external imports
 from sqlalchemy import Text, TypeDecorator
-import boto3
-from nautilus.helpers import convert_sqlalchemy_type
-from graphene.core.types.scalars import String
 # local imports
-from nautilus.ext import app
+from nautilus.api import convert_sqlalchemy_type
 
 class S3File(TypeDecorator):
     """
@@ -26,12 +23,17 @@ class S3File(TypeDecorator):
             # get the service resource
             s3 = boto3.resource('s3')
             # the name of the bucket
-            bucket = app.config['AWS_BUCKET']
-            directory = self.bucketDirectory + '/' if self.bucketDirectory else ''
-            # the name of the file
-            filename = self.bucketDirectory + value.name
+            bucket = currentApp.config['AWS_BUCKET']
+
+            # grab the name of the file
+            filename = value.name
+            # if there is a bucket directory specified,
+            if self.bucketDirectory:
+                filename = "{}/{}".format(self.bucketDirectory, filename)
+
             # upload the file to s3
             s3.upload_file(filename, bucket, filename)
+
             # store the s3 file location in a retrievable manner
             return "{}{}{}".format(bucket, self.deliminator, filename)
 

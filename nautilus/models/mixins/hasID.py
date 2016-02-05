@@ -1,4 +1,4 @@
-#  third party imports
+# external imports
 from sqlalchemy import Column, Integer
 
 class HasID(object):

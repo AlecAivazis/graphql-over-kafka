@@ -1,6 +1,6 @@
 """ Various helper functions for dealing with backend actions """
 
-# imports
+# external imports
 import pika, json
 
 def dispatch(body, exchange, routing_key = ''):

@@ -1,4 +1,4 @@
-# third party imports
+# external imports
 import json
 import logging
 # local imports

@@ -1,6 +1,7 @@
 import json, requests
 
-from .messaging import dispatchAction
+from .consumers import *
+from .dispatch import dispatchAction
 
 def queryGraphQLService(url, name, filedList, filterDict = {}):
     """ A graphql query wrapper factory"""

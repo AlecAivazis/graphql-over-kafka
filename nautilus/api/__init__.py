@@ -1,5 +1,7 @@
-# third party imports
+# external imports
 from flask_graphql import GraphQLView, GraphQL
+from graphene.contrib.sqlalchemy.converter import convert_sqlalchemy_type
+
 
 def init_service(service, schema):
     """ Add GraphQL support to the given Flask app """

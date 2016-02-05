@@ -2,7 +2,7 @@
 from flask.ext.admin import Admin, expose
 from flask.ext.admin.contrib.sqla import ModelView as Flask_ModelView
 # local imports
-from . import db
+from nautilus import db
 
 admin = Admin(template_mode='bootstrap3')
 

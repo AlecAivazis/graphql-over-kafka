@@ -1,4 +1,4 @@
-# third party imports
+# external imports
 from flask.ext.login import (
     login_user,
     logout_user,
@@ -7,6 +7,7 @@ from flask.ext.login import (
 # local imports
 from .decorators import *
 from .backend import init_app
+from .primitives import *
 
 def init_service(service):
     init_app(service.app)

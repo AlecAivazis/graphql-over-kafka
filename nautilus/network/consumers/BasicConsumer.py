@@ -24,6 +24,8 @@
 #             # leave the loop
 #             break
 
+
+# external imports
 import logging
 import pika
 

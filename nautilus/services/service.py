@@ -1,10 +1,10 @@
-# third party imports
+# external imports
 import threading
 from flask import Flask
 from flask_graphql import GraphQLView, GraphQL
 from flask_login import LoginManager
 # local imports
-from .network.messaging.consumers import ActionConsumer
+from nautilus.network.consumers import ActionConsumer
 
 class Service:
 
@@ -24,7 +24,7 @@ class Service:
         # if there is an action consumer, create a wrapper for it
         self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
 
-        from .ext import db
+        from nautilus import db
         db.init_app(self.app)
 
         # setup various functionalities
@@ -59,12 +59,12 @@ class Service:
 
 
     def setupAuth(self):
-        from .auth import init_service
+        from nautilus.auth import init_service
         init_service(self)
 
 
     def setupAdmin(self):
-        from .ext.admin import init_service
+        from nautilus.admin import init_service
         init_service(self)
 
 
@@ -72,11 +72,11 @@ class Service:
         # if there is a schema for the service
         if schema:
             # configure the service api with the schema
-            from .ext.api import init_service
+            from nautilus.api import init_service
             init_service(self, schema=schema)
 
 
     def addModelToAdmin(self, model):
-        from nautilus.ext.admin import add_model
+        from nautilus.admin import add_model
         add_model(model)
 

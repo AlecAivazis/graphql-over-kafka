@@ -1,7 +1,7 @@
-# third party imports
+# external imports
 from flask.ext.login import LoginManager
 # local imports
-from .models import User
+from .primitives import User
 
 # create a new login manager
 loginManager = LoginManager()

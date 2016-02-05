@@ -1,4 +1,4 @@
-# third party imports
+# external imports
 from flask.ext.login import UserMixin
 
 class User(UserMixin):
@@ -9,4 +9,3 @@ class User(UserMixin):
         for key, value in kwargs.items():
             # treat them like attribute assignments
             setattr(self, key, value)
-

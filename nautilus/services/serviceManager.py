@@ -1,7 +1,9 @@
 """
-    This module manages the commands of the manage file.
+    This module defines a small singleton that runs various scripts in the
+    context of the service.
 """
 
+# external imports
 from flask.ext.script import Manager
 
 class ServiceManager:
@@ -14,7 +16,7 @@ class ServiceManager:
         def syncdb():
             """ Create the database entries. """
             # import the db module
-            from nautilus.ext import db
+            from nautilus import db
             # create all of the tables
             db.create_all()
             # notify the user

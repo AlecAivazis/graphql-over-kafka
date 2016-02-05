@@ -1,10 +1,10 @@
 # from: http://variable-scope.com/posts/storing-and-verifying-passwords-with-sqlalchemy
 
-# third party imports
+# external imports
 from sqlalchemy import Text, TypeDecorator
-from nautilus.helpers import convert_sqlalchemy_type
 # local imports
-from ..types import PasswordHash
+from nautilus.auth.primitives import PasswordHash
+from nautilus.api import convert_sqlalchemy_type
 
 class Password(TypeDecorator):
     """Allows storing and retrieving password hashes using PasswordHash."""
