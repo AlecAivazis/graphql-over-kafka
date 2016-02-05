@@ -1,6 +1,7 @@
 """
     This file describes the GraphQL schema that other services will use to query the inner state
-    of this one.
+    of this service. For more information on graphql please visit:
+        https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html
 """
 
 # third party imports
