@@ -2,7 +2,7 @@
 from nautilus.conventions.actions import getCRUDAction
 from nautilus import db
 
-def deleteActionHandler(Model, required):
+def deleteHandler(Model, required):
     """
         This factory returns an action handler for create type actions
         following nautilus conovention.

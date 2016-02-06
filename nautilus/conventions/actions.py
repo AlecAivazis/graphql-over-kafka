@@ -3,9 +3,6 @@
     Most actions types take the form <method>_<target>
 """
 
-"""
-    C*UD actions
-"""
 
 methods = {
     'createMethod' 'create',

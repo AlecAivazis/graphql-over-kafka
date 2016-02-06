@@ -1,8 +1,7 @@
 # local imports
 from nautilus.conventions.actions import getCRUDAction
 
-# todo: infer the required fields from the model
-def createActionHandler(Model):
+def createHandler(Model):
     """
         This factory returns an action handler for create type actions
         following nautilus conovention.
@@ -13,9 +12,10 @@ def createActionHandler(Model):
             # for each required field
             for requirement in Model.requiredFields:
                 # ensure the value is in the payload
-                print("Required field not found in payload: {}".format(requried))
-                # todo: check all required fields rather than failing on the first
-                return
+                if not requirement in payload:
+                    print("Required field not found in payload: {}".format(requried))
+                    # todo: check all required fields rather than failing on the first
+                    return
 
             # create a new model
             newModel = Model(**payload)
