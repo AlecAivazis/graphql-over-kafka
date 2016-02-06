@@ -2,6 +2,7 @@
 from sqlalchemy.ext.declarative import declared_attr
 from flask.ext.jsontools import JsonSerializableBase
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.inspection import inspect
 # local imports
 from nautilus import admin, db
 
@@ -45,6 +46,9 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
         # register the class with the admin interface
         admin.add_model(cls)
 
+    @classmethod
+    def primaryKeys(cls):
+        return [key.name for key in inspect(cls).primary_key]
 
     def save(self):
         # add the entry to the db session

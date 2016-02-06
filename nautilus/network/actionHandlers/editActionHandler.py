@@ -1,0 +1,45 @@
+# local imports
+from nautilus.conventions.actions import getCRUDAction
+
+def editActionHandler(Model, required):
+    """
+        This factory returns an action handler for create type actions
+        following nautilus conovention.
+    """
+    def actionHandler(type, payload):
+        # if the payload represents a new instance of `Model`
+        if type == getCRUDAction('update', Model):
+
+            # go over each primary key
+            for key in Model.primaryKeys:
+                # if the key is in the payload
+                if key in payload:
+                    # then we can use it to identify the model we are editing
+
+                    # figure out the primary key field
+                    primaryKeyField = getattr(Model, key)
+
+                    # note: the payload is casted to the same type as the key for equality checks
+                    # todo: add pk filter
+                    try:
+                        model = Model.query.filter(primaryKeyField == type(primaryKeyField)(payload[key]))
+                    # if we couldn't cast the key
+                    except TypeError:
+                        pass
+
+                    # remove the key from the payload
+                    payload.pop(key, None)
+
+                    # for every key,value pair
+                    for key, value in payload.items():
+                        # update the model's attribute
+                        setattr(model, key, value)
+
+                    # save the updates
+                    model.save()
+
+                    # don't look for any more identifiers
+                    break
+
+    # return the handler
+    return actionHandler
