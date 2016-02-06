@@ -11,7 +11,7 @@ class CRUDNotificationCreator:
     def addListener(cls, db_event, action_type):
         # on event, dispatch the appropriate action
         @event.listens_for(cls, db_event)
-        def dispatchAction(mapper, connection, target):
+        def dispatchCRUDAction(mapper, connection, target):
             """ notifies the network of the new user model """
             dispatchAction({
                 'type': '{}_{}'.format(cls.__name__.lower(), type),
