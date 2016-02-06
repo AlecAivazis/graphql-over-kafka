@@ -1,7 +1,7 @@
 # local imports
 from nautilus.network import combineActionHandlers
 
-def CRUDActionHandler(model, required):
+def CRUDActionHandler(Model):
     """
         This action handler factory reaturns an action handler that
         responds to actions with CRUD types (following nautilus conventions)
@@ -11,7 +11,7 @@ def CRUDActionHandler(model, required):
     from . import editActionHandler, createActionHandler, deleteActionHandler
     # combine them into one handler
     return combineActionHandlers(
-        editActionHandler(model),
-        createActionHandler(model, required=required),
-        deleteActionHandler(model),
+        editActionHandler(Model),
+        createActionHandler(Model),
+        deleteActionHandler(Model),
     )

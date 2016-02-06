@@ -10,5 +10,4 @@ class User(HasID):
     """ The user model used by Synca. """
     firstName = Column(Text)
     lastName = Column(Text)
-    email = Column(Text)
-    username = Column(Text)
+    email = Column(Text, nullable = False)
