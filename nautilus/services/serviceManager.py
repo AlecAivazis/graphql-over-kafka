@@ -12,6 +12,8 @@ class ServiceManager:
         # create and attach a command manager for the service
         self.commandManager = Manager(service.app)
 
+        self.command.add_command('test', )
+
         @self.commandManager.command
         def syncdb():
             """ Create the database entries. """

@@ -1,4 +1,8 @@
-from distutils.core import setup
+#! /usr/bin/python3
+
+# Always prefer setuptools over distutils
+from setuptools import setup, find_packages
+
 setup(
     name = 'nautilus',
     packages = ['nautilus'],
@@ -10,6 +14,7 @@ setup(
     download_url = 'https://github.com/aaivazis/nautilus/tarball/0.1.0',
     keywords = ['microservice', 'flask', 'graphql'],
     classifiers = [],
+    test_suite='nose2.collector.collector',
     install_requires = [
         'bcrypt',
         'flask',

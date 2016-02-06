@@ -1,5 +1,6 @@
 # external imports
 from sqlalchemy import Text, TypeDecorator
+from graphene.core.types.scalars import String
 # local imports
 from nautilus.api import convert_sqlalchemy_type
 
