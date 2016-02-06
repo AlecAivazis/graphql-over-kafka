@@ -1,7 +1,7 @@
 # local imports
 from nautilus.conventions.actions import getCRUDAction
 
-def editHandler(Model, required):
+def updateHandler(Model):
     """
         This factory returns an action handler for create type actions
         following nautilus conovention.

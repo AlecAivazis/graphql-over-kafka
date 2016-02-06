@@ -1,15 +1,17 @@
 # local imports
 from nautilus.conventions.actions import getCRUDAction
-from nautilus import db
 
-def deleteHandler(Model, required):
+def deleteHandler(Model):
     """
         This factory returns an action handler for create type actions
         following nautilus conovention.
     """
+    # necessary imports
+    from nautilus import db
+
     def actionHandler(type, payload):
         # if the payload represents a new instance of `model`
-        if type == getCRUDAction('delete', model):
+        if type == getCRUDAction('delete', Model):
 
             # for now only handle a single selector specified by a string
             if not isinstance(payload, string):

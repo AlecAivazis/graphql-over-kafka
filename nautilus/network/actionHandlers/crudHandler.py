@@ -1,17 +1,17 @@
-# local imports
-from nautilus.network import combineActionHandlers
-
 def CRUDHandler(Model):
     """
         This action handler factory reaturns an action handler that
         responds to actions with CRUD types (following nautilus conventions)
         and performs the necessary mutation on the model's database.
     """
-    # import the various crud handlers
-    from . import editActionHandler, createActionHandler, deleteActionHandler
+
+    # import the necessary modules
+    from nautilus.network import combineActionHandlers
+    from . import updateHandler, createHandler, deleteHandler
+
     # combine them into one handler
     return combineActionHandlers(
-        editActionHandler(Model),
-        createActionHandler(Model),
-        deleteActionHandler(Model),
+        updateHandler(Model),
+        createHandler(Model),
+        deleteHandler(Model),
     )

@@ -26,5 +26,6 @@ setup(
         'flask_sqlalchemy',
         'graphene',
         'sqlalchemy',
+        'nose2',
     ]
 )
