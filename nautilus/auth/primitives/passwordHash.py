@@ -4,7 +4,7 @@ import bcrypt
 from sqlalchemy.ext.mutable import Mutable
 
 class PasswordHash(Mutable):
-    """ This is a wrapper class over password hashes that encapsulates equality """
+    """ This is a wrapper class over password hashes that abstracts equality """
 
     def __init__(self, hash_, rounds = None):
         # make sure the hash is valid
