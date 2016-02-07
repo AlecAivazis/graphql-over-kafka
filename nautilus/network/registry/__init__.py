@@ -27,17 +27,22 @@ def deregister_service(service):
 def keep_alive(service):
     ''' Ping the registry on an interval to show good health. '''
 
+    # the default tt is 10 sec
     ttl = service.ttl if hasattr(service, 'ttl') else 10
 
+    # register the service with consul
     consulSession.agent.check.register(
         name = service.name,
         check = Check.ttl(str(ttl) + 's'),
     )
 
+    # the keep alive check
     def run_check():
-        register_service(service)
+        # continuously run
         while True:
+            # sleep every 2 seconds
             time.sleep(2)
+            # tell the agent that we are passing the ttl check
             consulSession.agent.check.ttl_pass(service.name, 'Agent alive and reachable.')
 
     # create a thread that will run the consumer
