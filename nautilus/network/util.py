@@ -31,6 +31,23 @@ def query_graphql_service(url, name, fields, filters = {}):
         # return the data
         return dataRequest['data'][name]
 
+def query_model_service(service, fields, filters = {}):
+    '''
+        Apply the given filters to a query of a model service given its name
+        and the desired fields.
+    '''
+    # necessary imports
+    from nautilus.network.registry import service_location_by_name
+    from nautilus.conventions import root_query_for_model_service
+
+    # query the target using model service conventions
+    return query_graphql_service(
+        url = 'http://{}'.format(service_location_by_name(service)),
+        name = root_query_for_model_service(service),
+        fields = fields,
+        filters = filters
+    )
+
 
 def combineActionHandlers(*args):
     """
@@ -47,8 +64,3 @@ def combineActionHandlers(*args):
     # return the combined action handler
     return combinedActionHandler
 
-
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    return s.getsockname()[0]

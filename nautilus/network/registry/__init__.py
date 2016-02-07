@@ -5,7 +5,6 @@ import time
 import random
 from consul import Check
 # local imports
-from ..util import get_ip_address
 from nautilus.auth import random_string
 
 # create a consul session
@@ -18,7 +17,6 @@ def register_service(service):
         name = service.name,
         service_id = "{}-{}".format(service.name, random_string(6)),
         port = service.app.config['PORT'],
-        address = get_ip_address(),
     )
 
 def deregister_service(service):
@@ -30,9 +28,10 @@ def get_services():
     return consulSession.agent.services()
 
 
-def service_location_from_name(key):
+def service_location_by_name(key):
     ''' Return the service entry matching the given key '''
     # grab the registry of services
+    # todo: go through nginx reverse proxy (service proxy service)
     services = ["localhost:{}".format(service['Port']) for service in get_services().values() \
                                                     if service['Service'] == key ]
     # return a random entry from the possibilities
