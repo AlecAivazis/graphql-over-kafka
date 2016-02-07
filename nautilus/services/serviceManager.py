@@ -5,12 +5,14 @@
 
 # external imports
 from flask.ext.script import Manager
+import threading
 
 class ServiceManager:
 
     def __init__(self, service):
         # create and attach a command manager for the service
         self.commandManager = Manager(service.app)
+        self.service = service
 
         @self.commandManager.command
         def syncdb():
@@ -29,4 +31,7 @@ class ServiceManager:
 
     def run(self):
         """ run the command manager """
-        self.commandManager.run()
+        try:
+            self.commandManager.run()
+        except:
+            self.service.stop()

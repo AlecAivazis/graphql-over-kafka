@@ -26,4 +26,9 @@ class ModelService(Service):
             CRUDHandler(model)
         )
         # create the service
-        super().__init__(schema = schema, actionHandler = actionHandler, **kwargs)
+        super().__init__(
+            schema = schema,
+            actionHandler = actionHandler,
+            name = model.__name__.lower(),
+            **kwargs
+        )

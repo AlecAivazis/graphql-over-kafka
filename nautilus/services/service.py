@@ -1,5 +1,8 @@
 # external imports
 import threading
+import consul
+from nautilus.network import registry
+from consul import Check
 from flask import Flask
 from flask_graphql import GraphQLView, GraphQL
 from flask_login import LoginManager
@@ -8,11 +11,14 @@ from nautilus.network.consumers import ActionConsumer
 
 class Service:
 
-    name = 'Nautilus Service'
-
-    def __init__(self, schema = None, actionHandler = None, configObject = None):
+    def __init__(self, schema = None, actionHandler = None,
+                        configObject = None, name = 'Nautilus Service',
+                        auto_register = True):
         # base the service on a flask app
         self.app = Flask(__name__)
+
+        self.name = name
+        self.auto_register = auto_register
 
         # apply any necessary flask app config
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -40,10 +46,17 @@ class Service:
         self.app.config['PORT'] = port
         self.app.config['SECRET_KEY'] = secretKey
 
+        # if the service needs to register itself
+        if self.auto_register:
+            # register with the service registry
+            registry.keep_alive(self)
+
         # if we need to spin up an action consumer
         if self.actionConsumer:
             # create a thread that will run the consumer
-            actionThread = threading.Thread(target=self.actionConsumer.run)
+            actionThread = threading.Thread(
+                target = self.actionConsumer.run
+            )
             # start the thread
             actionThread.start()
 
@@ -56,6 +69,11 @@ class Service:
         if self.actionConsumer:
             # stop the consumer
             self.actionConsumer.stop()
+
+        # if the service is responsible for registering itself
+        if self.auto_register:
+            # remove the service from the registry
+            registry.deregister_service(self)
 
 
     def setupAuth(self):
@@ -76,7 +94,4 @@ class Service:
             init_service(self, schema=schema)
 
 
-    def addModelToAdmin(self, model):
-        from nautilus.admin import add_model
-        add_model(model)
 
