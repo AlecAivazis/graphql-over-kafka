@@ -3,7 +3,6 @@ import graphene
 from flask_graphql import GraphQLView, GraphQL
 from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 # local imports
-from nautilus import db
 from nautilus.api.fields import Connection
 from nautilus.api.filter import args_for_model, filter_model
 from nautilus.conventions import getModelString
@@ -18,6 +17,8 @@ def init_service(service, schema):
 
 def create_model_schema(Model):
     """ This function creates a graphql schema that provides a single model """
+
+    from nautilus import db
 
     # create the schema instance
     schema = graphene.Schema(
