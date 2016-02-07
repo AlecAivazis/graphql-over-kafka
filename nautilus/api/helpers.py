@@ -20,7 +20,10 @@ def create_model_schema(Model):
     """ This function creates a graphql schema that provides a single model """
 
     # create the schema instance
-    schema = graphene.Schema(session = db.session)
+    schema = graphene.Schema(
+        session = db.session,
+        auto_camelcase = False
+    )
 
     # create a graphene object registered with the schema
     @schema.register
@@ -37,6 +40,7 @@ def create_model_schema(Model):
         def resolve_all_models(self, args, info):
             # filter the model query according to the arguments
             return filter_model(Model, args)
+
 
     # add the query to the schema
     schema.query = Query

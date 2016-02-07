@@ -16,7 +16,7 @@ def args_for_model(Model):
     # go over the arguments
     for arg, type in args.items():
         # add the list member filter
-        fullArgs[arg + '__in'] = List(type)
+        fullArgs[arg + '_in'] = List(type)
 
     # return the complete dictionary of arguments
     return fullArgs
@@ -29,7 +29,7 @@ def filter_model(Model, args):
         # if the filter is for a group of values
         if isinstance(value, list):
             # filter the query
-            models = models.filter(getattr(Model, arg[:-4]).in_(value))
+            models = models.filter(getattr(Model, arg[:-3]).in_(value))
         else:
             # filter the argument
             models = models.filter(getattr(Model, arg) == value)
