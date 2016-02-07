@@ -2,7 +2,7 @@ import json
 import requests
 import socket
 
-def queryGraphQLService(url, name, filedList, filterDict = {}):
+def query_graphql_service(url, name, fields, filterDict = {}):
     """ A graphql query wrapper factory"""
 
     # construct the argument string out of the given dictionary
@@ -10,7 +10,7 @@ def queryGraphQLService(url, name, filedList, filterDict = {}):
     args = "(%s)" % argString if len(argString) > 0  else ''
 
     # construct the field string
-    fields = ', '.join(filedList)
+    fieldList = ', '.join(fields)
 
     # build the query out of the given paramters
     query = """
@@ -19,7 +19,7 @@ def queryGraphQLService(url, name, filedList, filterDict = {}):
                 %s
             }
         }
-    """ % (name, args, fields)
+    """ % (name, args, fieldList)
 
     # query the service to retrieve the data
     dataRequest = requests.get(url + '?query='   + query).json()

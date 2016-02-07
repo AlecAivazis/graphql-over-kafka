@@ -2,9 +2,11 @@
 import consul
 import threading
 import time
+import random
 from consul import Check
 # local imports
 from ..util import get_ip_address
+from nautilus.auth import random_string
 
 # create a consul session
 consulSession = consul.Consul()
@@ -14,7 +16,7 @@ def register_service(service):
     # the consul service entry
     consulSession.agent.service.register(
         name = service.name,
-        service_id = service.name,
+        service_id = "{}-{}".format(service.name, random_string(6)),
         port = service.app.config['PORT'],
         address = get_ip_address(),
     )
@@ -23,6 +25,18 @@ def deregister_service(service):
     ''' Remove a service from the registery. '''
     consulSession.agent.service.deregister(service.name)
 
+def get_services():
+    ''' Return a list of the active services. '''
+    return consulSession.agent.services()
+
+
+def service_location_from_name(key):
+    ''' Return the service entry matching the given key '''
+    # grab the registry of services
+    services = ["{}:{}".format(service['Address'], service['Port']) for service in get_services().values() \
+                                                    if service['Service'] == key ]
+    # return a random entry from the possibilities
+    return random.choice(services)
 
 def keep_alive(service):
     ''' Ping the registry on an interval to show good health. '''
@@ -35,6 +49,7 @@ def keep_alive(service):
         name = service.name,
         check = Check.ttl(str(ttl) + 's'),
     )
+    register_service(service)
 
     # the keep alive check
     def run_check():

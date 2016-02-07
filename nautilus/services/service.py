@@ -11,9 +11,14 @@ from nautilus.network.consumers import ActionConsumer
 
 class Service:
 
-    def __init__(self, schema = None, actionHandler = None,
-                        configObject = None, name = 'Nautilus Service',
-                        auto_register = True):
+    def __init__(
+            self,
+            schema = None,
+            actionHandler = None,
+            configObject = None,
+            name = 'Nautilus Service',
+            auto_register = True
+    ):
         # base the service on a flask app
         self.app = Flask(__name__)
 

@@ -1,8 +1,7 @@
 """
     This file is responsible for centralizing the action conventions used in nautilus.
-    Most actions types take the form <method>_<target>
 """
-from .models import getModelString
+from .models import get_model_string
 
 
 methods = {
@@ -14,4 +13,4 @@ methods = {
 
 
 def getCRUDAction(method, model):
-    return "{}_{}".format(methods[method], getModelString(model))
+    return "{}_{}".format(methods[method], get_model_string(model))

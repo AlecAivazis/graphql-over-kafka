@@ -5,10 +5,9 @@
 # local imports
 from nautilus.network import CRUDHandler, combineActionHandlers
 from nautilus.api import create_model_schema
+from nautilus.conventions.services import model_service_name
+from nautilus.network.actionHandlers import noop_handler
 from .service import Service
-
-def noopHandler(type, payload):
-    return
 
 class ModelService(Service):
     """
@@ -17,18 +16,18 @@ class ModelService(Service):
         internal ones.
     """
 
-    def __init__(self, model, addtionalActionHandler = noopHandler, **kwargs):
+    def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):
         # the schema to add to the service
         schema = create_model_schema(model)
         # the action handler is a combination
-        actionHandler = combineActionHandlers(
-            addtionalActionHandler,
+        action_handler = combineActionHandlers(
+            additonal_action_handler,
             CRUDHandler(model)
         )
         # create the service
         super().__init__(
             schema = schema,
-            actionHandler = actionHandler,
-            name = model.__name__.lower(),
+            actionHandler = action_handler,
+            name = model_service_name(model),
             **kwargs
         )

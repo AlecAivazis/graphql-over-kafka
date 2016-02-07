@@ -5,7 +5,9 @@ from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 # local imports
 from nautilus.api.fields import Connection
 from nautilus.api.filter import args_for_model, filter_model
-from nautilus.conventions import getModelString
+from nautilus.network.registry import service_location_from_name
+from nautilus.network import query_graphql_service
+from nautilus.conventions import root_query_for_model_service
 
 def init_service(service, schema):
     """ Add GraphQL support to the given Flask app """
@@ -47,3 +49,18 @@ def create_model_schema(Model):
     schema.query = Query
 
     return schema
+
+
+def query_model_service(service, fields, filters = {}):
+    ''' This function performs a query against a registered model service '''
+    # todo: go through nginx reverse proxy (service proxy service)
+    # get the location for the appropriate service
+    location = "http://{}".format(service_location_from_name(service))
+
+    # query the location like a graphql model service
+    return query_graphql_service(
+        url = location,
+        name = root_query_for_model_service(service),
+        filters = filters,
+        fields = fields,
+    )
