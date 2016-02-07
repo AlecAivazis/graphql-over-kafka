@@ -29,6 +29,7 @@ class ServiceManager:
             """ Start the service. """
             service.run(int(port), debug, secretKey)
 
+
     def run(self):
         """ run the command manager """
         try:
