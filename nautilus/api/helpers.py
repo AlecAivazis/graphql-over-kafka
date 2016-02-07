@@ -57,7 +57,7 @@ def query_model_service(service, fields, filters = {}):
     # get the location for the appropriate service
     location = "http://{}".format(service_location_from_name(service))
 
-    # query the location like a graphql model service
+    # query the location using model service conventions
     return query_graphql_service(
         url = location,
         name = root_query_for_model_service(service),

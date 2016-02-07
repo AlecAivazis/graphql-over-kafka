@@ -4,7 +4,7 @@
 
 def root_query_for_model_service(service):
     ''' This function returns the name of the root query for a model service. '''
-    return 'allModels'
+    return 'all_models'
 
 def root_query_for_connection_service(service):
     ''' This function returns the name of the root query for a connection service. '''

@@ -54,6 +54,10 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
     def requiredFields(cls):
         return [key.name for key in inspect(cls).columns if not key.nullable]
 
+    @classmethod
+    def columns(cls):
+        return [key.name for key in inspect(cls).columns]
+
     def save(self):
         # add the entry to the db session
         db.session.add(self)

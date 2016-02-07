@@ -2,11 +2,11 @@ import json
 import requests
 import socket
 
-def query_graphql_service(url, name, fields, filterDict = {}):
+def query_graphql_service(url, name, fields, filters = {}):
     """ A graphql query wrapper factory"""
 
     # construct the argument string out of the given dictionary
-    argString = ', '.join(['{}: {}'.format(key, json.dumps(value)) for key,value in filterDict.items()])
+    argString = ', '.join(['{}: {}'.format(key, json.dumps(value)) for key,value in filters.items()])
     args = "(%s)" % argString if len(argString) > 0  else ''
 
     # construct the field string

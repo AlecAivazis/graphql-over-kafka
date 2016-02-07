@@ -17,13 +17,20 @@ class ModelService(Service):
     """
 
     def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):
+        # save a reference to the model this service is managing
+        self.model = model
+
         # the schema to add to the service
         schema = create_model_schema(model)
+
         # the action handler is a combination
         action_handler = combineActionHandlers(
+            # of the given one
             additonal_action_handler,
+            # and a crud handler
             CRUDHandler(model)
         )
+
         # create the service
         super().__init__(
             schema = schema,

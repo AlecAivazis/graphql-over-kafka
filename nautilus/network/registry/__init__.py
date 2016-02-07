@@ -33,7 +33,7 @@ def get_services():
 def service_location_from_name(key):
     ''' Return the service entry matching the given key '''
     # grab the registry of services
-    services = ["{}:{}".format(service['Address'], service['Port']) for service in get_services().values() \
+    services = ["localhost:{}".format(service['Port']) for service in get_services().values() \
                                                     if service['Service'] == key ]
     # return a random entry from the possibilities
     return random.choice(services)
