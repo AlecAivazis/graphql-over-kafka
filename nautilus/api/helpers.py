@@ -5,6 +5,7 @@ from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 # local imports
 from nautilus import db
 from nautilus.api.fields import Connection
+from nautilus.api.filter import args_for_model, filter_model
 from nautilus.conventions import getModelString
 
 def init_service(service, schema):
@@ -29,10 +30,13 @@ def create_model_schema(Model):
 
     class Query(graphene.ObjectType):
         """ the root level query """
-        all_models = Connection(ModelObjectType)
+        all_models = Connection(ModelObjectType,
+            args = args_for_model(Model)
+        )
 
         def resolve_all_models(self, args, info):
-            return Model.query.all()
+            # filter the model query according to the arguments
+            return filter_model(Model, args)
 
     # add the query to the schema
     schema.query = Query
