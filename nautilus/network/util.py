@@ -1,4 +1,6 @@
-import json, requests
+import json
+import requests
+import socket
 
 def queryGraphQLService(url, name, filedList, filterDict = {}):
     """ A graphql query wrapper factory"""
@@ -44,3 +46,9 @@ def combineActionHandlers(*args):
 
     # return the combined action handler
     return combinedActionHandler
+
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]

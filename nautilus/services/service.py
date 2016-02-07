@@ -22,6 +22,7 @@ class Service:
 
         # apply any necessary flask app config
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
         # if there is a configObject
         if configObject:
             # apply the config object to the flask app
@@ -54,9 +55,7 @@ class Service:
         # if we need to spin up an action consumer
         if self.actionConsumer:
             # create a thread that will run the consumer
-            actionThread = threading.Thread(
-                target = self.actionConsumer.run
-            )
+            actionThread = threading.Thread(target = self.actionConsumer.run)
             # start the thread
             actionThread.start()
 

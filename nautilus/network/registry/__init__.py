@@ -1,7 +1,10 @@
 # external imports
 import consul
 import threading
+import time
 from consul import Check
+# local imports
+from ..util import get_ip_address
 
 # create a consul session
 consulSession = consul.Consul()
@@ -12,6 +15,7 @@ def register_service(service):
         name = service.name,
         service_id = service.name,
         port = service.app.config['PORT'],
+        address = get_ip_address(),
     )
 
 def deregister_service(service):
@@ -30,7 +34,8 @@ def keep_alive(service):
     def run_check():
         register_service(service)
         while True:
-            consulSession.agent.check.ttl_pass(service.name)
+            time.sleep(2)
+            consulSession.agent.check.ttl_pass(service.name, 'Agent alive and reachable.')
 
 
     # create a thread that will run the consumer
