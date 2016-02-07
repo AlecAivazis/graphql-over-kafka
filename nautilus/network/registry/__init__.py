@@ -10,7 +10,7 @@ from ..util import get_ip_address
 consulSession = consul.Consul()
 
 def register_service(service):
-    ''' Add a service to the registry service '''
+    ''' Add a service to the registry service. '''
     # the consul service entry
     consulSession.agent.service.register(
         name = service.name,
@@ -20,12 +20,12 @@ def register_service(service):
     )
 
 def deregister_service(service):
-    ''' Remove a service from the registery '''
+    ''' Remove a service from the registery. '''
     consulSession.agent.service.deregister(service.name)
 
 
 def keep_alive(service):
-    ''' Ping the registry on an interval to show good health '''
+    ''' Ping the registry on an interval to show good health. '''
 
     ttl = service.ttl if hasattr(service, 'ttl') else 10
 
@@ -39,7 +39,6 @@ def keep_alive(service):
         while True:
             time.sleep(2)
             consulSession.agent.check.ttl_pass(service.name, 'Agent alive and reachable.')
-
 
     # create a thread that will run the consumer
     thread = threading.Thread(target=run_check)
