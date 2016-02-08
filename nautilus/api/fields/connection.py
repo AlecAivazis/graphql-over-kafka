@@ -5,6 +5,8 @@ from graphql.core.utils.ast_to_dict import ast_to_dict
 from graphql.core.language.printer import print_ast
 # local imports
 from nautilus.network import query_model_service
+from nautilus.api.objectTypes import ServiceObjectType
+from nautilus.conventions.services import connection_service_name
 
 class Connection(Field):
     """
@@ -17,14 +19,23 @@ class Connection(Field):
 
     def __init__(self, target, service = None, relay = True, **kwds):
 
-        # save the provided datum
-        self.service = service
-        self.target = target
+        # perform auto resolve when:
+            # the connection is backed by a service
+            # a resolver wasn't explicity specified
+            # we are targetting a service object
+        perform_resolve = service and \
+                            'resolver' not in kwds and \
+                            issubclass(target, ServiceObjectType)
 
         # if a resolve was not specified
-        if 'resolver' not in kwds:
+        if perform_resolve:
+            # save references to constructor arguments
+            self.service = service
+            self.target = target
+            self.support_relay = relay
+
             # set the resolver if a service was specified
-            kwds['resolver'] = self.resolve_service if service else None
+            kwds['resolver'] = self.resolve_service
 
         # create a field that is a list of the target
         super().__init__(
@@ -32,12 +43,21 @@ class Connection(Field):
             **kwds
         )
 
-
     def resolve_service(self, instance, args, info):
         '''
             This function grab the remote data that acts as the source for this
             connection.
         '''
+        # note: it is safe to assume the target is a service object
+
+        # if we are connecting two service objects
+        if isinstance(instance, ServiceObjectType):
+            # the name of the service that manages the connection
+            service_name = connection_service_name(self.target.service, instance.service)
+            print("we need to resolve the connection through {!r}".format(service_name))
+
+        # otherwise we are connecting a non service object with a service object
+
         # the potential pieces of data to retrieve about the object depends on
         # the target object type we are going to instantiate.
         # todo: avoid internal _meta pointer since its potentially weak
@@ -47,6 +67,7 @@ class Connection(Field):
         fields = [field.attname for field in targetFields if not isinstance(field, type(self))]
 
         # check if any args point to another servce indicating a join filter
-
+        # for key, value in args.items():
+            # the name of the connection between
 
         return (self.target(**result) for result in query_model_service(self.service, fields, filters = args))
