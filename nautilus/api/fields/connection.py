@@ -23,14 +23,13 @@ class Connection(Field):
             # the connection is backed by a service
             # a resolver wasn't explicity specified
             # we are targetting a service object
-        perform_resolve = service and \
-                            'resolver' not in kwds and \
+        perform_resolve = 'resolver' not in kwds and \
+                            not isinstance(target, str) and \
                             issubclass(target, ServiceObjectType)
 
         # if a resolve was not specified
         if perform_resolve:
             # save references to constructor arguments
-            self.service = service
             self.target = target
             self.support_relay = relay
 
@@ -51,7 +50,8 @@ class Connection(Field):
         # note: it is safe to assume the target is a service object
 
         # if we are connecting two service objects
-        if isinstance(instance, ServiceObjectType):
+        if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
+
             # the name of the service that manages the connection
             service_name = connection_service_name(self.target.service, instance.service)
             print("we need to resolve the connection through {!r}".format(service_name))
@@ -70,4 +70,4 @@ class Connection(Field):
         # for key, value in args.items():
             # the name of the connection between
 
-        return (self.target(**result) for result in query_model_service(self.service, fields, filters = args))
+        return (self.target(**result) for result in query_model_service(self.target.service, fields, filters = args))

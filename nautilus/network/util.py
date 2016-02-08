@@ -39,12 +39,12 @@ def query_model_service(service, fields, filters = {}):
     '''
     # necessary imports
     from nautilus.network.registry import service_location_by_name
-    from nautilus.conventions import root_query_for_model_service
+    from nautilus.conventions import root_query
 
     # query the target using model service conventions
     return query_graphql_service(
         url = 'http://{}'.format(service_location_by_name(service)),
-        name = root_query_for_model_service(service),
+        name = root_query(service),
         fields = fields,
         filters = filters
     )

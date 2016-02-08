@@ -23,6 +23,7 @@ class Service:
         self.app = Flask(__name__)
 
         self.name = name
+        self.__name__ = name
         self.auto_register = auto_register
 
         # apply any necessary flask app config

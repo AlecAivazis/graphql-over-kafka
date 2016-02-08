@@ -8,4 +8,3 @@ from .services import *
 from flask.ext.sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-metadata = MetaData()

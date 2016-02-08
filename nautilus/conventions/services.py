@@ -24,7 +24,7 @@ def connection_service_name(*args):
             services.append(service)
         # otherwise the serivice was not a string
         else:
-            services.append(get_model_string(model))
+            services.append(get_model_string(service))
 
     # combine the two names into the connection name
     return "{}_connection".format('_'.join(sorted(services)))

@@ -7,9 +7,9 @@ from .modelService import ModelService
 
 class ConnectionService(ModelService):
     """
-        This service provides basic CRUD functionality around the connection
-        between two other services. Additional action handlers will be merged with
-        internal ones.
+        This service is a model service that manages the connection between two
+        other services. The underlying schema and database are automatically
+        generated to match the primary keys of the linked services.
     """
 
     def __init__(self, services = [], additonal_action_handler = noop_handler, **kwargs):
