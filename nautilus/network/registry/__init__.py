@@ -26,8 +26,11 @@ def register_service(service):
 
 def deregister_service(service):
     ''' Remove a service from the registery. '''
-    consulSession.agent.service.deregister(service.consul_name)
-    consulSession.agent.check.deregister(service.consul_name)
+    # if the service has been registered
+    if hasattr(service, 'consul_name'):
+        # deregister it
+        consulSession.agent.service.deregister(service.consul_name)
+        consulSession.agent.check.deregister(service.consul_name)
 
 
 def get_services():

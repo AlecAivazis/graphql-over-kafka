@@ -1,5 +1,6 @@
 # external imports
 from flask import current_app as currentApp
+from sqlalchemy import MetaData
 # local imports
 from .services import *
 
@@ -7,3 +8,4 @@ from .services import *
 from flask.ext.sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+metadata = MetaData()

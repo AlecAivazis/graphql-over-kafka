@@ -17,7 +17,7 @@ class Service:
             actionHandler = None,
             configObject = None,
             name = 'Nautilus Service',
-            auto_register = True
+            auto_register = True,
     ):
         # base the service on a flask app
         self.app = Flask(__name__)
@@ -64,7 +64,7 @@ class Service:
             # start the thread
             actionThread.start()
 
-        #run the service at the designated port
+        # run the service at the designated port
         self.app.run(port = self.app.config['PORT'])
 
 

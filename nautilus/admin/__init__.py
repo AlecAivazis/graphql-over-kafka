@@ -1,8 +1,6 @@
 # third party imports
 from flask.ext.admin import Admin, expose
 from flask.ext.admin.contrib.sqla import ModelView as Flask_ModelView
-# local imports
-from nautilus import db
 
 admin = Admin(template_mode='bootstrap3')
 
@@ -15,6 +13,8 @@ def init_service(service):
     admin.init_app(service.app)
 
 def add_model(model):
+    # damn circular references....
+    from nautilus import db
     # if the model has a custom AdminView defined then use it
     view = model.getAdminView() if hasattr(model, 'getAdminView') else ModelView
     # add the model to the view using its  using model view

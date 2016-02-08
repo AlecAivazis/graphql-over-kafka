@@ -1,7 +1,3 @@
-"""
-    This service maintains sensors registered with Synca.
-"""
-
 # local imports
 from nautilus.network import CRUDHandler, combineActionHandlers
 from nautilus.api import create_model_schema
@@ -31,10 +27,12 @@ class ModelService(Service):
             CRUDHandler(model)
         )
 
+        name = kwargs.pop('name', None) or model_service_name(model)
+
         # create the service
         super().__init__(
             schema = schema,
             actionHandler = action_handler,
-            name = model_service_name(model),
+            name = name,
             **kwargs
         )
