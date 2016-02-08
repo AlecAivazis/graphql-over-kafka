@@ -10,15 +10,21 @@ def model_service_name(model):
     return get_model_string(model)
 
 
-def connection_service_name(model1, model2):
-    ''' the name of a service that manages the connection between two models '''
+def connection_service_name(*args):
+    ''' the name of a service that manages the connection between services '''
 
-    # figure out the model string
-    model1_name = get_model_string(model1) if not isinstance(model1, str) else model1
-    model2_name = get_model_string(model2) if not isinstance(model2, str) else model2
+    # the list of services to connect
+    services = []
 
-    # sort the names alphabetically
-    [name1, name2] = sorted([model1_name, model2_name])
+    # for each service to connect
+    for service in args:
+        # if the service was passed as a string
+        if isinstance(service, str):
+            # add it to the list
+            services.append(service)
+        # otherwise the serivice was not a string
+        else:
+            services.append(get_model_string(model))
 
     # combine the two names into the connection name
-    return "{}_{}_connection".format(name1, name2)
+    return "{}_connection".format('_'.join(sorted(services)))
