@@ -59,7 +59,7 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
         return [key.name for key in inspect(cls).columns]
 
     def primary_key(self):
-        return getattr(self, type(self))
+        return getattr(self, type(self).primary_keys()[0])
 
     def save(self):
         # add the entry to the db session

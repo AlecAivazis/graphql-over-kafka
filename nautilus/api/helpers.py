@@ -1,10 +1,13 @@
 # external imports
 import graphene
+from graphene import Field
 from flask_graphql import GraphQLView, GraphQL
 from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
+from sqlalchemy.inspection import inspect
 # local imports
 from nautilus.api.fields import Connection
 from nautilus.api.filter import args_for_model, filter_model
+from nautilus.api import convert_sqlalchemy_type
 
 def init_service(service, schema):
     """ Add GraphQL support to the given Flask app """
@@ -25,11 +28,23 @@ def create_model_schema(Model):
         auto_camelcase = False
     )
 
+    primary_key = inspect(Model).primary_key[0]
+    primary_key_type = convert_sqlalchemy_type(primary_key.type, primary_key)
+    print(primary_key_type)
+
     # create a graphene object registered with the schema
     @schema.register
     class ModelObjectType(SQLAlchemyObjectType):
         class Meta:
             model = Model
+
+        primary_key = Field(primary_key_type, description = "The primary key for this object.")
+
+
+        def resolve_primary_key(self, args, info):
+            print(self, args, info)
+            return self.primary_key()
+
 
     class Query(graphene.ObjectType):
         """ the root level query """
