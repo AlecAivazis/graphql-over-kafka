@@ -31,6 +31,7 @@ def query_graphql_service(url, name, fields, filters = {}):
         # return the data
         return dataRequest['data'][name]
 
+
 def query_model_service(service, fields, filters = {}):
     '''
         Apply the given filters to a query of a model service given its name

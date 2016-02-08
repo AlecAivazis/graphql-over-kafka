@@ -19,9 +19,11 @@ def register_service(service):
         port = service.app.config['PORT'],
     )
 
+
 def deregister_service(service):
     ''' Remove a service from the registery. '''
     consulSession.agent.service.deregister(service.name)
+
 
 def get_services():
     ''' Return a list of the active services. '''
@@ -37,6 +39,7 @@ def service_location_by_name(key):
     # return a random entry from the possibilities
     return random.choice(services)
 
+
 def keep_alive(service):
     ''' Ping the registry on an interval to show good health. '''
 
@@ -44,11 +47,12 @@ def keep_alive(service):
     ttl = service.ttl if hasattr(service, 'ttl') else 10
 
     # register the service with consul
+    register_service(service)
+    # add a ttl check for the service in case we die
     consulSession.agent.check.register(
         name = service.name,
         check = Check.ttl(str(ttl) + 's'),
     )
-    register_service(service)
 
     # the keep alive check
     def run_check():
