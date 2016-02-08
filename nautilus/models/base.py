@@ -47,7 +47,7 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
         admin.add_model(cls)
 
     @classmethod
-    def primaryKeys(cls):
+    def primary_keys(cls):
         return [key.name for key in inspect(cls).primary_key]
 
     @classmethod
@@ -57,6 +57,9 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
     @classmethod
     def columns(cls):
         return [key.name for key in inspect(cls).columns]
+
+    def primary_key(self):
+        return getattr(self, type(self))
 
     def save(self):
         # add the entry to the db session

@@ -18,7 +18,7 @@ def deleteHandler(Model):
                 return
 
             # go over each primary key
-            for key in Model.primaryKeys:
+            for key in Model.primary_keys():
                 # find the model with the matching primary key
                 # the primary key field
                 primaryKey = getattr(Model, key)

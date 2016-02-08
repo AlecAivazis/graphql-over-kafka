@@ -41,7 +41,7 @@ def get_services():
 def service_location_by_name(key):
     ''' Return the service entry matching the given key '''
     # grab the registry of services
-    # todo: go through nginx reverse proxy (service proxy service)
+    # todo: go through service proxy service for more efficient loadbalancing
     services = ["localhost:{}".format(service['Port']) for service in get_services().values() \
                                                     if service['Service'] == key ]
     # return a random entry from the possibilities

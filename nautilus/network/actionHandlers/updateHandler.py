@@ -11,7 +11,7 @@ def updateHandler(Model):
         if type == getCRUDAction('update', Model):
 
             # go over each primary key
-            for key in Model.primaryKeys:
+            for key in Model.primary_keys():
                 # if the key is in the payload
                 if key in payload:
                     # then we can use it to identify the model we are editing
