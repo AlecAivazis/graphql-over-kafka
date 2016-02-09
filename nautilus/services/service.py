@@ -10,13 +10,36 @@ from flask_login import LoginManager
 from nautilus.network.consumers import ActionConsumer
 
 class Service:
+    """
+        This is the base class for all services that are part of a nautilus
+        cloud. Provides basic functionalities such as registration,
+        responding to actions, and predictable api endpoints.
+
+        :param name: The name of the service. This will be used to register
+                     the service with the registry as act as the designator
+                     for a ServiceObjectType.
+        :type name: string
+
+        :param schema: The GraphQL schema which acts as a basis for the external
+                        API.
+        :type schema: graphql.core.type.GraphQLSchema
+
+        :param actionHandler: The callback function fired when an action is recieved.
+        :type actionHandler: function
+
+        :param configObject: A python class to use for configuring the service.
+        :type configObject: class
+
+        :param auto_register: Whether or not the service should register itself when ran
+        :type auto_register: bool
+    """
 
     def __init__(
             self,
+            name,
             schema = None,
             actionHandler = None,
             configObject = None,
-            name = 'Nautilus Service',
             auto_register = True,
     ):
         # base the service on a flask app

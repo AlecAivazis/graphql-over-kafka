@@ -7,9 +7,16 @@ from .service import Service
 
 class ModelService(Service):
     """
-        This service provides basic CRUD support as well as a schema for
-        external consumption. Additional action handlers will be merged with
-        internal ones.
+        This service acts as the primary data store in your cloud. It manages
+        the records of a single model by listening for actions that indicate
+        a record mutation as well as emitting actions when the mutations are
+        successful. The external API is automatically generated to match the
+        given model.
+
+        :param model: The nautilus model to manage. Must inherit from
+                      nautilus.models.BaseModel.
+        :param additonal_action_handler: An optional action handler that will
+                                         be called alongside the internal ones.
     """
 
     def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):
