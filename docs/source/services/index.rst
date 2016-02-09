@@ -1,8 +1,8 @@
 Services
 ========
 
-Services are the building block of nautilus applications. Very simply,
-a nautilus service is a standalone process that responds to actions sent
+Services are the building block of nautilus clouds. Very simply, a
+nautilus service is a standalone process that responds to actions sent
 over the global event queue, maintains and mutates some internal state
 according to the action, and provides a summary of that internal state via
 a GraphQL API.
