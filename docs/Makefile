@@ -6,7 +6,7 @@ gh-pages:
 	git checkout master $(GH_PAGES_SOURCES) ; \
 	git reset HEAD ; \
 	make html -f ./sphinx.make ; \
-	mv build/html/* .. ; \
+	rsync -av build/html/ .. ; \
 	rm -rf $(GH_PAGES_SOURCES) build ; \
 	git add .. ; \
 	git commit -m "Updated documentation"
