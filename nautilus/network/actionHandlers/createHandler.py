@@ -3,8 +3,16 @@ from nautilus.conventions.actions import getCRUDAction
 
 def createHandler(Model):
     """
-        This factory returns an action handler for create type actions
-        following nautilus conovention.
+        This factory returns an action handler that creates a new instance of
+        the specified model when a create action is recieved, assuming the
+        action follows nautilus convetions.
+
+        Args:
+            Model (nautilus.BaseModel): The model to create when the action
+                received.
+
+        Returns:
+            function: The action handler for this model
     """
     def actionHandler(type, payload):
         # if the payload represents a new instance of `Model`

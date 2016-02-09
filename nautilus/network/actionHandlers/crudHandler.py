@@ -3,6 +3,13 @@ def CRUDHandler(Model):
         This action handler factory reaturns an action handler that
         responds to actions with CRUD types (following nautilus conventions)
         and performs the necessary mutation on the model's database.
+
+        Args:
+            Model (nautilus.BaseModel): The model to delete when the action
+                received.
+
+        Returns:
+            function: The action handler for this model
     """
 
     # import the necessary modules

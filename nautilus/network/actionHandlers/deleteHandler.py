@@ -3,8 +3,16 @@ from nautilus.conventions.actions import getCRUDAction
 
 def deleteHandler(Model):
     """
-        This factory returns an action handler for create type actions
-        following nautilus conovention.
+        This factory returns an action handler that deletes a new instance of
+        the specified model when a delete action is recieved, assuming the
+        action follows nautilus convetions.
+
+        Args:
+            Model (nautilus.BaseModel): The model to delete when the action
+                received.
+
+        Returns:
+            function: The action handler for this model
     """
     # necessary imports
     from nautilus import db
