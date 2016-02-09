@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>graphene.contrib.sqlalchemy.converter &mdash; nautilus v0.2.4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.2.4 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>graphene.contrib.sqlalchemy.converter</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for graphene.contrib.sqlalchemy.converter</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">singledispatch</span> <span class="kn">import</span> <span class="n">singledispatch</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">interfaces</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">sqlalchemy_utils.types.choice</span> <span class="kn">import</span> <span class="n">ChoiceType</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">class</span> <span class="nc">ChoiceType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="kn">from</span> <span class="nn">...core.classtypes.enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">...core.types.scalars</span> <span class="kn">import</span> <span class="n">ID</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">ConnectionOrListField</span><span class="p">,</span> <span class="n">SQLAlchemyModelField</span>
+
+
+<span class="k">def</span> <span class="nf">convert_sqlalchemy_relationship</span><span class="p">(</span><span class="n">relationship</span><span class="p">):</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="n">relationship</span><span class="o">.</span><span class="n">direction</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">relationship</span><span class="o">.</span><span class="n">mapper</span><span class="o">.</span><span class="n">entity</span>
+    <span class="n">model_field</span> <span class="o">=</span> <span class="n">SQLAlchemyModelField</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">relationship</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="n">interfaces</span><span class="o">.</span><span class="n">MANYTOONE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">model_field</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="n">interfaces</span><span class="o">.</span><span class="n">ONETOMANY</span> <span class="ow">or</span>
+          <span class="n">direction</span> <span class="o">==</span> <span class="n">interfaces</span><span class="o">.</span><span class="n">MANYTOMANY</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ConnectionOrListField</span><span class="p">(</span><span class="n">model_field</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">convert_sqlalchemy_column</span><span class="p">(</span><span class="n">column</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">convert_sqlalchemy_type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span> <span class="n">column</span><span class="p">)</span>
+
+
+<span class="nd">@singledispatch</span>
+<div class="viewcode-block" id="convert_sqlalchemy_type"><a class="viewcode-back" href="../../../../schema/index.html#nautilus.api.convert_sqlalchemy_type">[docs]</a><span class="k">def</span> <span class="nf">convert_sqlalchemy_type</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+        <span class="s2">&quot;Don&#39;t know how to convert the SQLAlchemy field </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">column</span><span class="o">.</span><span class="n">__class__</span><span class="p">))</span></div>
+
+
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Date</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">DateTime</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Time</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">String</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Unicode</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">UnicodeText</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Enum</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_column_to_string</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+
+
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">SmallInteger</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">BigInteger</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_column_to_int_or_id</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">column</span><span class="o">.</span><span class="n">primary_key</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ID</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Int</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+
+
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_column_to_boolean</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Boolean</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+
+
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Float</span><span class="p">)</span>
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_column_to_float</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Float</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+
+
+<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">ChoiceType</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_column_to_enum</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;{}_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Enum</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'v0.2.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

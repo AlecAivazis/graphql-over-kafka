@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.services.modelService &mdash; nautilus v0.2.4 documentation</title>
+  <title>nautilus.services.connectionService &mdash; nautilus v0.2.4 documentation</title>
   
 
   
@@ -118,7 +118,7 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-    <li>nautilus.services.modelService</li>
+    <li>nautilus.services.connectionService</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -130,50 +130,44 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for nautilus.services.modelService</h1><div class="highlight"><pre>
+  <h1>Source code for nautilus.services.connectionService</h1><div class="highlight"><pre>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">CRUDHandler</span><span class="p">,</span> <span class="n">combineActionHandlers</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
-<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">model_service_name</span>
 <span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
-<span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">connection_service_name</span>
+<span class="kn">from</span> <span class="nn">.modelService</span> <span class="kn">import</span> <span class="n">ModelService</span>
 
-<div class="viewcode-block" id="ModelService"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.modelService.ModelService">[docs]</a><span class="k">class</span> <span class="nc">ModelService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<div class="viewcode-block" id="ConnectionService"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.connectionService.ConnectionService">[docs]</a><span class="k">class</span> <span class="nc">ConnectionService</span><span class="p">(</span><span class="n">ModelService</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This service acts as the primary data store in your cloud. It manages</span>
-<span class="sd">        the records of a single model by listening for actions that indicate</span>
-<span class="sd">        a record mutation as well as emitting actions when the mutations have</span>
-<span class="sd">        finished (whether successfully or not). The external API is</span>
-<span class="sd">        automatically generated to match the given model.</span>
+<span class="sd">        This service manages a connection between any number of other services.</span>
+<span class="sd">        The underlying schema and database are automatically generated to</span>
+<span class="sd">        match the primary keys of the linked services.</span>
+
+<span class="sd">        This service will listen for actions indicating the deletion of a related</span>
+<span class="sd">        model and remove any related fields to maintain consistency.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (nautilus.BaseModel): The nautilus model to manage.</span>
+<span class="sd">            services (list of nautilus.Service): The list of services to connect.</span>
 <span class="sd">            additonal_action_handler (optional, function): An action handler</span>
 <span class="sd">                to be called alongside the internal ones.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">additonal_action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># save a reference to the model this service is managing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">services</span><span class="p">,</span> <span class="n">additonal_action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="c1"># the schema to add to the service</span>
-        <span class="n">schema</span> <span class="o">=</span> <span class="n">create_model_schema</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="c1"># *sigh*</span>
+        <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">create_connection_model</span>
 
-        <span class="c1"># the action handler is a combination</span>
-        <span class="n">action_handler</span> <span class="o">=</span> <span class="n">combineActionHandlers</span><span class="p">(</span>
-            <span class="c1"># of the given one</span>
-            <span class="n">additonal_action_handler</span><span class="p">,</span>
-            <span class="c1"># and a crud handler</span>
-            <span class="n">CRUDHandler</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="c1"># make sure we were passed more than one service</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">services</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please provide more than one service to connect&quot;</span><span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">model_service_name</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-
-        <span class="c1"># create the service</span>
+        <span class="c1"># # create the service</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">,</span>
-            <span class="n">actionHandler</span> <span class="o">=</span> <span class="n">action_handler</span><span class="p">,</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+            <span class="c1"># schema = create_model_schema(model),</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">create_connection_model</span><span class="p">(</span><span class="n">services</span><span class="p">),</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="n">services</span><span class="p">),</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span></div>
 </pre></div>

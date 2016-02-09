@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.network.registry package &mdash; nautilus v0.2.4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.2.4 documentation" href="../index.html"/>
+        <link rel="up" title="nautilus.network package" href="nautilus.network.html"/>
+        <link rel="next" title="nautilus.network.tests package" href="nautilus.network.tests.html"/>
+        <link rel="prev" title="nautilus.network.consumers package" href="nautilus.network.consumers.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">Service API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nautilus.admin.html">nautilus.admin package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="nautilus.network.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#module-nautilus.network.dispatch">nautilus.network.dispatch module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#module-nautilus.network.util">nautilus.network.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#module-nautilus.network">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module Index</a> &raquo;</li>
+      
+          <li><a href="nautilus.network.html">nautilus.network package</a> &raquo;</li>
+      
+    <li>nautilus.network.registry package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/internals/nautilus.network.registry.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nautilus-network-registry-package">
+<h1>nautilus.network.registry package<a class="headerlink" href="#nautilus-network-registry-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-nautilus.network.registry">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.network.registry" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.registry.deregister_service">
+<code class="descclassname">nautilus.network.registry.</code><code class="descname">deregister_service</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/registry.html#deregister_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.registry.deregister_service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a service from the registery.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.registry.get_services">
+<code class="descclassname">nautilus.network.registry.</code><code class="descname">get_services</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/registry.html#get_services"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.registry.get_services" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of the active services.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.registry.keep_alive">
+<code class="descclassname">nautilus.network.registry.</code><code class="descname">keep_alive</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/registry.html#keep_alive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.registry.keep_alive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ping the registry on an interval to show good health.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.registry.register_service">
+<code class="descclassname">nautilus.network.registry.</code><code class="descname">register_service</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/registry.html#register_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.registry.register_service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a service to the registry service.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.registry.service_location_by_name">
+<code class="descclassname">nautilus.network.registry.</code><code class="descname">service_location_by_name</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/registry.html#service_location_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.registry.service_location_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the service entry matching the given key</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="nautilus.network.tests.html" class="btn btn-neutral float-right" title="nautilus.network.tests package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nautilus.network.consumers.html" class="btn btn-neutral" title="nautilus.network.consumers package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.2.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
