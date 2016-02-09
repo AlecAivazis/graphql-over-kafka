@@ -7,9 +7,9 @@ from .modelService import ModelService
 
 class ConnectionService(ModelService):
     """
-        This service is a model service that manages the connection between any
-        number of other services. The underlying schema and database are automatically
-        generated to match the primary keys of the linked services.
+        This service manages a connection between any number of other services.
+        The underlying schema and database are automatically generated to
+        match the primary keys of the linked services.
 
         This service will listen for actions indicating the deletion of a related
         model and remove any related fields to maintain consistency.
@@ -18,6 +18,7 @@ class ConnectionService(ModelService):
             services (list of nautilus.Service): The list of services to connect.
             additonal_action_handler (optional, function): An action handler
                 to be called alongside the internal ones.
+
     """
 
     def __init__(self, services, additonal_action_handler = noop_handler, **kwargs):

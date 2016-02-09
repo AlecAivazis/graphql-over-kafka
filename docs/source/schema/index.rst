@@ -1,9 +1,9 @@
 Service API
 ================
 
-For the most part, model schema generation takes care of itself thanks to the
-excellent Graphene community. To reduce the overall boilerplate, Nautilus
-provides a schema factory that generates a schema to match a model:
+For the most part, the generation of a Graphql schema takes care of itself
+thanks to the excellent Graphene community. To reduce the overall boilerplate,
+Nautilus provides a schema factory that generates a schema to match a model:
 
 
 .. autofunction:: nautilus.api.create_model_schema
@@ -12,10 +12,10 @@ provides a schema factory that generates a schema to match a model:
 Summarizing an External Service in A Schema
 ---------------------------------------------
 
-Although a service does best when focused around a single model, sometimes
-(like in the case of the api gateway) it is useful to show another service's
-data in a schema. In this case, nautilus provides a special base class for
-the represntation of the external service object:
+Although a service should never rely on information that it does not maintain,
+there are very rare cases (like the api gateway) where it is necessary to show
+another service's data in a schema. In this case, nautilus provides a special
+base class for the object type that represents remote data.
 
 
 .. autoclass:: nautilus.api.ServiceObjectType
