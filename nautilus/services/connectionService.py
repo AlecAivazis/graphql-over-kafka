@@ -14,11 +14,13 @@ class ConnectionService(ModelService):
         This service will listen for actions indicating the deletion of a related
         model and remove any related fields to maintain consistency.
 
-        :param services: The list of services to connect.
-        :type service: list of nautilus.Service
+        Args:
+            services (list of nautilus.Service): The list of services to connect.
+            additonal_action_handler (optional, function): An action handler
+                to be called alongside the internal ones.
     """
 
-    def __init__(self, services = [], additonal_action_handler = noop_handler, **kwargs):
+    def __init__(self, services, additonal_action_handler = noop_handler, **kwargs):
 
         # *sigh*
         from nautilus.models import create_connection_model

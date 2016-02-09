@@ -12,26 +12,28 @@ from nautilus.network.consumers import ActionConsumer
 class Service:
     """
         This is the base class for all services that are part of a nautilus
-        cloud. Provides basic functionalities such as registration,
+        cloud. This class provides basic functionalities such as registration,
         responding to actions, and predictable api endpoints.
 
-        :param name: The name of the service. This will be used to register
-                     the service with the registry as act as the designator
-                     for a ServiceObjectType.
-        :type name: string
+        Args:
 
-        :param schema: The GraphQL schema which acts as a basis for the external
-                        API.
-        :type schema: graphql.core.type.GraphQLSchema
+            name (string): The name of the service. This will be used to
+                register the service with the registry as act as the designator
+                for a ServiceObjectType.
 
-        :param actionHandler: The callback function fired when an action is recieved.
-        :type actionHandler: function
+            schema (optional, graphql.core.type.GraphQLSchema): The GraphQL schema
+                which acts as a basis for the external API. If None, no endpoints are
+                added to the service.
 
-        :param configObject: A python class to use for configuring the service.
-        :type configObject: class
+            actionHandler (optional, function): The callback function fired when
+                an action is recieved. If None, the service does not connect to the
+                action queue.
 
-        :param auto_register: Whether or not the service should register itself when ran
-        :type auto_register: bool
+            configObject (optional, class): A python class to use for configuring the
+                service.
+
+            auto_register (optional, bool): Whether or not the service should
+                register itself when ran
     """
 
     def __init__(

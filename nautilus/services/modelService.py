@@ -13,10 +13,10 @@ class ModelService(Service):
         successful. The external API is automatically generated to match the
         given model.
 
-        :param model: The nautilus model to manage. Must inherit from
-                      nautilus.models.BaseModel.
-        :param additonal_action_handler: An optional action handler that will
-                                         be called alongside the internal ones.
+        Args:
+            model (nautilus.BaseModel): The nautilus model to manage.
+            additonal_action_handler (optional, function): An action handler
+                to be called alongside the internal ones.
     """
 
     def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):
