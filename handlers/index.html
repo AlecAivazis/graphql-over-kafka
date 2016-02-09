@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Action Handlers &mdash; nautilus v0.2.4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.2.4 documentation" href="../index.html"/>
+        <link rel="next" title="Service API" href="../schema/index.html"/>
+        <link rel="prev" title="Services" href="../services/index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Action Handlers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#combining-action-handlers">Combining Action Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#provided-action-handlers">Provided Action Handlers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#factories">Factories</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Action Handlers</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/handlers/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="action-handlers">
+<h1>Action Handlers<a class="headerlink" href="#action-handlers" title="Permalink to this headline">¶</a></h1>
+<p>Action handlers describe how your service mutates its internal state in
+response to the arrival of an action from the queue. They are defined as
+a function of two arguments: <code class="docutils literal"><span class="pre">type</span></code> and <code class="docutils literal"><span class="pre">payload</span></code>. <code class="docutils literal"><span class="pre">Type</span></code> is a string that
+classifies the event and <code class="docutils literal"><span class="pre">payload</span></code> is a dictionary representing the
+data associated with the event. For example,</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+    <span class="c1"># if the payload represents a new recipe to add to the list</span>
+    <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;create_recipe&#39;</span><span class="p">:</span>
+        <span class="c1"># create a new instance of the recipe model</span>
+        <span class="n">recipe</span> <span class="o">=</span> <span class="n">Recipe</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="p">)</span>
+        <span class="c1"># save the new model</span>
+        <span class="n">recipe</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c1"># otherwise if the payload is the id of a recipe to be deleted</span>
+    <span class="k">elif</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;delete_recipe&#39;</span><span class="p">:</span>
+        <span class="c1"># find the matching recipe</span>
+        <span class="n">recipe</span> <span class="o">=</span> <span class="n">Recipe</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">first</span><span class="p">(</span><span class="n">Recipe</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">payload</span><span class="p">)</span>
+        <span class="c1"># remove the recipe from the database</span>
+        <span class="n">recipe</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="combining-action-handlers">
+<h2>Combining Action Handlers<a class="headerlink" href="#combining-action-handlers" title="Permalink to this headline">¶</a></h2>
+<p>As your services get more complex, you&#8217;ll want to split your action handler into
+separate functions which each get called. Nautilus provides a function called
+<code class="docutils literal"><span class="pre">combineActionHandlers</span></code> which serves just this case:</p>
+<dl class="function">
+<dt id="nautilus.network.combineActionHandlers">
+<code class="descclassname">nautilus.network.</code><code class="descname">combineActionHandlers</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/util.html#combineActionHandlers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.combineActionHandlers" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function combines the given action handlers into a single function
+which will call all of them.</p>
+</dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combineActionHandlers</span>
+
+<span class="k">def</span> <span class="nf">action_handler1</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;first handler fired!&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">action_handler2</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;second handler fired!&quot;</span><span class="p">)</span>
+
+<span class="n">combined_handler</span> <span class="o">=</span> <span class="n">combineActionHandlers</span><span class="p">(</span>
+    <span class="n">action_handler1</span><span class="p">,</span>
+    <span class="n">action_handler2</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="provided-action-handlers">
+<h2>Provided Action Handlers<a class="headerlink" href="#provided-action-handlers" title="Permalink to this headline">¶</a></h2>
+<p>Nautilus provides some action handlers to mix with your own services when creating
+custom solutions.</p>
+<div class="section" id="factories">
+<h3>Factories<a class="headerlink" href="#factories" title="Permalink to this headline">¶</a></h3>
+<p>The following are functions that take a paramter and return an an action creator.</p>
+<dl class="function">
+<dt id="nautilus.network.CRUDHandler">
+<code class="descclassname">nautilus.network.</code><code class="descname">CRUDHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/crudHandler.html#CRUDHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.CRUDHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This action handler factory reaturns an action handler that
+responds to actions with CRUD types (following nautilus conventions)
+and performs the necessary mutation on the model&#8217;s database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.createHandler">
+<code class="descclassname">nautilus.network.</code><code class="descname">createHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/createHandler.html#createHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.createHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that creates a new instance of
+the specified model when a create action is recieved, assuming the
+action follows nautilus convetions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to create when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.updateHandler">
+<code class="descclassname">nautilus.network.</code><code class="descname">updateHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/updateHandler.html#updateHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.updateHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that updates a new instance of
+the specified model when a update action is recieved, assuming the
+action follows nautilus convetions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to update when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.deleteHandler">
+<code class="descclassname">nautilus.network.</code><code class="descname">deleteHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/deleteHandler.html#deleteHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.deleteHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that deletes a new instance of
+the specified model when a delete action is recieved, assuming the
+action follows nautilus convetions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../schema/index.html" class="btn btn-neutral float-right" title="Service API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../services/index.html" class="btn btn-neutral" title="Services" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.2.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
