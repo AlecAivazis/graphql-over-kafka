@@ -8,7 +8,7 @@ gh-pages:
 	make html -f ./sphinx.make ; \
 	mv build/html/* .. ; \
 	cd .. ; \
-	git add -am "Updated documentation" ; \
+	git commit -am "Updated documentation" ; \
 	git push origin gh-pages;
 
 	rm -rf $(GH_PAGES_SOURCES) build
