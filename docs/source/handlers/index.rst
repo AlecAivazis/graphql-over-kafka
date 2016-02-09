@@ -2,7 +2,7 @@ Action Handlers
 ================
 
 Action handlers describe how your service mutates its internal state in
-response to the arrival of an action from the queue. Handlers are defined as
+response to the arrival of an action from the queue. They are defined as
 a function of two arguments: ``type`` and ``payload``. ``Type`` is a string that
 classifies the event and ``payload`` is a dictionary representing the
 data associated with the event. For example,
@@ -32,6 +32,8 @@ As your services get more complex, you'll want to split your action handler into
 separate functions which each get called. Nautilus provides a function called
 ``combineActionHandlers`` which serves just this case:
 
+.. autofunction:: nautilus.network.combineActionHandlers
+
 .. code-block:: python
 
     from nautilus.network import combineActionHandlers
@@ -48,6 +50,7 @@ separate functions which each get called. Nautilus provides a function called
     )
 
 
+
 Provided Action Handlers
 -------------------------
 
@@ -59,7 +62,7 @@ Factories
 
 The following are functions that take a paramter and return an an action creator.
 
+.. autofunction:: nautilus.network.CRUDHandler
 .. autofunction:: nautilus.network.createHandler
 .. autofunction:: nautilus.network.updateHandler
 .. autofunction:: nautilus.network.deleteHandler
-.. autofunction:: nautilus.network.CRUDHandler
