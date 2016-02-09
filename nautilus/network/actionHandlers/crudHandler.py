@@ -9,7 +9,7 @@ def CRUDHandler(Model):
                 received.
 
         Returns:
-            function: The action handler for this model
+            function(type, payload): The action handler for this model
     """
 
     # import the necessary modules

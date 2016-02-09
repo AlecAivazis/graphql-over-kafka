@@ -12,7 +12,7 @@ def updateHandler(Model):
                 received.
 
         Returns:
-            function: The action handler for this model
+            function(type, payload): The action handler for this model
     """
     def actionHandler(type, payload):
         # if the payload represents a new instance of `Model`

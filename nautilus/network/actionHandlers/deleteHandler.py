@@ -12,7 +12,7 @@ def deleteHandler(Model):
                 received.
 
         Returns:
-            function: The action handler for this model
+            function(type, payload): The action handler for this model
     """
     # necessary imports
     from nautilus import db
