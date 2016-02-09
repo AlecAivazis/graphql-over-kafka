@@ -9,9 +9,9 @@ class ModelService(Service):
     """
         This service acts as the primary data store in your cloud. It manages
         the records of a single model by listening for actions that indicate
-        a record mutation as well as emitting actions when the mutations are
-        successful. The external API is automatically generated to match the
-        given model.
+        a record mutation as well as emitting actions when the mutations have
+        finished (whether successfully or not). The external API is
+        automatically generated to match the given model.
 
         Args:
             model (nautilus.BaseModel): The nautilus model to manage.
