@@ -12,12 +12,33 @@ class ConnectionService(ModelService):
         match the primary keys of the linked services.
 
         This service will listen for actions indicating the deletion of a related
-        model and remove any related fields to maintain consistency.
+        model and remove any related fields to maintain consistency. And provides
+        a way for the api gateway to deduce the relationship between services when
+        summarizing the cloud.
 
         Args:
             services (list of nautilus.Service): The list of services to connect.
             additonal_action_handler (optional, function): An action handler
                 to be called alongside the internal ones.
+
+        Example:
+
+            .. code-block:: python
+
+                # external imports
+                from nautilus import ConnectionService
+
+                # the services to connect
+                from local.directory import service as service_one
+                from other.local.directory import service as service_two
+
+                class ServiceConfig:
+                    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/connections.db'
+
+                service = ConnectionService(
+                    services = [service_one, service_two],
+                    configObject = ServiceConfig
+                )
 
     """
 

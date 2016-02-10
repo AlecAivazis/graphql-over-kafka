@@ -17,6 +17,31 @@ class ModelService(Service):
             model (nautilus.BaseModel): The nautilus model to manage.
             additonal_action_handler (optional, function): An action handler
                 to be called alongside the internal ones.
+
+        Example:
+
+            .. code-block:: python
+
+                from nautilus import ModelService
+                from sqlalchemy import Column, Text
+                from nautilus.models import HasID, BaseModel, CRUDNotificationCreator
+
+
+                # these mixins provide make the model "live". For more information,
+                # see foo_bar.
+                class Model(CRUDNotificationCreator, HasID, BaseModel):
+                    name = Column(Text)
+
+
+                class ServiceConfig:
+                    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
+
+
+                service = ModelService(
+                    model = Model,
+                    configObject = ServiceConfig,
+                )
+
     """
 
     def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):

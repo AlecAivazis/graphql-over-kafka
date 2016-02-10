@@ -13,4 +13,7 @@ gh-pages:
 	git push origin gh-pages; \
 	git checkout master
 
+local:
+	make html -f ./sphinx.make
+
 all: gh-pages

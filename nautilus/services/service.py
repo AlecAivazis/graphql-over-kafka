@@ -34,6 +34,31 @@ class Service:
 
             auto_register (optional, bool): Whether or not the service should
                 register itself when ran
+
+        Example:
+
+            .. code-block:: python
+
+                from nautilus import Service
+                from nautilus.api import create_model_schema
+                from nautilus.network import CRUDHandler
+                from nautilus.models import BaseModel
+
+
+                class Model(BaseModel):
+                    name = Column(Text)
+
+
+                # you could also make your own
+                api_schema = create_model_schema(Model)
+                action_handler = CRUDHandler(Model)
+
+
+                service = Service(
+                    name = 'My Awesome Service',
+                    schema = api_schema,
+                    actionHandler = action_handler
+                )
     """
 
     def __init__(
