@@ -10,6 +10,7 @@
     services/index
     handlers/index
     schema/index
+    utilities/index
     internals/index
 
 Welcome to Nautilus!
@@ -35,5 +36,4 @@ features include:
 
 
 At the moment, there is only a python implementation of the nautilus spec, but
-there are plans for many more implementations. Up next are JavaScript, Haskell
-and either golang or rust.
+there are plans for more languages. Up next are JavaScript and Haskell.

@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation / Setup &mdash; nautilus v0.2.4 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.2.4 documentation" href="../index.html"/>
+        <link rel="up" title="Getting Started" href="index.html"/>
+        <link rel="next" title="Your First Service" href="first_service/index.html"/>
+        <link rel="prev" title="Getting Started" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Installation / Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#necessary-background-processes">Necessary Background Processes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linux">Linux</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apple-osx">Apple / OSX</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="first_service/index.html">Your First Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting_services/index.html">Conecting Services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Building an API Gateway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Getting Started</a> &raquo;</li>
+      
+    <li>Installation / Setup</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/intro/installation.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation-setup">
+<h1>Installation / Setup<a class="headerlink" href="#installation-setup" title="Permalink to this headline">¶</a></h1>
+<p>Nautilus is availible using pip:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nautilus</span>
+</pre></div>
+</div>
+<div class="section" id="necessary-background-processes">
+<h2>Necessary Background Processes<a class="headerlink" href="#necessary-background-processes" title="Permalink to this headline">¶</a></h2>
+<p>In order to run a nautilus cloud, you must have both consul and rabbitmq
+installed and running on localhost.</p>
+<div class="section" id="linux">
+<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
+<p>If you are developing on a linux machine, this is easily accomplished using
+docker. For docker installation instructions please visit here. Once you have
+successfully installed docker, the two process can be started with two separate
+commands in your console:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="s2">&quot;5672:5672&quot;</span> <span class="n">rabbitmq</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="s2">&quot;8500:8500&quot;</span> <span class="n">progrium</span><span class="o">/</span><span class="n">consul</span> <span class="o">-</span><span class="n">server</span> <span class="o">-</span><span class="n">bootstrap</span>
+</pre></div>
+</div>
+<p>For more information using docker, please read the documentation here.</p>
+</div>
+<div class="section" id="apple-osx">
+<h3>Apple / OSX<a class="headerlink" href="#apple-osx" title="Permalink to this headline">¶</a></h3>
+<p>Because of some complications with docker on OSX, we cannot bind our containers
+to ports on localhost. This leaves us with two options: point nautilus to
+another location (we&#8217;ll have to do this for every service), or run the two
+processes by hand. Since we do not  yet support the first option, OSX users
+need to install these two packages by hand using MacPorts or homebrew.</p>
+<p>Once consul and rabbitmq are installed, they can be run in background processes
+with the following command in the terminal</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">consul</span> <span class="o">-</span><span class="n">server</span> <span class="o">-</span><span class="n">bootstrap</span> <span class="o">&amp;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rabbitmq</span><span class="o">-</span><span class="n">server</span> <span class="o">&amp;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>I know this is tedious to ensure when developping, I will eventually start these processes for you if they are not present when running a service.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="first_service/index.html" class="btn btn-neutral float-right" title="Your First Service" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Getting Started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.2.4',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
