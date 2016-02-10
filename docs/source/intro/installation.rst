@@ -3,7 +3,7 @@ Installation / Setup
 
 Nautilus is availible using pip:
 
->>> pip install nautilus
+$ pip install nautilus
 
 Necessary Background Processes
 -------------------------------
@@ -18,8 +18,10 @@ docker. For docker installation instructions please visit here. Once you have
 successfully installed docker, the two process can be started with two separate
 commands in your console:
 
->>> docker run -d -p "5672:5672" rabbitmq
->>> docker run -d -p "8500:8500" progrium/consul -server -bootstrap
+.. code-block:: bash
+
+    $ docker run -d -p "5672:5672" rabbitmq
+    $ docker run -d -p "8500:8500" progrium/consul -server -bootstrap
 
 For more information using docker, please read the documentation here.
 
@@ -35,8 +37,10 @@ need to install these two packages by hand using MacPorts or homebrew.
 Once consul and rabbitmq are installed, they can be run in background processes
 with the following command in the terminal
 
->>> consul -server -bootstrap &
->>> rabbitmq-server &
+.. code-block:: bash
+
+    $ consul -server -bootstrap &
+    $ rabbitmq-server &
 
 
 Notes

@@ -2,8 +2,18 @@ Your First Service
 ===================
 
 Services are the fundamental building blocks for cloud applications powered by
-nautilus. Let's begin by creating a directory with an empty file somewhere on
-your computer for us to use as a playground.
+nautilus. They are small, standalone processes which should be designed to 
+perform a single function and "do it well." We will be interacting with them a 
+lot throughout this tutorial so let's not spend too much time and start 
+writing some code. 
+
+Keep in mind, this section is meant to illustrate the various parts of a 
+service. As you will see in the next section, the service we are about to 
+construct can be much more succintly created using one of nautilus's 
+pre-packaged services.
+
+Create a directory with an empty file somewhere on your computer for us to use
+as a playground.
 
 .. code-block:: bash
 
@@ -11,10 +21,7 @@ your computer for us to use as a playground.
             cd nautilus_playground && \
             touch server.py
 
-Now that we have a file, let's make our first service. Keep in mind, that
-this section is meant to illustrate the various parts of a service, as you
-will see in the next section, the service we are about to construct can be
-much more succintly created using one of nautilus's pre-packaged services.
+Now that we have a file, let's make our first service. 
 Open server.py in your favorite text editor and copy and paste the following:
 
 .. code-block:: python
@@ -27,9 +34,11 @@ Open server.py in your favorite text editor and copy and paste the following:
         service.run()
 
 
-You could also have wrapped your service in a ServiceManager
-<nautilus.ServiceManager> which provides various command line arguments.
-Feel free to test that this works by executing this script in your console:
+This class is the base service class and provides basic functionalities. You 
+could also have wrapped your service in a ServiceManager
+<nautilus.ServiceManager> which provides various command line arguments. Feel
+free to test that everything is running properly by executing this script in 
+your console:
 
 .. code-block:: bash
 
@@ -57,8 +66,7 @@ not necessary, it is suggested that you also use SQLAlchemy to manage
 your database. And honestly, it's one of the nicest python packages written,
 so why not take the opportunity when you can?
 
-Throughout this guide, we're going to be making a recipe list, so open up
-server.py from the previous step and add the Recipe class.
+Go ahead and define the Recipe model as shown below.
 
 .. code-block:: python
 
