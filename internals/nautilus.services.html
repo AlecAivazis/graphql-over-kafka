@@ -169,7 +169,9 @@
 The underlying schema and database are automatically generated to
 match the primary keys of the linked services.</p>
 <p>This service will listen for actions indicating the deletion of a related
-model and remove any related fields to maintain consistency.</p>
+model and remove any related fields to maintain consistency. And provides
+a way for the api gateway to deduce the relationship between services when
+summarizing the cloud.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -183,6 +185,23 @@ to be called alongside the internal ones.</li>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># external imports</span>
+<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ConnectionService</span>
+
+<span class="c1"># the services to connect</span>
+<span class="kn">from</span> <span class="nn">local.directory</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">service_one</span>
+<span class="kn">from</span> <span class="nn">other.local.directory</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">service_two</span>
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/connections.db&#39;</span>
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">ConnectionService</span><span class="p">(</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_one</span><span class="p">,</span> <span class="n">service_two</span><span class="p">],</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -210,6 +229,28 @@ to be called alongside the internal ones.</li>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">CRUDNotificationCreator</span>
+
+
+<span class="c1"># these mixins provide make the model &quot;live&quot;. For more information,</span>
+<span class="c1"># see foo_bar.</span>
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">CRUDNotificationCreator</span><span class="p">,</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
+
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">ModelService</span><span class="p">(</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -245,6 +286,29 @@ register itself when ran</li>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
+<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">CRUDHandler</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+
+
+<span class="c1"># you could also make your own</span>
+<span class="n">api_schema</span> <span class="o">=</span> <span class="n">create_model_schema</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+<span class="n">action_handler</span> <span class="o">=</span> <span class="n">CRUDHandler</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;My Awesome Service&#39;</span><span class="p">,</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">api_schema</span><span class="p">,</span>
+    <span class="n">actionHandler</span> <span class="o">=</span> <span class="n">action_handler</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="nautilus.services.service.Service.run">
 <code class="descname">run</code><span class="sig-paren">(</span><em>port=8000</em>, <em>debug=False</em>, <em>secretKey='supersecret'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.run" title="Permalink to this definition">¶</a></dt>

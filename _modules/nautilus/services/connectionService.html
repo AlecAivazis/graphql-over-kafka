@@ -145,12 +145,33 @@
 <span class="sd">        match the primary keys of the linked services.</span>
 
 <span class="sd">        This service will listen for actions indicating the deletion of a related</span>
-<span class="sd">        model and remove any related fields to maintain consistency.</span>
+<span class="sd">        model and remove any related fields to maintain consistency. And provides</span>
+<span class="sd">        a way for the api gateway to deduce the relationship between services when</span>
+<span class="sd">        summarizing the cloud.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            services (list of nautilus.Service): The list of services to connect.</span>
 <span class="sd">            additonal_action_handler (optional, function): An action handler</span>
 <span class="sd">                to be called alongside the internal ones.</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # external imports</span>
+<span class="sd">                from nautilus import ConnectionService</span>
+
+<span class="sd">                # the services to connect</span>
+<span class="sd">                from local.directory import service as service_one</span>
+<span class="sd">                from other.local.directory import service as service_two</span>
+
+<span class="sd">                class ServiceConfig:</span>
+<span class="sd">                    SQLALCHEMY_DATABASE_URI = &#39;sqlite:////tmp/connections.db&#39;</span>
+
+<span class="sd">                service = ConnectionService(</span>
+<span class="sd">                    services = [service_one, service_two],</span>
+<span class="sd">                    configObject = ServiceConfig</span>
+<span class="sd">                )</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
