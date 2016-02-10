@@ -3,11 +3,6 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to nautilus's documentation!
-====================================
-
-Contents:
-
 .. toctree::
     :hidden:
 
@@ -17,11 +12,27 @@ Contents:
     schema/index
     internals/index
 
+Welcome to Nautilus!
+=====================
 
-Indices and tables
-==================
+While microservices  have been all the rage for some time now, there
+has been very little released that provides an "out of the box" solution
+for those developers looking to quickly develop distributed/cloud-based
+applications without having to think about how all the moving parts fit
+together.
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
+Nautilus is a framework for flux based microservices that looks to provide
+extendible implementations of common aspects of a cloud so that you can focus
+on what you do best: building massively scalable web applications. Some of these
+features include:
+
+    * Distributed authentication
+    * Service messaging
+    * Data retrieval and API gateway construction
+    * Distributed/remote database administration
+
+
+At the moment, there is only a python implementation of the nautilus spec, but
+there are plans for many more implementations. Up next are JavaScript, Haskell
+and either golang or rust.
