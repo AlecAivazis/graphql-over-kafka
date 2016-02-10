@@ -108,7 +108,8 @@ and recipes by adding a Connection field to the recipe class:
 
 When the a Connection is used between two ServiceObjects, nautilus will look up
 the details of the relationship from the connection service we created earlier
-and perform all of the necessary requests to create the snapshot you asked for.
+and perform all of the necessary requests/joins to create the snapshot you
+asked for.
 
 You can test this out with a query like ``{ recipes {name, ingredients { name } } }``
 

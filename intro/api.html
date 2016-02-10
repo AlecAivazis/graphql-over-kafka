@@ -236,7 +236,8 @@ and recipes by adding a Connection field to the recipe class:</p>
 </div>
 <p>When the a Connection is used between two ServiceObjects, nautilus will look up
 the details of the relationship from the connection service we created earlier
-and perform all of the necessary requests to create the snapshot you asked for.</p>
+and perform all of the necessary requests/joins to create the snapshot you
+asked for.</p>
 <p>You can test this out with a query like <code class="docutils literal"><span class="pre">{</span> <span class="pre">recipes</span> <span class="pre">{name,</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code></p>
 <p>Eventually all of this will be automated by taking advantage of GraphQL&#8217;s
 support for introspecting a schema without querying it.</p>
