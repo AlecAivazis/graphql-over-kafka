@@ -17,7 +17,7 @@ Welcome to Nautilus!
 
 While microservices  have been all the rage for some time now, there
 has been very little released that provides an "out of the box" solution
-for those developers looking to quickly develop distributed/cloud-based
+for those developers looking to quickly produce distributed/cloud-based
 applications without having to think about how all the moving parts fit
 together.
 
@@ -27,8 +27,9 @@ extendible implementations of common aspects of a cloud so that you can focus
 on what you do best: building massively scalable web applications. Some of these
 features include:
 
+    * Service registration
     * Distributed authentication
-    * Service messaging
+    * Message passing
     * Data retrieval and API gateway construction
     * Distributed/remote database administration
 
