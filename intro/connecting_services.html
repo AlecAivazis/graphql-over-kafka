@@ -148,20 +148,19 @@
             
   <div class="section" id="connecting-services-together">
 <h1>Connecting Services Together<a class="headerlink" href="#connecting-services-together" title="Permalink to this headline">¶</a></h1>
-<p>Given their highly specialized nature, a cloud is not very useful with only
-one service so let&#8217;s add another to our example cloud. In order to speed
-up the development process, nautilus comes  pre-packaged with a collection
-of extendible services which are great starting points when adding new
-functionalities to your cloud.</p>
+<p>Given their highly specialized nature, a service is not very useful on its
+own. So, let&#8217;s add another to our example cloud. This is a good opportunity
+to use some of the services that nautilus provides which are great starting
+points when adding new functionalities to your cloud.</p>
 <div class="section" id="using-pre-defined-services">
 <h2>Using Pre-defined Services<a class="headerlink" href="#using-pre-defined-services" title="Permalink to this headline">¶</a></h2>
 <p>One of the most commonly used services is the ModelService which maintains
 records of a particular database. If this sounds really familiar, it should
 - you implemented 80% of the service in Part 1, it just handles the other
 CRUD actions for you.</p>
-<p>Before we add another model, let&#8217;s rename the <code class="docutils literal"><span class="pre">server.py</span></code> file from part 1 to
-<code class="docutils literal"><span class="pre">recipes.py</span></code> and create a new file called <code class="docutils literal"><span class="pre">ingredients.py</span></code> in our
-directory. Inside of this file, paste the following code:</p>
+<p>Before we add another model service, let&#8217;s rename the <code class="docutils literal"><span class="pre">server.py</span></code> file
+from part 1 to <code class="docutils literal"><span class="pre">recipes.py</span></code> and create a new file called <code class="docutils literal"><span class="pre">ingredients.py</span></code>
+in our directory. Inside of this file, paste the following code:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># third party imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span><span class="p">,</span> <span class="n">ServiceManager</span>
 <span class="c1"># third party imports</span>
@@ -188,15 +187,15 @@ directory. Inside of this file, paste the following code:</p>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>You can see that we were able to get the same/more functionality with
-sifnicantly fewer lines of code. If you want, you can run the server
+<p>You can see that we were able to get the same/more functionality as before with
+significantly fewer lines of code. If you want, you can run the server
 and go to the admin panel / graphql endpoints to verify things are
 working as you expect.</p>
 <p>Sorry if feel that you went through all that trouble in part 1 for nothing.
 At least now you know what&#8217;s going on underneath and hopefully you never have
 to write that much boilerplate again. If you do need to implement a
-completely service, send me a message and let&#8217;s work together to figure out
-how nautilus can better serve your needs at a framework level.</p>
+completely custom service, send me a message and let&#8217;s work together to figure
+out if nautilus can better serve your needs at a framework level.</p>
 </div>
 <div class="section" id="connection-models">
 <h2>Connection Models<a class="headerlink" href="#connection-models" title="Permalink to this headline">¶</a></h2>
@@ -216,8 +215,9 @@ the connection service that has a 1 in the recipe column but this time there
 would be a 2 in the ingredient column. This relationship is called
 &#8220;many-to-many&#8221; because a recipe can have many ingredients and an ingredient can be a member of many recipes (neither column is unique). Relationships can also be
 classified as &#8220;one-to-one&#8221; and &#8220;one-to-many&#8221;.</p>
-<p>Create a new file called <code class="docutils literal"><span class="pre">recipeIngredients.py</span></code> next to the previously created
-services. In this file, paste the following source:</p>
+<p>Make a new file called <code class="docutils literal"><span class="pre">recipeIngredients.py</span></code> next to the previously created
+files. Now, create a ConnectionService to manage the relationship between
+recipes and ingredients:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ConnectionService</span>
 <span class="c1"># local imports</span>

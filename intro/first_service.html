@@ -153,22 +153,17 @@
   <div class="section" id="your-first-service">
 <h1>Your First Service<a class="headerlink" href="#your-first-service" title="Permalink to this headline">¶</a></h1>
 <p>Services are the fundamental building blocks for cloud applications powered by
-nautilus. They are small, standalone processes which should be designed to
-perform a single function and &#8220;do it well.&#8221; We will be interacting with them a
-lot throughout this tutorial so let&#8217;s not spend too much time and start
-writing some code.</p>
-<p>Keep in mind, this section is meant to illustrate the various parts of a
-service. As you will see in the next section, the service we are about to
-construct can be much more succintly created using one of nautilus&#8217;s
-pre-packaged services.</p>
-<p>Create a directory with an empty file somewhere on your computer for us to use
-as a playground.</p>
+nautilus. Let&#8217;s begin by creating a directory with an empty file somewhere on
+your computer for us to use as a playground.</p>
 <div class="highlight-bash"><div class="highlight"><pre>$ mkdir nautilus_playground <span class="o">&amp;&amp;</span> <span class="se">\</span>
         <span class="nb">cd</span> nautilus_playground <span class="o">&amp;&amp;</span> <span class="se">\</span>
         touch server.py
 </pre></div>
 </div>
-<p>Now that we have a file, let&#8217;s make our first service.
+<p>Now that we have a file, let&#8217;s make our first service. Keep in mind, that
+this section is meant to illustrate the various parts of a service, as you
+will see in the next section, the service we are about to construct can be
+much more succintly created using one of nautilus&#8217;s pre-packaged services.
 Open server.py in your favorite text editor and copy and paste the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
 
@@ -178,11 +173,7 @@ Open server.py in your favorite text editor and copy and paste the following:</p
     <span class="n">service</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>This class is the base service class and provides basic functionalities. You
-could also have wrapped your service in a ServiceManager
-&lt;nautilus.ServiceManager&gt; which provides various command line arguments. Feel
-free to test that everything is running properly by executing this script in
-your console:</p>
+<p>Test that this works by executing this script in your console:</p>
 <div class="highlight-bash"><div class="highlight"><pre>$ python3 ./server.py
 </pre></div>
 </div>
@@ -201,7 +192,8 @@ services and provides many helpers for common patterns. Therefore, while
 not necessary, it is suggested that you also use SQLAlchemy to manage
 your database. And honestly, it&#8217;s one of the nicest python packages written,
 so why not take the opportunity when you can?</p>
-<p>Go ahead and define the Recipe model as shown below.</p>
+<p>Throughout this guide, we&#8217;re going to be making a recipe list, so open up
+server.py from the previous step and add the Recipe class.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
 <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
@@ -221,7 +213,7 @@ so why not take the opportunity when you can?</p>
 </div>
 <p>Notice we also wrapped the service in a manager, which provides a basic
 command line interface for our service.</p>
-<p>While our service still can&#8217;t talk to the outside world, at least it&#8217;s keep
+<p>While our service still can&#8217;t talk to the outside world, at least it can keep
 track of our recipes for us. By inheriting from BaseModel &lt;nautilus.BaseModel&gt;
 nautilus automatically registers this model with an admin interface. But
 before we can look at the records, we have to create the database that will
@@ -239,14 +231,15 @@ to query this database.</p>
 <div class="section" id="building-a-schema">
 <h2>Building a Schema<a class="headerlink" href="#building-a-schema" title="Permalink to this headline">¶</a></h2>
 <p>Traditionally, backend data is made availible via some sort of RESTful api. In
-nautilus, services use a new technology called GraphQL from the facebook
-engineers which allows the service to expose the data through a single
-endpoint. For more information on GraphQL, visit this page.</p>
-<p>Normally, building the description of our endpoint would result in a
+nautilus, services use a piece of technology from the facebook engineers</p>
+<blockquote>
+<div>called GraphQL which allows the service to expose the data through a single</div></blockquote>
+<p>endpoint. For more information on GraphQL, visit [this]() page.</p>
+<p>Normally, building the schema for our endpoint would result in a
 significant amount of duplicated code (a new field for every model
 attribute we want to include). However, recently the Graphene team added
 automated support for SQLAlchemy models allowing us to add a graphql endpoint
-to our service with a few additional lines:</p>
+to our service with only a few additional lines:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span><span class="p">,</span> <span class="n">db</span>
 <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
@@ -288,21 +281,21 @@ to our service with a few additional lines:</p>
 For now, you can think of it as a wrapper around the List type that
 we are using to make our code more easily read.</p>
 <p>Sometimes, you might have to create the entire schema by hand, in which case
-I suggest reading the graphene documentation [here](graphene). However, given
-the simplicity of our Recipe model, Graphene can create the object for us.</p>
+I suggest reading the graphene documentation [here](graphene). However in most
+circumstances, Graphene can create the object for us.</p>
 <div class="section" id="querying-the-service-s-state">
 <h3>Querying the Service&#8217;s State<a class="headerlink" href="#querying-the-service-s-state" title="Permalink to this headline">¶</a></h3>
-<p>Now that our service has been given schema, we can query the internal state of
-the service using two different endpoints. Nautilus uses GraphQL as the service
-query langauge. Take a second to familiarize yourself with forming a GraphQL
-query by reading [this]() short blog post.</p>
-<p>If you navigate to the root url of your service (<a class="reference external" href="http://localhost:8000">http://localhost:8000</a> by
+<p>Now that our service has been given a schema, we can query the internal state
+of the service from two different endpoints. Nautilus uses GraphQL as the
+service query langauge. Take a second to familiarize yourself with GraphQL
+by reading [this]() short blog post.</p>
+<p>If you navigate to the root url of your service (<code class="docutils literal"><span class="pre">http://localhost:8000</span></code> by
 default) you will see that the service  is trying to parse an incoming
 query and can&#8217;t find one. You can give the service a query to fulfill by
 padding a value to the <cite>query</cite> url parameter by navigating to a url like
-<a class="reference external" href="http://localhost:8000/">http://localhost:8000/</a>?query={recipes{ name }}.</p>
+<code class="docutils literal"><span class="pre">http://localhost:8000/?query={recipes{</span> <span class="pre">name</span> <span class="pre">}}</span></code>.</p>
 <p>While this does work, it&#8217;s clear this endpoint is not intended for human
-consumption. Instead, if you point your browser to /graphiql you will
+consumption. Instead, if you point your browser to <code class="docutils literal"><span class="pre">/graphiql</span></code> you will
 get visual environment for forming queries. I suggest opening a second tab
 pointed at the admin interface previously discussed and proving to yourself
 that the api is working as expected.</p>
@@ -313,13 +306,12 @@ that the api is working as expected.</p>
 <p>Now that our service maintains an internal state and can provide a summary of
 that state to other services, all that&#8217;s left is to provide a way for the
 service to mutate its state as it recieves actions. To do this, we
-just need to define a function that takes two parameters: <code class="docutils literal"><span class="pre">type</span></code> and
-<code class="docutils literal"><span class="pre">payload</span></code>. <code class="docutils literal"><span class="pre">Type</span></code> identifies the event which allows the service to decide
-if it needs to respond. <code class="docutils literal"><span class="pre">Payload</span></code> provides the associated data for the event.
-For example, if an action means to indicate that a new recipe needs to be
-created, the type might be something like <code class="docutils literal"><span class="pre">create_recipe</span></code> and the payload
-service could represent the recipe&#8217;s attributes. The service would respond by
-creating a new record.</p>
+just need to define a function known as the &#8220;action handler&#8221; that
+takes two parameters: <code class="docutils literal"><span class="pre">type</span></code> and <code class="docutils literal"><span class="pre">payload</span></code>. <code class="docutils literal"><span class="pre">Type</span></code> identifies
+the event and  <code class="docutils literal"><span class="pre">Payload</span></code> provides the associated data. For example,
+if an action means to indicate that a new recipe needs to be created,
+the service can treat the payload as the recipe&#8217;s attributes and create
+the new record (or another mutation) when appropriate:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span><span class="p">,</span> <span class="n">db</span>
 <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
@@ -375,10 +367,9 @@ creating a new record.</p>
 <p>Congratulations! You have finally pieced together a complete nautilus service.
 Now other entities in your cloud (like another service or even a javascript
 client) can create, persist, and retrieve recipes without maintaining the data
-themselves.</p>
-<p>In the next section you will learn how to keep track of relationships between
-different services in your cloud as well as how to use some of the specialized
-services that come with nautilus.</p>
+themselves. In the next section you will learn how to create services based
+off of pre-packages ones as well as keep track of a relationships between
+different services in your cloud.</p>
 </div>
 </div>
 

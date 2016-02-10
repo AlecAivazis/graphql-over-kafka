@@ -235,9 +235,9 @@ and recipes by adding a Connection field to the recipe class:</p>
 </pre></div>
 </div>
 <p>When the a Connection is used between two ServiceObjects, nautilus will look up
-the details of the relationship from the connection service we created earlier
-and perform all of the necessary requests/joins to create the snapshot you
-asked for.</p>
+the details of the relationship from the corresponding service (assuming it is
+an instance of ConnectionService) and perform all of the necessary
+requests/joins to create the snapshot you asked for.</p>
 <p>You can test this out with a query like <code class="docutils literal"><span class="pre">{</span> <span class="pre">recipes</span> <span class="pre">{name,</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code>.</p>
 <p>As you can see, nautilus does a lot of work for us when creating a schema that
 spans many servies. In the next section we will talk about user authentication
