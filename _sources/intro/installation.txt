@@ -41,4 +41,4 @@ with the following command in the terminal
 
 Notes
 -----------
-    * I know this is tedious to ensure when developping, I will eventually start these processes for you if they are not present when running a service.
+    * I know this is tedious to ensure when developping, nautilus will eventually start these processes for you if they are not present when running a service.

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation / Setup &mdash; nautilus v0.2.4 documentation</title>
+  <title>Connecting Services Together &mdash; nautilus v0.2.4 documentation</title>
   
 
   
@@ -32,8 +32,8 @@
   
     <link rel="top" title="nautilus v0.2.4 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
-        <link rel="next" title="Your First Service" href="first_service.html"/>
-        <link rel="prev" title="Getting Started" href="index.html"/> 
+        <link rel="next" title="Building an API Gateway" href="api.html"/>
+        <link rel="prev" title="Your First Service" href="first_service.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -84,17 +84,13 @@
             
                 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="">Installation / Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#necessary-background-processes">Necessary Background Processes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#linux">Linux</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#apple-osx">Apple / OSX</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#notes">Notes</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="first_service.html">Your First Service</a></li>
-<li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Connecting Services Together</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-pre-defined-services">Using Pre-defined Services</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connection-models">Connection Models</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Building an API Gateway</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
 </ul>
@@ -136,11 +132,11 @@
       
           <li><a href="index.html">Getting Started</a> &raquo;</li>
       
-    <li>Installation / Setup</li>
+    <li>Connecting Services Together</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/intro/installation.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/intro/connecting_services.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -150,50 +146,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation-setup">
-<h1>Installation / Setup<a class="headerlink" href="#installation-setup" title="Permalink to this headline">¶</a></h1>
-<p>Nautilus is availible using pip:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">nautilus</span>
-</pre></div>
+  <div class="section" id="connecting-services-together">
+<h1>Connecting Services Together<a class="headerlink" href="#connecting-services-together" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="using-pre-defined-services">
+<h2>Using Pre-defined Services<a class="headerlink" href="#using-pre-defined-services" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="necessary-background-processes">
-<h2>Necessary Background Processes<a class="headerlink" href="#necessary-background-processes" title="Permalink to this headline">¶</a></h2>
-<p>In order to run a nautilus cloud, you must have both consul and rabbitmq
-installed and running on localhost.</p>
-<div class="section" id="linux">
-<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
-<p>If you are developing on a linux machine, this is easily accomplished using
-docker. For docker installation instructions please visit here. Once you have
-successfully installed docker, the two process can be started with two separate
-commands in your console:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="s2">&quot;5672:5672&quot;</span> <span class="n">rabbitmq</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">d</span> <span class="o">-</span><span class="n">p</span> <span class="s2">&quot;8500:8500&quot;</span> <span class="n">progrium</span><span class="o">/</span><span class="n">consul</span> <span class="o">-</span><span class="n">server</span> <span class="o">-</span><span class="n">bootstrap</span>
-</pre></div>
-</div>
-<p>For more information using docker, please read the documentation here.</p>
-</div>
-<div class="section" id="apple-osx">
-<h3>Apple / OSX<a class="headerlink" href="#apple-osx" title="Permalink to this headline">¶</a></h3>
-<p>Because of some complications with docker on OSX, we cannot bind our containers
-to ports on localhost. This leaves us with two options: point nautilus to
-another location (we&#8217;ll have to do this for every service), or run the two
-processes by hand. Since we do not  yet support the first option, OSX users
-need to install these two packages by hand using MacPorts or homebrew.</p>
-<p>Once consul and rabbitmq are installed, they can be run in background processes
-with the following command in the terminal</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">consul</span> <span class="o">-</span><span class="n">server</span> <span class="o">-</span><span class="n">bootstrap</span> <span class="o">&amp;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rabbitmq</span><span class="o">-</span><span class="n">server</span> <span class="o">&amp;</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li>I know this is tedious to ensure when developping, nautilus will eventually start these processes for you if they are not present when running a service.</li>
-</ul>
-</div></blockquote>
+<div class="section" id="connection-models">
+<h2>Connection Models<a class="headerlink" href="#connection-models" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -204,10 +163,10 @@ with the following command in the terminal</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="first_service.html" class="btn btn-neutral float-right" title="Your First Service" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Building an API Gateway" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Getting Started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="first_service.html" class="btn btn-neutral" title="Your First Service" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
