@@ -46,7 +46,7 @@ significantly easier.
 
 Rather than basing your schema object types on an SQLAlchemyObjectType like
 before, services that you wish to use as representation for an external service
-should be based on the SerivceObjectType. Add the following code blck at the
+should be based on the SerivceObjectType. Add the following code block at the
 end of the api gateway file:
 
 .. code-block:: python
@@ -76,7 +76,7 @@ end of the api gateway file:
     schema.query = Query
 
 
-Notice the class Meta defined inside of the ServiceObjectType. The attribute
+Notice the class Meta defined inside of the ServiceObjectType. The value
 of the service parameter inside that class desingates the name of the service
 to use as its source.
 
@@ -111,9 +111,8 @@ the details of the relationship from the connection service we created earlier
 and perform all of the necessary requests/joins to create the snapshot you
 asked for.
 
-You can test this out with a query like
-``{ recipes {name, ingredients { name } } }``. This is where I started to get
-pretty excited...
+You can test this out with a query like ``{ recipes {name, ingredients { name } } }``.
 
-Eventually a huge portion of this will be automated by taking advantage of
-GraphQL's support for introspecting a schema for possible data.
+As you can see, nautilus does a lot of work for us when creating a schema that
+spans many servies. In the next section we will talk about user authentication
+and add an authorization layer on top of our api gateway.
