@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Hiding The Distributed Structure &mdash; nautilus v0.2.4 documentation</title>
+  <title>Querying The Distributed Structure &mdash; nautilus v0.2.4 documentation</title>
   
 
   
@@ -87,7 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="first_service.html">Your First Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Hiding The Distributed Structure</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Querying The Distributed Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
 </ul>
 </li>
@@ -128,7 +128,7 @@
       
           <li><a href="index.html">Getting Started</a> &raquo;</li>
       
-    <li>Hiding The Distributed Structure</li>
+    <li>Querying The Distributed Structure</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -142,8 +142,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="hiding-the-distributed-structure">
-<h1>Hiding The Distributed Structure<a class="headerlink" href="#hiding-the-distributed-structure" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="querying-the-distributed-structure">
+<h1>Querying The Distributed Structure<a class="headerlink" href="#querying-the-distributed-structure" title="Permalink to this headline">¶</a></h1>
 <p>We now have three different services which are each responsible for maintaining
 a small bit of the application. While this has many benefits, one rather large
 annoyance is the difficulty to create a summary of our application using data
@@ -238,9 +238,11 @@ and recipes by adding a Connection field to the recipe class:</p>
 the details of the relationship from the connection service we created earlier
 and perform all of the necessary requests/joins to create the snapshot you
 asked for.</p>
-<p>You can test this out with a query like <code class="docutils literal"><span class="pre">{</span> <span class="pre">recipes</span> <span class="pre">{name,</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code></p>
-<p>Eventually all of this will be automated by taking advantage of GraphQL&#8217;s
-support for introspecting a schema without querying it.</p>
+<p>You can test this out with a query like
+<code class="docutils literal"><span class="pre">{</span> <span class="pre">recipes</span> <span class="pre">{name,</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code>. This is where I started to get
+pretty excited...</p>
+<p>Eventually a huge portion of this will be automated by taking advantage of
+GraphQL&#8217;s support for introspecting a schema for possible data.</p>
 </div>
 
 
