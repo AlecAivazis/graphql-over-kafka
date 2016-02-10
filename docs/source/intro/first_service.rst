@@ -193,8 +193,9 @@ just need to define a function that takes two parameters: ``type`` and
 ``payload``. ``Type`` identifies the event which allows the service to decide
 if it needs to respond. ``Payload`` provides the associated data for the event.
 For example, if an action means to indicate that a new recipe needs to be
-created, the service can treat the payload as the recipe's attributes and
-create the new record (or another mutation) when appropriate:
+created, the type might be something like ``create_recipe`` and the payload
+service could represent the recipe's attributes. The service would respond by
+creating a new record. 
 
 
 .. code-block:: python
@@ -254,6 +255,8 @@ Feel free to test this by....
 Congratulations! You have finally pieced together a complete nautilus service.
 Now other entities in your cloud (like another service or even a javascript
 client) can create, persist, and retrieve recipes without maintaining the data
-themselves. In the next section you will learn how to create services based
-off of pre-packages ones as well as keep track of a relationships between
-different services in your cloud.
+themselves. 
+
+In the next section you will learn how to keep track of relationships between
+different services in your cloud as well as how to use some of the specialized
+services that come with nautilus.
