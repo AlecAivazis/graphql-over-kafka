@@ -36,4 +36,4 @@ features include:
 
 
 At the moment, there is only a python implementation of the nautilus spec, but
-there are plans for more languages. Up next are JavaScript and Haskell.
+there are plans for more languages - stay tuned!

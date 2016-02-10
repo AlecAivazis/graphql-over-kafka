@@ -95,7 +95,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api.html">Building an API Gateway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Hiding The Distributed Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
 </ul>
 </li>
@@ -153,17 +153,22 @@
   <div class="section" id="your-first-service">
 <h1>Your First Service<a class="headerlink" href="#your-first-service" title="Permalink to this headline">¶</a></h1>
 <p>Services are the fundamental building blocks for cloud applications powered by
-nautilus. Let&#8217;s begin by creating a directory with an empty file somewhere on
-your computer for us to use as a playground.</p>
+nautilus. They are small, standalone processes which should be designed to
+perform a single function and &#8220;do it well.&#8221; We will be interacting with them a
+lot throughout this tutorial so let&#8217;s not spend too much time and start
+writing some code.</p>
+<p>Keep in mind, this section is meant to illustrate the various parts of a
+service. As you will see in the next section, the service we are about to
+construct can be much more succintly created using one of nautilus&#8217;s
+pre-packaged services.</p>
+<p>Create a directory with an empty file somewhere on your computer for us to use
+as a playground.</p>
 <div class="highlight-bash"><div class="highlight"><pre>$ mkdir nautilus_playground <span class="o">&amp;&amp;</span> <span class="se">\</span>
         <span class="nb">cd</span> nautilus_playground <span class="o">&amp;&amp;</span> <span class="se">\</span>
         touch server.py
 </pre></div>
 </div>
-<p>Now that we have a file, let&#8217;s make our first service. Keep in mind, that
-this section is meant to illustrate the various parts of a service, as you
-will see in the next section, the service we are about to construct can be
-much more succintly created using one of nautilus&#8217;s pre-packaged services.
+<p>Now that we have a file, let&#8217;s make our first service.
 Open server.py in your favorite text editor and copy and paste the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
 
@@ -173,9 +178,11 @@ Open server.py in your favorite text editor and copy and paste the following:</p
     <span class="n">service</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>You could also have wrapped your service in a ServiceManager
-&lt;nautilus.ServiceManager&gt; which provides various command line arguments.
-Feel free to test that this works by executing this script in your console:</p>
+<p>This class is the base service class and provides basic functionalities. You
+could also have wrapped your service in a ServiceManager
+&lt;nautilus.ServiceManager&gt; which provides various command line arguments. Feel
+free to test that everything is running properly by executing this script in
+your console:</p>
 <div class="highlight-bash"><div class="highlight"><pre>$ python3 ./server.py
 </pre></div>
 </div>
@@ -194,8 +201,7 @@ services and provides many helpers for common patterns. Therefore, while
 not necessary, it is suggested that you also use SQLAlchemy to manage
 your database. And honestly, it&#8217;s one of the nicest python packages written,
 so why not take the opportunity when you can?</p>
-<p>Throughout this guide, we&#8217;re going to be making a recipe list, so open up
-server.py from the previous step and add the Recipe class.</p>
+<p>Go ahead and define the Recipe model as shown below.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
 <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
@@ -311,8 +317,9 @@ just need to define a function that takes two parameters: <code class="docutils 
 <code class="docutils literal"><span class="pre">payload</span></code>. <code class="docutils literal"><span class="pre">Type</span></code> identifies the event which allows the service to decide
 if it needs to respond. <code class="docutils literal"><span class="pre">Payload</span></code> provides the associated data for the event.
 For example, if an action means to indicate that a new recipe needs to be
-created, the service can treat the payload as the recipe&#8217;s attributes and
-create the new record (or another mutation) when appropriate:</p>
+created, the type might be something like <code class="docutils literal"><span class="pre">create_recipe</span></code> and the payload
+service could represent the recipe&#8217;s attributes. The service would respond by
+creating a new record.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span><span class="p">,</span> <span class="n">db</span>
 <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
@@ -368,9 +375,10 @@ create the new record (or another mutation) when appropriate:</p>
 <p>Congratulations! You have finally pieced together a complete nautilus service.
 Now other entities in your cloud (like another service or even a javascript
 client) can create, persist, and retrieve recipes without maintaining the data
-themselves. In the next section you will learn how to create services based
-off of pre-packages ones as well as keep track of a relationships between
-different services in your cloud.</p>
+themselves.</p>
+<p>In the next section you will learn how to keep track of relationships between
+different services in your cloud as well as how to use some of the specialized
+services that come with nautilus.</p>
 </div>
 </div>
 

@@ -32,7 +32,7 @@
   
     <link rel="top" title="nautilus v0.2.4 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
-        <link rel="next" title="Building an API Gateway" href="api.html"/>
+        <link rel="next" title="Hiding The Distributed Structure" href="api.html"/>
         <link rel="prev" title="Your First Service" href="first_service.html"/> 
 
   
@@ -91,7 +91,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#connection-models">Connection Models</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html">Building an API Gateway</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Hiding The Distributed Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
 </ul>
 </li>
@@ -148,11 +148,95 @@
             
   <div class="section" id="connecting-services-together">
 <h1>Connecting Services Together<a class="headerlink" href="#connecting-services-together" title="Permalink to this headline">¶</a></h1>
+<p>Given their highly specialized nature, a cloud is not very useful with only
+one service so let&#8217;s add another to our example cloud. In order to speed
+up the development process, nautilus comes  pre-packaged with a collection
+of extendible services which are great starting points when adding new
+functionalities to your cloud.</p>
 <div class="section" id="using-pre-defined-services">
 <h2>Using Pre-defined Services<a class="headerlink" href="#using-pre-defined-services" title="Permalink to this headline">¶</a></h2>
+<p>One of the most commonly used services is the ModelService which maintains
+records of a particular database. If this sounds really familiar, it should
+- you implemented 80% of the service in Part 1, it just handles the other
+CRUD actions for you.</p>
+<p>Before we add another model, let&#8217;s rename the <code class="docutils literal"><span class="pre">server.py</span></code> file from part 1 to
+<code class="docutils literal"><span class="pre">recipes.py</span></code> and create a new file called <code class="docutils literal"><span class="pre">ingredients.py</span></code> in our
+directory. Inside of this file, paste the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># third party imports</span>
+<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span><span class="p">,</span> <span class="n">ServiceManager</span>
+<span class="c1"># third party imports</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">CRUDNotificationCreator</span>
+
+<span class="c1"># the notification mixin adds the sqlalchemy event handlers from part 1</span>
+<span class="k">class</span> <span class="nc">Ingredient</span><span class="p">(</span><span class="n">CRUDNotificationCreator</span><span class="p">,</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/ingredients.db&#39;</span>
+
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">ModelService</span><span class="p">(</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Ingredient</span><span class="p">,</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can see that we were able to get the same/more functionality with
+sifnicantly fewer lines of code. If you want, you can run the server
+and go to the admin panel / graphql endpoints to verify things are
+working as you expect.</p>
+<p>Sorry if feel that you went through all that trouble in part 1 for nothing.
+At least now you know what&#8217;s going on underneath and hopefully you never have
+to write that much boilerplate again. If you do need to implement a
+completely service, send me a message and let&#8217;s work together to figure out
+how nautilus can better serve your needs at a framework level.</p>
 </div>
 <div class="section" id="connection-models">
 <h2>Connection Models<a class="headerlink" href="#connection-models" title="Permalink to this headline">¶</a></h2>
+<p>Another very common service in nautilus clouds is the ConnectionService which
+is a specialized ModelService whose internal data represents the relationship
+between two other services. If you are familiar with databases, connection
+services play the exact same role as join tables.</p>
+<p>If that made sense to you, feel free to skip this paragraph. To illustrate
+the role of connection services, say there is an entry in the recipe table
+with and id of 1 and a entry in the ingredient table which also has an id
+of 1. To express that the recipe contains a particular ingredient, we would
+add an entry in the connection service which has a value of 1 in the recipe
+column and a value of 1 in the ingredient column. Keep in mind that these
+columns do not necessarily have to be unique. If there was a second ingredient
+with id 2 that is also a part of the recipe, there would be a second entry in
+the connection service that has a 1 in the recipe column but this time there
+would be a 2 in the ingredient column. This relationship is called
+&#8220;many-to-many&#8221; because a recipe can have many ingredients and an ingredient can be a member of many recipes (neither column is unique). Relationships can also be
+classified as &#8220;one-to-one&#8221; and &#8220;one-to-many&#8221;.</p>
+<p>Create a new file called <code class="docutils literal"><span class="pre">recipeIngredients.py</span></code> next to the previously created
+services. In this file, paste the following source:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># external imports</span>
+<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ConnectionService</span>
+<span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">recipes</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">recipeService</span>
+<span class="kn">from</span> <span class="nn">ingredients</span> <span class="kn">import</span> <span class="n">service</span> <span class="n">ingredientService</span>
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/ingredients.db&#39;</span>
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">ConnectionService</span><span class="p">(</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">recipeService</span><span class="p">,</span> <span class="n">ingredientService</span><span class="p">],</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, you can run the service and check out the various endpoints. Currently,
+there is a bug in the admin panel that shows the connected services, Ignore
+those, they shouldn&#8217;t be there and do not represent the state of the connected
+services.</p>
 </div>
 </div>
 
@@ -163,7 +247,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="Building an API Gateway" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Hiding The Distributed Structure" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="first_service.html" class="btn btn-neutral" title="Your First Service" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
