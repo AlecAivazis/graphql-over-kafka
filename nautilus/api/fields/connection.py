@@ -66,9 +66,15 @@ class Connection(Field):
             # look for connections originating from this object
             join_filter = {}
             join_filter[instance.service] = instance.primary_key
+            # query the connection service for related data
+            related = query_service(service_name, [target_service], join_filter)
+
+            # if there were no related fields
+            if len(related) == 0:
+                return None
+
             # grab the list of primary keys from the remote service
-            join_ids = [ entry[target_service] \
-                            for entry in query_service(service_name, [target_service], join_filter) ]
+            join_ids = [ entry[target_service] for entry in related ]
 
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
@@ -83,6 +89,10 @@ class Connection(Field):
 
         # grab the final list of entries
         results = query_service(self.target.service, fields, filters = args)
+
+        # there are no results
+        if len(results) == 0:
+            return None
 
         # todo: think about doing this at the join step (how to specify both sides of relationship in one spot)
         # if we are on the `one` side of the relationship
