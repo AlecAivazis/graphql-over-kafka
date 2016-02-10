@@ -182,7 +182,7 @@ not yet fully automated, nautilus makes the creation of this schema
 significantly easier.</p>
 <p>Rather than basing your schema object types on an SQLAlchemyObjectType like
 before, services that you wish to use as representation for an external service
-should be based on the SerivceObjectType. Add the following code blck at the
+should be based on the SerivceObjectType. Add the following code block at the
 end of the api gateway file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="n">Schema</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">ServiceObjectType</span><span class="p">,</span> <span class="n">Connection</span>
@@ -209,7 +209,7 @@ end of the api gateway file:</p>
 <span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
 </pre></div>
 </div>
-<p>Notice the class Meta defined inside of the ServiceObjectType. The attribute
+<p>Notice the class Meta defined inside of the ServiceObjectType. The value
 of the service parameter inside that class desingates the name of the service
 to use as its source.</p>
 <p>Remember earlier when you used a Connection and it acted just like a list?
@@ -238,11 +238,10 @@ and recipes by adding a Connection field to the recipe class:</p>
 the details of the relationship from the connection service we created earlier
 and perform all of the necessary requests/joins to create the snapshot you
 asked for.</p>
-<p>You can test this out with a query like
-<code class="docutils literal"><span class="pre">{</span> <span class="pre">recipes</span> <span class="pre">{name,</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code>. This is where I started to get
-pretty excited...</p>
-<p>Eventually a huge portion of this will be automated by taking advantage of
-GraphQL&#8217;s support for introspecting a schema for possible data.</p>
+<p>You can test this out with a query like <code class="docutils literal"><span class="pre">{</span> <span class="pre">recipes</span> <span class="pre">{name,</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code>.</p>
+<p>As you can see, nautilus does a lot of work for us when creating a schema that
+spans many servies. In the next section we will talk about user authentication
+and add an authorization layer on top of our api gateway.</p>
 </div>
 
 
