@@ -1,5 +1,5 @@
-Hiding The Distributed Structure
-=================================
+Querying The Distributed Structure
+===================================
 
 We now have three different services which are each responsible for maintaining
 a small bit of the application. While this has many benefits, one rather large
@@ -115,5 +115,5 @@ You can test this out with a query like
 ``{ recipes {name, ingredients { name } } }``. This is where I started to get
 pretty excited...
 
-Eventually all of this will be automated by taking advantage of GraphQL's
-support for introspecting a schema without querying it.
+Eventually a huge portion of this will be automated by taking advantage of
+GraphQL's support for introspecting a schema for possible data.
