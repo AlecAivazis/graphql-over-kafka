@@ -1,11 +1,10 @@
 Connecting Services Together
 =============================
 
-Given their highly specialized nature, a cloud is not very useful with only
-one service so let's add another to our example cloud. In order to speed
-up the development process, nautilus comes  pre-packaged with a collection
-of extendible services which are great starting points when adding new
-functionalities to your cloud.
+Given their highly specialized nature, a service is not very useful on its
+own. So, let's add another to our example cloud. This is a good opportunity
+to use some of the services that nautilus provides which are great starting
+points when adding new functionalities to your cloud.
 
 
 Using Pre-defined Services
@@ -15,9 +14,9 @@ records of a particular database. If this sounds really familiar, it should
 - you implemented 80% of the service in Part 1, it just handles the other
 CRUD actions for you.
 
-Before we add another model, let's rename the ``server.py`` file from part 1 to
-``recipes.py`` and create a new file called ``ingredients.py`` in our
-directory. Inside of this file, paste the following code:
+Before we add another model service, let's rename the ``server.py`` file
+from part 1 to ``recipes.py`` and create a new file called ``ingredients.py``
+in our directory. Inside of this file, paste the following code:
 
 .. code-block:: python
 
@@ -47,16 +46,16 @@ directory. Inside of this file, paste the following code:
         manager.run()
 
 
-You can see that we were able to get the same/more functionality with
-sifnicantly fewer lines of code. If you want, you can run the server
+You can see that we were able to get the same/more functionality as before with
+significantly fewer lines of code. If you want, you can run the server
 and go to the admin panel / graphql endpoints to verify things are
 working as you expect.
 
 Sorry if feel that you went through all that trouble in part 1 for nothing.
 At least now you know what's going on underneath and hopefully you never have
 to write that much boilerplate again. If you do need to implement a
-completely service, send me a message and let's work together to figure out
-how nautilus can better serve your needs at a framework level.
+completely custom service, send me a message and let's work together to figure
+out if nautilus can better serve your needs at a framework level.
 
 
 Connection Models
@@ -80,8 +79,9 @@ would be a 2 in the ingredient column. This relationship is called
 "many-to-many" because a recipe can have many ingredients and an ingredient can be a member of many recipes (neither column is unique). Relationships can also be
 classified as "one-to-one" and "one-to-many".
 
-Create a new file called ``recipeIngredients.py`` next to the previously created
-services. In this file, paste the following source:
+Make a new file called ``recipeIngredients.py`` next to the previously created
+files. Now, create a ConnectionService to manage the relationship between
+recipes and ingredients:
 
 .. code-block:: python
 
@@ -98,6 +98,7 @@ services. In this file, paste the following source:
         services = [recipeService, ingredientService],
         configObject = ServiceConfig
     )
+
 
 Again, you can run the service and check out the various endpoints. Currently,
 there is a bug in the admin panel that shows the connected services, Ignore

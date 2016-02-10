@@ -2,18 +2,8 @@ Your First Service
 ===================
 
 Services are the fundamental building blocks for cloud applications powered by
-nautilus. They are small, standalone processes which should be designed to 
-perform a single function and "do it well." We will be interacting with them a 
-lot throughout this tutorial so let's not spend too much time and start 
-writing some code. 
-
-Keep in mind, this section is meant to illustrate the various parts of a 
-service. As you will see in the next section, the service we are about to 
-construct can be much more succintly created using one of nautilus's 
-pre-packaged services.
-
-Create a directory with an empty file somewhere on your computer for us to use
-as a playground.
+nautilus. Let's begin by creating a directory with an empty file somewhere on
+your computer for us to use as a playground.
 
 .. code-block:: bash
 
@@ -21,7 +11,10 @@ as a playground.
             cd nautilus_playground && \
             touch server.py
 
-Now that we have a file, let's make our first service. 
+Now that we have a file, let's make our first service. Keep in mind, that
+this section is meant to illustrate the various parts of a service, as you
+will see in the next section, the service we are about to construct can be
+much more succintly created using one of nautilus's pre-packaged services.
 Open server.py in your favorite text editor and copy and paste the following:
 
 .. code-block:: python
@@ -34,11 +27,7 @@ Open server.py in your favorite text editor and copy and paste the following:
         service.run()
 
 
-This class is the base service class and provides basic functionalities. You 
-could also have wrapped your service in a ServiceManager
-<nautilus.ServiceManager> which provides various command line arguments. Feel
-free to test that everything is running properly by executing this script in 
-your console:
+Test that this works by executing this script in your console:
 
 .. code-block:: bash
 
@@ -66,7 +55,8 @@ not necessary, it is suggested that you also use SQLAlchemy to manage
 your database. And honestly, it's one of the nicest python packages written,
 so why not take the opportunity when you can?
 
-Go ahead and define the Recipe model as shown below.
+Throughout this guide, we're going to be making a recipe list, so open up
+server.py from the previous step and add the Recipe class.
 
 .. code-block:: python
 
@@ -90,7 +80,7 @@ Go ahead and define the Recipe model as shown below.
 Notice we also wrapped the service in a manager, which provides a basic
 command line interface for our service.
 
-While our service still can't talk to the outside world, at least it's keep
+While our service still can't talk to the outside world, at least it can keep
 track of our recipes for us. By inheriting from BaseModel <nautilus.BaseModel>
 nautilus automatically registers this model with an admin interface. But
 before we can look at the records, we have to create the database that will
@@ -112,15 +102,15 @@ Building a Schema
 -------------------
 
 Traditionally, backend data is made availible via some sort of RESTful api. In
-nautilus, services use a new technology called GraphQL from the facebook
-engineers which allows the service to expose the data through a single
-endpoint. For more information on GraphQL, visit this page.
+nautilus, services use a piece of technology from the facebook engineers
+ called GraphQL which allows the service to expose the data through a single
+endpoint. For more information on GraphQL, visit [this]() page.
 
-Normally, building the description of our endpoint would result in a
+Normally, building the schema for our endpoint would result in a
 significant amount of duplicated code (a new field for every model
 attribute we want to include). However, recently the Graphene team added
 automated support for SQLAlchemy models allowing us to add a graphql endpoint
-to our service with a few additional lines:
+to our service with only a few additional lines:
 
 .. code-block:: python
 
@@ -166,26 +156,26 @@ For now, you can think of it as a wrapper around the List type that
 we are using to make our code more easily read.
 
 Sometimes, you might have to create the entire schema by hand, in which case
-I suggest reading the graphene documentation [here](graphene). However, given
-the simplicity of our Recipe model, Graphene can create the object for us.
+I suggest reading the graphene documentation [here](graphene). However in most
+circumstances, Graphene can create the object for us.
 
 
 Querying the Service's State
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now that our service has been given schema, we can query the internal state of
-the service using two different endpoints. Nautilus uses GraphQL as the service
-query langauge. Take a second to familiarize yourself with forming a GraphQL
-query by reading [this]() short blog post.
+Now that our service has been given a schema, we can query the internal state
+of the service from two different endpoints. Nautilus uses GraphQL as the
+service query langauge. Take a second to familiarize yourself with GraphQL
+by reading [this]() short blog post.
 
-If you navigate to the root url of your service (http://localhost:8000 by
+If you navigate to the root url of your service (``http://localhost:8000`` by
 default) you will see that the service  is trying to parse an incoming
 query and can't find one. You can give the service a query to fulfill by
 padding a value to the `query` url parameter by navigating to a url like
-http://localhost:8000/?query={recipes{ name }}.
+``http://localhost:8000/?query={recipes{ name }}``.
 
 While this does work, it's clear this endpoint is not intended for human
-consumption. Instead, if you point your browser to /graphiql you will
+consumption. Instead, if you point your browser to ``/graphiql`` you will
 get visual environment for forming queries. I suggest opening a second tab
 pointed at the admin interface previously discussed and proving to yourself
 that the api is working as expected.
@@ -197,13 +187,12 @@ Responding to Actions
 Now that our service maintains an internal state and can provide a summary of
 that state to other services, all that's left is to provide a way for the
 service to mutate its state as it recieves actions. To do this, we
-just need to define a function that takes two parameters: ``type`` and
-``payload``. ``Type`` identifies the event which allows the service to decide
-if it needs to respond. ``Payload`` provides the associated data for the event.
-For example, if an action means to indicate that a new recipe needs to be
-created, the type might be something like ``create_recipe`` and the payload
-service could represent the recipe's attributes. The service would respond by
-creating a new record. 
+just need to define a function known as the "action handler" that
+takes two parameters: ``type`` and ``payload``. ``Type`` identifies
+the event and  ``Payload`` provides the associated data. For example,
+if an action means to indicate that a new recipe needs to be created,
+the service can treat the payload as the recipe's attributes and create
+the new record (or another mutation) when appropriate:
 
 
 .. code-block:: python
@@ -263,8 +252,6 @@ Feel free to test this by....
 Congratulations! You have finally pieced together a complete nautilus service.
 Now other entities in your cloud (like another service or even a javascript
 client) can create, persist, and retrieve recipes without maintaining the data
-themselves. 
-
-In the next section you will learn how to keep track of relationships between
-different services in your cloud as well as how to use some of the specialized
-services that come with nautilus.
+themselves. In the next section you will learn how to create services based
+off of pre-packages ones as well as keep track of a relationships between
+different services in your cloud.
