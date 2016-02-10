@@ -111,7 +111,9 @@ the details of the relationship from the connection service we created earlier
 and perform all of the necessary requests/joins to create the snapshot you
 asked for.
 
-You can test this out with a query like ``{ recipes {name, ingredients { name } } }``
+You can test this out with a query like
+``{ recipes {name, ingredients { name } } }``. This is where I started to get
+pretty excited...
 
 Eventually all of this will be automated by taking advantage of GraphQL's
 support for introspecting a schema without querying it.
