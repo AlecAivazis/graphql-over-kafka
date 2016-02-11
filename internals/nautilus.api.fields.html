@@ -165,13 +165,28 @@
 <span id="nautilus-api-fields-connection-module"></span><h2>nautilus.api.fields.connection module<a class="headerlink" href="#module-nautilus.api.fields.connection" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.api.fields.connection.Connection">
-<em class="property">class </em><code class="descclassname">nautilus.api.fields.connection.</code><code class="descname">Connection</code><span class="sig-paren">(</span><em>target</em>, <em>relationship='many'</em>, <em>service=None</em>, <em>relay=True</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/fields/connection.html#Connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.fields.connection.Connection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.api.fields.connection.</code><code class="descname">Connection</code><span class="sig-paren">(</span><em>target</em>, <em>relationship='many'</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/fields/connection.html#Connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.fields.connection.Connection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.core.types.field.Field</span></code></p>
-<p>A field which encapsultes a connection between two objects. Optionally,
-this field takes a <cite>service</cite> argument which indicates that this connection
-is backed by a remote service. This will cause the field resolution to query
-the remote service for data. If a <cite>service</cite> is not specified, a resolver function
-must be present - either with the conventional name or explicity passed.</p>
+<p>A field that encapsultes a connection with another GraphQL object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>target</strong> (<em>string or ObjectType</em>) &#8211; The target object type. If target is a
+SerivceObjectType then the remote data lookup is automated using the
+target object&#8217;s meta service attribute.</li>
+<li><strong>(string</strong> (<em>relationship</em>) &#8211; &#8220;one&#8221; or &#8220;many&#8221;): The kind of relationship that this
+connection encapsultes. If set to &#8220;many&#8221; the connection will result in
+a list whereas if it is set to &#8220;one&#8221; the connection will result in the
+object type itself.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<p>For an example, see the getting started guide.</p>
 <dl class="method">
 <dt id="nautilus.api.fields.connection.Connection.resolve_service">
 <code class="descname">resolve_service</code><span class="sig-paren">(</span><em>instance</em>, <em>query_args</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/fields/connection.html#Connection.resolve_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.fields.connection.Connection.resolve_service" title="Permalink to this definition">¶</a></dt>

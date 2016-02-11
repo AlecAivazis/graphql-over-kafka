@@ -144,28 +144,40 @@
 
 <div class="viewcode-block" id="Connection"><a class="viewcode-back" href="../../../../internals/nautilus.api.fields.html#nautilus.api.fields.connection.Connection">[docs]</a><span class="k">class</span> <span class="nc">Connection</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A field which encapsultes a connection between two objects. Optionally,</span>
-<span class="sd">        this field takes a `service` argument which indicates that this connection</span>
-<span class="sd">        is backed by a remote service. This will cause the field resolution to query</span>
-<span class="sd">        the remote service for data. If a `service` is not specified, a resolver function</span>
-<span class="sd">        must be present - either with the conventional name or explicity passed.</span>
+<span class="sd">        A field that encapsultes a connection with another GraphQL object.</span>
+
+<span class="sd">        Args:</span>
+
+<span class="sd">            target (string or ObjectType): The target object type. If target is a</span>
+<span class="sd">                SerivceObjectType then the remote data lookup is automated using the</span>
+<span class="sd">                target object&#39;s meta service attribute.</span>
+
+<span class="sd">            relationship (string: &quot;one&quot; or &quot;many&quot;): The kind of relationship that this</span>
+<span class="sd">                connection encapsultes. If set to &quot;many&quot; the connection will result in</span>
+<span class="sd">                a list whereas if it is set to &quot;one&quot; the connection will result in the</span>
+<span class="sd">                object type itself.</span>
+
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            For an example, see the getting started guide.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">relationship</span> <span class="o">=</span> <span class="s1">&#39;many&#39;</span><span class="p">,</span> <span class="n">service</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">relay</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">relationship</span> <span class="o">=</span> <span class="s1">&#39;many&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
 
         <span class="c1"># perform auto resolve when:</span>
             <span class="c1"># the connection is backed by a service</span>
             <span class="c1"># a resolver wasn&#39;t explicity specified</span>
             <span class="c1"># we are targetting a service object</span>
         <span class="n">perform_resolve</span> <span class="o">=</span> <span class="s1">&#39;resolver&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwds</span> <span class="ow">and</span> \
-                            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> \
-                            <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span>
+                            <span class="p">(</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> \
+                            <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span> <span class="p">)</span>
 
         <span class="c1"># if a resolve was not specified</span>
         <span class="k">if</span> <span class="n">perform_resolve</span><span class="p">:</span>
             <span class="c1"># save references to constructor arguments</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">support_relay</span> <span class="o">=</span> <span class="n">relay</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">relationship</span> <span class="o">=</span> <span class="n">relationship</span>
 
             <span class="c1"># set the resolver if a service was specified</span>
@@ -178,12 +190,20 @@
             <span class="o">**</span><span class="n">kwds</span>
         <span class="p">)</span>
 
+
 <div class="viewcode-block" id="Connection.resolve_service"><a class="viewcode-back" href="../../../../internals/nautilus.api.fields.html#nautilus.api.fields.connection.Connection.resolve_service">[docs]</a>    <span class="k">def</span> <span class="nf">resolve_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">query_args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">            This function grab the remote data that acts as the source for this</span>
 <span class="sd">            connection.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># note: it is safe to assume the target is a service object</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+
+        <span class="c1"># if we are targetting a string</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># todo: find a non-weak version of _type_names</span>
+            <span class="c1"># grab the equivalent class from the schema</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">graphene_schema</span><span class="o">.</span><span class="n">_types_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">]</span>
 
         <span class="c1"># make a normal dictionary out of the immutable dictionary</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">query_args</span><span class="o">.</span><span class="n">to_data_dict</span><span class="p">()</span>
@@ -192,7 +212,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 
             <span class="c1"># the target service</span>
-            <span class="n">target_service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">service</span>
+            <span class="n">target_service</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">service</span>
 
             <span class="c1"># the name of the service that manages the connection</span>
             <span class="n">service_name</span> <span class="o">=</span> <span class="n">connection_service_name</span><span class="p">(</span><span class="n">target_service</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="p">)</span>
@@ -200,9 +220,15 @@
             <span class="c1"># look for connections originating from this object</span>
             <span class="n">join_filter</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">join_filter</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">primary_key</span>
+            <span class="c1"># query the connection service for related data</span>
+            <span class="n">related</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="p">[</span><span class="n">target_service</span><span class="p">],</span> <span class="n">join_filter</span><span class="p">)</span>
+
+            <span class="c1"># if there were no related fields</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">related</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+
             <span class="c1"># grab the list of primary keys from the remote service</span>
-            <span class="n">join_ids</span> <span class="o">=</span> <span class="p">[</span> <span class="n">entry</span><span class="p">[</span><span class="n">target_service</span><span class="p">]</span> \
-                            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">query_service</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="p">[</span><span class="n">target_service</span><span class="p">],</span> <span class="n">join_filter</span><span class="p">)</span> <span class="p">]</span>
+            <span class="n">join_ids</span> <span class="o">=</span> <span class="p">[</span> <span class="n">entry</span><span class="p">[</span><span class="n">target_service</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">related</span> <span class="p">]</span>
 
             <span class="c1"># add the private key filter to the filter dicts</span>
             <span class="n">args</span><span class="p">[</span><span class="s1">&#39;pk_in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">join_ids</span>
@@ -210,13 +236,17 @@
         <span class="c1"># the potential pieces of data to retrieve about the object depends on</span>
         <span class="c1"># the target object type we are going to instantiate.</span>
         <span class="c1"># todo: avoid internal _meta pointer since its potentially weak</span>
-        <span class="n">targetFields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">fields</span>
+        <span class="n">targetFields</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">fields</span>
 
         <span class="c1"># grab the fields that are not connections</span>
         <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">attname</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">targetFields</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))]</span>
 
         <span class="c1"># grab the final list of entries</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
+
+        <span class="c1"># there are no results</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
 
         <span class="c1"># todo: think about doing this at the join step (how to specify both sides of relationship in one spot)</span>
         <span class="c1"># if we are on the `one` side of the relationship</span>
@@ -228,10 +258,10 @@
             <span class="c1"># otherwise there is only one result</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># pull the first item out of the list</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># create instances of the target class for every result</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

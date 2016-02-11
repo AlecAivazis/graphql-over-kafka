@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.conventions.services &mdash; nautilus v0.2.4 documentation</title>
+  <title>nautilus.services.apiGateway &mdash; nautilus v0.2.4 documentation</title>
   
 
   
@@ -119,7 +119,7 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-    <li>nautilus.conventions.services</li>
+    <li>nautilus.services.apiGateway</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -131,41 +131,52 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for nautilus.conventions.services</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This file is responsible for centralizing the service conventions used in nautilus.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
+  <h1>Source code for nautilus.services.apiGateway</h1><div class="highlight"><pre>
+<span class="c1"># external imports</span>
+<span class="kn">from</span> <span class="nn">flask.ext.cors</span> <span class="kn">import</span> <span class="n">CORS</span>
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">get_model_string</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">api_gateway_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
+<span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
 
-<div class="viewcode-block" id="model_service_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.services.model_service_name">[docs]</a><span class="k">def</span> <span class="nf">model_service_name</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; the name of a service that manages a model &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">get_model_string</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+<div class="viewcode-block" id="APIGateway"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway">[docs]</a><span class="k">class</span> <span class="nc">APIGateway</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This provides a single endpoint that other services and clients can</span>
+<span class="sd">        use to query the cloud without worrying about the distributed nature</span>
+<span class="sd">        of the system.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            schema (graphql.core.type.GraphQLSchema): The schema to use that</span>
+<span class="sd">                encapsultes the overall topology of the cloud.</span>
 
-<div class="viewcode-block" id="connection_service_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.services.connection_service_name">[docs]</a><span class="k">def</span> <span class="nf">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; the name of a service that manages the connection between services &#39;&#39;&#39;</span>
+<span class="sd">        Example:</span>
 
-    <span class="c1"># the list of services to connect</span>
-    <span class="n">services</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="sd">            .. code-block:: python</span>
 
-    <span class="c1"># for each service to connect</span>
-    <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="c1"># if the service was passed as a string</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="c1"># add it to the list</span>
-            <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
-        <span class="c1"># otherwise the serivice was not a string</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_model_string</span><span class="p">(</span><span class="n">service</span><span class="p">))</span>
+<span class="sd">                # external imports</span>
+<span class="sd">                from nautilus import APIGateway</span>
+<span class="sd">                # local imports</span>
+<span class="sd">                from .schema import schema</span>
 
-    <span class="c1"># combine the two names into the connection name</span>
-    <span class="k">return</span> <span class="s2">&quot;{}_connection&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">services</span><span class="p">)))</span></div>
+<span class="sd">                # create a nautilus service with just the schema</span>
+<span class="sd">                service = APIGateway(schema=schema)</span>
 
-<div class="viewcode-block" id="api_gateway_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.services.api_gateway_name">[docs]</a><span class="k">def</span> <span class="nf">api_gateway_name</span><span class="p">():</span>
-    <span class="sd">&#39;&#39;&#39; the name of the default api gateway &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="s2">&quot;api&quot;</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c1"># use the name kwarg if it was given</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">api_gateway_name</span><span class="p">()</span>
+
+        <span class="c1"># create the service</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">,</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># add cors headers to the app</span>
+        <span class="n">CORS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
