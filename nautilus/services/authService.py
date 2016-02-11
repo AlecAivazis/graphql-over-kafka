@@ -2,6 +2,7 @@
 from .service import Service
 from nautilus.network.actionHandlers import noop_handler
 from nautilus.auth.blueprints import service_blueprint
+from nautilus.conventions.services import auth_service_name
 
 class AuthService(Service):
     """
@@ -30,7 +31,7 @@ class AuthService(Service):
 
         # perform any necessary configuration first
         super().__init__(
-            name = 'auth',
+            name = auth_service_name(),
             **kwargs
         )
 

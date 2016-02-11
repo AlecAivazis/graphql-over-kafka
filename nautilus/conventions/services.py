@@ -10,6 +10,15 @@ def model_service_name(model):
     return get_model_string(model)
 
 
+def auth_service_name():
+    return "auth"
+
+
+def api_gateway_name():
+    ''' the name of the default api gateway '''
+    return "api"
+
+
 def connection_service_name(*args):
     ''' the name of a service that manages the connection between services '''
 
@@ -28,7 +37,3 @@ def connection_service_name(*args):
 
     # combine the two names into the connection name
     return "{}_connection".format('_'.join(sorted(services)))
-
-def api_gateway_name():
-    ''' the name of the default api gateway '''
-    return "api"

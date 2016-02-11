@@ -4,7 +4,6 @@ from os import path
 # local imports
 from nautilus.auth import login_user, logout_user
 from nautilus.network import query_graphql_service
-from .models import UserPassword
 from .forms import (
     LoginForm,
     RegistrationForm,
@@ -15,6 +14,7 @@ service_blueprint = Blueprint('auth', __name__, template_folder='templates')
 
 @service_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    from .models import UserPassword
 
     form = LoginForm()
 

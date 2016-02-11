@@ -37,6 +37,3 @@ class ServiceObjectType(ObjectType, metaclass = ServiceObjectTypeMeta):
     """
 
     primary_key = String()
-
-    def resolve_primary_key(self, args, info):
-        return '2'
