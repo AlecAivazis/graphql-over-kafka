@@ -238,8 +238,14 @@ of the system.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>schema</strong> (<em>graphql.core.type.GraphQLSchema</em>) &#8211; The schema to use that
-encapsultes the overall topology of the cloud.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>schema</strong> (<em>graphql.core.type.GraphQLSchema</em>) &#8211; The schema to use that
+encapsultes the overall topology of the cloud.</li>
+<li><strong>action_handler</strong> (<em>optional, function</em>) &#8211; The callback function fired
+when an action is recieved. If None, the service does not
+connect to the action queue.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
