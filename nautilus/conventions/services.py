@@ -28,3 +28,7 @@ def connection_service_name(*args):
 
     # combine the two names into the connection name
     return "{}_connection".format('_'.join(sorted(services)))
+
+def api_gateway_name():
+    ''' the name of the default api gateway '''
+    return "api"

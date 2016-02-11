@@ -19,5 +19,9 @@ Service class which all act as good starting points for your own services:
     :members:
 
 
+.. autoclass:: nautilus.APIGateway
+    :members:
+
+
 .. autoclass:: nautilus.Service
     :members:
