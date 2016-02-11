@@ -15,6 +15,10 @@ class APIGateway(Service):
             schema (graphql.core.type.GraphQLSchema): The schema to use that
                 encapsultes the overall topology of the cloud.
 
+            action_handler (optional, function): The callback function fired
+                when an action is recieved. If None, the service does not
+                connect to the action queue.
+
         Example:
 
             .. code-block:: python
