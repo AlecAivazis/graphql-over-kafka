@@ -50,7 +50,7 @@ def query_service(service, fields, filters = {}):
     )
 
 
-def combineActionHandlers(*args):
+def combine_action_handlers(*args):
     """
         This function combines the given action handlers into a single function
         which will call all of them.

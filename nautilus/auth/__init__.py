@@ -10,6 +10,7 @@ import string
 from .decorators import *
 from .backend import init_app
 from .primitives import *
+from .forms import *
 
 def init_service(service):
     init_app(service.app)

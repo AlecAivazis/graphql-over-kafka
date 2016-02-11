@@ -14,7 +14,7 @@ def init_service(service):
 
 def add_model(model):
     # damn circular references....
-    from nautilus import db
+    from nautilus.db import db
     # if the model has a custom AdminView defined then use it
     view = model.getAdminView() if hasattr(model, 'getAdminView') else ModelView
     # add the model to the view using its  using model view

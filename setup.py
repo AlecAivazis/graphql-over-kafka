@@ -30,5 +30,6 @@ setup(
         'pika',
         'python-consul',
         'singledispatch',
+        'wtforms',
     ]
 )

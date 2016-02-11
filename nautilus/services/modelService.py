@@ -1,5 +1,5 @@
 # local imports
-from nautilus.network import CRUDHandler, combineActionHandlers
+from nautilus.network import CRUDHandler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
 from nautilus.network.actionHandlers import noop_handler
@@ -52,7 +52,7 @@ class ModelService(Service):
         schema = create_model_schema(model)
 
         # the action handler is a combination
-        action_handler = combineActionHandlers(
+        action_handler = combine_action_handlers(
             # of the given one
             additonal_action_handler,
             # and a crud handler

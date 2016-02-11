@@ -87,7 +87,7 @@ class Service:
         # if there is an action consumer, create a wrapper for it
         self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
 
-        from nautilus import db
+        from nautilus.db import db
         db.init_app(self.app)
 
         # setup various functionalities
@@ -130,6 +130,9 @@ class Service:
             # remove the service from the registry
             registry.deregister_service(self)
 
+    def use_blueprint(self, blueprint):
+        """ Apply a flask blueprint to the internal application """
+        self.app.register_blueprint(blueprint)
 
     def setupAuth(self):
         from nautilus.auth import init_service

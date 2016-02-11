@@ -18,7 +18,7 @@ class ServiceManager:
         def syncdb():
             """ Create the database entries. """
             # import the db module
-            from nautilus import db
+            from nautilus.db import db
             # create all of the tables
             db.create_all()
             # notify the user

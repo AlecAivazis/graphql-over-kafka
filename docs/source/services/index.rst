@@ -23,5 +23,9 @@ Service class which all act as good starting points for your own services:
     :members:
 
 
+.. autoclass:: nautilus.AuthService
+    :members:
+
+
 .. autoclass:: nautilus.Service
     :members:

@@ -4,7 +4,8 @@ from flask.ext.jsontools import JsonSerializableBase
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.inspection import inspect
 # local imports
-from nautilus import admin, db
+from nautilus import admin
+from ..db import db
 
 class _Meta(type):
     """

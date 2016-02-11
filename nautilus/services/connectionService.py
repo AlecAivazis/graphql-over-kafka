@@ -1,5 +1,4 @@
 # local imports
-from nautilus.network import CRUDHandler, combineActionHandlers
 from nautilus.api import create_model_schema
 from nautilus.network.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name

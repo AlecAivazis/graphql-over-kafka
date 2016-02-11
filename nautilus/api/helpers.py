@@ -20,7 +20,7 @@ def init_service(service, schema):
 def create_model_schema(Model):
     """ This function creates a graphql schema that provides a single model """
 
-    from nautilus import db
+    from nautilus.db import db
 
     # create the schema instance
     schema = graphene.Schema(

@@ -32,11 +32,11 @@ As your services get more complex, you'll want to split your action handler into
 separate functions which each get called. Nautilus provides a function called
 ``combineActionHandlers`` which serves just this case:
 
-.. autofunction:: nautilus.network.combineActionHandlers
+.. autofunction:: nautilus.network.combine_action_handlers
 
 .. code-block:: python
 
-    from nautilus.network import combineActionHandlers
+    from nautilus.network import combine_action_handlers
 
     def action_handler1(type, payload):
         print("first handler fired!")
@@ -44,7 +44,7 @@ separate functions which each get called. Nautilus provides a function called
     def action_handler2(type, payload):
         print("second handler fired!")
 
-    combined_handler = combineActionHandlers(
+    combined_handler = combine_action_handlers(
         action_handler1,
         action_handler2
     )
