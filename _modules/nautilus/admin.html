@@ -148,7 +148,7 @@
 
 <div class="viewcode-block" id="add_model"><a class="viewcode-back" href="../../internals/nautilus.admin.html#nautilus.admin.add_model">[docs]</a><span class="k">def</span> <span class="nf">add_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
     <span class="c1"># damn circular references....</span>
-    <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">db</span>
+    <span class="kn">from</span> <span class="nn">nautilus.db</span> <span class="kn">import</span> <span class="n">db</span>
     <span class="c1"># if the model has a custom AdminView defined then use it</span>
     <span class="n">view</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">getAdminView</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;getAdminView&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">ModelView</span>
     <span class="c1"># add the model to the view using its  using model view</span>

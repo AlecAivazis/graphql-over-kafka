@@ -262,6 +262,28 @@ connect to the action queue.</li>
 </dd></dl>
 
 <dl class="class">
+<dt id="nautilus.AuthService">
+<em class="property">class </em><code class="descclassname">nautilus.</code><code class="descname">AuthService</code><span class="sig-paren">(</span><em>action_handler=&lt;function noop_handler&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#AuthService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.AuthService" title="Permalink to this definition">¶</a></dt>
+<dd><p>This service handles user authentication for the entire cloud and is
+the only service with access to the users passwords. As such, this
+service does not provide any sort of external schema, nor does it
+respond to actions by default. It&#8217;s sole purpose is to collect the
+necessary information from the user and provide that user with a way
+to provid valid credentials to other services.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">AuthService</span>
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">AuthService</span><span class="p">(</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
 <dt id="nautilus.Service">
 <em class="property">class </em><code class="descclassname">nautilus.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>actionHandler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.Service" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the base class for all services that are part of a nautilus
@@ -313,6 +335,12 @@ register itself when ran</li>
 <span class="p">)</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="nautilus.Service.use_blueprint">
+<code class="descname">use_blueprint</code><span class="sig-paren">(</span><em>blueprint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.use_blueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.Service.use_blueprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a flask blueprint to the internal application</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

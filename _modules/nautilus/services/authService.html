@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.services.modelService &mdash; nautilus v0.2.4 documentation</title>
+  <title>nautilus.services.authService &mdash; nautilus v0.2.4 documentation</title>
   
 
   
@@ -119,7 +119,7 @@
       
           <li><a href="../../index.html">Module code</a> &raquo;</li>
       
-    <li>nautilus.services.modelService</li>
+    <li>nautilus.services.authService</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -131,77 +131,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for nautilus.services.modelService</h1><div class="highlight"><pre>
+  <h1>Source code for nautilus.services.authService</h1><div class="highlight"><pre>
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">CRUDHandler</span><span class="p">,</span> <span class="n">combine_action_handlers</span>
-<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
-<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">model_service_name</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
+<span class="kn">from</span> <span class="nn">nautilus.auth.blueprints</span> <span class="kn">import</span> <span class="n">service_blueprint</span>
 
-<div class="viewcode-block" id="ModelService"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.modelService.ModelService">[docs]</a><span class="k">class</span> <span class="nc">ModelService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthService"><a class="viewcode-back" href="../../../services/index.html#nautilus.AuthService">[docs]</a><span class="k">class</span> <span class="nc">AuthService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This service acts as the primary data store in your cloud. It manages</span>
-<span class="sd">        the records of a single model by listening for actions that indicate</span>
-<span class="sd">        a record mutation as well as emitting actions when the mutations have</span>
-<span class="sd">        finished (whether successfully or not). The external API is</span>
-<span class="sd">        automatically generated to match the given model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            model (nautilus.BaseModel): The nautilus model to manage.</span>
-<span class="sd">            additonal_action_handler (optional, function): An action handler</span>
-<span class="sd">                to be called alongside the internal ones.</span>
+<span class="sd">        This service handles user authentication for the entire cloud and is</span>
+<span class="sd">        the only service with access to the users passwords. As such, this</span>
+<span class="sd">        service does not provide any sort of external schema, nor does it</span>
+<span class="sd">        respond to actions by default. It&#39;s sole purpose is to collect the</span>
+<span class="sd">        necessary information from the user and provide that user with a way</span>
+<span class="sd">        to provid valid credentials to other services.</span>
 
 <span class="sd">        Example:</span>
 
 <span class="sd">            .. code-block:: python</span>
 
-<span class="sd">                from nautilus import ModelService</span>
-<span class="sd">                from sqlalchemy import Column, Text</span>
-<span class="sd">                from nautilus.models import HasID, BaseModel, CRUDNotificationCreator</span>
-
-
-<span class="sd">                # these mixins provide make the model &quot;live&quot;. For more information,</span>
-<span class="sd">                # see foo_bar.</span>
-<span class="sd">                class Model(CRUDNotificationCreator, HasID, BaseModel):</span>
-<span class="sd">                    name = Column(Text)</span>
-
+<span class="sd">                from nautilus import AuthService</span>
 
 <span class="sd">                class ServiceConfig:</span>
 <span class="sd">                    SQLALCHEMY_DATABASE_URI = &#39;sqlite:////tmp/models.db&#39;</span>
 
-
-<span class="sd">                service = ModelService(</span>
-<span class="sd">                    model = Model,</span>
+<span class="sd">                service = AuthService(</span>
 <span class="sd">                    configObject = ServiceConfig,</span>
 <span class="sd">                )</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">additonal_action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># save a reference to the model this service is managing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="c1"># the schema to add to the service</span>
-        <span class="n">schema</span> <span class="o">=</span> <span class="n">create_model_schema</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-
-        <span class="c1"># the action handler is a combination</span>
-        <span class="n">action_handler</span> <span class="o">=</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
-            <span class="c1"># of the given one</span>
-            <span class="n">additonal_action_handler</span><span class="p">,</span>
-            <span class="c1"># and a crud handler</span>
-            <span class="n">CRUDHandler</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="c1"># perform any necessary configuration first</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">model_service_name</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="c1"># add the authentication blueprint to the service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_blueprint</span><span class="p">(</span><span class="n">service_blueprint</span><span class="p">)</span></div>
 
-        <span class="c1"># create the service</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">,</span>
-            <span class="n">actionHandler</span> <span class="o">=</span> <span class="n">action_handler</span><span class="p">,</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span></div>
+
 </pre></div>
 
            </div>
