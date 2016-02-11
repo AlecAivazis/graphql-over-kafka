@@ -10,28 +10,40 @@ from nautilus.conventions.services import connection_service_name
 
 class Connection(Field):
     """
-        A field which encapsultes a connection between two objects. Optionally,
-        this field takes a `service` argument which indicates that this connection
-        is backed by a remote service. This will cause the field resolution to query
-        the remote service for data. If a `service` is not specified, a resolver function
-        must be present - either with the conventional name or explicity passed.
+        A field that encapsultes a connection with another GraphQL object.
+
+        Args:
+
+            target (string or ObjectType): The target object type. If target is a
+                SerivceObjectType then the remote data lookup is automated using the
+                target object's meta service attribute.
+
+            relationship (string: "one" or "many"): The kind of relationship that this
+                connection encapsultes. If set to "many" the connection will result in
+                a list whereas if it is set to "one" the connection will result in the
+                object type itself.
+
+
+        Example:
+
+            For an example, see the getting started guide.
+
     """
 
-    def __init__(self, target, relationship = 'many', service = None, relay = True, **kwds):
+    def __init__(self, target, relationship = 'many', **kwds):
 
         # perform auto resolve when:
             # the connection is backed by a service
             # a resolver wasn't explicity specified
             # we are targetting a service object
         perform_resolve = 'resolver' not in kwds and \
-                            not isinstance(target, str) and \
-                            issubclass(target, ServiceObjectType)
+                            ( isinstance(target, str) or \
+                            issubclass(target, ServiceObjectType) )
 
         # if a resolve was not specified
         if perform_resolve:
             # save references to constructor arguments
             self.target = target
-            self.support_relay = relay
             self.relationship = relationship
 
             # set the resolver if a service was specified
@@ -44,12 +56,20 @@ class Connection(Field):
             **kwds
         )
 
+
     def resolve_service(self, instance, query_args, info):
         '''
             This function grab the remote data that acts as the source for this
             connection.
         '''
         # note: it is safe to assume the target is a service object
+        target = self.target
+
+        # if we are targetting a string
+        if isinstance(self.target, str):
+            # todo: find a non-weak version of _type_names
+            # grab the equivalent class from the schema
+            target = info.schema.graphene_schema._types_names[self.target]
 
         # make a normal dictionary out of the immutable dictionary
         args = query_args.to_data_dict()
@@ -58,7 +78,7 @@ class Connection(Field):
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
 
             # the target service
-            target_service = self.target.service
+            target_service = target.service
 
             # the name of the service that manages the connection
             service_name = connection_service_name(target_service, instance.service)
@@ -82,13 +102,13 @@ class Connection(Field):
         # the potential pieces of data to retrieve about the object depends on
         # the target object type we are going to instantiate.
         # todo: avoid internal _meta pointer since its potentially weak
-        targetFields = self.target._meta.fields
+        targetFields = target._meta.fields
 
         # grab the fields that are not connections
         fields = [field.attname for field in targetFields if not isinstance(field, type(self))]
 
         # grab the final list of entries
-        results = query_service(self.target.service, fields, filters = args)
+        results = query_service(target.service, fields, filters = args)
 
         # there are no results
         if len(results) == 0:
@@ -104,7 +124,7 @@ class Connection(Field):
             # otherwise there is only one result
             else:
                 # pull the first item out of the list
-                return self.target(**results[0])
+                return target(**results[0])
 
         # create instances of the target class for every result
-        return (self.target(**result) for result in results)
+        return (target(**result) for result in results)
