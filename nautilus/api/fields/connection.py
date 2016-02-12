@@ -68,12 +68,15 @@ class Connection(Field):
 
         # print(kwds)
 
+        # if hasattr(target, 'service'):
+
+
         # if we are supposed to resolve only a single element
         if relationship == 'one':
             # then the field should be a direct reference to the target
             super().__init__(
                 type = target,
-                args = args_for_model(target.service.model) if hasattr(target, 'service') else None,
+                args = args_for_model(target.service.model) if hasattr(target, 'model') else None,
                 **kwds
             )
         # otherwise we are going to be resolving many elements
@@ -81,7 +84,7 @@ class Connection(Field):
             # use the list wrapper as the field type
             super().__init__(
                 type = list_wrapper,
-                args = args_for_model(target.service.model) if hasattr(target, 'service') else None,
+                args = args_for_model(target.service.model) if hasattr(target, 'model') else None,
                 **kwds
             )
 
