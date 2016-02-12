@@ -7,6 +7,8 @@ from graphql.core.language.printer import print_ast
 from nautilus.network import query_service
 from nautilus.api.objectTypes import ServiceObjectType
 from nautilus.conventions.services import connection_service_name
+from nautilus.api import convert_sqlalchemy_type
+from nautilus.api.filter import args_for_model
 
 class Connection(Field):
     """
@@ -40,21 +42,49 @@ class Connection(Field):
                             ( isinstance(target, str) or \
                                 issubclass(target, ServiceObjectType) )
 
-        # if a resolve was not specified
-        if perform_resolve:
-            # save references to constructor arguments
-            self.target = target
-            self.relationship = relationship
+        # the field to use as the list
+        list_wrapper = List(target)
 
-            # set the resolver if a service was specified
-            kwds['resolver'] = self.resolve_service
+        # if we're not supposed to perform the resolve
+        if not perform_resolve:
+            # just instantiate a field with the wrapper
+            super().__init__(type = list_wrapper, **kwds)
+            # and don't do anything else
+            return
 
-        # create a field that is a list of the target
-        super().__init__(
-            # a connection is normally a list unless we are encapsulating a foreign key
-            type = target if perform_resolve and relationship == 'one' else List(target),
-            **kwds
-        )
+        # we are supposed to perform the resolve
+
+        # save references to constructor arguments
+        self.target = target
+        self.relationship = relationship
+
+        # set the resolver if a service was specified
+        kwds['resolver'] = self.resolve_service
+        # add the arguments to the field
+        # kwds['args'] = {field.attname: convert_sqlalchemy_type(field.type, field) \
+        #                                             for field in self.target.true_fields()}
+
+        print(hasattr(target, 'service'))
+
+        # print(kwds)
+
+        # if we are supposed to resolve only a single element
+        if relationship == 'one':
+            # then the field should be a direct reference to the target
+            super().__init__(
+                type = target,
+                args = args_for_model(target.service.model) if hasattr(target, 'service') else None,
+                **kwds
+            )
+        # otherwise we are going to be resolving many elements
+        else:
+            # use the list wrapper as the field type
+            super().__init__(
+                type = list_wrapper,
+                args = args_for_model(target.service.model) if hasattr(target, 'service') else None,
+                **kwds
+            )
+
 
 
     def resolve_service(self, instance, query_args, info):
@@ -63,25 +93,26 @@ class Connection(Field):
             connection.
         '''
         # note: it is safe to assume the target is a service object
+
+        # the target class for the connection
         target = self.target
 
-        # if we are targetting a string
-        if isinstance(self.target, str):
+        # if we were given a string to target
+        if isinstance(target, str):
             # todo: find a non-weak version of _type_names
             # grab the equivalent class from the schema
-            target = info.schema.graphene_schema._types_names[self.target]
+            self.target = info.schema.graphene_schema._types_names[self.target]
 
-        # make a normal dictionary out of the immutable dictionary
+        # make a normal dictionary out of the immutable one we were given
         args = query_args.to_data_dict()
-
 
         ## resolve the connection if necessary
 
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
-
+            print(target.service.name)
             # the target service
-            target_service = target.service
+            target_service = target.service.name
 
             # the name of the service that manages the connection
             service_name = connection_service_name(target_service, instance.service)
@@ -105,16 +136,11 @@ class Connection(Field):
 
         ## query the target service
 
-        # the potential pieces of data to retrieve about the object depends on
-        # the target object type we are going to instantiate.
-        # todo: avoid internal _meta pointer since its potentially weak
-        targetFields = target._meta.fields
-
-        # grab the fields that are not connections
-        fields = [field.attname for field in targetFields if not isinstance(field, type(self))]
+        # only query the backend service for the fields that are not connections
+        fields = [field.attname for field in target.true_fields()]
 
         # grab the final list of entries
-        results = query_service(target.service, fields, filters = args)
+        results = query_service(target.service.name, fields, filters = args)
 
         # there are no results
         if len(results) == 0:
@@ -144,6 +170,7 @@ class Connection(Field):
         if auth:
             # apply the authorization criteria to the result
             results = [result for result in results if auth(result)]
+
 
         ## deal with target relationship types
 

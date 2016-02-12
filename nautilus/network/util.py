@@ -2,6 +2,9 @@ import json
 import requests
 import socket
 
+from nautilus.conventions.services import api_gateway_name
+from nautilus.network.registry import service_location_by_name
+
 def query_graphql_service(url, name, fields, filters = {}):
     """ A graphql query wrapper factory"""
 
@@ -38,7 +41,6 @@ def query_service(service, fields, filters = {}):
         and the desired fields.
     '''
     # necessary imports
-    from nautilus.network.registry import service_location_by_name
     from nautilus.conventions import root_query
 
     # query the target using model service conventions
@@ -48,6 +50,19 @@ def query_service(service, fields, filters = {}):
         fields = fields,
         filters = filters
     )
+
+def query_api(query, mutation = None):
+    '''
+        Perform the given query on the api gateway and turn the results.
+        Use this function to avoid hard coding the name of the api gateway.
+    '''
+    api_location = service_location_by_name(api_gateway_name())
+    url = 'http://{}'.format(api_location)
+    # query the service to retrieve the data
+    dataRequest = requests.get(url + '?query='   + query).json()
+    print(dataRequest)
+
+    return query_service(api_gateway_name(), query)
 
 
 def combine_action_handlers(*args):
