@@ -29,6 +29,11 @@ class ServiceObjectTypeMeta(type(ObjectType)):
         # return the full class record
         return super().construct(*args, **kwds)
 
+    @classmethod
+    def __prepare__(cls, name, bases, **kwds):
+        print('foo')
+        return super().__prepare__(name, bases, **kwds)
+
     def __new__(cls, name, bases, attributes, **kwds):
 
         # if there is a Meta class defined
@@ -40,6 +45,8 @@ class ServiceObjectTypeMeta(type(ObjectType)):
                 for key,value in args_for_model(service.model).items():
                     if 'pk' not in key and 'in' not in key:
                         attributes[key] = value
+
+        print('new')
 
         # create the nex class records
         return super().__new__(cls, name, bases, attributes, **kwds)

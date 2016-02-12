@@ -1,6 +1,6 @@
 # external imports
 import collections
-from graphene import Field, List
+from graphene import Field, List, String
 from graphql.core.utils.ast_to_dict import ast_to_dict
 from graphql.core.language.printer import print_ast
 # local imports
@@ -64,7 +64,13 @@ class Connection(Field):
         # kwds['args'] = {field.attname: convert_sqlalchemy_type(field.type, field) \
         #                                             for field in self.target.true_fields()}
 
-        print(hasattr(target, 'service'))
+        print('{!r}'.format(self))
+
+        kwds['args'] = {
+            'id': String()
+        }
+
+        # print(hasattr(target, 'service'))
 
         # print(kwds)
 
@@ -76,7 +82,6 @@ class Connection(Field):
             # then the field should be a direct reference to the target
             super().__init__(
                 type = target,
-                args = args_for_model(target.service.model) if hasattr(target, 'model') else None,
                 **kwds
             )
         # otherwise we are going to be resolving many elements
@@ -84,7 +89,6 @@ class Connection(Field):
             # use the list wrapper as the field type
             super().__init__(
                 type = list_wrapper,
-                args = args_for_model(target.service.model) if hasattr(target, 'model') else None,
                 **kwds
             )
 
