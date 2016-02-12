@@ -38,7 +38,7 @@ class Connection(Field):
             # we are targetting a service object
         perform_resolve = 'resolver' not in kwds and \
                             ( isinstance(target, str) or \
-                            issubclass(target, ServiceObjectType) )
+                                issubclass(target, ServiceObjectType) )
 
         # if a resolve was not specified
         if perform_resolve:
@@ -74,6 +74,9 @@ class Connection(Field):
         # make a normal dictionary out of the immutable dictionary
         args = query_args.to_data_dict()
 
+
+        ## resolve the connection if necessary
+
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
 
@@ -99,6 +102,9 @@ class Connection(Field):
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
 
+
+        ## query the target service
+
         # the potential pieces of data to retrieve about the object depends on
         # the target object type we are going to instantiate.
         # todo: avoid internal _meta pointer since its potentially weak
@@ -113,18 +119,44 @@ class Connection(Field):
         # there are no results
         if len(results) == 0:
             return None
+        # if there is more than one result for a "one" relation
+        elif len(results) > 1 and self.relationship == 'one':
+            # yell loudly
+            raise Exception("Inconsistent state reached: multiple entries resolving a foreign key reference")
+
+
+        ## remove instances of the target that the user is not allowed to see
+
+        auth = None
+
+        # if the user provided an auth factory
+        if hasattr(target, 'auth_factory'):
+            auth = target.auth_factory(instance)
+            # make sure we got a function from the factory
+            assert hasattr(auth, '__call__'), 'auth factory must return a function.'
+
+        # or if they just provided an auth filter
+        elif hasattr(target, 'auth'):
+            # use that instead
+            auth = target.auth
+
+        # if we need to apply some sort of authorization
+        if auth:
+            # apply the authorization criteria to the result
+            results = [result for result in results if auth(result)]
+
+        ## deal with target relationship types
+
+        # if the filter got rid of all of the results
+        if len(results) == 0:
+            # the user isn't allowed to see the related data so return nothing
+            return None
 
         # todo: think about doing this at the join step (how to specify both sides of relationship in one spot)
         # if we are on the `one` side of the relationship
-        if self.relationship == 'one':
-            # if there is more than one result
-            if len(results) > 1:
-                # yell loudly
-                raise Exception("Inconsistent state reached: multiple entries resolving a foreign key reference")
-            # otherwise there is only one result
-            else:
-                # pull the first item out of the list
-                return target(**results[0])
+        elif self.relationship == 'one':
+            # pull the first item out of the list
+            return target(**results[0])
 
         # create instances of the target class for every result
         return (target(**result) for result in results)

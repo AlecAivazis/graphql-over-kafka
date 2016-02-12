@@ -28,9 +28,9 @@ def create_model_schema(Model):
         auto_camelcase = False
     )
 
+    # grab the primary key from the Model
     primary_key = inspect(Model).primary_key[0]
     primary_key_type = convert_sqlalchemy_type(primary_key.type, primary_key)
-    print(primary_key_type)
 
     # create a graphene object registered with the schema
     @schema.register
