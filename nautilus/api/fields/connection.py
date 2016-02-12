@@ -60,22 +60,11 @@ class Connection(Field):
 
         # set the resolver if a service was specified
         kwds['resolver'] = self.resolve_service
-        # add the arguments to the field
-        # kwds['args'] = {field.attname: convert_sqlalchemy_type(field.type, field) \
-        #                                             for field in self.target.true_fields()}
 
-        print('{!r}'.format(self))
-
-        kwds['args'] = {
-            'id': String()
-        }
-
-        # print(hasattr(target, 'service'))
-
-        # print(kwds)
-
-        # if hasattr(target, 'service'):
-
+        # if the target is a service service model
+        if hasattr(self.target, 'service') and hasattr(self.target.service, 'model'):
+            # add the model's args to the field
+            kwds['args'] = args_for_model(self.target.service.model)
 
         # if we are supposed to resolve only a single element
         if relationship == 'one':
@@ -108,34 +97,36 @@ class Connection(Field):
         if isinstance(target, str):
             # todo: find a non-weak version of _type_names
             # grab the equivalent class from the schema
-            self.target = info.schema.graphene_schema._types_names[self.target]
+            target = info.schema.graphene_schema._types_names[self.target]
 
         # make a normal dictionary out of the immutable one we were given
         args = query_args.to_data_dict()
 
         ## resolve the connection if necessary
+        target_service_name = target.service.name if hasattr(target.service, 'name') \
+                                                    else target.service
 
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
-            print(target.service.name)
             # the target service
-            target_service = target.service.name
+            instance_service_name = instance.service.name if hasattr(instance.service, 'name') else instance.service
 
             # the name of the service that manages the connection
-            service_name = connection_service_name(target_service, instance.service)
+            connection_service = connection_service_name(target_service_name, instance_service_name)
 
             # look for connections originating from this object
             join_filter = {}
-            join_filter[instance.service] = instance.primary_key
+            join_filter[instance_service_name] = instance.primary_key
+
             # query the connection service for related data
-            related = query_service(service_name, [target_service], join_filter)
+            related = query_service(connection_service, [target_service_name], join_filter)
 
             # if there were no related fields
             if len(related) == 0:
                 return None
 
             # grab the list of primary keys from the remote service
-            join_ids = [ entry[target_service] for entry in related ]
+            join_ids = [ entry[target_service_name] for entry in related ]
 
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
@@ -147,11 +138,11 @@ class Connection(Field):
         fields = [field.attname for field in target.true_fields()]
 
         # grab the final list of entries
-        results = query_service(target.service.name, fields, filters = args)
+        results = query_service(target_service_name, fields, filters = args)
 
         # there are no results
         if len(results) == 0:
-            return None
+            return []
         # if there is more than one result for a "one" relation
         elif len(results) > 1 and self.relationship == 'one':
             # yell loudly

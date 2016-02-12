@@ -60,7 +60,6 @@ def query_api(query, mutation = None):
     url = 'http://{}'.format(api_location)
     # query the service to retrieve the data
     dataRequest = requests.get(url + '?query='   + query).json()
-    print(dataRequest)
 
     return query_service(api_gateway_name(), query)
 

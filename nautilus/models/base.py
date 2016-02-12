@@ -57,7 +57,7 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
 
     @classmethod
     def columns(cls):
-        return [key.name for key in inspect(cls).columns]
+        return inspect(cls).columns
 
     def primary_key(self):
         return getattr(self, type(self).primary_keys()[0])
