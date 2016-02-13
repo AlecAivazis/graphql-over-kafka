@@ -136,6 +136,9 @@
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 
+<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">api_gateway_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.registry</span> <span class="kn">import</span> <span class="n">service_location_by_name</span>
+
 <div class="viewcode-block" id="query_graphql_service"><a class="viewcode-back" href="../../../internals/nautilus.network.html#nautilus.network.query_graphql_service">[docs]</a><span class="k">def</span> <span class="nf">query_graphql_service</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot; A graphql query wrapper factory&quot;&quot;&quot;</span>
 
@@ -172,7 +175,6 @@
 <span class="sd">        and the desired fields.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># necessary imports</span>
-    <span class="kn">from</span> <span class="nn">nautilus.network.registry</span> <span class="kn">import</span> <span class="n">service_location_by_name</span>
     <span class="kn">from</span> <span class="nn">nautilus.conventions</span> <span class="kn">import</span> <span class="n">root_query</span>
 
     <span class="c1"># query the target using model service conventions</span>
@@ -182,6 +184,22 @@
         <span class="n">fields</span> <span class="o">=</span> <span class="n">fields</span><span class="p">,</span>
         <span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span>
     <span class="p">)</span></div>
+
+<div class="viewcode-block" id="query_api"><a class="viewcode-back" href="../../../internals/nautilus.network.html#nautilus.network.query_api">[docs]</a><span class="k">def</span> <span class="nf">query_api</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">mutation</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Perform the given query on the api gateway and turn the results.</span>
+<span class="sd">        Use this function to avoid hard coding the name of the api gateway.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># grab the location of the api service from the registry</span>
+    <span class="n">api_location</span> <span class="o">=</span> <span class="n">service_location_by_name</span><span class="p">(</span><span class="n">api_gateway_name</span><span class="p">())</span>
+    <span class="c1"># construct the url out of the location</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api_location</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">url</span> <span class="o">+</span> <span class="s1">&#39;?query=&#39;</span>   <span class="o">+</span> <span class="n">query</span><span class="p">)</span>
+    <span class="c1"># query the service to retrieve the data</span>
+    <span class="n">dataRequest</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span> <span class="o">+</span> <span class="s1">&#39;?query=&#39;</span>   <span class="o">+</span> <span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+
+    <span class="k">return</span> <span class="n">query_service</span><span class="p">(</span><span class="n">api_gateway_name</span><span class="p">(),</span> <span class="n">query</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="combine_action_handlers"><a class="viewcode-back" href="../../../internals/nautilus.network.html#nautilus.network.combine_action_handlers">[docs]</a><span class="k">def</span> <span class="nf">combine_action_handlers</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>

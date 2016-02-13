@@ -285,7 +285,7 @@ to provid valid credentials to other services.</p>
 
 <dl class="class">
 <dt id="nautilus.Service">
-<em class="property">class </em><code class="descclassname">nautilus.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>actionHandler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.Service" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>actionHandler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em>, <em>auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.Service" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the base class for all services that are part of a nautilus
 cloud. This class provides basic functionalities such as registration,
 responding to actions, and predictable api endpoints.</p>
@@ -294,19 +294,21 @@ responding to actions, and predictable api endpoints.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>actionHandler</strong> (<em>optional, function</em>) &#8211; The callback function fired when
+an action is recieved. If None, the service does not connect to the
+action queue.</li>
+<li><strong>auth</strong> (<em>optional, bool, default = True</em>) &#8211; Whether or not the service should add
+authentication requirements.</li>
+<li><strong>auto_register</strong> (<em>optional, bool</em>) &#8211; Whether or not the service should
+register itself when ran</li>
+<li><strong>configObject</strong> (<em>optional, class</em>) &#8211; A python class to use for configuring the
+service.</li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The name of the service. This will be used to
 register the service with the registry as act as the designator
 for a ServiceObjectType.</li>
 <li><strong>schema</strong> (<em>optional, graphql.core.type.GraphQLSchema</em>) &#8211; The GraphQL schema
 which acts as a basis for the external API. If None, no endpoints are
 added to the service.</li>
-<li><strong>actionHandler</strong> (<em>optional, function</em>) &#8211; The callback function fired when
-an action is recieved. If None, the service does not connect to the
-action queue.</li>
-<li><strong>configObject</strong> (<em>optional, class</em>) &#8211; A python class to use for configuring the
-service.</li>
-<li><strong>auto_register</strong> (<em>optional, bool</em>) &#8211; Whether or not the service should
-register itself when ran</li>
 </ul>
 </td>
 </tr>

@@ -149,11 +149,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># import the necessary modules</span>
-    <span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combineActionHandlers</span>
+    <span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span>
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">updateHandler</span><span class="p">,</span> <span class="n">createHandler</span><span class="p">,</span> <span class="n">deleteHandler</span>
 
     <span class="c1"># combine them into one handler</span>
-    <span class="k">return</span> <span class="n">combineActionHandlers</span><span class="p">(</span>
+    <span class="k">return</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
         <span class="n">updateHandler</span><span class="p">(</span><span class="n">Model</span><span class="p">),</span>
         <span class="n">createHandler</span><span class="p">(</span><span class="n">Model</span><span class="p">),</span>
         <span class="n">deleteHandler</span><span class="p">(</span><span class="n">Model</span><span class="p">),</span>

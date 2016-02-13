@@ -151,6 +151,19 @@
 
 <span class="sd">        Args:</span>
 
+<span class="sd">            actionHandler (optional, function): The callback function fired when</span>
+<span class="sd">                an action is recieved. If None, the service does not connect to the</span>
+<span class="sd">                action queue.</span>
+
+<span class="sd">            auth (optional, bool, default = True): Whether or not the service should add</span>
+<span class="sd">                authentication requirements.</span>
+
+<span class="sd">            auto_register (optional, bool): Whether or not the service should</span>
+<span class="sd">                register itself when ran</span>
+
+<span class="sd">            configObject (optional, class): A python class to use for configuring the</span>
+<span class="sd">                service.</span>
+
 <span class="sd">            name (string): The name of the service. This will be used to</span>
 <span class="sd">                register the service with the registry as act as the designator</span>
 <span class="sd">                for a ServiceObjectType.</span>
@@ -158,16 +171,6 @@
 <span class="sd">            schema (optional, graphql.core.type.GraphQLSchema): The GraphQL schema</span>
 <span class="sd">                which acts as a basis for the external API. If None, no endpoints are</span>
 <span class="sd">                added to the service.</span>
-
-<span class="sd">            actionHandler (optional, function): The callback function fired when</span>
-<span class="sd">                an action is recieved. If None, the service does not connect to the</span>
-<span class="sd">                action queue.</span>
-
-<span class="sd">            configObject (optional, class): A python class to use for configuring the</span>
-<span class="sd">                service.</span>
-
-<span class="sd">            auto_register (optional, bool): Whether or not the service should</span>
-<span class="sd">                register itself when ran</span>
 
 <span class="sd">        Example:</span>
 
@@ -202,6 +205,7 @@
             <span class="n">actionHandler</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
             <span class="n">configObject</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
             <span class="n">auto_register</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="n">auth</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># base the service on a flask app</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -209,6 +213,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auto_register</span> <span class="o">=</span> <span class="n">auto_register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
         <span class="c1"># apply any necessary flask app config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SQLALCHEMY_TRACK_MODIFICATIONS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
@@ -269,8 +274,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Service.setupAuth"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setupAuth">[docs]</a>    <span class="k">def</span> <span class="nf">setupAuth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">init_service</span>
-        <span class="n">init_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="c1"># if we are supposed to enable authentication for the service</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">init_service</span>
+            <span class="n">init_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Service.setupAdmin"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setupAdmin">[docs]</a>    <span class="k">def</span> <span class="nf">setupAdmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -191,7 +191,7 @@
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.columns"><a class="viewcode-back" href="../../../internals/nautilus.models.html#nautilus.models.base.BaseModel.columns">[docs]</a>    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inspect</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">inspect</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span></div>
 
 <div class="viewcode-block" id="BaseModel.primary_key"><a class="viewcode-back" href="../../../internals/nautilus.models.html#nautilus.models.base.BaseModel.primary_key">[docs]</a>    <span class="k">def</span> <span class="nf">primary_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">primary_keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span></div>

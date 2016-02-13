@@ -138,14 +138,15 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">consul</span> <span class="kn">import</span> <span class="n">Check</span>
-<span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">random_string</span>
 
 <span class="c1"># create a consul session</span>
 <span class="n">consulSession</span> <span class="o">=</span> <span class="n">consul</span><span class="o">.</span><span class="n">Consul</span><span class="p">()</span>
 
 <div class="viewcode-block" id="register_service"><a class="viewcode-back" href="../../../internals/nautilus.network.registry.html#nautilus.network.registry.register_service">[docs]</a><span class="k">def</span> <span class="nf">register_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Add a service to the registry service. &#39;&#39;&#39;</span>
+
+    <span class="c1"># local imports</span>
+    <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">random_string</span>
 
     <span class="c1"># compute and save the consul identifier for the service</span>
     <span class="n">service</span><span class="o">.</span><span class="n">consul_name</span> <span class="o">=</span> <span class="s2">&quot;{}-{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">random_string</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>

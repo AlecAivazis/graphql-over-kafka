@@ -162,9 +162,9 @@
         <span class="n">auto_camelcase</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="p">)</span>
 
+    <span class="c1"># grab the primary key from the Model</span>
     <span class="n">primary_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span><span class="o">.</span><span class="n">primary_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">primary_key_type</span> <span class="o">=</span> <span class="n">convert_sqlalchemy_type</span><span class="p">(</span><span class="n">primary_key</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">primary_key_type</span><span class="p">)</span>
 
     <span class="c1"># create a graphene object registered with the schema</span>
     <span class="nd">@schema.register</span>
@@ -176,7 +176,6 @@
 
 
         <span class="k">def</span> <span class="nf">resolve_primary_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span>
 
 

@@ -182,20 +182,56 @@ conventions.</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.resolve_primary_key">
-<code class="descname">resolve_primary_key</code><span class="sig-paren">(</span><em>args</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectType.resolve_primary_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.resolve_primary_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.__getattr__">
+<code class="descname">__getattr__</code><span class="sig-paren">(</span><em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectType.__getattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is overwritten to check for connection fields which don&#8217;t
+make it to the class record.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.connections">
+<em class="property">classmethod </em><code class="descname">connections</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectType.connections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.connections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of fields that are connections.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of fields of this object that are
+connections to other objects.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(list of fields)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.service">
 <code class="descname">service</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.service" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="classmethod">
+<dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.true_fields">
+<em class="property">classmethod </em><code class="descname">true_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectType.true_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.true_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of fields that are not connections.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The list of fields of this object that are
+not connections to other objects.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(list of fields)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta">
-<em class="property">class </em><code class="descclassname">nautilus.api.objectTypes.serviceObjectType.</code><code class="descname">ServiceObjectTypeMeta</code><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectTypeMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.api.objectTypes.serviceObjectType.</code><code class="descname">ServiceObjectTypeMeta</code><span class="sig-paren">(</span><em>name</em>, <em>bases</em>, <em>dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectTypeMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.core.classtypes.objecttype.ObjectTypeMeta</span></code></p>
 <dl class="method">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta.construct">

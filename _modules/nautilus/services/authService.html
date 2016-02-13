@@ -136,6 +136,8 @@
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
 <span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
 <span class="kn">from</span> <span class="nn">nautilus.auth.blueprints</span> <span class="kn">import</span> <span class="n">service_blueprint</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">auth_service_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.auth.backend</span> <span class="kn">import</span> <span class="n">loginManager</span>
 
 <div class="viewcode-block" id="AuthService"><a class="viewcode-back" href="../../../services/index.html#nautilus.AuthService">[docs]</a><span class="k">class</span> <span class="nc">AuthService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -164,12 +166,15 @@
 
         <span class="c1"># perform any necessary configuration first</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">auth_service_name</span><span class="p">(),</span>
+            <span class="n">auth</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span>
         <span class="p">)</span>
 
         <span class="c1"># add the authentication blueprint to the service</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_blueprint</span><span class="p">(</span><span class="n">service_blueprint</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_blueprint</span><span class="p">(</span><span class="n">service_blueprint</span><span class="p">)</span>
+
+        <span class="n">loginManager</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span></div>
 
 
 </pre></div>

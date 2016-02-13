@@ -138,12 +138,12 @@
 <span class="kn">from</span> <span class="nn">flask.ext.login</span> <span class="kn">import</span> <span class="n">LoginManager</span>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">.primitives</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.registry</span> <span class="kn">import</span> <span class="n">service_location_by_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">auth_service_name</span>
 
 <span class="c1"># create a new login manager</span>
 <span class="n">loginManager</span> <span class="o">=</span> <span class="n">LoginManager</span><span class="p">()</span>
 
-<span class="c1"># make sure unauthorized views are redirected to the auth service</span>
-<span class="n">loginManager</span><span class="o">.</span><span class="n">login_view</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:8005/login&#39;</span>
 
 <div class="viewcode-block" id="config_app"><a class="viewcode-back" href="../../../internals/nautilus.auth.html#nautilus.auth.backend.config_app">[docs]</a><span class="k">def</span> <span class="nf">config_app</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; set the necessary configuration parameters &quot;&quot;&quot;</span>
@@ -155,6 +155,9 @@
     <span class="k">return</span> <span class="n">User</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user_id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="init_app"><a class="viewcode-back" href="../../../internals/nautilus.auth.html#nautilus.auth.backend.init_app">[docs]</a><span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="c1"># make sure unauthorized views are redirected to the auth service</span>
+    <span class="n">loginManager</span><span class="o">.</span><span class="n">login_view</span> <span class="o">=</span> <span class="s1">&#39;http://&#39;</span> <span class="o">+</span> <span class="n">service_location_by_name</span><span class="p">(</span><span class="n">auth_service_name</span><span class="p">())</span>
+
     <span class="n">loginManager</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span></div>
 </pre></div>
 

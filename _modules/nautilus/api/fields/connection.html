@@ -134,13 +134,18 @@
   <h1>Source code for nautilus.api.fields.connection</h1><div class="highlight"><pre>
 <span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">String</span>
 <span class="kn">from</span> <span class="nn">graphql.core.utils.ast_to_dict</span> <span class="kn">import</span> <span class="n">ast_to_dict</span>
 <span class="kn">from</span> <span class="nn">graphql.core.language.printer</span> <span class="kn">import</span> <span class="n">print_ast</span>
 <span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">current_user</span>
 <span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">query_service</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.objectTypes</span> <span class="kn">import</span> <span class="n">ServiceObjectType</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.objectTypes.serviceObjectType</span> <span class="kn">import</span> <span class="n">serivce_objects</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">connection_service_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">convert_sqlalchemy_type</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.filter</span> <span class="kn">import</span> <span class="n">args_for_model</span>
+
 
 <div class="viewcode-block" id="Connection"><a class="viewcode-back" href="../../../../internals/nautilus.api.fields.html#nautilus.api.fields.connection.Connection">[docs]</a><span class="k">class</span> <span class="nc">Connection</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -172,23 +177,41 @@
             <span class="c1"># we are targetting a service object</span>
         <span class="n">perform_resolve</span> <span class="o">=</span> <span class="s1">&#39;resolver&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwds</span> <span class="ow">and</span> \
                             <span class="p">(</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> \
-                            <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span> <span class="p">)</span>
+                                <span class="nb">issubclass</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span> <span class="p">)</span>
 
-        <span class="c1"># if a resolve was not specified</span>
-        <span class="k">if</span> <span class="n">perform_resolve</span><span class="p">:</span>
-            <span class="c1"># save references to constructor arguments</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">relationship</span> <span class="o">=</span> <span class="n">relationship</span>
+        <span class="c1"># the field to use as the list</span>
+        <span class="n">list_wrapper</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
-            <span class="c1"># set the resolver if a service was specified</span>
-            <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;resolver&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_service</span>
+        <span class="c1"># if we&#39;re not supposed to perform the resolve</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">perform_resolve</span><span class="p">:</span>
+            <span class="c1"># just instantiate a field with the wrapper</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="nb">type</span> <span class="o">=</span> <span class="n">list_wrapper</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="c1"># and don&#39;t do anything else</span>
+            <span class="k">return</span>
 
-        <span class="c1"># create a field that is a list of the target</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="c1"># a connection is normally a list unless we are encapsulating a foreign key</span>
-            <span class="nb">type</span> <span class="o">=</span> <span class="n">target</span> <span class="k">if</span> <span class="n">perform_resolve</span> <span class="ow">and</span> <span class="n">relationship</span> <span class="o">==</span> <span class="s1">&#39;one&#39;</span> <span class="k">else</span> <span class="n">List</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
-            <span class="o">**</span><span class="n">kwds</span>
-        <span class="p">)</span>
+        <span class="c1"># we are supposed to perform the resolve</span>
+
+        <span class="c1"># save references to constructor arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relationship</span> <span class="o">=</span> <span class="n">relationship</span>
+
+        <span class="c1"># set the resolver if a service was specified</span>
+        <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;resolver&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_service</span>
+
+        <span class="c1"># if the target is a service service model</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="s1">&#39;service&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">):</span>
+            <span class="c1"># add the model&#39;s args to the field</span>
+            <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args_for_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># if we are supposed to resolve only a single element</span>
+        <span class="k">if</span> <span class="n">relationship</span> <span class="o">==</span> <span class="s1">&#39;one&#39;</span><span class="p">:</span>
+            <span class="c1"># then the field should be a direct reference to the target</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="nb">type</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="c1"># otherwise we are going to be resolving many elements</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># use the list wrapper as the field type</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="nb">type</span> <span class="o">=</span> <span class="n">list_wrapper</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
 
 
 <div class="viewcode-block" id="Connection.resolve_service"><a class="viewcode-back" href="../../../../internals/nautilus.api.fields.html#nautilus.api.fields.connection.Connection.resolve_service">[docs]</a>    <span class="k">def</span> <span class="nf">resolve_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">query_args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
@@ -197,68 +220,106 @@
 <span class="sd">            connection.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c1"># note: it is safe to assume the target is a service object</span>
+
+        <span class="c1"># the target class for the connection</span>
         <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
 
-        <span class="c1"># if we are targetting a string</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="c1"># todo: find a non-weak version of _type_names</span>
-            <span class="c1"># grab the equivalent class from the schema</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">graphene_schema</span><span class="o">.</span><span class="n">_types_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">]</span>
+        <span class="c1"># if we were given a string to target</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># if the string points to a service object we recognize</span>
+            <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">serivce_objects</span><span class="p">:</span>
+                <span class="c1"># grab the service object with the matching name</span>
+                <span class="n">target</span> <span class="o">=</span> <span class="n">serivce_objects</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+            <span class="c1"># otherwise the string target does not designate a service object</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># yell loudly</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please provide a string designating a &quot;</span> <span class="o">+</span> \
+                                    <span class="s2">&quot;ServiceObjectType as the target for &quot;</span> <span class="o">+</span> \
+                                    <span class="s2">&quot;a connection.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># make a normal dictionary out of the immutable dictionary</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="n">query_args</span><span class="o">.</span><span class="n">to_data_dict</span><span class="p">()</span>
+        <span class="c1"># make a normal dictionary out of the immutable one we were given</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">query_args</span> \
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> \
+                    <span class="k">else</span> <span class="n">query_args</span><span class="o">.</span><span class="n">to_data_dict</span><span class="p">()</span>
+
+        <span class="c1">## resolve the connection if necessary</span>
+        <span class="n">target_service_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">name</span> \
+                                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span> \
+                                    <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">service</span>
 
         <span class="c1"># if we are connecting two service objects, we need to go through a connection table</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-
             <span class="c1"># the target service</span>
-            <span class="n">target_service</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">service</span>
+            <span class="n">instance_service_name</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">name</span> \
+                                            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span> \
+                                            <span class="k">else</span> <span class="n">instance</span><span class="o">.</span><span class="n">service</span>
 
             <span class="c1"># the name of the service that manages the connection</span>
-            <span class="n">service_name</span> <span class="o">=</span> <span class="n">connection_service_name</span><span class="p">(</span><span class="n">target_service</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="p">)</span>
+            <span class="n">connection_service</span> <span class="o">=</span> <span class="n">connection_service_name</span><span class="p">(</span><span class="n">target_service_name</span><span class="p">,</span>
+                                                            <span class="n">instance_service_name</span><span class="p">)</span>
 
             <span class="c1"># look for connections originating from this object</span>
             <span class="n">join_filter</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">join_filter</span><span class="p">[</span><span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">primary_key</span>
+            <span class="n">join_filter</span><span class="p">[</span><span class="n">instance_service_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">primary_key</span>
+
             <span class="c1"># query the connection service for related data</span>
-            <span class="n">related</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="p">[</span><span class="n">target_service</span><span class="p">],</span> <span class="n">join_filter</span><span class="p">)</span>
+            <span class="n">related</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span>
+                <span class="n">connection_service</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">target_service_name</span><span class="p">],</span>
+                <span class="n">join_filter</span>
+            <span class="p">)</span>
 
             <span class="c1"># if there were no related fields</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">related</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">None</span>
 
             <span class="c1"># grab the list of primary keys from the remote service</span>
-            <span class="n">join_ids</span> <span class="o">=</span> <span class="p">[</span> <span class="n">entry</span><span class="p">[</span><span class="n">target_service</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">related</span> <span class="p">]</span>
+            <span class="n">join_ids</span> <span class="o">=</span> <span class="p">[</span> <span class="n">entry</span><span class="p">[</span><span class="n">target_service_name</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">related</span> <span class="p">]</span>
 
             <span class="c1"># add the private key filter to the filter dicts</span>
             <span class="n">args</span><span class="p">[</span><span class="s1">&#39;pk_in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">join_ids</span>
 
-        <span class="c1"># the potential pieces of data to retrieve about the object depends on</span>
-        <span class="c1"># the target object type we are going to instantiate.</span>
-        <span class="c1"># todo: avoid internal _meta pointer since its potentially weak</span>
-        <span class="n">targetFields</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">fields</span>
 
-        <span class="c1"># grab the fields that are not connections</span>
-        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">attname</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">targetFields</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))]</span>
+        <span class="c1">## query the target service</span>
+
+        <span class="c1"># only query the backend service for the fields that are not connections</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">attname</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">true_fields</span><span class="p">()]</span>
 
         <span class="c1"># grab the final list of entries</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="n">target_service_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
 
         <span class="c1"># there are no results</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="c1"># if there is more than one result for a &quot;one&quot; relation</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationship</span> <span class="o">==</span> <span class="s1">&#39;one&#39;</span><span class="p">:</span>
+            <span class="c1"># yell loudly</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Inconsistent state reached: multiple entries &quot;</span> <span class="o">+</span> \
+                                        <span class="s2">&quot;resolving a foreign key reference&quot;</span><span class="p">)</span>
+
+
+        <span class="c1">## remove instances of the target that the user is not allowed to see</span>
+
+        <span class="c1"># if we need to apply some sort of authorization</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s1">&#39;auth&#39;</span><span class="p">):</span>
+            <span class="c1"># apply the authorization criteria to the result</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span> \
+                                <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">auth</span><span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">),</span> <span class="n">current_user</span><span class="p">)]</span>
+
+
+        <span class="c1">## deal with target relationship types</span>
+
+        <span class="c1"># if the filter got rid of all of the results</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># the user isn&#39;t allowed to see the related data so return nothing</span>
             <span class="k">return</span> <span class="bp">None</span>
 
-        <span class="c1"># todo: think about doing this at the join step (how to specify both sides of relationship in one spot)</span>
+        <span class="c1"># todo: think about doing this at the join step</span>
+        <span class="c1"># (how to specify both sides of relationship in one spot)</span>
         <span class="c1"># if we are on the `one` side of the relationship</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationship</span> <span class="o">==</span> <span class="s1">&#39;one&#39;</span><span class="p">:</span>
-            <span class="c1"># if there is more than one result</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># yell loudly</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Inconsistent state reached: multiple entries resolving a foreign key reference&quot;</span><span class="p">)</span>
-            <span class="c1"># otherwise there is only one result</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># pull the first item out of the list</span>
-                <span class="k">return</span> <span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationship</span> <span class="o">==</span> <span class="s1">&#39;one&#39;</span><span class="p">:</span>
+            <span class="c1"># pull the first item out of the list</span>
+            <span class="k">return</span> <span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># create instances of the target class for every result</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">target</span><span class="p">(</span><span class="o">**</span><span class="n">result</span><span class="p">)</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">)</span></div></div>

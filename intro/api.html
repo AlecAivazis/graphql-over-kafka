@@ -177,46 +177,43 @@ our cloud.</p>
 <p>Normally, supporting this schema involes bouncing a lot of different queries
 between various ModelServices and their connections in order to create a single
 report. This easily becomes very difficult to maintain, is prone to bugs,
-and leads to a significant amount of code duplication (which is bad). While
-not yet fully automated, nautilus makes the creation of this schema
-significantly easier.</p>
-<p>Rather than basing your schema object types on an SQLAlchemyObjectType like
+and leads to a significant amount of code duplication (which is bad). Nautilus
+makes the creation and evaluation of this schema significantly easier.</p>
+<p>Rather than basing your object types on an SQLAlchemyObjectType like
 before, services that you wish to use as representation for an external service
 should be based on the SerivceObjectType. Add the following code block at the
 end of the api gateway file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="n">Schema</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">ServiceObjectType</span><span class="p">,</span> <span class="n">Connection</span>
+<span class="kn">from</span> <span class="nn">.recipes</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">RecipeService</span>
+<span class="kn">from</span> <span class="nn">.ingredients</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">IngredientService</span>
 
 <span class="k">class</span> <span class="nc">Ingredient</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;ingredient&#39;</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;The name of the ingredient.&quot;</span><span class="p">)</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="n">IngredientService</span>
 
 
 <span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;recipe&#39;</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;The name of the recipe.&quot;</span><span class="p">)</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span>
 
 
 <span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">ObjectType</span><span class="p">):</span>
     <span class="n">ingredients</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">Ingredient</span><span class="p">)</span>
     <span class="n">recipes</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">Recipes</span><span class="p">)</span>
 
+
 <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">()</span>
 <span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
 </pre></div>
 </div>
-<p>Notice the class Meta defined inside of the ServiceObjectType. The value
-of the service parameter inside that class desingates the name of the service
-to use as its source.</p>
+<p>Notice the class Meta defined inside of the ServiceObjectType. That paramter
+takes a service to use as a base for field and query arguments.</p>
 <p>Remember earlier when you used a Connection and it acted just like a list?
 Well, that&#8217;s because the type you were connecting was a standard GraphQL one.
 When the target of a connection is a service object, nautilus will use the
-target&#8217;s service keyword to look up the location of the service in the registry and
-use its data. Go ahead and pass the schema to your service and give it a try.
+target&#8217;s service to look up the location of the remote service in the registry
+and use its data. Go ahead and pass the schema to your service and give it a try.
 You should be able to query the state of the recipe service from the api
 service with a query like <code class="docutils literal"><span class="pre">{</span> <span class="pre">ingredients</span> <span class="pre">{</span> <span class="pre">name</span> <span class="pre">}}</span></code>. Pretty cool huh? Just
 wait, it gets better.</p>
@@ -224,9 +221,7 @@ wait, it gets better.</p>
 and recipes by adding a Connection field to the recipe class:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;recipe&#39;</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;The name of the recipe.&quot;</span><span class="p">)</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span>
 
     <span class="n">ingredients</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span>
                     <span class="n">Ingredient</span><span class="p">,</span>
