@@ -43,7 +43,7 @@ on the current user is easy in nautilus. Simply, add a function to your
 returns true if the user can see the object and false if not. For example, say
 we had set up a relationship between recipes and users through another
 connection service. We could limit the results in the recipe query to only
-those related to the current user by changing our recipe service object to
+those written by the current user by changing our recipe service object to
 look something like:
 
 
@@ -53,9 +53,12 @@ look something like:
         class Meta:
             service = RecipeService
 
+        # assuming this was defined above/elsewhere
+        author = Connection(User)
+
         def auth(self, user):
             """
                 This function returns True if the given user is able to view
                 this recipe.
             """
-            return self.user.id == user.id
+            return self.author.id == user.id
