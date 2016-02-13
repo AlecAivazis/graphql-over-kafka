@@ -52,7 +52,6 @@ class ConnectionService(ModelService):
 
         # # create the service
         super().__init__(
-            # schema = create_model_schema(model),
             model = create_connection_model(services),
             name = connection_service_name(*services),
             **kwargs

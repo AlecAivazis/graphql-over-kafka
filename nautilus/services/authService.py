@@ -3,6 +3,7 @@ from .service import Service
 from nautilus.network.actionHandlers import noop_handler
 from nautilus.auth.blueprints import service_blueprint
 from nautilus.conventions.services import auth_service_name
+from nautilus.auth.backend import loginManager
 
 class AuthService(Service):
     """
@@ -32,10 +33,13 @@ class AuthService(Service):
         # perform any necessary configuration first
         super().__init__(
             name = auth_service_name(),
+            auth = False,
             **kwargs
         )
 
         # add the authentication blueprint to the service
         self.use_blueprint(service_blueprint)
+
+        loginManager.init_app(self.app)
 
 

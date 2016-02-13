@@ -17,6 +17,19 @@ class Service:
 
         Args:
 
+            actionHandler (optional, function): The callback function fired when
+                an action is recieved. If None, the service does not connect to the
+                action queue.
+
+            auth (optional, bool, default = True): Whether or not the service should add
+                authentication requirements.
+
+            auto_register (optional, bool): Whether or not the service should
+                register itself when ran
+
+            configObject (optional, class): A python class to use for configuring the
+                service.
+
             name (string): The name of the service. This will be used to
                 register the service with the registry as act as the designator
                 for a ServiceObjectType.
@@ -24,16 +37,6 @@ class Service:
             schema (optional, graphql.core.type.GraphQLSchema): The GraphQL schema
                 which acts as a basis for the external API. If None, no endpoints are
                 added to the service.
-
-            actionHandler (optional, function): The callback function fired when
-                an action is recieved. If None, the service does not connect to the
-                action queue.
-
-            configObject (optional, class): A python class to use for configuring the
-                service.
-
-            auto_register (optional, bool): Whether or not the service should
-                register itself when ran
 
         Example:
 
@@ -68,6 +71,7 @@ class Service:
             actionHandler = None,
             configObject = None,
             auto_register = True,
+            auth = True,
     ):
         # base the service on a flask app
         self.app = Flask(__name__)
@@ -75,6 +79,7 @@ class Service:
         self.name = name
         self.__name__ = name
         self.auto_register = auto_register
+        self.auth = auth
 
         # apply any necessary flask app config
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -135,8 +140,10 @@ class Service:
         self.app.register_blueprint(blueprint)
 
     def setupAuth(self):
-        from nautilus.auth import init_service
-        init_service(self)
+        # if we are supposed to enable authentication for the service
+        if self.auth:
+            from nautilus.auth import init_service
+            init_service(self)
 
 
     def setupAdmin(self):

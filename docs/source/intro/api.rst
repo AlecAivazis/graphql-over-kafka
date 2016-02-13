@@ -40,11 +40,10 @@ our cloud.
 Normally, supporting this schema involes bouncing a lot of different queries
 between various ModelServices and their connections in order to create a single
 report. This easily becomes very difficult to maintain, is prone to bugs,
-and leads to a significant amount of code duplication (which is bad). While
-not yet fully automated, nautilus makes the creation of this schema
-significantly easier.
+and leads to a significant amount of code duplication (which is bad). Nautilus
+makes the creation and evaluation of this schema significantly easier.
 
-Rather than basing your schema object types on an SQLAlchemyObjectType like
+Rather than basing your object types on an SQLAlchemyObjectType like
 before, services that you wish to use as representation for an external service
 should be based on the SerivceObjectType. Add the following code block at the
 end of the api gateway file:
@@ -53,38 +52,36 @@ end of the api gateway file:
 
     from graphene import String, ObjectType, Schema
     from nautilus.api import ServiceObjectType, Connection
+    from .recipes import service as RecipeService
+    from .ingredients import service as IngredientService
 
     class Ingredient(ServiceObjectType):
         class Meta:
-            service = 'ingredient'
-
-        name = String(description = "The name of the ingredient.")
+            service = IngredientService
 
 
     class Recipe(ServiceObjectType):
         class Meta:
-            service = 'recipe'
-
-        name = String(description = "The name of the recipe.")
+            service = RecipeService
 
 
     class Query(ObjectType):
         ingredients = Connection(Ingredient)
         recipes = Connection(Recipes)
 
+
     schema = Schema()
     schema.query = Query
 
 
-Notice the class Meta defined inside of the ServiceObjectType. The value
-of the service parameter inside that class desingates the name of the service
-to use as its source.
+Notice the class Meta defined inside of the ServiceObjectType. That paramter
+takes a service to use as a base for field and query arguments.
 
 Remember earlier when you used a Connection and it acted just like a list?
 Well, that's because the type you were connecting was a standard GraphQL one.
 When the target of a connection is a service object, nautilus will use the
-target's service keyword to look up the location of the service in the registry and
-use its data. Go ahead and pass the schema to your service and give it a try.
+target's service to look up the location of the remote service in the registry
+and use its data. Go ahead and pass the schema to your service and give it a try.
 You should be able to query the state of the recipe service from the api
 service with a query like ``{ ingredients { name }}``. Pretty cool huh? Just
 wait, it gets better.
@@ -96,9 +93,7 @@ and recipes by adding a Connection field to the recipe class:
 
     class Recipe(ServiceObjectType):
         class Meta:
-            service = 'recipe'
-
-        name = String(description = "The name of the recipe.")
+            service = RecipeService
 
         ingredients = Connection(
                         Ingredient,

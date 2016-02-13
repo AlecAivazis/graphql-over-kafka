@@ -42,7 +42,6 @@ def create_model_schema(Model):
 
 
         def resolve_primary_key(self, args, info):
-            print(self, args, info)
             return self.primary_key()
 
 

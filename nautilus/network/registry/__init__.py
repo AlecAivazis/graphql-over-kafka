@@ -4,14 +4,15 @@ import threading
 import time
 import random
 from consul import Check
-# local imports
-from nautilus.auth import random_string
 
 # create a consul session
 consulSession = consul.Consul()
 
 def register_service(service):
     ''' Add a service to the registry service. '''
+
+    # local imports
+    from nautilus.auth import random_string
 
     # compute and save the consul identifier for the service
     service.consul_name = "{}-{}".format(service.name, random_string(6))

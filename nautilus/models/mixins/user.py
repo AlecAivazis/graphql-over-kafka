@@ -8,6 +8,6 @@ from .hasID import HasID
 
 class User(HasID):
     """ The user model used by Synca. """
-    firstName = Column(Text)
-    lastName = Column(Text)
+    firstname = Column(Text)
+    lastname = Column(Text)
     email = Column(Text, nullable = False)

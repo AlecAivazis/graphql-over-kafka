@@ -6,6 +6,9 @@ from nautilus.api.filter import args_for_model
 
 VALID_ATTRS = ('service',)
 
+# collect the created service objects in a list
+serivce_objects = {}
+
 class ServiceObjectTypeOptions(ObjectTypeOptions):
 
     def __init__(self, *args, **kwds):
@@ -29,6 +32,7 @@ class ServiceObjectTypeMeta(type(ObjectType)):
         # return the full class record
         return super().construct(*args, **kwds)
 
+
     def __new__(cls, name, bases, attributes, **kwds):
 
         # if there is a Meta class defined
@@ -45,6 +49,12 @@ class ServiceObjectTypeMeta(type(ObjectType)):
         return super().__new__(cls, name, bases, attributes, **kwds)
 
 
+    def __init__(cls, name, bases, dict):
+        # bubble upwards
+        super().__init__(name, bases, dict)
+        # add the object to the registry
+        serivce_objects[name] = cls
+
 class ServiceObjectType(ObjectType, metaclass = ServiceObjectTypeMeta):
     """
         This object type represents data maintained by a remote service.
@@ -55,8 +65,25 @@ class ServiceObjectType(ObjectType, metaclass = ServiceObjectTypeMeta):
 
     primary_key = String()
 
+    def __getattr__(self, attr):
+        """
+            This is overwritten to check for connection fields which don't
+            make it to the class record.
+        """
+        # figure out the connections for this service
+        connection = [connection for connection in type(self).connections() \
+                                    if connection.attname == attr]
+        # if the attribute that was asked for was a connection
+        if connection:
+            # return the resolved value
+            return connection[0].resolver(self, {}, {})
+        else:
+            # Default behaviour
+            raise AttributeError
+
+
     @classmethod
-    def true_fields(self):
+    def true_fields(cls):
         """
             Returns the list of fields that are not connections.
 
@@ -64,11 +91,25 @@ class ServiceObjectType(ObjectType, metaclass = ServiceObjectTypeMeta):
                 (list of fields): The list of fields of this object that are
                     not connections to other objects.
         """
-
         from nautilus.api.fields import Connection
-
         # todo: avoid internal _meta pointer since its potentially weak
-        targetFields = self._meta.fields
-
+        fields = cls._meta.fields
         # grab the fields that are not connections
-        return [field for field in targetFields if not isinstance(field, Connection)]
+        return [field for field in fields if not isinstance(field, Connection)]
+
+
+    @classmethod
+    def connections(cls):
+        """
+            Returns the list of fields that are connections.
+
+            Returns:
+                (list of fields): The list of fields of this object that are
+                    connections to other objects.
+        """
+        from nautilus.api.fields import Connection
+        # todo: avoid internal _meta pointer since its potentially weak
+        fields = cls._meta.fields
+        # grab the fields that are not connections
+        return [field for field in fields if isinstance(field, Connection)]
+
