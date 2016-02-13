@@ -165,7 +165,7 @@ interacts with a service like the API gateway or a client, they a bit of
 information with every request that identifies them and indicates they are
 logged in. If a service requires authentication and it cannot be found, the
 user is redirected to this service to obtain such credentials. As such, this
-service needs to only be responsible for maintaining user passwords, other
+service needs to only be responsible for maintaining user passwords. Other
 bits of user information can be stored in another, less protected service.</p>
 <p>Go ahead and run this service (remember to create the database). Navigate
 to the <code class="docutils literal"><span class="pre">/register</span></code> endpoint and register an account for us to use. Log into
@@ -175,15 +175,15 @@ endpoint.</p>
 <div class="section" id="authorizing-users-for-particular-pieces-of-data">
 <h2>Authorizing Users for Particular Pieces of Data<a class="headerlink" href="#authorizing-users-for-particular-pieces-of-data" title="Permalink to this headline">¶</a></h2>
 <p>Regardless of your application, not all bits of information are inteded for
-everyone. Eventually you&#8217;ll want to be able to specify which users are able
-to see which entries in our api. Thankfully, hiding pieces of data based on
-the current user is easy in nautilus. Simply, add a function to your
-<a href="#id1"><span class="problematic" id="id2">``</span></a>ServiceObjectType``s that takes the user as an argument and returns true or
-false depending on wether that user can see the object. For example, say we
-had set up a relationship between recipes and users through another connection
-service. We could limit the results in the recipe query to only those related
-to the current user by adding the function at the bottom of the object
-definition:</p>
+everyone to see. Eventually you&#8217;ll want to be able to specify which users are
+able to see which entries in our api. Thankfully, hiding pieces of data based
+on the current user is easy in nautilus. Simply, add a function to your
+<code class="docutils literal"><span class="pre">ServiceObjectType``s</span> <span class="pre">called</span> <span class="pre">``auth</span></code> that takes the user as an argument and
+returns true if the user can see the object and false if not. For example, say
+we had set up a relationship between recipes and users through another
+connection service. We could limit the results in the recipe query to only
+those related to the current user by changing our recipe service object to
+look something like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span>
