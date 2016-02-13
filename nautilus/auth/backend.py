@@ -2,12 +2,12 @@
 from flask.ext.login import LoginManager
 # local imports
 from .primitives import User
+from nautilus.network.registry import service_location_by_name
+from nautilus.conventions.services import auth_service_name
 
 # create a new login manager
 loginManager = LoginManager()
 
-# make sure unauthorized views are redirected to the auth service
-loginManager.login_view = 'http://localhost:8005/login'
 
 def config_app(app):
     """ set the necessary configuration parameters """
@@ -19,4 +19,7 @@ def load_user(user_id):
     return User(id=user_id)
 
 def init_app(app):
+    # make sure unauthorized views are redirected to the auth service
+    loginManager.login_view = 'http://' + service_location_by_name(auth_service_name())
+
     loginManager.init_app(app)

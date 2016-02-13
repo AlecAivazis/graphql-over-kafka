@@ -12,7 +12,7 @@
           <div class="email-password-area col-xs-12 large col-sm-12">
             <div class="header">
               <span>Log In or </span>
-              <a href="">Create an Account</a>
+              <a href="{{ url_for('auth.register') }}">Create an Account</a>
             </div>
             {% with messages = get_flashed_messages() %}
               {% if messages %}

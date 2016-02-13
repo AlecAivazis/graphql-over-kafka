@@ -1,5 +1,5 @@
 # external imports
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, abort, redirect, request, flash
 from os import path
 # local imports
 from nautilus.auth import login_user, logout_user
@@ -8,13 +8,14 @@ from .forms import (
     LoginForm,
     RegistrationForm,
 )
+from .models import UserPassword
+from .primitives import User
 
 
 service_blueprint = Blueprint('auth', __name__, template_folder='templates')
 
 @service_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
-    from .models import UserPassword
 
     form = LoginForm()
 
@@ -24,23 +25,21 @@ def login():
         data = form.data
 
         # get the user with matching email
-        user = queryGraphQLService('http://localhost:8000', 'users', [
+        user_data = query_graphql_service('http://localhost:8000', 'users', [
             'id',
-            'firstName',
-            'lastName',
             'email',
-            'username',
         ], {
             'email': data['email']
         })[0]
 
         # look for a matching entry in the local database
-        passwordEntry = UserPassword.query.filter_by(user=user['id']).first()
+        passwordEntry = UserPassword.query.filter(UserPassword.user == user_data['id']).first()
 
         # if the given password matches the stored hash
         if passwordEntry and passwordEntry.password == data['password']:
             # create a user object out of the remote user data
-            user = User(**data)
+            user = User(**user_data)
+            print(user)
             # log in the user
             login_user(user, remember=True)
             # redirect the user to the url parameter
@@ -63,3 +62,24 @@ def logout():
    """
     logout_user()
     return redirect('/')
+
+@service_blueprint.route('/register', methods=['GET', 'POST'])
+def register():
+
+    form = RegistrationForm()
+
+    # if we recieved a post request with valid information
+    if form.validate_on_submit():
+        # the form data
+        data = form.data
+
+        # create an entry in the user password table
+        password = UserPassword(**data)
+        # save it to the database
+        password.save()
+
+        # move the user along
+        return redirect(request.args.get('next'))
+
+    # we did not recieve a post request with valid information
+    return render_template('register.html', form=form)
