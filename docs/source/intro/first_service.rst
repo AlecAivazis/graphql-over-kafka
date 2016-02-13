@@ -102,9 +102,9 @@ Building a Schema
 -------------------
 
 Traditionally, backend data is made availible via some sort of RESTful api. In
-nautilus, services use a piece of technology from the facebook engineers
- called GraphQL which allows the service to expose the data through a single
-endpoint. For more information on GraphQL, visit [this]() page.
+nautilus, services use a piece of technology from the facebook engineers called
+GraphQL which allows the service to expose the data through a single endpoint.
+For more information on GraphQL, visit [this]() page.
 
 Normally, building the schema for our endpoint would result in a
 significant amount of duplicated code (a new field for every model

@@ -39,7 +39,7 @@ Regardless of your application, not all bits of information are inteded for
 everyone to see. Eventually you'll want to be able to specify which users are
 able to see which entries in our api. Thankfully, hiding pieces of data based
 on the current user is easy in nautilus. Simply, add a function to your
-``ServiceObjectType``s called ``auth`` that takes the user as an argument and
+``ServiceObjectType`` s called ``auth`` that takes the user as an argument and
 returns true if the user can see the object and false if not. For example, say
 we had set up a relationship between recipes and users through another
 connection service. We could limit the results in the recipe query to only
