@@ -1,7 +1,11 @@
+# external imports
 from nautilus import APIGateway
 from graphene import Schema, ObjectType, String
 from nautilus.api import ServiceObjectType
 from nautilus.api.fields import Connection
+# local imports
+from .recipes import service as RecipeService
+from .ingredients import service as IngredientService
 
 
 # create the schema based on the query object
@@ -12,9 +16,7 @@ schema = Schema(name='Product Schema')
 class Recipe(ServiceObjectType):
 
     class Meta:
-        service = 'recipe'
-
-    name = String(description = 'The name of the recipe')
+        service = RecipeService
     
     # you can avoid circular/undefined references using strings - nautilus will look 
     # for the corresponding ServiceObjectType
@@ -25,9 +27,7 @@ class Recipe(ServiceObjectType):
 class Ingredient(ServiceObjectType):
 
     class Meta:
-        service = 'ingredient'
-
-    name = String(description = 'The name of the ingredient')
+        service = IngredientService
     
     # connections are resolved/joined using the appropriate connection service
     recipes = Connection(Recipe, description = 'The recipes with this ingredient')
