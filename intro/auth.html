@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Authentication &mdash; nautilus v0.2.4 documentation</title>
+  <title>Authentication &mdash; nautilus v0.3.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.2.4 documentation" href="../index.html"/>
+    <link rel="top" title="nautilus v0.3.0 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
         <link rel="next" title="Services" href="../services/index.html"/>
         <link rel="prev" title="Querying The Distributed Structure" href="api.html"/> 
@@ -190,8 +190,8 @@ definition:</p>
 
     <span class="k">def</span> <span class="nf">auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            A recipe can only be seen by a user if the connected id</span>
-<span class="sd">            matches the users.</span>
+<span class="sd">            This function returns True if the given user is able to view</span>
+<span class="sd">            this sensor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span>
 </pre></div>
@@ -240,7 +240,7 @@ definition:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.2.4',
+            VERSION:'v0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -55,8 +55,8 @@ definition:
 
         def auth(self, user):
             """
-                A recipe can only be seen by a user if the connected id
-                matches the users.
+                This function returns True if the given user is able to view
+                this sensor.
             """
             return self.user.id == user.id
 
