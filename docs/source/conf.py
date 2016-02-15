@@ -65,7 +65,7 @@ author = 'Alec Aivazis'
 # built documents.
 #
 # The short X.Y version.
-version = 'v0'
+version = 'v0.3'
 # The full version, including alpha/beta/rc tags.
 release = 'v0.3.0'
 
