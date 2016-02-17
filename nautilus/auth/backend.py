@@ -19,7 +19,4 @@ def load_user(user_id):
     return User(id=user_id)
 
 def init_app(app):
-    # make sure unauthorized views are redirected to the auth service
-    loginManager.login_view = 'http://' + service_location_by_name(auth_service_name())
-
     loginManager.init_app(app)
