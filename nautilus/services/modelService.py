@@ -3,6 +3,7 @@ from nautilus.network import CRUDHandler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
 from nautilus.network.actionHandlers import noop_handler
+from nautilus.admin import add_model as add_model_to_admin
 from .service import Service
 
 class ModelService(Service):
@@ -48,6 +49,7 @@ class ModelService(Service):
         # save a reference to the model this service is managing
         self.model = model
 
+
         # the schema to add to the service
         schema = create_model_schema(model)
 
@@ -68,3 +70,11 @@ class ModelService(Service):
             name = name,
             **kwargs
         )
+
+    def run(self, **kwargs):
+
+        # register the class with the admin interface
+        add_model_to_admin(self.model)
+
+
+        super().run(**kwargs)

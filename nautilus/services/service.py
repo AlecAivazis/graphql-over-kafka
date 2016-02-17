@@ -101,12 +101,15 @@ class Service:
         self.setupApi(schema)
 
 
-    def run(self, port = 8000, debug = False, secretKey = 'supersecret'):
+    def run(self, port = 8000, debug = False, secretKey = 'supersecret', **kwargs):
 
         # save command line arguments
-        self.app.config['DEBUG'] = debug
-        self.app.config['PORT'] = port
-        self.app.config['SECRET_KEY'] = secretKey
+        self.app.config['DEBUG'] = kwargs['debug'] if 'debug' in kwargs \
+                                                    else debug
+        self.app.config['PORT'] = kwargs['port'] if 'port' in kwargs \
+                                                    else port
+        self.app.config['SECRET_KEY'] = kwargs['secretKey'] if 'secretKey' in kwargs \
+                                                            else secretKey
 
         # if the service needs to register itself
         if self.auto_register:

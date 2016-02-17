@@ -43,9 +43,7 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
             setattr(self, key, value)
 
     @classmethod
-    def onCreation(cls):
-        # register the class with the admin interface
-        admin.add_model(cls)
+    def onCreation(cls): pass
 
     @classmethod
     def primary_keys(cls):
