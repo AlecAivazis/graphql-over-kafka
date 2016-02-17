@@ -100,8 +100,5 @@ recipes and ingredients:
     )
 
 
-Again, you can run the service and check out the various endpoints. Currently,
-there is a bug in the admin panel that shows the connected services, Ignore
-those, they shouldn't be there and do not represent the state of the connected
-services.
+Again, you can run the service and check out the various endpoints.
 

@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                v0
+                v0.3
               </div>
             
           
@@ -235,12 +235,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setupApi</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Service.run"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">secretKey</span> <span class="o">=</span> <span class="s1">&#39;supersecret&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.run"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">secretKey</span> <span class="o">=</span> <span class="s1">&#39;supersecret&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="c1"># save command line arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">debug</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secretKey</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;debug&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
+                                                    <span class="k">else</span> <span class="n">debug</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;port&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
+                                                    <span class="k">else</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secretKey&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;secretKey&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
+                                                            <span class="k">else</span> <span class="n">secretKey</span>
 
         <span class="c1"># if the service needs to register itself</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_register</span><span class="p">:</span>

@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                v0
+                v0.3
               </div>
             
           
@@ -196,6 +196,21 @@
 </div>
 <div class="section" id="module-nautilus.auth.decorators">
 <span id="nautilus-auth-decorators-module"></span><h2>nautilus.auth.decorators module<a class="headerlink" href="#module-nautilus.auth.decorators" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.auth.decorators.login_required">
+<code class="descclassname">nautilus.auth.decorators.</code><code class="descname">login_required</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/decorators.html#login_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.decorators.login_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorating a view with this will ensure that the current user is
+logged in and authentication before calling the view. If a user
+is not logged in, they are redirected to the auth service to provide
+the necessary credentials.</p>
+<p class="rubric">Example</p>
+<p>&#64;service.app.route(&#8216;/foo)
+&#64;login_required
+def hello():</p>
+<blockquote>
+<div>return &#8216;world&#8217;</div></blockquote>
+</dd></dl>
+
 </div>
 <div class="section" id="module-nautilus.auth">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.auth" title="Permalink to this headline">¶</a></h2>
