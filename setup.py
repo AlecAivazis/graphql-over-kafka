@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'nautilus',
-    version = '0.3.0',
+    version = '0.3.1',
     description = 'A library for creating microservice applications',
     author = 'Alec Aivazis',
     author_email = 'alec@aivazis.com',
@@ -17,13 +17,15 @@ setup(
     packages = find_packages(exclude=['example', 'tests']),
     install_requires = [
         'bcrypt',
-        'flask',
+        'flask',,
         'flask_admin',
+        'flask_cors',
         'flask_graphql',
         'flask_jsontools',
         'flask_login',
         'flask_script',
         'flask_sqlalchemy',
+        'flask_wtf',
         'graphene',
         'sqlalchemy',
         'nose2',
