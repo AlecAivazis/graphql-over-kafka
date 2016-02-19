@@ -17,7 +17,7 @@ setup(
     packages = find_packages(exclude=['example', 'tests']),
     install_requires = [
         'bcrypt',
-        'flask',,
+        'flask',
         'flask_admin',
         'flask_cors',
         'flask_graphql',
