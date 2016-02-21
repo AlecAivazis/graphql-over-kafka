@@ -160,7 +160,7 @@ the entire cloud. This has a few major benefits that are worth pointing out:</p>
 </ul>
 <p>Let&#8217;s begin by creating a new file called <code class="docutils literal"><span class="pre">api.py</span></code> in our directory with the
 following contents:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># external imports</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">APIGateway</span><span class="p">,</span> <span class="n">ServiceManager</span>
 
 <span class="n">service</span> <span class="o">=</span> <span class="n">APIGateway</span><span class="p">()</span>
@@ -183,7 +183,7 @@ makes the creation and evaluation of this schema significantly easier.</p>
 before, services that you wish to use as representation for an external service
 should be based on the SerivceObjectType. Add the following code block at the
 end of the api gateway file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="n">Schema</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">ObjectType</span><span class="p">,</span> <span class="n">Schema</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">ServiceObjectType</span><span class="p">,</span> <span class="n">Connection</span>
 <span class="kn">from</span> <span class="nn">.recipes</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">RecipeService</span>
 <span class="kn">from</span> <span class="nn">.ingredients</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">IngredientService</span>
@@ -219,7 +219,7 @@ service with a query like <code class="docutils literal"><span class="pre">{</sp
 wait, it gets better.</p>
 <p>Let&#8217;s tell the API Gateway that there is a connection between ingredients
 and recipes by adding a Connection field to the recipe class:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span>
 

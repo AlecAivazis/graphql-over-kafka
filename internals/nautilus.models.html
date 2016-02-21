@@ -97,16 +97,16 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.models package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.models.base">nautilus.models.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.models.util">nautilus.models.util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.models">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nautilus-models-base-module">nautilus.models.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nautilus-models-util-module">nautilus.models.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -163,18 +163,18 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.models.mixins.html">nautilus.models.mixins package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-nautilus.models.mixins.crudNotificationCreator">nautilus.models.mixins.crudNotificationCreator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-nautilus.models.mixins.hasID">nautilus.models.mixins.hasID module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-nautilus.models.mixins.hasPassword">nautilus.models.mixins.hasPassword module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-nautilus.models.mixins.user">nautilus.models.mixins.user module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-nautilus.models.mixins">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-crudnotificationcreator-module">nautilus.models.mixins.crudNotificationCreator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-hasid-module">nautilus.models.mixins.hasID module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-haspassword-module">nautilus.models.mixins.hasPassword module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-user-module">nautilus.models.mixins.user module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.models.types.html">nautilus.models.types package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#module-nautilus.models.types.password">nautilus.models.types.password module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#module-nautilus.models.types.s3File">nautilus.models.types.s3File module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#module-nautilus.models.types">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#nautilus-models-types-password-module">nautilus.models.types.password module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#nautilus-models-types-s3file-module">nautilus.models.types.s3File module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#module-contents">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -183,61 +183,14 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.base">
-<span id="nautilus-models-base-module"></span><h2>nautilus.models.base module<a class="headerlink" href="#module-nautilus.models.base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.models.base.BaseModel">
-<em class="property">class </em><code class="descclassname">nautilus.models.base.</code><code class="descname">BaseModel</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code>, <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.declarative.api.Base</span></code></p>
-<dl class="classmethod">
-<dt id="nautilus.models.base.BaseModel.columns">
-<em class="property">classmethod </em><code class="descname">columns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel.columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel.columns" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.models.base.BaseModel.nautilus_base">
-<code class="descname">nautilus_base</code><em class="property"> = True</em><a class="headerlink" href="#nautilus.models.base.BaseModel.nautilus_base" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="classmethod">
-<dt id="nautilus.models.base.BaseModel.onCreation">
-<em class="property">classmethod </em><code class="descname">onCreation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel.onCreation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel.onCreation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.base.BaseModel.primary_key">
-<code class="descname">primary_key</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel.primary_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel.primary_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="classmethod">
-<dt id="nautilus.models.base.BaseModel.primary_keys">
-<em class="property">classmethod </em><code class="descname">primary_keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel.primary_keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel.primary_keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="classmethod">
-<dt id="nautilus.models.base.BaseModel.requiredFields">
-<em class="property">classmethod </em><code class="descname">requiredFields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel.requiredFields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel.requiredFields" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.base.BaseModel.save">
-<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/base.html#BaseModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.base.BaseModel.save" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-models-base-module">
+<h2>nautilus.models.base module<a class="headerlink" href="#nautilus-models-base-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.util">
-<span id="nautilus-models-util-module"></span><h2>nautilus.models.util module<a class="headerlink" href="#module-nautilus.models.util" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="nautilus.models.util.create_connection_model">
-<code class="descclassname">nautilus.models.util.</code><code class="descname">create_connection_model</code><span class="sig-paren">(</span><em>services</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/util.html#create_connection_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.util.create_connection_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create an SQL Alchemy table that connects the provides services</p>
-</dd></dl>
-
+<div class="section" id="nautilus-models-util-module">
+<h2>nautilus.models.util module<a class="headerlink" href="#nautilus-models-util-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

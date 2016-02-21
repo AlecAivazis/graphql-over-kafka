@@ -150,7 +150,7 @@
 <p>Like usual, the bulk of our cloud&#8217;s authentication logic lives within a
 separate service. Let&#8217;s begin by adding a new file to our directory
 called <code class="docutils literal"><span class="pre">auth.py</span></code> with the following contents:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">AuthService</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">AuthService</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
     <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/passwords.db&#39;</span>
@@ -184,7 +184,7 @@ we had set up a relationship between recipes and users through another
 connection service. We could limit the results in the recipe query to only
 those written by the current user by changing our recipe service object to
 look something like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span>
 

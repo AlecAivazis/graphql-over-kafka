@@ -161,7 +161,7 @@ CRUD actions for you.</p>
 <p>Before we add another model service, let&#8217;s rename the <code class="docutils literal"><span class="pre">server.py</span></code> file
 from part 1 to <code class="docutils literal"><span class="pre">recipes.py</span></code> and create a new file called <code class="docutils literal"><span class="pre">ingredients.py</span></code>
 in our directory. Inside of this file, paste the following code:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># third party imports</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># third party imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span><span class="p">,</span> <span class="n">ServiceManager</span>
 <span class="c1"># third party imports</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
@@ -218,7 +218,7 @@ classified as &#8220;one-to-one&#8221; and &#8220;one-to-many&#8221;.</p>
 <p>Make a new file called <code class="docutils literal"><span class="pre">recipeIngredients.py</span></code> next to the previously created
 files. Now, create a ConnectionService to manage the relationship between
 recipes and ingredients:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># external imports</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ConnectionService</span>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">recipes</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">recipeService</span>
