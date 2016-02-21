@@ -42,6 +42,14 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
             # treat them like attribute assignments
             setattr(self, key, value)
 
+    def _json(self):
+        # build a dictionary out of just the columns in the table
+        return {
+            column.name: getattr(self, column.name) \
+                for column in type(self).columns()
+        }
+        
+
     @classmethod
     def onCreation(cls): pass
 

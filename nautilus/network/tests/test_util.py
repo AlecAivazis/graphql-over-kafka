@@ -5,13 +5,13 @@ class TestUtil(unittest.TestCase):
 
     def test_can_merge_action_handlers(self):
         # import the function to be tested
-        from nautilus.network.util import combineActionHandlers
+        from nautilus.network.util import combine_action_handlers
         # create some handler mocks to make sure they were tested
         handleMock1 = MagicMock()
         handleMock2 = MagicMock()
         handleMock3 = MagicMock()
         # merge a series of mock handlers
-        mergedActionHandler = combineActionHandlers(
+        mergedActionHandler = combine_action_handlers(
             handleMock1,
             handleMock2,
             handleMock3,
