@@ -1,17 +1,22 @@
 # external imports
+import tempfile
+import mimetypes
 from sqlalchemy import Text, TypeDecorator
 from graphene.core.types.scalars import String
 # local imports
+from nautilus import current_app
 from nautilus.api import convert_sqlalchemy_type
 
 class S3File(TypeDecorator):
     """
         This type decorator takes a python file and uploads it to the service's bucket
-        (specified in the config). When retrieving the value from the database, a
-        string will be returned with a pre-signed url for universal-access of the file.
+        (specified in the config). If a string is given instead, this field will parse
+        the string for image information and create a temporary file to upload. When
+        retrieving the value from the database, a string will be returned with a
+        pre-signed url for universal-access of the file.
     """
     impl = Text
-    bucketDirectory = '' # this will get prepended to the
+    folder = '' # this will get prepended to the file path
     deliminator = ':'
 
     def process_result_value(self, value, dialect):
@@ -21,19 +26,52 @@ class S3File(TypeDecorator):
             in the database as a string of the form <bucket><self.deliminator><key>.
         """
         if value is not None:
-            # get the service resource
-            s3 = boto3.resource('s3')
-            # the name of the bucket
-            bucket = currentApp.config['AWS_BUCKET']
 
-            # grab the name of the file
-            filename = value.name
-            # if there is a bucket directory specified,
-            if self.bucketDirectory:
-                filename = "{}/{}".format(self.bucketDirectory, filename)
+            # we might need to create a temporary file and check for it later
+            created_temp_file = False
 
-            # upload the file to s3
-            s3.upload_file(filename, bucket, filename)
+            # if the new value is a string
+            if isinstance(value, str):
+                # we need to turn it into a file so create an empty one
+                value = tempfile.NamedTemporaryFile(delete=True)
+
+                # treat the value like a base 64 encoded file and separate the relevant data
+                [head, file_contents] = value.split(',')
+                mimetype = head.split(';')[0].split(':')[1]
+                extension = mimetypes.guess_extension(mimetype)
+
+                # set the file name
+                value.name = "{}{}".format(name, extension)
+                # write the file contents
+                value.write(standard_b64decode(file_contents))
+
+                # make sure we clear the temporary file
+                created_temp_file = True
+
+            # now that the value is hopefully a file
+            try:
+                # make sure that's the case
+                assert(isinstance(value, tempfile.NamedTemporaryFile), 'S3File can only accept files or strings.')
+
+                # get the s3 service resource
+                s3 = boto3.resource('s3')
+                # the name of the bucket
+                bucket = current_app.config['AWS_BUCKET']
+
+                # grab the name of the file
+                filename = value.name
+                # the target location to upload the file
+                target_file = "{}/{}".format(self.folder, filename) if self.bucket \
+                                                                        else filename
+                # upload the file to s3
+                s3.upload_file(filename, bucket, target_file)
+
+            # cleanup after uploading
+            finally:
+                # if we created a temporary file
+                if created_temp_file:
+                    # close and delete the file
+                    value.close()
 
             # store the s3 file location in a retrievable manner
             return "{}{}{}".format(bucket, self.deliminator, filename)
@@ -56,6 +94,7 @@ class S3File(TypeDecorator):
                     'Key': key
                 }
             )
+
 
 
 # Graphene Support

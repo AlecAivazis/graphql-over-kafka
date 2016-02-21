@@ -1,5 +1,5 @@
 # external imports
-from flask import current_app as currentApp
+from flask import current_app
 from sqlalchemy import MetaData
 # local imports
 from .services import *
