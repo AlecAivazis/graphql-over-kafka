@@ -56,12 +56,13 @@ your database. And honestly, it's one of the nicest python packages written,
 so why not take the opportunity when you can?
 
 Throughout this guide, we're going to be making a recipe list, so open up
-server.py from the previous step and add the Recipe class.
+server.py from the previous step and add the Recipe model.
 
 .. code-block:: python
 
     from nautilus import Service, ServiceManager
     from nautilus.models import BaseModel, HasID
+    from nautilus.admin import add_model as add_model_to_admin
     from sqlalchemy import Column, Text
 
     # we're using the HasID mixin here to automatically provide a primary key
@@ -70,6 +71,10 @@ server.py from the previous step and add the Recipe class.
         name = Column(Text, description="The name of the recipe")
 
     service = Service(name='my service')
+
+
+    # register the model with the admin
+    add_model_to_admin(Recipe)
 
     manager = ServiceManager(service)
 
@@ -81,11 +86,10 @@ Notice we also wrapped the service in a manager, which provides a basic
 command line interface for our service.
 
 While our service still can't talk to the outside world, at least it can keep
-track of our recipes for us. By inheriting from BaseModel <nautilus.BaseModel>
-nautilus automatically registers this model with an admin interface. But
-before we can look at the records, we have to create the database that will
-persist the data. Since our service is now wrapped in a manager, we can easily
-do this by executing the ``syncdb`` command:
+track of our recipes for us.  Before we can look at the records, we have to 
+create the database that will persist the data. Since our service is now 
+wrapped in a manager, we can easily do this by executing the ``syncdb`` 
+command:
 
 .. code-block:: bash
 

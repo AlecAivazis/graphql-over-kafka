@@ -18,6 +18,7 @@ class Recipe(ServiceObjectType):
     class Meta:
         service = RecipeService
     
+    # connections are resolved/joined using the appropriate connection service
     # you can avoid circular/undefined references using strings - nautilus will look 
     # for the corresponding ServiceObjectType
     ingredients = Connection('Ingredient', description = 'The ingredients in this recipe.')
@@ -29,7 +30,6 @@ class Ingredient(ServiceObjectType):
     class Meta:
         service = IngredientService
     
-    # connections are resolved/joined using the appropriate connection service
     recipes = Connection(Recipe, description = 'The recipes with this ingredient')
 
 
