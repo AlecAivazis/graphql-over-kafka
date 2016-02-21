@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'nautilus',
-    version = '0.3.4',
+    version = '0.3.5',
     description = 'A library for creating microservice applications',
     author = 'Alec Aivazis',
     author_email = 'alec@aivazis.com',

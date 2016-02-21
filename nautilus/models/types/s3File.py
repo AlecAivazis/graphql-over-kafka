@@ -51,7 +51,9 @@ class S3File(TypeDecorator):
             # now that the value is hopefully a file
             try:
                 # make sure that's the case
-                assert(isinstance(value, tempfile.NamedTemporaryFile), 'S3File can only accept files or strings.')
+                assert isinstance(value, tempfile.NamedTemporaryFile), (
+                    'S3File can only accept files or strings.'
+                )
 
                 # get the s3 service resource
                 s3 = boto3.resource('s3')
