@@ -162,4 +162,10 @@ class Service:
             init_service(self, schema=schema)
 
 
+    def route(self, **options):
+        """
+            A wrapper over Flask's @app.route(**options).
+        """
+
+        return self.app.route(**options)
 
