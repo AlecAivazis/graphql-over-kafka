@@ -132,20 +132,25 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.models.types.s3File</h1><div class="highlight"><pre>
-<span class="c1"># external imports</span>
+<span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">mimetypes</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Text</span><span class="p">,</span> <span class="n">TypeDecorator</span>
 <span class="kn">from</span> <span class="nn">graphene.core.types.scalars</span> <span class="kn">import</span> <span class="n">String</span>
 <span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">current_app</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">convert_sqlalchemy_type</span>
 
 <div class="viewcode-block" id="S3File"><a class="viewcode-back" href="../../../../internals/nautilus.models.types.html#nautilus.models.types.s3File.S3File">[docs]</a><span class="k">class</span> <span class="nc">S3File</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This type decorator takes a python file and uploads it to the service&#39;s bucket</span>
-<span class="sd">        (specified in the config). When retrieving the value from the database, a</span>
-<span class="sd">        string will be returned with a pre-signed url for universal-access of the file.</span>
+<span class="sd">        (specified in the config). If a string is given instead, this field will parse</span>
+<span class="sd">        the string for image information and create a temporary file to upload. When</span>
+<span class="sd">        retrieving the value from the database, a string will be returned with a</span>
+<span class="sd">        pre-signed url for universal-access of the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">impl</span> <span class="o">=</span> <span class="n">Text</span>
-    <span class="n">bucketDirectory</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># this will get prepended to the</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="c1"># this will get prepended to the file path</span>
     <span class="n">deliminator</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span>
 
 <div class="viewcode-block" id="S3File.process_result_value"><a class="viewcode-back" href="../../../../internals/nautilus.models.types.html#nautilus.models.types.s3File.S3File.process_result_value">[docs]</a>    <span class="k">def</span> <span class="nf">process_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
@@ -155,19 +160,52 @@
 <span class="sd">            in the database as a string of the form &lt;bucket&gt;&lt;self.deliminator&gt;&lt;key&gt;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c1"># get the service resource</span>
-            <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
-            <span class="c1"># the name of the bucket</span>
-            <span class="n">bucket</span> <span class="o">=</span> <span class="n">currentApp</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;AWS_BUCKET&#39;</span><span class="p">]</span>
 
-            <span class="c1"># grab the name of the file</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">name</span>
-            <span class="c1"># if there is a bucket directory specified,</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bucketDirectory</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;{}/{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bucketDirectory</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="c1"># we might need to create a temporary file and check for it later</span>
+            <span class="n">created_temp_file</span> <span class="o">=</span> <span class="bp">False</span>
 
-            <span class="c1"># upload the file to s3</span>
-            <span class="n">s3</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="c1"># if the new value is a string</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="c1"># we need to turn it into a file so create an empty one</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+                <span class="c1"># treat the value like a base 64 encoded file and separate the relevant data</span>
+                <span class="p">[</span><span class="n">head</span><span class="p">,</span> <span class="n">file_contents</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                <span class="n">mimetype</span> <span class="o">=</span> <span class="n">head</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">extension</span> <span class="o">=</span> <span class="n">mimetypes</span><span class="o">.</span><span class="n">guess_extension</span><span class="p">(</span><span class="n">mimetype</span><span class="p">)</span>
+
+                <span class="c1"># set the file name</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">extension</span><span class="p">)</span>
+                <span class="c1"># write the file contents</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">standard_b64decode</span><span class="p">(</span><span class="n">file_contents</span><span class="p">))</span>
+
+                <span class="c1"># make sure we clear the temporary file</span>
+                <span class="n">created_temp_file</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="c1"># now that the value is hopefully a file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># make sure that&#39;s the case</span>
+                <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">),</span> <span class="s1">&#39;S3File can only accept files or strings.&#39;</span><span class="p">)</span>
+
+                <span class="c1"># get the s3 service resource</span>
+                <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+                <span class="c1"># the name of the bucket</span>
+                <span class="n">bucket</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;AWS_BUCKET&#39;</span><span class="p">]</span>
+
+                <span class="c1"># grab the name of the file</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">name</span>
+                <span class="c1"># the target location to upload the file</span>
+                <span class="n">target_file</span> <span class="o">=</span> <span class="s2">&quot;{}/{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bucket</span> \
+                                                                        <span class="k">else</span> <span class="n">filename</span>
+                <span class="c1"># upload the file to s3</span>
+                <span class="n">s3</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">target_file</span><span class="p">)</span>
+
+            <span class="c1"># cleanup after uploading</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="c1"># if we created a temporary file</span>
+                <span class="k">if</span> <span class="n">created_temp_file</span><span class="p">:</span>
+                    <span class="c1"># close and delete the file</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
             <span class="c1"># store the s3 file location in a retrievable manner</span>
             <span class="k">return</span> <span class="s2">&quot;{}{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bucket</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">deliminator</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
@@ -190,6 +228,7 @@
                     <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="n">key</span>
                 <span class="p">}</span>
             <span class="p">)</span></div></div>
+
 
 
 <span class="c1"># Graphene Support</span>

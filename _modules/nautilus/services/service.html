@@ -132,7 +132,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.services.service</h1><div class="highlight"><pre>
-<span class="c1"># external imports</span>
+<span></span><span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">consul</span>
 <span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">registry</span>
@@ -293,9 +293,15 @@
         <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
             <span class="c1"># configure the service api with the schema</span>
             <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">init_service</span>
-            <span class="n">init_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span></div></div>
+            <span class="n">init_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="Service.route"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.route">[docs]</a>    <span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            A wrapper over Flask&#39;s @app.route(**options).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span></div></div>
 
 </pre></div>
 

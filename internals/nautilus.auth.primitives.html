@@ -95,9 +95,9 @@
 <li class="toctree-l3 current"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="nautilus.auth.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#nautilus-auth-backend-module">nautilus.auth.backend module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#nautilus-auth-decorators-module">nautilus.auth.decorators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth.backend">nautilus.auth.backend module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth.decorators">nautilus.auth.decorators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
@@ -106,7 +106,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -162,14 +162,58 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="nautilus-auth-primitives-passwordhash-module">
-<h2>nautilus.auth.primitives.passwordHash module<a class="headerlink" href="#nautilus-auth-primitives-passwordhash-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.auth.primitives.passwordHash">
+<span id="nautilus-auth-primitives-passwordhash-module"></span><h2>nautilus.auth.primitives.passwordHash module<a class="headerlink" href="#module-nautilus.auth.primitives.passwordHash" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.auth.primitives.passwordHash.PasswordHash">
+<em class="property">class </em><code class="descclassname">nautilus.auth.primitives.passwordHash.</code><code class="descname">PasswordHash</code><span class="sig-paren">(</span><em>hash_</em>, <em>rounds=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/passwordHash.html#PasswordHash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.passwordHash.PasswordHash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.ext.mutable.Mutable</span></code></p>
+<p>This is a wrapper class over password hashes that abstracts equality</p>
+<dl class="method">
+<dt id="nautilus.auth.primitives.passwordHash.PasswordHash.__eq__">
+<code class="descname">__eq__</code><span class="sig-paren">(</span><em>candidate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/passwordHash.html#PasswordHash.__eq__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.passwordHash.PasswordHash.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hashes the candidate string and compares it to the stored hash.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.auth.primitives.passwordHash.PasswordHash.__repr__">
+<code class="descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/passwordHash.html#PasswordHash.__repr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.passwordHash.PasswordHash.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple object representation.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="nautilus.auth.primitives.passwordHash.PasswordHash.coerce">
+<em class="property">classmethod </em><code class="descname">coerce</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/passwordHash.html#PasswordHash.coerce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.passwordHash.PasswordHash.coerce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure that loaded values are PasswordHashes.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="nautilus.auth.primitives.passwordHash.PasswordHash.new">
+<em class="property">classmethod </em><code class="descname">new</code><span class="sig-paren">(</span><em>password</em>, <em>rounds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/passwordHash.html#PasswordHash.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.passwordHash.PasswordHash.new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a PasswordHash from the given password.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.auth.primitives.passwordHash.PasswordHash.rehash">
+<code class="descname">rehash</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/passwordHash.html#PasswordHash.rehash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.passwordHash.PasswordHash.rehash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recreates the internal hash.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="nautilus-auth-primitives-user-module">
-<h2>nautilus.auth.primitives.user module<a class="headerlink" href="#nautilus-auth-primitives-user-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.auth.primitives.user">
+<span id="nautilus-auth-primitives-user-module"></span><h2>nautilus.auth.primitives.user module<a class="headerlink" href="#module-nautilus.auth.primitives.user" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.auth.primitives.user.User">
+<em class="property">class </em><code class="descclassname">nautilus.auth.primitives.user.</code><code class="descname">User</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/primitives/user.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.primitives.user.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_login.UserMixin</span></code></p>
+<p>The base user class used by nautilus apps</p>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.auth.primitives">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.auth.primitives" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

@@ -95,11 +95,11 @@
 <li class="toctree-l3"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.conventions package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-conventions-actions-module">nautilus.conventions.actions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-conventions-models-module">nautilus.conventions.models module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-conventions-schema-module">nautilus.conventions.schema module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-conventions-services-module">nautilus.conventions.services module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.actions">nautilus.conventions.actions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.models">nautilus.conventions.models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.schema">nautilus.conventions.schema module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.services">nautilus.conventions.services module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
@@ -107,7 +107,7 @@
 <li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -161,20 +161,64 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="nautilus-conventions-actions-module">
-<h2>nautilus.conventions.actions module<a class="headerlink" href="#nautilus-conventions-actions-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.conventions.actions">
+<span id="nautilus-conventions-actions-module"></span><h2>nautilus.conventions.actions module<a class="headerlink" href="#module-nautilus.conventions.actions" title="Permalink to this headline">¶</a></h2>
+<p>This file is responsible for centralizing the action conventions used in nautilus.</p>
+<dl class="function">
+<dt id="nautilus.conventions.actions.getCRUDAction">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">getCRUDAction</code><span class="sig-paren">(</span><em>method</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#getCRUDAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.getCRUDAction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="nautilus-conventions-models-module">
-<h2>nautilus.conventions.models module<a class="headerlink" href="#nautilus-conventions-models-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.conventions.models">
+<span id="nautilus-conventions-models-module"></span><h2>nautilus.conventions.models module<a class="headerlink" href="#module-nautilus.conventions.models" title="Permalink to this headline">¶</a></h2>
+<p>This file is responsible for centralizing the model conventions used in nautilus.</p>
+<dl class="function">
+<dt id="nautilus.conventions.models.get_model_string">
+<code class="descclassname">nautilus.conventions.models.</code><code class="descname">get_model_string</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/models.html#get_model_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.models.get_model_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the conventional action designator for a given model.</p>
+</dd></dl>
+
 </div>
-<div class="section" id="nautilus-conventions-schema-module">
-<h2>nautilus.conventions.schema module<a class="headerlink" href="#nautilus-conventions-schema-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.conventions.schema">
+<span id="nautilus-conventions-schema-module"></span><h2>nautilus.conventions.schema module<a class="headerlink" href="#module-nautilus.conventions.schema" title="Permalink to this headline">¶</a></h2>
+<p>This file is responsible for centralizing the schema conventions used in nautilus.</p>
+<dl class="function">
+<dt id="nautilus.conventions.schema.root_query">
+<code class="descclassname">nautilus.conventions.schema.</code><code class="descname">root_query</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/schema.html#root_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.schema.root_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the name of the root query for a model service.</p>
+</dd></dl>
+
 </div>
-<div class="section" id="nautilus-conventions-services-module">
-<h2>nautilus.conventions.services module<a class="headerlink" href="#nautilus-conventions-services-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.conventions.services">
+<span id="nautilus-conventions-services-module"></span><h2>nautilus.conventions.services module<a class="headerlink" href="#module-nautilus.conventions.services" title="Permalink to this headline">¶</a></h2>
+<p>This file is responsible for centralizing the service conventions used in nautilus.</p>
+<dl class="function">
+<dt id="nautilus.conventions.services.api_gateway_name">
+<code class="descclassname">nautilus.conventions.services.</code><code class="descname">api_gateway_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/services.html#api_gateway_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.services.api_gateway_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>the name of the default api gateway</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.services.auth_service_name">
+<code class="descclassname">nautilus.conventions.services.</code><code class="descname">auth_service_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/services.html#auth_service_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.services.auth_service_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.services.connection_service_name">
+<code class="descclassname">nautilus.conventions.services.</code><code class="descname">connection_service_name</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/services.html#connection_service_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.services.connection_service_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>the name of a service that manages the connection between services</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.services.model_service_name">
+<code class="descclassname">nautilus.conventions.services.</code><code class="descname">model_service_name</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/services.html#model_service_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.services.model_service_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>the name of a service that manages a model</p>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.conventions">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.conventions" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

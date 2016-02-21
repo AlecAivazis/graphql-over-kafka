@@ -132,20 +132,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.network.tests.test_util</h1><div class="highlight"><pre>
-<span class="kn">import</span> <span class="nn">unittest</span>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">MagicMock</span>
 
 <div class="viewcode-block" id="TestUtil"><a class="viewcode-back" href="../../../../internals/nautilus.network.tests.html#nautilus.network.tests.test_util.TestUtil">[docs]</a><span class="k">class</span> <span class="nc">TestUtil</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
 
 <div class="viewcode-block" id="TestUtil.test_can_merge_action_handlers"><a class="viewcode-back" href="../../../../internals/nautilus.network.tests.html#nautilus.network.tests.test_util.TestUtil.test_can_merge_action_handlers">[docs]</a>    <span class="k">def</span> <span class="nf">test_can_merge_action_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># import the function to be tested</span>
-        <span class="kn">from</span> <span class="nn">nautilus.network.util</span> <span class="kn">import</span> <span class="n">combineActionHandlers</span>
+        <span class="kn">from</span> <span class="nn">nautilus.network.util</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span>
         <span class="c1"># create some handler mocks to make sure they were tested</span>
         <span class="n">handleMock1</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
         <span class="n">handleMock2</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
         <span class="n">handleMock3</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
         <span class="c1"># merge a series of mock handlers</span>
-        <span class="n">mergedActionHandler</span> <span class="o">=</span> <span class="n">combineActionHandlers</span><span class="p">(</span>
+        <span class="n">mergedActionHandler</span> <span class="o">=</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
             <span class="n">handleMock1</span><span class="p">,</span>
             <span class="n">handleMock2</span><span class="p">,</span>
             <span class="n">handleMock3</span><span class="p">,</span>

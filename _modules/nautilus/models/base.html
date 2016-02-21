@@ -132,7 +132,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.models.base</h1><div class="highlight"><pre>
-<span class="c1"># external imports</span>
+<span></span><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declared_attr</span>
 <span class="kn">from</span> <span class="nn">flask.ext.jsontools</span> <span class="kn">import</span> <span class="n">JsonSerializableBase</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
@@ -175,6 +175,14 @@
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="c1"># treat them like attribute assignments</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># build a dictionary out of just the columns in the table</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> \
+                <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
+        <span class="p">}</span>
+        
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="BaseModel.onCreation"><a class="viewcode-back" href="../../../internals/nautilus.models.html#nautilus.models.base.BaseModel.onCreation">[docs]</a>    <span class="k">def</span> <span class="nf">onCreation</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span> <span class="k">pass</span></div>

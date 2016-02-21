@@ -132,8 +132,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sqlalchemy.sql.sqltypes</h1><div class="highlight"><pre>
-<span class="c1"># sql/sqltypes.py</span>
-<span class="c1"># Copyright (C) 2005-2015 the SQLAlchemy authors and contributors</span>
+<span></span><span class="c1"># sql/sqltypes.py</span>
+<span class="c1"># Copyright (C) 2005-2016 the SQLAlchemy authors and contributors</span>
 <span class="c1"># &lt;see AUTHORS file&gt;</span>
 <span class="c1">#</span>
 <span class="c1"># This module is part of SQLAlchemy and is released under</span>
@@ -1010,9 +1010,9 @@
 
     <span class="sd">&quot;&quot;&quot;A type for large binary byte data.</span>
 
-<span class="sd">    The Binary type generates BLOB or BYTEA when tables are created,</span>
-<span class="sd">    and also converts incoming values using the ``Binary`` callable</span>
-<span class="sd">    provided by each DB-API.</span>
+<span class="sd">    The :class:`.LargeBinary` type corresponds to a large and/or unlengthed</span>
+<span class="sd">    binary type for the target platform, such as BLOB on MySQL and BYTEA for</span>
+<span class="sd">    Postgresql.  It also handles the necessary conversions for the DBAPI.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1023,13 +1023,8 @@
 <span class="sd">        Construct a LargeBinary type.</span>
 
 <span class="sd">        :param length: optional, a length for the column for use in</span>
-<span class="sd">          DDL statements, for those BLOB types that accept a length</span>
-<span class="sd">          (i.e. MySQL).  It does *not* produce a *lengthed* BINARY/VARBINARY</span>
-<span class="sd">          type - use the BINARY/VARBINARY types specifically for those.</span>
-<span class="sd">          May be safely omitted if no ``CREATE</span>
-<span class="sd">          TABLE`` will be issued.  Certain databases may require a</span>
-<span class="sd">          *length* for use in DDL, and will raise an exception when</span>
-<span class="sd">          the ``CREATE TABLE`` DDL is issued.</span>
+<span class="sd">          DDL statements, for those binary types that accept a length,</span>
+<span class="sd">          such as the MySQL BLOB type.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_Binary</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>

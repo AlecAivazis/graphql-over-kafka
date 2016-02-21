@@ -97,16 +97,16 @@
 <li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.services package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-services-connectionservice-module">nautilus.services.connectionService module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-services-modelservice-module">nautilus.services.modelService module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-services-service-module">nautilus.services.service module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nautilus-services-servicemanager-module">nautilus.services.serviceManager module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.connectionService">nautilus.services.connectionService module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.modelService">nautilus.services.modelService module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.service">nautilus.services.service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.serviceManager">nautilus.services.serviceManager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -160,20 +160,222 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="nautilus-services-connectionservice-module">
-<h2>nautilus.services.connectionService module<a class="headerlink" href="#nautilus-services-connectionservice-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.services.connectionService">
+<span id="nautilus-services-connectionservice-module"></span><h2>nautilus.services.connectionService module<a class="headerlink" href="#module-nautilus.services.connectionService" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.services.connectionService.ConnectionService">
+<em class="property">class </em><code class="descclassname">nautilus.services.connectionService.</code><code class="descname">ConnectionService</code><span class="sig-paren">(</span><em>services</em>, <em>additonal_action_handler=&lt;function noop_handler&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/connectionService.html#ConnectionService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.connectionService.ConnectionService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nautilus.services.modelService.ModelService" title="nautilus.services.modelService.ModelService"><code class="xref py py-class docutils literal"><span class="pre">nautilus.services.modelService.ModelService</span></code></a></p>
+<p>This service manages a connection between any number of other services.
+The underlying schema and database are automatically generated to
+match the primary keys of the linked services.</p>
+<p>This service will listen for actions indicating the deletion of a related
+model and remove any related fields to maintain consistency. And provides
+a way for the api gateway to deduce the relationship between services when
+summarizing the cloud.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>services</strong> (<em>list of nautilus.Service</em>) &#8211; The list of services to connect.</li>
+<li><strong>additonal_action_handler</strong> (<em>optional, function</em>) &#8211; An action handler
+to be called alongside the internal ones.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># external imports</span>
+<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ConnectionService</span>
+
+<span class="c1"># the services to connect</span>
+<span class="kn">from</span> <span class="nn">local.directory</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">service_one</span>
+<span class="kn">from</span> <span class="nn">other.local.directory</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">service_two</span>
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/connections.db&#39;</span>
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">ConnectionService</span><span class="p">(</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_one</span><span class="p">,</span> <span class="n">service_two</span><span class="p">],</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+<span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="nautilus-services-modelservice-module">
-<h2>nautilus.services.modelService module<a class="headerlink" href="#nautilus-services-modelservice-module" title="Permalink to this headline">¶</a></h2>
+</dd></dl>
+
 </div>
-<div class="section" id="nautilus-services-service-module">
-<h2>nautilus.services.service module<a class="headerlink" href="#nautilus-services-service-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.services.modelService">
+<span id="nautilus-services-modelservice-module"></span><h2>nautilus.services.modelService module<a class="headerlink" href="#module-nautilus.services.modelService" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.services.modelService.ModelService">
+<em class="property">class </em><code class="descclassname">nautilus.services.modelService.</code><code class="descname">ModelService</code><span class="sig-paren">(</span><em>model</em>, <em>additonal_action_handler=&lt;function noop_handler&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nautilus.services.service.Service" title="nautilus.services.service.Service"><code class="xref py py-class docutils literal"><span class="pre">nautilus.services.service.Service</span></code></a></p>
+<p>This service acts as the primary data store in your cloud. It manages
+the records of a single model by listening for actions that indicate
+a record mutation as well as emitting actions when the mutations have
+finished (whether successfully or not). The external API is
+automatically generated to match the given model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<em>nautilus.BaseModel</em>) &#8211; The nautilus model to manage.</li>
+<li><strong>additonal_action_handler</strong> (<em>optional, function</em>) &#8211; An action handler
+to be called alongside the internal ones.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">CRUDNotificationCreator</span>
+
+
+<span class="c1"># these mixins provide make the model &quot;live&quot;. For more information,</span>
+<span class="c1"># see foo_bar.</span>
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">CRUDNotificationCreator</span><span class="p">,</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
+
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">ModelService</span><span class="p">(</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="nautilus-services-servicemanager-module">
-<h2>nautilus.services.serviceManager module<a class="headerlink" href="#nautilus-services-servicemanager-module" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="nautilus.services.modelService.ModelService.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nautilus.services.service">
+<span id="nautilus-services-service-module"></span><h2>nautilus.services.service module<a class="headerlink" href="#module-nautilus.services.service" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.services.service.Service">
+<em class="property">class </em><code class="descclassname">nautilus.services.service.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>actionHandler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em>, <em>auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>This is the base class for all services that are part of a nautilus
+cloud. This class provides basic functionalities such as registration,
+responding to actions, and predictable api endpoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>actionHandler</strong> (<em>optional, function</em>) &#8211; The callback function fired when
+an action is recieved. If None, the service does not connect to the
+action queue.</li>
+<li><strong>auth</strong> (<em>optional, bool, default = True</em>) &#8211; Whether or not the service should add
+authentication requirements.</li>
+<li><strong>auto_register</strong> (<em>optional, bool</em>) &#8211; Whether or not the service should
+register itself when ran</li>
+<li><strong>configObject</strong> (<em>optional, class</em>) &#8211; A python class to use for configuring the
+service.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The name of the service. This will be used to
+register the service with the registry as act as the designator
+for a ServiceObjectType.</li>
+<li><strong>schema</strong> (<em>optional, graphql.core.type.GraphQLSchema</em>) &#8211; The GraphQL schema
+which acts as a basis for the external API. If None, no endpoints are
+added to the service.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
+<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">CRUDHandler</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
+
+
+<span class="c1"># you could also make your own</span>
+<span class="n">api_schema</span> <span class="o">=</span> <span class="n">create_model_schema</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+<span class="n">action_handler</span> <span class="o">=</span> <span class="n">CRUDHandler</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+
+
+<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;My Awesome Service&#39;</span><span class="p">,</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">api_schema</span><span class="p">,</span>
+    <span class="n">actionHandler</span> <span class="o">=</span> <span class="n">action_handler</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="nautilus.services.service.Service.route">
+<code class="descname">route</code><span class="sig-paren">(</span><em>**options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.route" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper over Flask&#8217;s &#64;app.route(<a href="#id1"><span class="problematic" id="id2">**</span></a>options).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>port=8000</em>, <em>debug=False</em>, <em>secretKey='supersecret'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.setupAdmin">
+<code class="descname">setupAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setupAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setupAdmin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.setupApi">
+<code class="descname">setupApi</code><span class="sig-paren">(</span><em>schema=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setupApi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setupApi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.setupAuth">
+<code class="descname">setupAuth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setupAuth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setupAuth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.use_blueprint">
+<code class="descname">use_blueprint</code><span class="sig-paren">(</span><em>blueprint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.use_blueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.use_blueprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a flask blueprint to the internal application</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.services.serviceManager">
+<span id="nautilus-services-servicemanager-module"></span><h2>nautilus.services.serviceManager module<a class="headerlink" href="#module-nautilus.services.serviceManager" title="Permalink to this headline">¶</a></h2>
+<p>This module defines a small singleton that runs various scripts in the
+context of the service.</p>
+<dl class="class">
+<dt id="nautilus.services.serviceManager.ServiceManager">
+<em class="property">class </em><code class="descclassname">nautilus.services.serviceManager.</code><code class="descname">ServiceManager</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/serviceManager.html#ServiceManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.serviceManager.ServiceManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="nautilus.services.serviceManager.ServiceManager.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/serviceManager.html#ServiceManager.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.serviceManager.ServiceManager.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run the command manager</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.services">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.services" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
