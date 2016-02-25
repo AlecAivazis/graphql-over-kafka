@@ -101,11 +101,13 @@ class Service:
         self.setupApi(schema)
 
 
-    def run(self, port = 8000, debug = False, secretKey = 'supersecret', **kwargs):
+    def run(self, host='127.0.0.1', port = 8000, debug = False, secretKey = 'supersecret', **kwargs):
 
         # save command line arguments
         self.app.config['DEBUG'] = kwargs['debug'] if 'debug' in kwargs \
                                                     else debug
+        self.app.config['HOST'] = kwargs['host'] if 'host' in kwargs \
+                                                    else host
         self.app.config['PORT'] = kwargs['port'] if 'port' in kwargs \
                                                     else port
         self.app.config['SECRET_KEY'] = kwargs['secretKey'] if 'secretKey' in kwargs \
@@ -124,7 +126,7 @@ class Service:
             actionThread.start()
 
         # run the service at the designated port
-        self.app.run(port = self.app.config['PORT'])
+        self.app.run(host=self.app.config['HOST'], port = self.app.config['PORT'])
 
 
     def stop(self):
