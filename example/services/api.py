@@ -54,7 +54,7 @@ class AddRecipeMutation(Mutation):
         """ perform the mutation """
         # send the new production action into the queue
         dispatchAction({
-            'type': getCRUDAction('create', 'product'),
+            'type': getCRUDAction('create', 'recipe'),
             'payload': args
         })
 
