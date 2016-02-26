@@ -16,7 +16,7 @@ def dispatch(body, exchange, routing_key = ''):
     # close the connection
     connection.close()
 
-def dispatchAction(action):
+def dispatch_action(action):
     """ assume the dispatch text is a json object """
     # the exchange to dispatch to
     exchange = {

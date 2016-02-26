@@ -3,7 +3,7 @@ from nautilus import APIGateway
 from graphene import Schema, ObjectType, String, Mutation, Boolean
 from nautilus.api import ServiceObjectType
 from nautilus.api.fields import Connection
-from nautilus.network import dispatchAction
+from nautilus.network import dispatch_action
 from nautilus.conventions import getCRUDAction
 # local imports
 from .recipes import service as RecipeService
@@ -50,7 +50,7 @@ class AddRecipeMutation(Mutation):
     def mutate(cls, instance, args, info):
         """ perform the mutation """
         # send the new recipe action into the queue
-        dispatchAction({
+        dispatch_action({
             'type': getCRUDAction('create', 'recipe'),
             'payload': args
         })

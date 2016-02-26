@@ -1,5 +1,5 @@
 from .consumers import *
-from .dispatch import dispatchAction
+from .dispatch import dispatch_action
 from .util import (
     query_graphql_service,
     query_service,
