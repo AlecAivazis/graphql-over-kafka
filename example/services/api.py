@@ -49,7 +49,7 @@ class AddRecipeMutation(Mutation):
     @classmethod
     def mutate(cls, instance, args, info):
         """ perform the mutation """
-        # send the new production action into the queue
+        # send the new recipe action into the queue
         dispatchAction({
             'type': getCRUDAction('create', 'recipe'),
             'payload': args
