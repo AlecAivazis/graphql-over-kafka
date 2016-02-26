@@ -39,9 +39,6 @@ class Ingredient(ServiceObjectType):
 # add the query to the schema
 schema.query = Query
 
-
-# third party imports
-
 class AddRecipeMutation(Mutation):
 
     class Input:
