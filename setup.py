@@ -14,6 +14,9 @@ setup(
     keywords=['microservice', 'flask', 'graphql'],
     test_suite='nose2.collector.collector',
     packages=find_packages(exclude=['example', 'tests']),
+    entry_points={'console_scripts': [
+        'naut = nautilus.scripts:run_cloud_manager',
+    ]},
     install_requires=[
         'bcrypt',
         'flask',
