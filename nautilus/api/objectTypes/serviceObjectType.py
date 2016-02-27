@@ -4,7 +4,7 @@ from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
 from nautilus.api.filter import args_for_model
 
-VALID_ATTRS = ('service',)
+VALID_ATTRS = ('service', 'support_relay')
 
 # collect the created service objects in a list
 serivce_objects = {}
@@ -15,20 +15,22 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
         super().__init__(*args, **kwds)
         self.valid_attrs += VALID_ATTRS
         self.service = None
+        self.support_relay = False
 
     def contribute_to_class(self, cls, name):
         # bubble up the chain
         super().contribute_to_class(cls, name)
         # add the service to the class record
         cls.service = self.service
+        cls.support_relay = self.support_relay
 
 class ServiceObjectTypeMeta(type(ObjectType)):
 
     options_class = ServiceObjectTypeOptions
 
-    def construct(cls, *args, **kwds):
+    def construct(self, *args, **kwds):
         # pass the service to the class record
-        cls.service = cls._meta.service
+        self.service = self._meta.service
         # return the full class record
         return super().construct(*args, **kwds)
 
@@ -41,9 +43,17 @@ class ServiceObjectTypeMeta(type(ObjectType)):
             service = attributes['Meta'].service
             # and that service has a model attributes
             if hasattr(service, 'model'):
-                for key,value in args_for_model(service.model).items():
+                # for each argument corresponding to a service field
+                # TODO: this can probably be done with a better method than
+                # args_for_model
+                for key, value in args_for_model(service.model).items():
+                    # ignore dynamically created fields
+                    # TODO: make this cleaner
                     if 'pk' not in key and 'in' not in key:
+                        # add an attribute to the cls that matches the argument
                         attributes[key] = value
+
+        print(bases)
 
         # create the nex class records
         return super().__new__(cls, name, bases, attributes, **kwds)

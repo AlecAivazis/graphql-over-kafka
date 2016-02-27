@@ -1,15 +1,11 @@
 # external imports
-import collections
-from graphene import Field, List, String
-from graphql.core.utils.ast_to_dict import ast_to_dict
-from graphql.core.language.printer import print_ast
+from graphene import Field, List, relay
 # local imports
 from nautilus.auth import current_user
 from nautilus.network import query_service
 from nautilus.api.objectTypes import ServiceObjectType
 from nautilus.api.objectTypes.serviceObjectType import serivce_objects
 from nautilus.conventions.services import connection_service_name
-from nautilus.api import convert_sqlalchemy_type
 from nautilus.api.filter import args_for_model
 
 
@@ -35,23 +31,34 @@ class Connection(Field):
 
     """
 
-    def __init__(self, target, relationship = 'many', **kwds):
+    def __init__(self, target, relationship='many', **kwds):
 
         # perform auto resolve when:
-            # the connection is backed by a service
             # a resolver wasn't explicity specified
-            # we are targetting a service object
+            # we are targetting a service object either explicitly or via a str
         perform_resolve = 'resolver' not in kwds and \
-                            ( isinstance(target, str) or \
-                                issubclass(target, ServiceObjectType) )
+                            (isinstance(target, str) or \
+                                issubclass(target, ServiceObjectType))
 
         # the field to use as the list
         list_wrapper = List(target)
 
+        # if the target is a service service model
+        if hasattr(target, 'service') and hasattr(target.service, 'model'):
+            # add the model's args to the field
+            kwds['args'] = args_for_model(target.service.model)
+
+            # if the target service model is is a relay node
+            if hasattr(target.service, 'support_relay') \
+                        and target.service.support_relay:
+                # use a relay connection instead of a normal list
+                list_wrapper = relay.ConnectionField(target)
+
+
         # if we're not supposed to perform the resolve
         if not perform_resolve:
             # just instantiate a field with the wrapper
-            super().__init__(type = list_wrapper, **kwds)
+            super().__init__(type=list_wrapper, **kwds)
             # and don't do anything else
             return
 
@@ -64,19 +71,14 @@ class Connection(Field):
         # set the resolver if a service was specified
         kwds['resolver'] = self.resolve_service
 
-        # if the target is a service service model
-        if hasattr(self.target, 'service') and hasattr(self.target.service, 'model'):
-            # add the model's args to the field
-            kwds['args'] = args_for_model(self.target.service.model)
-
         # if we are supposed to resolve only a single element
         if relationship == 'one':
             # then the field should be a direct reference to the target
-            super().__init__(type = target, **kwds)
+            super().__init__(type=target, **kwds)
         # otherwise we are going to be resolving many elements
         else:
             # use the list wrapper as the field type
-            super().__init__(type = list_wrapper, **kwds)
+            super().__init__(type=list_wrapper, **kwds)
 
 
 
@@ -122,7 +124,7 @@ class Connection(Field):
 
             # the name of the service that manages the connection
             connection_service = connection_service_name(target_service_name,
-                                                            instance_service_name)
+                                                         instance_service_name)
 
             # look for connections originating from this object
             join_filter = {}
@@ -140,7 +142,7 @@ class Connection(Field):
                 return None
 
             # grab the list of primary keys from the remote service
-            join_ids = [ entry[target_service_name] for entry in related ]
+            join_ids = [entry[target_service_name] for entry in related]
 
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
@@ -152,7 +154,7 @@ class Connection(Field):
         fields = [field.attname for field in target.true_fields()]
 
         # grab the final list of entries
-        results = query_service(target_service_name, fields, filters = args)
+        results = query_service(target_service_name, fields, filters=args)
 
         # there are no results
         if len(results) == 0:
