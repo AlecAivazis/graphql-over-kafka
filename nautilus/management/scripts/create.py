@@ -24,7 +24,7 @@ def model(model_names):
     for model_name in model_names:
         # render the model template
         render_template(template='model', context={
-            'name': model_name
+            'name': model_name,
         })
 
 @click.command()

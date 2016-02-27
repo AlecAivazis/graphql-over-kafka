@@ -49,7 +49,14 @@ def render_template(template, out_dir='.', context={}):
             # the target filename
             filename = os.path.join(out_dir, source_relpath)
             # create a jinja template out of the file path
-            filename_rendered = Template(filename).render(context)
+            filename_rendered = Template(filename).render(**context)
+
+            # the directory of the target file
+            source_dir = os.path.dirname(filename_rendered)
+            # if the directory doesn't exist
+            if not os.path.exists(source_dir):
+                # create the directories
+                os.makedirs(source_dir)
 
             # create the target file
             with open(filename_rendered, 'w') as target_file:
@@ -62,7 +69,7 @@ def render_template(template, out_dir='.', context={}):
             # dirname
             dirname = os.path.join(out_dir, dirpath)
             # treat the dirname as a jinja template
-            dirname_rendered = Template(dirname, context)
+            dirname_rendered = Template(dirname).render(**context)
             # create the directory in the target, replacing the name
             os.makedirs(dirname_rendered)
         except OSError as exc:
