@@ -15,10 +15,11 @@ setup(
     test_suite='nose2.collector.collector',
     packages=find_packages(exclude=['example', 'tests']),
     entry_points={'console_scripts': [
-        'naut = nautilus.scripts:run_cloud_manager',
+        'naut = nautilus.scripts:cloud_manager',
     ]},
     install_requires=[
         'bcrypt',
+        'click',
         'flask',
         'flask_admin',
         'flask_cors',

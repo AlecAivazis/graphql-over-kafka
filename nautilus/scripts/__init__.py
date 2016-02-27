@@ -1,7 +1,16 @@
 #! /usr/bin/env python3
 
-def run_cloud_manager():
+# external imports
+import click
+# local imports
+from .create import create
+
+@click.group()
+def cloud_manager():
     """
-        This function runs the cloud command manager.
+        A collection of functions for managing nautilus clouds.
     """
-    print('hello')
+    pass
+
+# add the various sub commands to the manager
+cloud_manager.add_command(create)
