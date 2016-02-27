@@ -3,7 +3,7 @@ Action Handlers
 
 Action handlers describe how your service mutates its internal state in
 response to the arrival of an action from the queue. They are defined as
-a function of two arguments: ``type`` and ``payload``. ``Type`` is a string that
+a function of two arguments: ``action_type`` and ``payload``. ``Action_type`` is a string that
 classifies the event and ``payload`` is a dictionary representing the
 data associated with the event. For example,
 
@@ -38,10 +38,10 @@ separate functions which each get called. Nautilus provides a function called
 
     from nautilus.network import combine_action_handlers
 
-    def action_handler1(type, payload):
+    def action_handler1(action_type, payload):
         print("first handler fired!")
 
-    def action_handler2(type, payload):
+    def action_handler2(action_type, payload):
         print("second handler fired!")
 
     combined_handler = combine_action_handlers(

@@ -203,9 +203,23 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.network.dispatch.dispatchAction">
-<code class="descclassname">nautilus.network.dispatch.</code><code class="descname">dispatchAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/dispatch.html#dispatchAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.dispatch.dispatchAction" title="Permalink to this definition">¶</a></dt>
-<dd><p>assume the dispatch text is a json object</p>
+<dt id="nautilus.network.dispatch.dispatch_action">
+<code class="descclassname">nautilus.network.dispatch.</code><code class="descname">dispatch_action</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/dispatch.html#dispatch_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.dispatch.dispatch_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function dispatches an event over the action exchange with the designated
+type and payload.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>action_type</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The type of the action. Used by action handlers to figure out
+if it should respond to the event.</li>
+<li><strong>payload</strong> (<em>anything serializable</em>) &#8211; The payload associated with the action.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

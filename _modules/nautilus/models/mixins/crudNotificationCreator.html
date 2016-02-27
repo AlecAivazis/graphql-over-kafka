@@ -135,22 +135,27 @@
 <span></span><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">event</span>
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">dispatchAction</span>
+<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">dispatch_action</span>
 
 <div class="viewcode-block" id="CRUDNotificationCreator"><a class="viewcode-back" href="../../../../internals/nautilus.models.mixins.html#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator">[docs]</a><span class="k">class</span> <span class="nc">CRUDNotificationCreator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This mixin class provides basic crus event publishing when the model</span>
+<span class="sd">        is mutated, following nautilus conventions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
 
     <span class="n">nautilus_base</span> <span class="o">=</span> <span class="bp">True</span> <span class="c1"># required to prevent self-application on creation</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="CRUDNotificationCreator.addListener"><a class="viewcode-back" href="../../../../internals/nautilus.models.mixins.html#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.addListener">[docs]</a>    <span class="k">def</span> <span class="nf">addListener</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">db_event</span><span class="p">,</span> <span class="n">action_type</span><span class="p">):</span>
+<div class="viewcode-block" id="CRUDNotificationCreator.add_listener"><a class="viewcode-back" href="../../../../internals/nautilus.models.mixins.html#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.add_listener">[docs]</a>    <span class="k">def</span> <span class="nf">add_listener</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">db_event</span><span class="p">,</span> <span class="n">action_type</span><span class="p">):</span>
         <span class="c1"># on event, dispatch the appropriate action</span>
         <span class="nd">@event.listens_for</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">db_event</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">dispatchCRUDAction</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot; notifies the network of the new user model &quot;&quot;&quot;</span>
-            <span class="n">dispatchAction</span><span class="p">({</span>
-                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;{}_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="nb">type</span><span class="p">),</span>
-                <span class="s1">&#39;payload&#39;</span><span class="p">:</span> <span class="n">target</span><span class="o">.</span><span class="n">__json__</span><span class="p">(),</span>
-            <span class="p">})</span></div>
+            <span class="n">dispatch_action</span><span class="p">(</span>
+                <span class="n">action_type</span><span class="o">=</span><span class="s1">&#39;{}_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="nb">type</span><span class="p">),</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">target</span><span class="o">.</span><span class="n">__json__</span><span class="p">(),</span>
+            <span class="p">)</span></div>
 
 
     <span class="nd">@classmethod</span>
@@ -158,9 +163,9 @@
         <span class="c1"># perform the intended behavior</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">onCreation</span><span class="p">()</span>
         <span class="c1"># add the crud action emitters</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">addListener</span><span class="p">(</span><span class="s1">&#39;after_insert&#39;</span><span class="p">,</span> <span class="s1">&#39;create_success&#39;</span><span class="p">)</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">addListener</span><span class="p">(</span><span class="s1">&#39;after_delete&#39;</span><span class="p">,</span> <span class="s1">&#39;delete_success&#39;</span><span class="p">)</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">addListener</span><span class="p">(</span><span class="s1">&#39;after_update&#39;</span><span class="p">,</span> <span class="s1">&#39;update_success&#39;</span><span class="p">)</span></div></div>
+        <span class="n">cls</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="s1">&#39;after_insert&#39;</span><span class="p">,</span> <span class="s1">&#39;create_success&#39;</span><span class="p">)</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="s1">&#39;after_delete&#39;</span><span class="p">,</span> <span class="s1">&#39;delete_success&#39;</span><span class="p">)</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">add_listener</span><span class="p">(</span><span class="s1">&#39;after_update&#39;</span><span class="p">,</span> <span class="s1">&#39;update_success&#39;</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

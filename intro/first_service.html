@@ -345,9 +345,9 @@ the new record (or another mutation) when appropriate:</p>
 <span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
 
 
-<span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
     <span class="c1"># if the payload represents a new recipe to create</span>
-    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;create_recipe&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;create_recipe&#39;</span><span class="p">:</span>
         <span class="c1"># create a new instance of the recipe</span>
         <span class="n">recipe</span> <span class="o">=</span> <span class="n">Recipe</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="p">)</span>
         <span class="c1"># save the recipe instance</span>

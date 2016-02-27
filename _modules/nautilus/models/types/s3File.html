@@ -185,7 +185,9 @@
             <span class="c1"># now that the value is hopefully a file</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># make sure that&#39;s the case</span>
-                <span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">),</span> <span class="s1">&#39;S3File can only accept files or strings.&#39;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">),</span> <span class="p">(</span>
+                    <span class="s1">&#39;S3File can only accept files or strings.&#39;</span>
+                <span class="p">)</span>
 
                 <span class="c1"># get the s3 service resource</span>
                 <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>

@@ -151,11 +151,11 @@
     <span class="n">QUEUE</span> <span class="o">=</span> <span class="bp">None</span> <span class="c1"># ensures the parent uses an automatically assigned name</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_handler</span><span class="p">):</span>
         <span class="c1"># use the same url for all action consumers</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MESSAGE_URL</span><span class="p">)</span>
         <span class="c1"># save the handler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_actionHandler</span> <span class="o">=</span> <span class="n">actionHandler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
 
 
 <div class="viewcode-block" id="ActionConsumer.on_message"><a class="viewcode-back" href="../../../../internals/nautilus.network.consumers.html#nautilus.network.consumers.ActionConsumer.ActionConsumer.on_message">[docs]</a>    <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
@@ -163,16 +163,16 @@
         <span class="c1"># pass the message onto the parent class first</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_message</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
         <span class="c1"># decode the body as a byte string</span>
-        <span class="n">bodyString</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">body_string</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="c1"># parse the body as json</span>
-        <span class="n">bodyData</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">bodyString</span><span class="p">)</span>
+        <span class="n">body_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">body_string</span><span class="p">)</span>
         <span class="c1"># if there is a type and payload</span>
-        <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">bodyData</span> <span class="ow">and</span> <span class="s1">&#39;payload&#39;</span> <span class="ow">in</span> <span class="n">bodyData</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">body_data</span> <span class="ow">and</span> <span class="s1">&#39;payload&#39;</span> <span class="ow">in</span> <span class="n">body_data</span><span class="p">:</span>
             <span class="c1"># pass the type and payload to the action handler</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_actionHandler</span><span class="p">(</span><span class="nb">type</span> <span class="o">=</span> <span class="n">bodyData</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">payload</span> <span class="o">=</span> <span class="n">bodyData</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="o">=</span><span class="n">body_data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">payload</span><span class="o">=</span><span class="n">body_data</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">])</span>
         <span class="c1"># otherwise its an invalid action</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Encountered invalid action: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bodyString</span><span class="p">)</span> <span class="p">)</span></div></div>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Encountered invalid action: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">body_string</span><span class="p">))</span></div></div>
 </pre></div>
 
            </div>

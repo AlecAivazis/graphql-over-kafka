@@ -148,27 +148,27 @@
 <span class="sd">                received.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            function(type, payload): The action handler for this model</span>
+<span class="sd">            function(action_type, payload): The action handler for this model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">actionHandler</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
         <span class="c1"># if the payload represents a new instance of `Model`</span>
-        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">getCRUDAction</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="n">getCRUDAction</span><span class="p">(</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
             <span class="c1"># for each required field</span>
             <span class="k">for</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">Model</span><span class="o">.</span><span class="n">requiredFields</span><span class="p">:</span>
                 <span class="c1"># ensure the value is in the payload</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">requirement</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
-                    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Required field not found in payload: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">requried</span><span class="p">))</span>
+                    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Required field not found in payload: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">requirement</span><span class="p">))</span>
                     <span class="c1"># todo: check all required fields rather than failing on the first</span>
                     <span class="k">return</span>
 
             <span class="c1"># create a new model</span>
-            <span class="n">newModel</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="p">)</span>
+            <span class="n">new_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="p">)</span>
 
             <span class="c1"># save the new model instance</span>
-            <span class="n">newModel</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">new_model</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
     <span class="c1"># return the handler</span>
-    <span class="k">return</span> <span class="n">actionHandler</span></div>
+    <span class="k">return</span> <span class="n">action_handler</span></div>
 </pre></div>
 
            </div>
