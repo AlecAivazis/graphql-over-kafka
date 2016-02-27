@@ -3,7 +3,7 @@
 # external imports
 import click
 # local imports
-from .create import create
+from .scripts.create import create
 
 @click.group()
 def cloud_manager():
