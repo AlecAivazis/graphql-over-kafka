@@ -1,0 +1,61 @@
+"""
+    This module defines the various create scripts availible to the cloud
+    manager
+"""
+# external imports
+import click
+import sys
+# local imports
+from ..util import render_template
+from nautilus.conventions import connection_service_name
+
+
+@click.group()
+def create():
+    """ A set of generators for common files and directory strctures. """
+    pass
+
+@click.command()
+@click.argument('model_names', nargs=-1)
+def model(model_names):
+    """
+        Creates the example directory structure necessary for a model service.
+    """
+    # for each model name we need to create
+    for model_name in model_names:
+        # the template context
+        context = {
+            'name': model_name,
+        }
+
+        # render the model template
+        render_template(template='common', context=context)
+        render_template(template='model', context=context)
+
+@click.command()
+@click.argument('model_connections', nargs=-1)
+def connection(model_connections):
+    """
+        Creates the example directory structure necessary for a connection
+        service.
+    """
+
+    # for each connection group
+    for connection_str in model_connections:
+
+        # the services to connect
+        services = connection_str.split(':')
+        services.sort()
+
+        # the template context
+        context = {
+            'name': ''.join([service.title() for service in services]),
+            'services': services,
+        }
+
+        render_template(template='common', context=context)
+        render_template(template='connection', context=context)
+
+# add the various sub commands
+create.add_command(model)
+create.add_command(connection)
