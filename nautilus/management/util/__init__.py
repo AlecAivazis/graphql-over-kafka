@@ -48,17 +48,23 @@ def render_template(template, out_dir='.', context={}):
 
             # the target filename
             filename = os.path.join(out_dir, source_relpath)
+            # create a jinja template out of the file path
+            filename_rendered = Template(filename).render(context)
 
             # create the target file
-            with open(filename, 'w') as target_file:
+            with open(filename_rendered, 'w') as target_file:
                 # write the rendered template to the target file
                 target_file.write(template_rendered)
 
     # for each empty directory
     for dirpath in empty_dirs:
         try:
-            # create the directory in the target
-            os.makedirs(os.path.join(out_dir, dirpath))
+            # dirname
+            dirname = os.path.join(out_dir, dirpath)
+            # treat the dirname as a jinja template
+            dirname_rendered = Template(dirname, context)
+            # create the directory in the target, replacing the name
+            os.makedirs(dirname_rendered)
         except OSError as exc:
             # if the directory already exists
             if exc.errno == errno.EEXIST and os.path.isdir(dirpath):
