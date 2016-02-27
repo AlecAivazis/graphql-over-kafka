@@ -1,6 +1,6 @@
 # external imports
 from nautilus import APIGateway
-from graphene import Schema, ObjectType, String, Mutation, Boolean
+from graphene import Schema, ObjectType, String, Mutation, Boolean, Field
 from nautilus.api import ServiceObjectType
 from nautilus.api.fields import Connection
 from nautilus.network import dispatch_action
@@ -40,9 +40,15 @@ class Ingredient(ServiceObjectType):
 schema.query = Query
 
 class AddRecipeMutation(Mutation):
-
+    """
+        This mutation fires an event to create a new recipe in the model service.
+    """
     class Input:
+        """
+            This class defines the mutation arguments.
+        """
         name = String()
+
 
     success = Boolean(description="Wether or not the dispatch was successful")
 
@@ -50,18 +56,18 @@ class AddRecipeMutation(Mutation):
     def mutate(cls, instance, args, info):
         """ perform the mutation """
         # send the new recipe action into the queue
-        dispatch_action({
-            'type': getCRUDAction('create', 'recipe'),
-            'payload': args
-        })
+        dispatch_action(
+            action_type=getCRUDAction('create', 'recipe'),
+            payload=args
+        )
 
 
-class Mutation(ObjectType):
+class ApiMutations(ObjectType):
     """ the list of mutations that the api supports """
     addRecipe = Field(AddRecipeMutation)
 
 
-sceham.mutation = Mutation
+schema.mutation = ApiMutations
 
 # create a nautilus service with just the schema
 service = APIGateway(schema=schema)

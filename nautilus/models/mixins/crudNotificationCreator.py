@@ -4,6 +4,11 @@ from sqlalchemy import event
 from nautilus.network import dispatch_action
 
 class CRUDNotificationCreator:
+    """
+        This mixin class provides basic crus event publishing when the model
+        is mutated, following nautilus conventions.
+    """
+
 
     nautilus_base = True # required to prevent self-application on creation
 
@@ -13,10 +18,10 @@ class CRUDNotificationCreator:
         @event.listens_for(cls, db_event)
         def dispatchCRUDAction(mapper, connection, target):
             """ notifies the network of the new user model """
-            dispatch_action({
-                'type': '{}_{}'.format(cls.__name__.lower(), type),
-                'payload': target.__json__(),
-            })
+            dispatch_action(
+                action_type='{}_{}'.format(cls.__name__.lower(), type),
+                payload=target.__json__(),
+            )
 
 
     @classmethod

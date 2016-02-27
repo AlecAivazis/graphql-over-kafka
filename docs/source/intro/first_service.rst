@@ -231,9 +231,9 @@ the new record (or another mutation) when appropriate:
     schema.query = Query
 
 
-    def action_handler(type, payload):
+    def action_handler(action_type, payload):
         # if the payload represents a new recipe to create
-        if type == 'create_recipe':
+        if action_type == 'create_recipe':
             # create a new instance of the recipe
             recipe = Recipe(**payload)
             # save the recipe instance
