@@ -70,8 +70,11 @@ def render_template(template, out_dir='.', context={}):
             dirname = os.path.join(out_dir, dirpath)
             # treat the dirname as a jinja template
             dirname_rendered = Template(dirname).render(**context)
-            # create the directory in the target, replacing the name
-            os.makedirs(dirname_rendered)
+
+            # if the directory doesn't exist
+            if not os.path.exists(dirname_rendered):
+                # create the directory in the target, replacing the name
+                os.makedirs(dirname_rendered)
         except OSError as exc:
             # if the directory already exists
             if exc.errno == errno.EEXIST and os.path.isdir(dirpath):

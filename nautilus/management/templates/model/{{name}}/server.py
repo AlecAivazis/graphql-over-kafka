@@ -13,5 +13,6 @@ class ServiceConfig:
 
 
 service = ModelService(
-    model = {{name.title()}},
     configObject = ServiceConfig,
+    model = {{name.title()}},
+)
