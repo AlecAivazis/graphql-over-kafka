@@ -14,9 +14,9 @@ def updateHandler(Model):
         Returns:
             function(type, payload): The action handler for this model
     """
-    def actionHandler(type, payload):
+    def action_handler(action_type, payload):
         # if the payload represents a new instance of `Model`
-        if type == getCRUDAction('update', Model):
+        if action_type == getCRUDAction('update', Model):
 
             # go over each primary key
             for key in Model.primary_keys():
@@ -25,12 +25,14 @@ def updateHandler(Model):
                     # then we can use it to identify the model we are editing
 
                     # figure out the primary key field
-                    primaryKeyField = getattr(Model, key)
+                    primary_key_field = getattr(Model, key)
 
                     # note: the payload is casted to the same type as the key for equality checks
                     # todo: add pk filter
                     try:
-                        model = Model.query.filter(primaryKeyField == type(primaryKeyField)(payload[key]))
+                        model = Model.query.filter(
+                            primary_key_field == type(primary_key_field)(payload[key])
+                        )
                     # if we couldn't cast the key
                     except TypeError:
                         pass
@@ -50,4 +52,4 @@ def updateHandler(Model):
                     break
 
     # return the handler
-    return actionHandler
+    return action_handler

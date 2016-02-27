@@ -17,12 +17,12 @@ def deleteHandler(Model):
     # necessary imports
     from nautilus.db import db
 
-    def actionHandler(type, payload):
+    def action_handler(action_type, payload):
         # if the payload represents a new instance of `model`
-        if type == getCRUDAction('delete', Model):
+        if action_type == getCRUDAction('delete', Model):
 
             # for now only handle a single selector specified by a string
-            if not isinstance(payload, string):
+            if not isinstance(payload, str):
                 return
 
             # go over each primary key
@@ -44,4 +44,4 @@ def deleteHandler(Model):
 
 
     # return the handler
-    return actionHandler
+    return action_handler
