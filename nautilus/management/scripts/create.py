@@ -4,6 +4,9 @@
 """
 # external imports
 import click
+# local imports
+from ..util import render_template
+
 
 @click.group()
 def create():
@@ -15,7 +18,7 @@ def model():
     """
         Creates the example directory structure necessary for a model service.
     """
-    print('creating model')
+    render_template(template='model')
 
 @click.command()
 def connection():
@@ -23,7 +26,7 @@ def connection():
         Creates the example directory structure necessary for a connection
         service.
     """
-    print('creating connection')
+    render_template(template='connection')
 
 # add the various sub commands
 create.add_command(model)

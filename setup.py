@@ -30,6 +30,7 @@ setup(
         'flask_sqlalchemy',
         'flask_wtf',
         'graphene',
+        'jinja2',
         'sqlalchemy',
         'nose2',
         'pika',
