@@ -1,8 +1,10 @@
 # external imports
 from graphene import ObjectType, Field, String
+from graphene.relay import Node
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
 from nautilus.api.filter import args_for_model
+from nautilus.network import query_service
 
 VALID_ATTRS = ('service', 'support_relay')
 
@@ -24,7 +26,7 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
         cls.service = self.service
         cls.support_relay = self.support_relay
 
-class ServiceObjectTypeMeta(type(ObjectType)):
+class ServiceObjectTypeMeta(type(Node)):
 
     options_class = ServiceObjectTypeOptions
 
@@ -49,11 +51,9 @@ class ServiceObjectTypeMeta(type(ObjectType)):
                 for key, value in args_for_model(service.model).items():
                     # ignore dynamically created fields
                     # TODO: make this cleaner
-                    if 'pk' not in key and 'in' not in key:
+                    if 'pk' not in key and 'in' not in key and 'id' not in key:
                         # add an attribute to the cls that matches the argument
                         attributes[key] = value
-
-        print(bases)
 
         # create the nex class records
         return super().__new__(cls, name, bases, attributes, **kwds)
@@ -65,7 +65,7 @@ class ServiceObjectTypeMeta(type(ObjectType)):
         # add the object to the registry
         serivce_objects[name] = cls
 
-class ServiceObjectType(ObjectType, metaclass = ServiceObjectTypeMeta):
+class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
     """
         This object type represents data maintained by a remote service.
         `Connection`s to and from other `ServiceObjectType`s are resolved
@@ -90,6 +90,34 @@ class ServiceObjectType(ObjectType, metaclass = ServiceObjectTypeMeta):
         else:
             # Default behaviour
             raise AttributeError
+
+
+    @classmethod
+    def get_node(cls, id, info):
+        """
+            Returns the node with the corresponding id by querying the
+            appropriate service.
+        """
+        from nautilus.conventions import model_service_name
+
+        # the name of the service to query
+        service_name = model_service_name(cls.service)
+        # the filter to apply to the query to retrieve the object by id
+        object_filter = {
+            'primary_key': id,
+        }
+
+        # the fields of the service to request
+        service_fields = [arg for arg in args_for_model(cls.service.model).items() \
+                            if 'pk' not in arg and 'in' not in arg \
+                            and 'id' not in arg]
+
+        # query the connection service for related data
+        return query_service(
+            service_name,
+            [service_fields],
+            object_filter
+        )[0]
 
 
     @classmethod

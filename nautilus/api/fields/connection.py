@@ -1,5 +1,6 @@
 # external imports
 from graphene import Field, List, relay
+from graphene.relay import ConnectionField, Node
 # local imports
 from nautilus.auth import current_user
 from nautilus.network import query_service
@@ -9,7 +10,7 @@ from nautilus.conventions.services import connection_service_name
 from nautilus.api.filter import args_for_model
 
 
-class Connection(Field):
+class Connection(ConnectionField):
     """
         A field that encapsultes a connection with another GraphQL object.
 
@@ -48,12 +49,6 @@ class Connection(Field):
             # add the model's args to the field
             kwds['args'] = args_for_model(target.service.model)
 
-            # if the target service model is is a relay node
-            if hasattr(target.service, 'support_relay') \
-                        and target.service.support_relay:
-                # use a relay connection instead of a normal list
-                list_wrapper = relay.ConnectionField(target)
-
 
         # if we're not supposed to perform the resolve
         if not perform_resolve:
@@ -62,35 +57,6 @@ class Connection(Field):
             # and don't do anything else
             return
 
-        # we are supposed to perform the resolve
-
-        # save references to constructor arguments
-        self.target = target
-        self.relationship = relationship
-
-        # set the resolver if a service was specified
-        kwds['resolver'] = self.resolve_service
-
-        # if we are supposed to resolve only a single element
-        if relationship == 'one':
-            # then the field should be a direct reference to the target
-            super().__init__(type=target, **kwds)
-        # otherwise we are going to be resolving many elements
-        else:
-            # use the list wrapper as the field type
-            super().__init__(type=list_wrapper, **kwds)
-
-
-
-    def resolve_service(self, instance, query_args, info):
-        '''
-            This function grab the remote data that acts as the source for this
-            connection.
-        '''
-        # note: it is safe to assume the target is a service object
-
-        # the target class for the connection
-        target = self.target
 
         # if we were given a string to target
         if isinstance(target, str):
@@ -104,6 +70,31 @@ class Connection(Field):
                 raise ValueError("Please provide a string designating a " + \
                                     "ServiceObjectType as the target for " + \
                                     "a connection.")
+
+        # we are supposed to perform the resolve
+
+        assert relationship == 'many', 'single relationships are not yet supported'
+
+        # save references to constructor arguments
+        self.target = target
+        self.relationship = relationship
+
+        # set the resolver if a service was specified
+        kwds['resolver'] = self.resolve_service
+
+        super().__init__(type=target, **kwds)
+
+
+
+    def resolve_service(self, instance, query_args, info):
+        '''
+            This function grab the remote data that acts as the source for this
+            connection.
+        '''
+        # note: it is safe to assume the target is a service object
+
+        # the target class for the connection
+        target = self.target
 
         # make a normal dictionary out of the immutable one we were given
         args = query_args \
@@ -174,7 +165,6 @@ class Connection(Field):
             results = [result for result in results \
                                 if target.auth(target(**result), current_user)]
 
-
         ## deal with target relationship types
 
         # if the filter got rid of all of the results
@@ -190,4 +180,4 @@ class Connection(Field):
             return target(**results[0])
 
         # create instances of the target class for every result
-        return (target(**result) for result in results)
+        return [target(**result) for result in results]
