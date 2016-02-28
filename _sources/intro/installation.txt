@@ -39,7 +39,7 @@ with the following command in the terminal
 
 .. code-block:: bash
 
-    $ consul -server -bootstrap &
+    $ consul agent -server -bootstrap -data-dir /tmp/data &
     $ rabbitmq-server &
 
 
