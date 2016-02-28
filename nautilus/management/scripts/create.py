@@ -31,6 +31,19 @@ def model(model_names):
         render_template(template='model', context=context)
 
 @click.command()
+def api():
+    """
+        Create the folder/directories for an ApiGateway service.
+    """
+    # the template context
+    context = {
+        'name': 'api',
+    }
+
+    render_template(template='common', context=context)
+    render_template(template='api', context=context)
+
+@click.command()
 @click.argument('model_connections', nargs=-1)
 def connection(model_connections):
     """
@@ -58,5 +71,6 @@ def connection(model_connections):
         render_template(template='connection', context=context)
 
 # add the various sub commands
-create.add_command(model)
+create.add_command(api)
 create.add_command(connection)
+create.add_command(model)

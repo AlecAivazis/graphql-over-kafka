@@ -9,7 +9,7 @@ class {{name.title()}}(CRUDNotificationCreator, HasID, BaseModel):
 
 
 class ServiceConfig:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/data.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/{{name}}.db'
 
 
 service = ModelService(
