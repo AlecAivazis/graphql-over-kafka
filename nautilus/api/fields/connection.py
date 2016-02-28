@@ -19,11 +19,11 @@ class Connection(Field):
 
         Args:
 
-            target (string or ObjectType): The target object type. If target is a
+            target (str or ObjectType): The target object type. If target is a
                 SerivceObjectType then the remote data lookup is automated using the
                 target object's meta service attribute.
 
-            relationship (string: "one" or "many"): The kind of relationship that this
+            relationship (str: "one" or "many"): The kind of relationship that this
                 connection encapsultes. If set to "many" the connection will result in
                 a list whereas if it is set to "one" the connection will result in the
                 object type itself.
