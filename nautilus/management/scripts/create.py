@@ -4,10 +4,8 @@
 """
 # external imports
 import click
-import sys
 # local imports
 from ..util import render_template
-from nautilus.conventions import connection_service_name
 
 
 @click.group()
@@ -47,9 +45,12 @@ def connection(model_connections):
         services = connection_str.split(':')
         services.sort()
 
+        service_name = ''.join([service.title() for service in services])
+
         # the template context
         context = {
-            'name': ''.join([service.title() for service in services]),
+            # make sure the first letter is lowercase
+            'name': service_name[0].lower() + service_name[1:],
             'services': services,
         }
 
