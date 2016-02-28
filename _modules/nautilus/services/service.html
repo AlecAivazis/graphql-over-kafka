@@ -151,7 +151,7 @@
 
 <span class="sd">        Args:</span>
 
-<span class="sd">            actionHandler (optional, function): The callback function fired when</span>
+<span class="sd">            action_handler (optional, function): The callback function fired when</span>
 <span class="sd">                an action is recieved. If None, the service does not connect to the</span>
 <span class="sd">                action queue.</span>
 
@@ -194,18 +194,18 @@
 <span class="sd">                service = Service(</span>
 <span class="sd">                    name = &#39;My Awesome Service&#39;,</span>
 <span class="sd">                    schema = api_schema,</span>
-<span class="sd">                    actionHandler = action_handler</span>
+<span class="sd">                    action_handler = action_handler</span>
 <span class="sd">                )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">name</span><span class="p">,</span>
-            <span class="n">schema</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-            <span class="n">actionHandler</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-            <span class="n">configObject</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-            <span class="n">auto_register</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
-            <span class="n">auth</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="n">schema</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">action_handler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">configObject</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">auto_register</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+            <span class="n">auth</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># base the service on a flask app</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -224,18 +224,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">configObject</span><span class="p">)</span>
 
         <span class="c1"># if there is an action consumer, create a wrapper for it</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">actionConsumer</span> <span class="o">=</span> <span class="n">ActionConsumer</span><span class="p">(</span><span class="n">actionHandler</span> <span class="o">=</span> <span class="n">actionHandler</span><span class="p">)</span> <span class="k">if</span> <span class="n">actionHandler</span> <span class="k">else</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_consumer</span> <span class="o">=</span> <span class="n">ActionConsumer</span><span class="p">(</span><span class="n">action_handler</span><span class="o">=</span><span class="n">action_handler</span><span class="p">)</span> \
+                                                  <span class="k">if</span> <span class="n">action_handler</span> <span class="k">else</span> <span class="bp">None</span>
 
         <span class="kn">from</span> <span class="nn">nautilus.db</span> <span class="kn">import</span> <span class="n">db</span>
         <span class="n">db</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
 
         <span class="c1"># setup various functionalities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setupAdmin</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setupAuth</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setupApi</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_admin</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_auth</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_api</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Service.run"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">secretKey</span> <span class="o">=</span> <span class="s1">&#39;supersecret&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.run"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+            <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="n">secret_key</span><span class="o">=</span><span class="s1">&#39;supersecret&#39;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+           <span class="p">):</span>
 
         <span class="c1"># save command line arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;debug&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
@@ -244,8 +251,9 @@
                                                     <span class="k">else</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;port&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
                                                     <span class="k">else</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secretKey&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;secretKey&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
-                                                            <span class="k">else</span> <span class="n">secretKey</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secret_key&#39;</span><span class="p">]</span> \
+                                                <span class="k">if</span> <span class="s1">&#39;secret_key&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> \
+                                                            <span class="k">else</span> <span class="n">secret_key</span>
 
         <span class="c1"># if the service needs to register itself</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_register</span><span class="p">:</span>
@@ -253,21 +261,21 @@
             <span class="n">registry</span><span class="o">.</span><span class="n">keep_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># if we need to spin up an action consumer</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">actionConsumer</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_consumer</span><span class="p">:</span>
             <span class="c1"># create a thread that will run the consumer</span>
-            <span class="n">actionThread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actionConsumer</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+            <span class="n">action_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_consumer</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
             <span class="c1"># start the thread</span>
-            <span class="n">actionThread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">action_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="c1"># run the service at the designated port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;HOST&#39;</span><span class="p">],</span> <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PORT&#39;</span><span class="p">])</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;HOST&#39;</span><span class="p">],</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PORT&#39;</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="Service.stop"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># if there is an action consumer</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">actionConsumer</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_consumer</span><span class="p">:</span>
             <span class="c1"># stop the consumer</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">actionConsumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
         <span class="c1"># if the service is responsible for registering itself</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_register</span><span class="p">:</span>
@@ -278,19 +286,19 @@
         <span class="sd">&quot;&quot;&quot; Apply a flask blueprint to the internal application &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">blueprint</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Service.setupAuth"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setupAuth">[docs]</a>    <span class="k">def</span> <span class="nf">setupAuth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.setup_auth"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setup_auth">[docs]</a>    <span class="k">def</span> <span class="nf">setup_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># if we are supposed to enable authentication for the service</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">init_service</span>
             <span class="n">init_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Service.setupAdmin"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setupAdmin">[docs]</a>    <span class="k">def</span> <span class="nf">setupAdmin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.setup_admin"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setup_admin">[docs]</a>    <span class="k">def</span> <span class="nf">setup_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">nautilus.admin</span> <span class="kn">import</span> <span class="n">init_service</span>
         <span class="n">init_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Service.setupApi"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setupApi">[docs]</a>    <span class="k">def</span> <span class="nf">setupApi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.setup_api"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.setup_api">[docs]</a>    <span class="k">def</span> <span class="nf">setup_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="c1"># if there is a schema for the service</span>
         <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
             <span class="c1"># configure the service api with the schema</span>

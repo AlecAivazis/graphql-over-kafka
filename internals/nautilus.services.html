@@ -264,7 +264,7 @@ to be called alongside the internal ones.</li>
 <span id="nautilus-services-service-module"></span><h2>nautilus.services.service module<a class="headerlink" href="#module-nautilus.services.service" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.services.service.Service">
-<em class="property">class </em><code class="descclassname">nautilus.services.service.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>actionHandler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em>, <em>auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.services.service.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>action_handler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em>, <em>auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>This is the base class for all services that are part of a nautilus
 cloud. This class provides basic functionalities such as registration,
@@ -274,7 +274,7 @@ responding to actions, and predictable api endpoints.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>actionHandler</strong> (<em>optional, function</em>) &#8211; The callback function fired when
+<li><strong>action_handler</strong> (<em>optional, function</em>) &#8211; The callback function fired when
 an action is recieved. If None, the service does not connect to the
 action queue.</li>
 <li><strong>auth</strong> (<em>optional, bool, default = True</em>) &#8211; Whether or not the service should add
@@ -313,7 +313,7 @@ added to the service.</li>
 <span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;My Awesome Service&#39;</span><span class="p">,</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">api_schema</span><span class="p">,</span>
-    <span class="n">actionHandler</span> <span class="o">=</span> <span class="n">action_handler</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -325,22 +325,22 @@ added to the service.</li>
 
 <dl class="method">
 <dt id="nautilus.services.service.Service.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>host='127.0.0.1'</em>, <em>port=8000</em>, <em>debug=False</em>, <em>secretKey='supersecret'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><em>host='127.0.0.1'</em>, <em>port=8000</em>, <em>debug=False</em>, <em>secret_key='supersecret'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="nautilus.services.service.Service.setupAdmin">
-<code class="descname">setupAdmin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setupAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setupAdmin" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.services.service.Service.setup_admin">
+<code class="descname">setup_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setup_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setup_admin" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="nautilus.services.service.Service.setupApi">
-<code class="descname">setupApi</code><span class="sig-paren">(</span><em>schema=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setupApi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setupApi" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.services.service.Service.setup_api">
+<code class="descname">setup_api</code><span class="sig-paren">(</span><em>schema=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setup_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setup_api" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="nautilus.services.service.Service.setupAuth">
-<code class="descname">setupAuth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setupAuth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setupAuth" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.services.service.Service.setup_auth">
+<code class="descname">setup_auth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setup_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setup_auth" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

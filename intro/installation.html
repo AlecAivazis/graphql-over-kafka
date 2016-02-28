@@ -179,7 +179,7 @@ processes by hand. Since we do not  yet support the first option, OSX users
 need to install these two packages by hand using MacPorts or homebrew.</p>
 <p>Once consul and rabbitmq are installed, they can be run in background processes
 with the following command in the terminal</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ consul agent -server -bootstrap -data-dir /tmp/data <span class="p">&amp;</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ consul agent -server -bootstrap -data-dir /tmp/data -ui <span class="p">&amp;</span>
 $ rabbitmq-server <span class="p">&amp;</span>
 </pre></div>
 </div>
