@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 class ActionConsumer(BasicConsumer):
     """ This async consumer looks for messages in the action exchange and parses them as json """
 
-    MESSAGE_URL = 'amqp://actions/'
+    MESSAGE_URL = 'amqp://localhost/'
 
     EXCHANGE = 'actions'
     EXCHANGE_TYPE = 'fanout'
