@@ -6,7 +6,7 @@ import pika, json
 def dispatch(body, exchange, routing_key=''):
     """ dispatch the action through the message queue """
     # connect to the rabbit mq server
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='actions'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
     # open a channel
     channel = connection.channel()
     # make sure the exchange matches our expectations
