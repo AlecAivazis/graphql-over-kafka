@@ -65,9 +65,9 @@ class ModelService(Service):
 
         # create the service
         super().__init__(
-            schema = schema,
-            # actionHandler = action_handler,
-            name = name,
+            schema=schema,
+            action_handler=action_handler,
+            name=name,
             **kwargs
         )
 

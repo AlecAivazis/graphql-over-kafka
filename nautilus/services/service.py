@@ -17,7 +17,7 @@ class Service:
 
         Args:
 
-            actionHandler (optional, function): The callback function fired when
+            action_handler (optional, function): The callback function fired when
                 an action is recieved. If None, the service does not connect to the
                 action queue.
 
@@ -60,18 +60,18 @@ class Service:
                 service = Service(
                     name = 'My Awesome Service',
                     schema = api_schema,
-                    actionHandler = action_handler
+                    action_handler = action_handler
                 )
     """
 
     def __init__(
             self,
             name,
-            schema = None,
-            actionHandler = None,
-            configObject = None,
-            auto_register = True,
-            auth = True,
+            schema=None,
+            action_handler=None,
+            configObject=None,
+            auto_register=True,
+            auth=True,
     ):
         # base the service on a flask app
         self.app = Flask(__name__)
@@ -90,18 +90,25 @@ class Service:
             self.app.config.from_object(configObject)
 
         # if there is an action consumer, create a wrapper for it
-        self.actionConsumer = ActionConsumer(actionHandler = actionHandler) if actionHandler else None
+        self.action_consumer = ActionConsumer(action_handler=action_handler) \
+                                                  if action_handler else None
 
         from nautilus.db import db
         db.init_app(self.app)
 
         # setup various functionalities
-        self.setupAdmin()
-        self.setupAuth()
-        self.setupApi(schema)
+        self.setup_admin()
+        self.setup_auth()
+        self.setup_api(schema)
 
 
-    def run(self, host='127.0.0.1', port = 8000, debug = False, secretKey = 'supersecret', **kwargs):
+    def run(self,
+            host='127.0.0.1',
+            port=8000,
+            debug=False,
+            secret_key='supersecret',
+            **kwargs
+           ):
 
         # save command line arguments
         self.app.config['DEBUG'] = kwargs['debug'] if 'debug' in kwargs \
@@ -110,8 +117,9 @@ class Service:
                                                     else host
         self.app.config['PORT'] = kwargs['port'] if 'port' in kwargs \
                                                     else port
-        self.app.config['SECRET_KEY'] = kwargs['secretKey'] if 'secretKey' in kwargs \
-                                                            else secretKey
+        self.app.config['SECRET_KEY'] = kwargs['secret_key'] \
+                                                if 'secret_key' in kwargs \
+                                                            else secret_key
 
         # if the service needs to register itself
         if self.auto_register:
@@ -119,21 +127,21 @@ class Service:
             registry.keep_alive(self)
 
         # if we need to spin up an action consumer
-        if self.actionConsumer:
+        if self.action_consumer:
             # create a thread that will run the consumer
-            actionThread = threading.Thread(target = self.actionConsumer.run)
+            action_thread = threading.Thread(target=self.action_consumer.run)
             # start the thread
-            actionThread.start()
+            action_thread.start()
 
         # run the service at the designated port
-        self.app.run(host=self.app.config['HOST'], port = self.app.config['PORT'])
+        self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
 
 
     def stop(self):
         # if there is an action consumer
-        if self.actionConsumer:
+        if self.action_consumer:
             # stop the consumer
-            self.actionConsumer.stop()
+            self.action_consumer.stop()
 
         # if the service is responsible for registering itself
         if self.auto_register:
@@ -144,19 +152,19 @@ class Service:
         """ Apply a flask blueprint to the internal application """
         self.app.register_blueprint(blueprint)
 
-    def setupAuth(self):
+    def setup_auth(self):
         # if we are supposed to enable authentication for the service
         if self.auth:
             from nautilus.auth import init_service
             init_service(self)
 
 
-    def setupAdmin(self):
+    def setup_admin(self):
         from nautilus.admin import init_service
         init_service(self)
 
 
-    def setupApi(self, schema = None):
+    def setup_api(self, schema=None):
         # if there is a schema for the service
         if schema:
             # configure the service api with the schema

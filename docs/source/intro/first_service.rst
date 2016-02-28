@@ -86,9 +86,9 @@ Notice we also wrapped the service in a manager, which provides a basic
 command line interface for our service.
 
 While our service still can't talk to the outside world, at least it can keep
-track of our recipes for us.  Before we can look at the records, we have to 
-create the database that will persist the data. Since our service is now 
-wrapped in a manager, we can easily do this by executing the ``syncdb`` 
+track of our recipes for us.  Before we can look at the records, we have to
+create the database that will persist the data. Since our service is now
+wrapped in a manager, we can easily do this by executing the ``syncdb``
 command:
 
 .. code-block:: bash
@@ -243,7 +243,7 @@ the new record (or another mutation) when appropriate:
     service = Service(
         name='my service',
         schema = schema,
-        actionHandler = action_handler
+        action_handler = action_handler
     )
 
     manager = ServiceManager(service)

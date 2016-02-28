@@ -30,7 +30,7 @@ Combining Action Handlers
 
 As your services get more complex, you'll want to split your action handler into
 separate functions which each get called. Nautilus provides a function called
-``combineActionHandlers`` which serves just this case:
+``combine_action_handlers`` which serves just this case:
 
 .. autofunction:: nautilus.network.combine_action_handlers
 

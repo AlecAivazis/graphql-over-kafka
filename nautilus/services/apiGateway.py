@@ -40,8 +40,9 @@ class APIGateway(Service):
 
         # create the service
         super().__init__(
-            schema = schema,
-            name = name,
+            action_handler=action_handler,
+            schema=schema,
+            name=name,
             **kwargs
         )
 
