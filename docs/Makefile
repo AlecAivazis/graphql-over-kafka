@@ -1,6 +1,8 @@
 
 GH_PAGES_SOURCES = source sphinx.make ../nautilus
 
+all: local
+
 gh-pages:
 	git checkout gh-pages ; \
 	git checkout master $(GH_PAGES_SOURCES) ; \
@@ -19,4 +21,7 @@ local: clean
 clean:
 	make clean -f ./sphinx.make
 
-all: gh-pages
+build_internals: local
+
+publish: gh-pages
+
