@@ -1,11 +1,10 @@
 # external imports
 import graphene
-from graphene import Field
+from graphene import Field, List
 from flask_graphql import GraphQLView, GraphQL
 from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 from sqlalchemy.inspection import inspect
 # local imports
-from nautilus.api.fields import Connection
 from nautilus.api.filter import args_for_model, filter_model
 from nautilus.api import convert_sqlalchemy_type
 
@@ -47,9 +46,9 @@ def create_model_schema(Model):
 
     class Query(graphene.ObjectType):
         """ the root level query """
-        all_models = Connection(ModelObjectType,
-            args = args_for_model(Model)
-        )
+        all_models = List(ModelObjectType,
+                          args=args_for_model(Model)
+                         )
 
         def resolve_all_models(self, args, info):
             # filter the model query according to the arguments

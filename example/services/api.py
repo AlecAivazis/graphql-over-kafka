@@ -13,18 +13,18 @@ from .ingredients import service as IngredientService
 # create the schema based on the query object
 schema = Schema(name='Product Schema')
 
-
 ## define the schema that encapsulates the cloud
 
 class Recipe(ServiceObjectType):
 
     class Meta:
         service = RecipeService
-    
+        support_relay = True
+
     # connections are resolved/joined using the appropriate connection service
-    # you can avoid circular/undefined references using strings - nautilus will look 
+    # you can avoid circular/undefined references using strings - nautilus will look
     # for the corresponding ServiceObjectType
-    ingredients = Connection('Ingredient', description = 'The ingredients in this recipe.')
+    ingredients = Connection('Ingredient', description='The ingredients in this recipe.')
 
 
 
@@ -32,8 +32,9 @@ class Ingredient(ServiceObjectType):
 
     class Meta:
         service = IngredientService
-    
-    recipes = Connection(Recipe, description = 'The recipes with this ingredient')
+        support_relay = True
+
+    recipes = Connection(Recipe, description='The recipes with this ingredient')
 
 
 # add the query to the schema
