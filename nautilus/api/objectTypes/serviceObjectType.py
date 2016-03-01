@@ -6,7 +6,7 @@ from graphene.core.classtypes.objecttype import ObjectTypeOptions
 from nautilus.api.filter import args_for_model
 from nautilus.network import query_service
 
-VALID_ATTRS = ('service', 'support_relay')
+VALID_ATTRS = ('service',)
 
 # collect the created service objects in a list
 serivce_objects = {}
@@ -17,14 +17,12 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
         super().__init__(*args, **kwds)
         self.valid_attrs += VALID_ATTRS
         self.service = None
-        self.support_relay = False
 
     def contribute_to_class(self, cls, name):
         # bubble up the chain
         super().contribute_to_class(cls, name)
         # add the service to the class record
         cls.service = self.service
-        cls.support_relay = self.support_relay
 
 class ServiceObjectTypeMeta(type(Node)):
 
@@ -59,11 +57,11 @@ class ServiceObjectTypeMeta(type(Node)):
         return super().__new__(cls, name, bases, attributes, **kwds)
 
 
-    def __init__(cls, name, bases, dict):
+    def __init__(self, name, bases, dict):
         # bubble upwards
         super().__init__(name, bases, dict)
         # add the object to the registry
-        serivce_objects[name] = cls
+        serivce_objects[name] = self
 
 class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
     """
