@@ -57,20 +57,6 @@ class Connection(ConnectionField):
             # and don't do anything else
             return
 
-
-        # if we were given a string to target
-        if isinstance(target, str):
-            # if the string points to a service object we recognize
-            if target in serivce_objects:
-                # grab the service object with the matching name
-                target = serivce_objects[target]
-            # otherwise the string target does not designate a service object
-            else:
-                # yell loudly
-                raise ValueError("Please provide a string designating a " + \
-                                    "ServiceObjectType as the target for " + \
-                                    "a connection.")
-
         # we are supposed to perform the resolve
 
         assert relationship == 'many', 'single relationships are not yet supported'
@@ -95,6 +81,19 @@ class Connection(ConnectionField):
 
         # the target class for the connection
         target = self.target
+
+        # if we were given a string to target
+        if isinstance(target, str):
+            # if the string points to a service object we recognize
+            if target in serivce_objects:
+                # grab the service object with the matching name
+                target = serivce_objects[target]
+            # otherwise the string target does not designate a service object
+            else:
+                # yell loudly
+                raise ValueError("Please provide a string designating a " + \
+                                    "ServiceObjectType as the target for " + \
+                                    "a connection.")
 
         # make a normal dictionary out of the immutable one we were given
         args = query_args \
