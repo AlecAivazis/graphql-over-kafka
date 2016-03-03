@@ -35,6 +35,10 @@ class Ingredient(ServiceObjectType):
     recipes = Connection(Recipe, description='The recipes with this ingredient')
 
 
+class Query(ObjectType):
+    ingredients = Connection(Ingredient)
+    recipes = Connection(Recipe)
+
 # add the query to the schema
 schema.query = Query
 
