@@ -111,15 +111,10 @@ class Service:
            ):
 
         # save command line arguments
-        self.app.config['DEBUG'] = kwargs['debug'] if 'debug' in kwargs \
-                                                    else debug
-        self.app.config['HOST'] = kwargs['host'] if 'host' in kwargs \
-                                                    else host
-        self.app.config['PORT'] = kwargs['port'] if 'port' in kwargs \
-                                                    else port
-        self.app.config['SECRET_KEY'] = kwargs['secret_key'] \
-                                                if 'secret_key' in kwargs \
-                                                            else secret_key
+        self.app.config['DEBUG'] = debug
+        self.app.config['HOST'] = host
+        self.app.config['PORT'] = port
+        self.app.config['SECRET_KEY'] = secret_key
 
         # if the service needs to register itself
         if self.auto_register:
