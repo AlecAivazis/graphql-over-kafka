@@ -1,6 +1,7 @@
 # external imports
 import threading
 import consul
+import requests
 from nautilus.network import registry
 from consul import Check
 from flask import Flask
@@ -138,10 +139,13 @@ class Service:
             # stop the consumer
             self.action_consumer.stop()
 
-        # if the service is responsible for registering itself
-        if self.auto_register:
-            # remove the service from the registry
-            registry.deregister_service(self)
+        try:
+            # if the service is responsible for registering itself
+            if self.auto_register:
+                # remove the service from the registry
+                registry.deregister_service(self)
+        except requests.exceptions.ConnectionError as error:
+            pass
 
     def use_blueprint(self, blueprint):
         """ Apply a flask blueprint to the internal application """
