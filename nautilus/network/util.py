@@ -74,7 +74,7 @@ def combine_action_handlers(*args):
         which will call all of them.
     """
     # the combined action handler
-    def combinedActionHandler(type, payload):
+    def combinedActionHandler(action_type, payload):
         # goes over every given handler
         for handler in args:
             # call the handler
