@@ -1,6 +1,7 @@
 # external imports
 import threading
 import consul
+import os
 import requests
 from nautilus.network import registry
 from consul import Check
@@ -93,8 +94,6 @@ class Service:
         # if there is an action consumer, create a wrapper for it
         self.action_consumer = ActionConsumer(action_handler=action_handler) \
                                                   if action_handler else None
-
-
         # setup various functionalities
         self.setup_db()
         self.setup_admin()
@@ -121,16 +120,33 @@ class Service:
             # register with the service registry
             registry.keep_alive(self)
 
+        # don't assume we are going to spawn a subprocess
+        pid = None
+
         # if we need to spin up an action consumer
         if self.action_consumer:
-            # create a thread that will run the consumer
-            action_thread = threading.Thread(target=self.action_consumer.run)
-            # start the thread
-            action_thread.start()
+            # create a subprocess
+            pid = os.fork()
+            # if we are on the subprocess
+            if pid == 0:
+                # start the action consumer
+                self.action_consumer.run()
+                # when we're done with what we're doing
+                raise SystemExit(0)
 
-        # run the service at the designated port
-        self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
+        # listen for keyboard interupts
+        try:
+            # run the service at the designated port
+            self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
 
+        # if the application is interrupted by the keyboard
+        except KeyboardInterrupt:
+            # if there is a child process
+            if pid:
+                # send a sigterm to the child process
+                os.kill(pid, 2)
+                # collect the status so we don't create a zombie
+                status, pid = os.waitpid(pid, 0)
 
     def stop(self):
         # if there is an action consumer
@@ -143,8 +159,11 @@ class Service:
             if self.auto_register:
                 # remove the service from the registry
                 registry.deregister_service(self)
-        except requests.exceptions.ConnectionError as error:
+
+        # if there is no server to disconnect from
+        except requests.exceptions.ConnectionError:
             pass
+
 
     def setup_db(self):
         # import the nautilus db configuration
