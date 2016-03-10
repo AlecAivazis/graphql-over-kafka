@@ -18,7 +18,7 @@ def createHandler(Model):
         # if the payload represents a new instance of `Model`
         if action_type == getCRUDAction('create', Model):
             # for each required field
-            for requirement in Model.requiredFields:
+            for requirement in Model.requiredFields():
                 # ensure the value is in the payload
                 if not requirement in payload:
                     print("Required field not found in payload: {}".format(requirement))
