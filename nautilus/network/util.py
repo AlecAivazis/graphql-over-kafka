@@ -78,7 +78,7 @@ def combine_action_handlers(*args):
         # goes over every given handler
         for handler in args:
             # call the handler
-            handler(type, payload)
+            handler(action_type, payload)
 
     # return the combined action handler
     return combinedActionHandler
