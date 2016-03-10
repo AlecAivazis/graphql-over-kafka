@@ -94,10 +94,9 @@ class Service:
         self.action_consumer = ActionConsumer(action_handler=action_handler) \
                                                   if action_handler else None
 
-        from nautilus.db import db
-        db.init_app(self.app)
 
         # setup various functionalities
+        self.setup_db()
         self.setup_admin()
         self.setup_auth()
         self.setup_api(schema)
@@ -147,9 +146,17 @@ class Service:
         except requests.exceptions.ConnectionError as error:
             pass
 
+    def setup_db(self):
+        # import the nautilus db configuration
+        from nautilus.db import db
+        # initialize the service app
+        db.init_app(self.app)
+
+
     def use_blueprint(self, blueprint):
         """ Apply a flask blueprint to the internal application """
         self.app.register_blueprint(blueprint)
+
 
     def setup_auth(self):
         # if we are supposed to enable authentication for the service
