@@ -1,15 +1,10 @@
 # external imports
-import threading
-import consul
 import os
 import requests
-from nautilus.network import registry
-from consul import Check
 from flask import Flask
-from flask_graphql import GraphQLView, GraphQL
-from flask_login import LoginManager
 # local imports
 from nautilus.network.consumers import ActionConsumer
+from nautilus.network import registry
 
 class Service:
     """
@@ -129,9 +124,6 @@ class Service:
                 # when we're done with what we're doing
                 raise SystemExit(0)
 
-        # listen for exceptions
-        try:
-
             # if the service needs to register itself
             if self.auto_register:
                 # register with the service registry
@@ -140,8 +132,11 @@ class Service:
             # run the service at the designated port
             self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
 
-        # if the application is interrupted by the keyboard
-        except KeyboardInterrupt:
+            # app.run is blocking while the server is running
+            # lines afterwards are executed when the server stop
+            # perfect time to clean up
+            self.stop()
+
             # if there is a child process
             if pid:
                 # send a sigterm to the child process
@@ -151,14 +146,11 @@ class Service:
 
 
     def stop(self):
-        # if there is an action consumer
-        if self.action_consumer:
-            # stop the consumer
-            self.action_consumer.stop()
 
         try:
             # if the service is responsible for registering itself
             if self.auto_register:
+                print('deregistering service')
                 # remove the service from the registry
                 registry.deregister_service(self)
 
