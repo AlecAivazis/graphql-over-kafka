@@ -115,11 +115,6 @@ class Service:
         self.app.config['PORT'] = port
         self.app.config['SECRET_KEY'] = secret_key
 
-        # if the service needs to register itself
-        if self.auto_register:
-            # register with the service registry
-            registry.keep_alive(self)
-
         # don't assume we are going to spawn a subprocess
         pid = None
 
@@ -136,6 +131,12 @@ class Service:
 
         # listen for exceptions
         try:
+
+            # if the service needs to register itself
+            if self.auto_register:
+                # register with the service registry
+                registry.keep_alive(self)
+
             # run the service at the designated port
             self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
 
