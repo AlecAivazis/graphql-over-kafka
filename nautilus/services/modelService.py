@@ -49,7 +49,6 @@ class ModelService(Service):
         # save a reference to the model this service is managing
         self.model = model
 
-
         # the schema to add to the service
         schema = create_model_schema(model)
 
@@ -61,6 +60,7 @@ class ModelService(Service):
             CRUDHandler(model)
         )
 
+        # pull the name of the service from kwargs if it was given
         name = kwargs.pop('name', None) or model_service_name(model)
 
         # create the service
