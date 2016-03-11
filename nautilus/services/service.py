@@ -150,7 +150,6 @@ class Service:
         try:
             # if the service is responsible for registering itself
             if self.auto_register:
-                print('deregistering service')
                 # remove the service from the registry
                 registry.deregister_service(self)
 
