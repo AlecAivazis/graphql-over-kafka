@@ -134,7 +134,7 @@ class Service:
                 # when we're done with what we're doing
                 raise SystemExit(0)
 
-        # listen for keyboard interupts
+        # listen for exceptions
         try:
             # run the service at the designated port
             self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
@@ -147,6 +147,7 @@ class Service:
                 os.kill(pid, 2)
                 # collect the status so we don't create a zombie
                 status, pid = os.waitpid(pid, 0)
+
 
     def stop(self):
         # if there is an action consumer
