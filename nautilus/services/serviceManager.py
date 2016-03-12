@@ -39,4 +39,5 @@ class ServiceManager:
             print("Cleaning up service...")
             self.service.stop()
         except Exception as err:
+            print("Closing due to error: %s" % err)
             self.service.stop()

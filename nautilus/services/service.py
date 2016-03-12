@@ -77,6 +77,7 @@ class Service:
         self.__name__ = name
         self.auto_register = auto_register
         self.auth = auth
+        self.subprocesses = []
 
         # apply any necessary flask app config
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -116,9 +117,9 @@ class Service:
         # if we need to spin up an action consumer
         if self.action_consumer:
             # create a subprocess
-            pid = os.fork()
+            self.subprocesses.append(os.fork())
             # if we are on the subprocess
-            if pid == 0:
+            if self.subprocesses[-1] == 0:
                 # start the action consumer
                 self.action_consumer.run()
                 # when we're done with what we're doing
@@ -132,22 +133,25 @@ class Service:
             # run the service at the designated port
             self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
 
-            # app.run is blocking while the server is running
-            # lines afterwards are executed when the server stop
-            # perfect time to clean up
+            # app.run is blocking while the server is running.
+            # the lines afterwards are executed when the server stops so it is a
+            # perfect time to clean up and ensure no leaks
             self.stop()
-
-            # if there is a child process
-            if pid:
-                # send a sigterm to the child process
-                os.kill(pid, 2)
-                # collect the status so we don't create a zombie
-                status, pid = os.waitpid(pid, 0)
 
 
     def stop(self):
-
         try:
+            # for each subprocess id we know about
+            for pid in self.subprocesses:
+                # if its a child process
+                if pid != 0:
+                    # send a sigterm to the child process
+                    os.kill(pid, 2)
+                    # collect the status so we don't create a zombie
+                    status, sub_pid = os.waitpid(pid, 0)
+                    # remove the subprocess from the list
+                    self.subprocesses.remove(pid)
+
             # if the service is responsible for registering itself
             if self.auto_register:
                 # remove the service from the registry
