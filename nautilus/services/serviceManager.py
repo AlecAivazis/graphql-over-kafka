@@ -34,6 +34,10 @@ class ServiceManager:
         """ run the command manager """
         try:
             self.commandManager.run()
+        except KeyboardInterrupt:
+            print()
+            print("Cleaning up service...")
+            self.service.stop()
         except Exception as err:
-            print(err)
+            print("Closing due to error: %s" % err)
             self.service.stop()

@@ -15,13 +15,14 @@ def register_service(service):
     from nautilus.auth import random_string
 
     # compute and save the consul identifier for the service
-    service.consul_name = "{}-{}".format(service.name, random_string(6))
+    service.consul_name = "{}-{}".format(service.name, random_string(6))\
+                                 .replace('_', '-')
 
     # the consul service entry
     consulSession.agent.service.register(
-        name = service.name,
-        service_id = service.consul_name,
-        port = service.app.config['PORT'],
+        name=service.name.replace('_', '-'),
+        service_id=service.consul_name,
+        port=service.app.config['PORT'],
     )
 
 
