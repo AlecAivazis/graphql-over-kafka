@@ -132,9 +132,9 @@ class Service:
 
             # run the service at the designated port
             self.app.run(
-                         host=self.app.config['HOST'],
-                         port=self.app.config['PORT'],
-                         use_reloader=False
+                host=self.app.config['HOST'],
+                port=self.app.config['PORT'],
+                use_reloader=False
             )
 
             # app.run is blocking while the server is running.
