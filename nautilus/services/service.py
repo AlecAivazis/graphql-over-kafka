@@ -130,7 +130,11 @@ class Service:
                 registry.keep_alive(self)
 
             # run the service at the designated port
-            self.app.run(host=self.app.config['HOST'], port=self.app.config['PORT'])
+            self.app.run(
+                         host=self.app.config['HOST'],
+                         port=self.app.config['PORT'],
+                         use_reloader=False
+            )
 
             # app.run is blocking while the server is running
             # lines afterwards are executed when the server stop
