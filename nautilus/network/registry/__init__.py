@@ -20,7 +20,7 @@ def register_service(service):
 
     # the consul service entry
     consulSession.agent.service.register(
-        name=service.name.replace('_', '-'),
+        name=service.name,
         service_id=service.consul_name,
         port=service.app.config['PORT'],
     )

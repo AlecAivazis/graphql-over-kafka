@@ -204,4 +204,3 @@ class Service:
         """
 
         return self.app.route(**options)
-
