@@ -5,11 +5,11 @@ from setuptools import setup, find_packages
 
 setup(
     name='nautilus',
-    version='0.3.12',
+    version='0.3.13',
     description='A library for creating microservice applications',
     author='Alec Aivazis',
     author_email='alec@aivazis.com',
-    url='https://github.com/aaivazis/nautilus',
+    url='https://github.com/AlecAivazis/nautilus',
     download_url='https://github.com/aaivazis/nautilus/tarball/0.3.2',
     keywords=['microservice', 'flask', 'graphql'],
     test_suite='nose2.collector.collector',
