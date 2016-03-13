@@ -129,14 +129,13 @@ class Connection(ConnectionField):
 
             # if there were no related fields
             if len(related) == 0:
-                return None
+                return []
 
             # grab the list of primary keys from the remote service
             join_ids = [entry[target_service_name] for entry in related]
 
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
-
 
         ## query the target service
 
@@ -154,7 +153,6 @@ class Connection(ConnectionField):
             # yell loudly
             raise Exception("Inconsistent state reached: multiple entries " + \
                                         "resolving a foreign key reference")
-
 
         ## remove instances of the target that the user is not allowed to see
 
