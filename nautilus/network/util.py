@@ -5,15 +5,20 @@ import socket
 from nautilus.conventions.services import api_gateway_name
 from nautilus.network.registry import service_location_by_name
 
-def query_graphql_service(url, name, fields, filters = {}):
+def query_graphql_service(url, name, fields, filters=None):
     """ A graphql query wrapper factory"""
 
-    # construct the argument string out of the given dictionary
-    argString = ', '.join(['{}: {}'.format(key, json.dumps(value)) for key,value in filters.items()])
-    args = "(%s)" % argString if len(argString) > 0  else ''
+    # by default there are no args to add to the query
+    args = None
+    # if there are filters defined for the query
+    if filters:
+        # construct the argument string out of the given dictionary
+        arg_string = ', '.join(['{}: {}'.format(key, json.dumps(value)) \
+                                            for key, value in filters.items()])
+        args = "(%s)" % arg_string if len(arg_string) > 0  else ''
 
     # construct the field string
-    fieldList = ', '.join(fields)
+    field_list = ', '.join(fields)
 
     # build the query out of the given paramters
     query = """
@@ -22,17 +27,17 @@ def query_graphql_service(url, name, fields, filters = {}):
                 %s
             }
         }
-    """ % (name, args, fieldList)
+    """ % (name, args or '', field_list)
 
     # query the service to retrieve the data
-    dataRequest = requests.get(url + '?query='   + query).json()
+    data_request = requests.get(url + '?query='   + query).json()
     # if there is an error
-    if 'errors' in dataRequest:
-        raise RuntimeError(dataRequest['errors'])
+    if 'errors' in data_request:
+        raise RuntimeError(data_request['errors'])
     # otherwise there is no error
     else:
         # return the data
-        return dataRequest['data'][name]
+        return data_request['data'][name]
 
 
 def query_service(service, fields, filters = {}):
