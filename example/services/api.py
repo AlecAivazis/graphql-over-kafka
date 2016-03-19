@@ -60,7 +60,7 @@ class AddRecipeMutation(Mutation):
         """ perform the mutation """
         # send the new recipe action into the queue
         dispatch_action(
-            action_type=getCRUDAction('create', 'recipe'),
+            action_type=getCRUDAction('create', RecipeService.model),
             payload=args
         )
 
