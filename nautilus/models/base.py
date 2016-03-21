@@ -34,18 +34,18 @@ class BaseModel(peewee.Model, metaclass=_MixedMeta):
 
     nautilus_base = True # necessary to prevent meta class behavior on this model
 
-    def __init__(self, **kwargs):
-        """ treat kwargs as attribute assignment """
-        # loop over the given kwargs
-        for key, value in kwargs.items():
-            # treat them like attribute assignments
-            setattr(self, key, value)
+    # def __init__(self, **kwargs):
+    #     """ treat kwargs as attribute assignment """
+    #     # loop over the given kwargs
+    #     for key, value in kwargs.items():
+    #         # treat them like attribute assignments
+    #         setattr(self, key, value)
 
     def _json(self):
         # build a dictionary out of just the columns in the table
         return {
-            column.name: getattr(self, column.name) \
-                for column in type(self).columns()
+            field.name: getattr(self, field.name) \
+                for field in type(self).fields()
         }
 
     class Meta:

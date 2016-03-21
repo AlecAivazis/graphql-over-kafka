@@ -43,21 +43,21 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    # def test_can_be_serialized_using_model_encoder(self):
-    #     # import the model serializer
-    #     from nautilus.models import ModelSerializer
-    #     import json
+    def test_can_be_serialized_using_model_encoder(self):
+        # import the model serializer
+        from nautilus.models import ModelSerializer
+        import json
 
 
-    #     model = self.Model(name="foo", date="bar")
+        model = self.Model(name="foo", date="bar")
 
-    #     serialized = ModelSerializer().serialize(model)
+        serialized = ModelSerializer().serialize(model)
 
-    #     assert serialized == json.dumps({
-    #         "name": "foo", "date": "bar"
-    #     }), (
-    #         'Model was not correctly serialized'
-    #     )
+        assert serialized == json.dumps({
+            "name": "foo", "date": "bar", 'id': None
+        }), (
+            'Model was not correctly serialized'
+        )
 
 
 
