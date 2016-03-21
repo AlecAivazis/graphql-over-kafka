@@ -12,15 +12,12 @@ class TestUtil(unittest.TestCase):
 
     def setUp(self):
 
-        class User(models.BaseModel):
+        class TestUser(models.BaseModel):
             name = models.fields.CharField(null=True)
             date = models.fields.CharField(null=False)
 
-        @classmethod
-        def on_creation(cls):
-            print('hello')
 
-        self.Model = User
+        self.Model = TestUser
 
 
     def test_can_retrieve_fields(self):
@@ -51,17 +48,13 @@ class TestUtil(unittest.TestCase):
         # import the model serializer
         from nautilus.models import ModelSerializer
         import json
-
-
+        # create an instance of a model that we can serialize
         model = self.Model(name="foo", date="bar")
-
+        # serialize the model
         serialized = ModelSerializer().serialize(model)
-
+        # check that the serialized model can be hydrated as expected
         assert json.loads(serialized) == {
             "name": "foo", "date": "bar", 'id': None
         } , (
             'Model was not correctly serialized'
         )
-
-
-

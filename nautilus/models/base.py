@@ -20,7 +20,7 @@ class _Meta(type):
         # if the class is not a nautilus base class
         if 'nautilus_base' not in attributes or not attributes['nautilus_base']:
             # perform the necessary functions
-            self.onCreation()
+            self.on_creation()
 
         return
 
@@ -41,6 +41,10 @@ class BaseModel(peewee.Model, metaclass=_MixedMeta):
     #         # treat them like attribute assignments
     #         setattr(self, key, value)
 
+    class Meta:
+        database = db
+
+
     def _json(self):
         # build a dictionary out of just the columns in the table
         return {
@@ -48,12 +52,9 @@ class BaseModel(peewee.Model, metaclass=_MixedMeta):
                 for field in type(self).fields()
         }
 
-    class Meta:
-        database = db
-
 
     @classmethod
-    def onCreation(cls): pass
+    def on_creation(cls): pass
 
 
     @classmethod

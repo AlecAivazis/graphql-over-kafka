@@ -2,12 +2,12 @@
     This file defines the models used by the user service.
 """
 
-# external imports
-from sqlalchemy import Column, Text
-from .hasID import HasID
+# local imports
+from .. import Model
+from ..fields import CharField
 
-class User(HasID):
+class User(Model):
     """ The user model used by Synca. """
-    firstname = Column(Text)
-    lastname = Column(Text)
-    email = Column(Text, nullable = False)
+    firstname = CharField(null=True)
+    lastname = CharField(null=True)
+    email = CharField(null=False)

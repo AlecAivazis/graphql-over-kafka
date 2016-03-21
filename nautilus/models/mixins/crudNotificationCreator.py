@@ -3,6 +3,9 @@ from sqlalchemy import event
 # local imports
 from nautilus.network.amqp import dispatch_action
 
+# peewee support for signals from from a playhouse extension:
+# http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#signals
+
 class CRUDNotificationCreator:
     """
         This mixin class provides basic crus event publishing when the model

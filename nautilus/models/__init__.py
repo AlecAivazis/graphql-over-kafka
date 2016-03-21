@@ -1,5 +1,5 @@
 # external imports
-
+from peewee import Model
 # local imports
 from .types import *
 from .mixins import *
