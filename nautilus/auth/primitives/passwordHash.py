@@ -1,9 +1,8 @@
 # from: http://variable-scope.com/posts/storing-and-verifying-passwords-with-sqlalchemy
 
 import bcrypt
-from sqlalchemy.ext.mutable import Mutable
 
-class PasswordHash(Mutable):
+class PasswordHash:
     """ This is a wrapper class over password hashes that abstracts equality """
 
     def __init__(self, hash_, rounds = None):
@@ -75,4 +74,3 @@ class PasswordHash(Mutable):
         """Recreates the internal hash."""
         self.hash = self._new(password, self.desired_rounds)
         self.rounds = self.desired_rounds
-        self.changed()

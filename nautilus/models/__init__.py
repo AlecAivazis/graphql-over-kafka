@@ -1,5 +1,5 @@
 # external imports
-from peewee import Model
+from peewee import Model, Field
 # local imports
 from .mixins import *
 from .base import BaseModel

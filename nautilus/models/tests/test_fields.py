@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 
+import nautilus.db as db
 import nautilus.models as models
 
 
@@ -17,10 +18,22 @@ class TestUtil(unittest.TestCase):
 
         # create an instance of the table with a password
         record = TestClass(password="foo")
+        # save the record to the database
+        record.save()
 
-        # make sure we cannot read the password
-        assert record.password != 'foo', (
-            'Password could be read from model instance.'
+        # retireve the record
+        password = TestClass.get(TestClass.id == record.id).password
+        # make sure there is a hash assocaited with the password
+        assert hasattr(password, 'hash') , (
+            "Retrieved record's password did not come with a hash"
+        )
+        # make sure that hash hide the password
+        assert password.hash != 'foo' , (
+            "Retrieved record's password is in plain sight!"
+        )
+        # make sure we can check for password equality
+        assert password == 'foo', (
+            'Password could not checked for equality.'
         )
 
 

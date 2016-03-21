@@ -1,4 +1,4 @@
 # external imports
-from flask.ext.sqlalchemy import SQLAlchemy
+from peewee import SqliteDatabase
 
-db = SQLAlchemy()
+db = SqliteDatabase(':memory:')
