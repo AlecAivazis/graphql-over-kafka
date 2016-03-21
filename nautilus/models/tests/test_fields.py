@@ -20,7 +20,7 @@ class TestUtil(unittest.TestCase):
 
         # make sure we cannot read the password
         assert record.password != 'foo', (
-            'Password could be read after being set'
+            'Password could be read from model instance.'
         )
 
 

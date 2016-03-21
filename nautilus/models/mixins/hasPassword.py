@@ -2,10 +2,10 @@
 from sqlalchemy import Column
 from sqlalchemy.orm import validates
 # local imports
-from ..types import Password
+from ..fields import PasswordField
 
 class HasPassword(object):
-    password = Column(Password)
+    password = Column(PasswordField)
 
     # the decorate isn't necessary but ensures an immediate cast to a password hash and
     # prevents storing the raw password in memory. :thumbsup:

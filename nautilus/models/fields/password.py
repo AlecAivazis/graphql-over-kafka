@@ -12,7 +12,7 @@ class PasswordField(TypeDecorator):
 
     def __init__(self, rounds=12, **kwds):
         self.rounds = rounds
-        super(Password, self).__init__(**kwds)
+        super().__init__(**kwds)
 
     def process_bind_param(self, value, dialect):
         """Ensure the value is a PasswordHash and then return its hash."""
@@ -51,7 +51,7 @@ class PasswordField(TypeDecorator):
 
 # Graphene Support
 
-@convert_sqlalchemy_type.register(Password)
+@convert_sqlalchemy_type.register(PasswordField)
 def convert_column_to_string(type, column):
     """ Make sure the password is never included in a schema. """
     raise Exception("Passwords cannot be included in a schema. Make sure to explcitly ignore any password fields in models.")

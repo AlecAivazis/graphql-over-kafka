@@ -54,21 +54,35 @@ class BaseModel(peewee.Model, metaclass=_MixedMeta):
 
 
     @classmethod
-    def on_creation(cls): pass
+    def on_creation(cls):
+        """
+            This callback allows for customization of the class record defined
+            by various subclass of the base model.
+        """
 
 
     @classmethod
     def primary_key(cls):
+        """
+            Retrieve the primary key of the database table.
+        """
         return cls._meta.primary_key
+
 
     @classmethod
     def required_fields(cls):
+        """
+            Retrieve the required fields for this model.
+        """
         return [field for field in cls.fields() if not field.null]
+
 
     @classmethod
     def fields(cls):
+        """
+            Returns the fields of the table.
+        """
         return cls._meta.fields.values()
-
 
 
     __abstract__ = True

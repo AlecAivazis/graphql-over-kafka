@@ -22,11 +22,3 @@ class GraphqlRequestHandler(tornado.web.RequestHandler):
         # send the response to the client and close its connection
         self.finish(json.dumps(result.data))
 
-# class GraphqlRequestHandler(tornado.web.RequestHandler):
-
-#         @tornado.web.asynchronous
-#         @tornado.gen.engine
-#         def get(self):
-
-#             print("HELLO")
-#             self.finish('hello')
