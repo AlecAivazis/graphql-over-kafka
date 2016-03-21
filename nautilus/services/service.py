@@ -97,7 +97,7 @@ class Service:
 
         # create a tornado web application
         app = tornado.web.Application([
-            (r"/", GraphqlRequestHandler, schema),
+            (r"/", GraphqlRequestHandler, dict(schema=schema)),
         ])
 
         # attach the ioloop to the application

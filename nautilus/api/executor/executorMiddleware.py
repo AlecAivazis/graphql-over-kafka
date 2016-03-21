@@ -5,7 +5,6 @@ from tornado.concurrent import Future
 from graphql.core.pyutils.defer import Deferred
 from graphql.core.execution.middlewares.utils import resolver_has_tag, tag_resolver
 
-from consumers.action_consumer import action_consumer
 
 _nautilus_tag = 'nautilus_service'
 
@@ -21,34 +20,7 @@ def execute_resolver(resolver, deffered):
         This function executes the given resolver, passing it
     """
 
-    from consumers.action_consumer import request_handlers
-
-    # create a correlation id for the request
-    correlation_id = str(uuid.uuid4())
-    # make sure the correlation_id is unique
-    while correlation_id in request_handlers:
-        # generate a new correlation_id
-        correlation_id = str(uuid.uuid4())
-
-    def request_callback(msg):
-        """
-            This function passes the incoming message to the appropriate
-            handler.
-        """
-        deffered.callback(msg.decode('utf-8'))
-
-    # associate the correlation id with the response handler
-    request_handlers[correlation_id] = request_callback
-
-    # record the publish to the log
-    print('publishing event %s: %s' % (correlation_id, time.time()))
-
-    # publish the data request event
-    action_consumer.publish(
-        message=resolver(),
-        route='read.user.pending',
-        correlation_id=correlation_id,
-    )
+    resolver(deferred)
 
 
 class TornadoExecutionMiddleware:
