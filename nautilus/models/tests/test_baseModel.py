@@ -16,6 +16,10 @@ class TestUtil(unittest.TestCase):
             name = models.fields.CharField(null=True)
             date = models.fields.CharField(null=False)
 
+        @classmethod
+        def on_creation(cls):
+            print('hello')
+
         self.Model = User
 
 
@@ -53,9 +57,9 @@ class TestUtil(unittest.TestCase):
 
         serialized = ModelSerializer().serialize(model)
 
-        assert serialized == json.dumps({
+        assert json.loads(serialized) == {
             "name": "foo", "date": "bar", 'id': None
-        }), (
+        } , (
             'Model was not correctly serialized'
         )
 
