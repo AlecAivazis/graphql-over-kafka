@@ -24,6 +24,7 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
         # add the service to the class record
         cls.service = self.service
 
+
 class ServiceObjectTypeMeta(type(Node)):
 
     options_class = ServiceObjectTypeOptions
@@ -62,6 +63,7 @@ class ServiceObjectTypeMeta(type(Node)):
         super().__init__(name, bases, dict)
         # add the object to the registry
         serivce_objects[name] = self
+
 
 class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
     """

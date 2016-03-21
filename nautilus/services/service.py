@@ -1,10 +1,11 @@
 # external imports
 import os
 import requests
-from flask import Flask
+import tornado.ioloop
+import tornado.web
 # local imports
-from nautilus.network.consumers import ActionConsumer
-from nautilus.network import registry
+from nautilus.network.amqp.consumers.actions import ActionHandler
+from nautilus.network.http import GraphqlRequestHandler
 
 class Service:
     """
@@ -44,13 +45,13 @@ class Service:
                 from nautilus.network import CRUDHandler
                 from nautilus.models import BaseModel
 
-
                 class Model(BaseModel):
                     name = Column(Text)
 
 
-                # you could also make your own
                 api_schema = create_model_schema(Model)
+
+
                 action_handler = CRUDHandler(Model)
 
 
@@ -71,136 +72,76 @@ class Service:
             auth=True,
     ):
         # base the service on a flask app
-        self.app = Flask(__name__)
+        self.app = self.tornado_app(schema)
 
         self.name = name
         self.__name__ = name
-        self.auto_register = auto_register
-        self.auth = auth
-        self.subprocesses = []
+        self.action_consumer = None
 
         # apply any necessary flask app config
-        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+        # self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
         # if there is a configObject
-        if configObject:
-            # apply the config object to the flask app
-            self.app.config.from_object(configObject)
+        # if configObject:
+        #     # apply the config object to the flask app
+        #     self.app.config.from_object(configObject)
 
-        # if there is an action consumer, create a wrapper for it
-        self.action_consumer = ActionConsumer(action_handler=action_handler) \
-                                                  if action_handler else None
         # setup various functionalities
-        self.setup_db()
-        self.setup_admin()
-        self.setup_auth()
-        self.setup_api(schema)
+        self.init_action_handler(action_handler)
+        # self.setup_db()
+        # self.setup_admin()
+        # self.setup_auth()
 
 
-    def run(self,
-            host='127.0.0.1',
-            port=8000,
-            debug=False,
-            secret_key='supersecret',
-            **kwargs
-           ):
+    def tornado_app(self, schema):
 
-        # save command line arguments
-        self.app.config['DEBUG'] = debug
-        self.app.config['HOST'] = host
-        self.app.config['PORT'] = port
-        self.app.config['SECRET_KEY'] = secret_key
+        # create a tornado web application
+        app = tornado.web.Application([
+            (r"/", GraphqlRequestHandler, schema),
+        ])
 
-        # don't assume we are going to spawn a subprocess
-        pid = None
+        # attach the ioloop to the application
+        app.ioloop = tornado.ioloop.IOLoop.instance()
 
-        # if we need to spin up an action consumer
-        if self.action_consumer:
-            # create a subprocess
-            self.subprocesses.append(os.fork())
-            # if we are on the subprocess
-            if self.subprocesses[-1] == 0:
-                # start the action consumer
-                self.action_consumer.run()
-                # when we're done with what we're doing
-                raise SystemExit(0)
+        return app
 
-            # if the service needs to register itself
-            if self.auto_register:
-                # register with the service registry
-                registry.keep_alive(self)
 
-            # run the service at the designated port
-            self.app.run(
-                host=self.app.config['HOST'],
-                port=self.app.config['PORT'],
-                use_reloader=False
-            )
+    def init_action_handler(self, action_handler):
+        # if the service was provided an action handler
+        if action_handler:
+            # create a wrapper for it
+            self.action_consumer = ActionHandler(callback=action_handler)
+            # add it to the ioloop
+            self.app.ioloop.add_callback(self.action_consumer.run)
 
-            # app.run is blocking while the server is running.
-            # the lines afterwards are executed when the server stops so it is a
-            # perfect time to clean up and ensure no leaks
-            self.stop()
+
+    def run(self, port=8000, **kwargs):
+        # assign the port to the app instance
+        self.app.listen(port)
+        # start the ioloop
+        self.app.ioloop.start()
 
 
     def stop(self):
-        try:
-            # for each subprocess id we know about
-            for pid in self.subprocesses:
-                # if its a child process
-                if pid != 0:
-                    # send a sigterm to the child process
-                    os.kill(pid, 2)
-                    # collect the status so we don't create a zombie
-                    status, sub_pid = os.waitpid(pid, 0)
-                    # remove the subprocess from the list
-                    self.subprocesses.remove(pid)
-
-            # if the service is responsible for registering itself
-            if self.auto_register:
-                # remove the service from the registry
-                registry.deregister_service(self)
-
-        # if there is no server to disconnect from
-        except requests.exceptions.ConnectionError:
-            pass
+        # stop the ioloop
+        self.app.ioloop.stop()
 
 
-    def setup_db(self):
-        # import the nautilus db configuration
-        from nautilus.db import db
-        # initialize the service app
-        db.init_app(self.app)
+    # def setup_db(self):
+    #     # import the nautilus db configuration
+    #     from nautilus.db import db
+    #     # initialize the service app
+    #     db.init_app(self.app)
 
 
-    def use_blueprint(self, blueprint):
-        """ Apply a flask blueprint to the internal application """
-        self.app.register_blueprint(blueprint)
+    # def setup_auth(self):
+    #     # if we are supposed to enable authentication for the service
+    #     if self.auth:
+    #         from nautilus.auth import init_service
+    #         init_service(self)
 
 
-    def setup_auth(self):
-        # if we are supposed to enable authentication for the service
-        if self.auth:
-            from nautilus.auth import init_service
-            init_service(self)
+    # def setup_admin(self):
+    #     from nautilus.admin import init_service
+    #     init_service(self)
 
-
-    def setup_admin(self):
-        from nautilus.admin import init_service
-        init_service(self)
-
-
-    def setup_api(self, schema=None):
-        # if there is a schema for the service
-        if schema:
-            # configure the service api with the schema
-            from nautilus.api import init_service
-            init_service(self, schema=schema)
-
-
-    def route(self, **options):
-        """
-            A wrapper over Flask's @app.route(**options).
-        """
-
-        return self.app.route(**options)
