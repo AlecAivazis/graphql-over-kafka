@@ -1,6 +1,7 @@
 # external imports
+import peewee
+
 from sqlalchemy.ext.declarative import declared_attr
-from flask.ext.jsontools import JsonSerializableBase
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.inspection import inspect
 # local imports
@@ -23,15 +24,13 @@ class _Meta(type):
 
         return
 
-class _MixedMeta(_Meta, type(db.Model)):
+class _MixedMeta(_Meta, type(peewee.Model)):
     """
         This meta class mixes the sqlalchemy model meta class and the nautilus one.
     """
 
 
-JsonBase = declarative_base(cls=(JsonSerializableBase,))
-
-class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
+class BaseModel(peewee.Model, metaclass=_MixedMeta):
 
     nautilus_base = True # necessary to prevent meta class behavior on this model
 
@@ -48,20 +47,27 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
             column.name: getattr(self, column.name) \
                 for column in type(self).columns()
         }
-        
+
+    class Meta:
+        database = db
+
 
     @classmethod
     def onCreation(cls): pass
 
+
     @classmethod
+    @property
     def primary_keys(cls):
         return [key.name for key in inspect(cls).primary_key]
 
     @classmethod
-    def requiredFields(cls):
+    @property
+    def required_fields(cls):
         return [key.name for key in inspect(cls).columns if not key.nullable]
 
     @classmethod
+    @property
     def columns(cls):
         return inspect(cls).columns
 
@@ -74,10 +80,6 @@ class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
         # commit the entry
         db.session.commit()
 
-    @declared_attr
-    def __tablename__(self):
-        return '{}_{}'.format(self.__module__.split('.')[-1], self.__name__.lower())
 
     __abstract__ = True
-    __table_args__ = dict(mysql_charset='utf8')
 
