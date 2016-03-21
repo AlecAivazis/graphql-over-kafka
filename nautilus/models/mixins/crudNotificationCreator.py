@@ -1,7 +1,7 @@
 # external imports
 from sqlalchemy import event
 # local imports
-from nautilus.network import dispatch_action
+from nautilus.network.amqp import dispatch_action
 
 class CRUDNotificationCreator:
     """

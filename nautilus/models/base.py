@@ -57,28 +57,17 @@ class BaseModel(peewee.Model, metaclass=_MixedMeta):
 
 
     @classmethod
-    @property
-    def primary_keys(cls):
-        return [key.name for key in inspect(cls).primary_key]
+    def primary_key(cls):
+        return cls._meta.primary_key
 
     @classmethod
-    @property
     def required_fields(cls):
-        return [key.name for key in inspect(cls).columns if not key.nullable]
+        return [field for field in cls.fields() if not field.null]
 
     @classmethod
-    @property
-    def columns(cls):
-        return inspect(cls).columns
+    def fields(cls):
+        return cls._meta.fields.values()
 
-    def primary_key(self):
-        return getattr(self, type(self).primary_keys()[0])
-
-    def save(self):
-        # add the entry to the db session
-        db.session.add(self)
-        # commit the entry
-        db.session.commit()
 
 
     __abstract__ = True
