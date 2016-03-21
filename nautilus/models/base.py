@@ -1,9 +1,5 @@
 # external imports
 import peewee
-
-from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.inspection import inspect
 # local imports
 from nautilus import admin
 from ..db import db

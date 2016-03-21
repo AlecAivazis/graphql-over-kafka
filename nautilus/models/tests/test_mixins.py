@@ -1,6 +1,4 @@
-import unittest
-from unittest.mock import MagicMock
-
+# local imports
 import nautilus.models as models
 
 
