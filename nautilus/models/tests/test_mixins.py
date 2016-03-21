@@ -1,3 +1,5 @@
+# external imports
+import unittest
 # local imports
 import nautilus.models as models
 

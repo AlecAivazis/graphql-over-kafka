@@ -1,11 +1,7 @@
 # from: http://variable-scope.com/posts/storing-and-verifying-passwords-with-sqlalchemy
 
-from nautilus.models import Field
-from nautilus.auth.primitives import PasswordHash
-
-# external imports
-# from sqlalchemy import Text, TypeDecorator
 # local imports
+from nautilus.models import Field
 from nautilus.auth.primitives import PasswordHash
 # from nautilus.api import convert_sqlalchemy_type
 
