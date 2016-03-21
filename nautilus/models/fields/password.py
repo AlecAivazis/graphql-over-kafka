@@ -6,7 +6,7 @@ from sqlalchemy import Text, TypeDecorator
 from nautilus.auth.primitives import PasswordHash
 from nautilus.api import convert_sqlalchemy_type
 
-class Password(TypeDecorator):
+class PasswordField(TypeDecorator):
     """Allows storing and retrieving password hashes using PasswordHash."""
     impl = Text
 

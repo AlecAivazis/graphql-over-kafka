@@ -17,3 +17,5 @@ from peewee import (
     TimeField,
     UUIDField,
 )
+
+from .password import PasswordField

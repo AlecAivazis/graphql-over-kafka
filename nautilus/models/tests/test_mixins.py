@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import MagicMock
 
 import nautilus.models as models
-import peewee
 
 
 class TestUtil(unittest.TestCase):
@@ -13,7 +12,7 @@ class TestUtil(unittest.TestCase):
 
     def test_can_extend_models_with_mixins(self):
 
-        class Mixin(peewee.Model):
+        class Mixin(models.Model):
             address = models.fields.CharField(null=True)
 
         class TestModel(Mixin, models.BaseModel):
