@@ -47,7 +47,6 @@ class PasswordField(Field):
             return PasswordHash(value, rounds=self.rounds)
 
 
-
     def _convert(self, value):
         """
             This function is responsible for the actual conversion from a

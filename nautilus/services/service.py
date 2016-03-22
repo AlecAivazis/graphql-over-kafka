@@ -6,6 +6,7 @@ import tornado.web
 # local imports
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.network.http import GraphqlRequestHandler
+import nautilus.network.registry as registry
 
 class Service:
     """
@@ -88,6 +89,7 @@ class Service:
 
         # setup various functionalities
         self.init_action_handler(action_handler)
+        self.init_keep_alive()
         # self.setup_db()
         # self.setup_admin()
         # self.setup_auth()
@@ -115,9 +117,16 @@ class Service:
             self.app.ioloop.add_callback(self.action_consumer.run)
 
 
+    def init_keep_alive(self):
+        # create the period callback
+        self.keep_alive = registry.keep_alive(self)
+
+
     def run(self, port=8000, **kwargs):
         print("Running service on http://localhost:%i. " % port + \
                                             "Press Ctrl+C to terminate.")
+        # start the keep alive timer
+        self.keep_alive.start()
         # assign the port to the app instance
         self.app.listen(port)
         # start the ioloop
@@ -125,6 +134,11 @@ class Service:
 
 
     def stop(self):
+        # stop the keep_alive timer
+        self.keep_alive.stop()
+        # remove the service entry from the registry
+        registry.deregister_service(self)
+
         # stop the ioloop
         self.app.ioloop.stop()
         # stop the action consumer
