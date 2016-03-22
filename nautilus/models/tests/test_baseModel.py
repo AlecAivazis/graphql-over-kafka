@@ -55,6 +55,6 @@ class TestUtil(unittest.TestCase):
         # check that the serialized model can be hydrated as expected
         assert json.loads(serialized) == {
             "name": "foo", "date": "bar", 'id': None
-        } , (
+        }, (
             'Model was not correctly serialized'
         )

@@ -1,13 +1,9 @@
 # external imports
 import tempfile
 import mimetypes
-from sqlalchemy import Text, TypeDecorator
-from graphene.core.types.scalars import String
-# local imports
-from nautilus import current_app
-from nautilus.api import convert_sqlalchemy_type
+from nautilus.models import Field
 
-class S3File(TypeDecorator):
+class S3File(Field):
     """
         This type decorator takes a python file and uploads it to the service's bucket
         (specified in the config). If a string is given instead, this field will parse
@@ -15,11 +11,11 @@ class S3File(TypeDecorator):
         retrieving the value from the database, a string will be returned with a
         pre-signed url for universal-access of the file.
     """
-    impl = Text
+    db_field = 'varchar'
     folder = '' # this will get prepended to the file path
     deliminator = ':'
 
-    def process_result_value(self, value, dialect):
+    def db_value(self, value, dialect):
         """
             Upload the given file to s3 and turn it into the necessary data to persist
             an s3 location given a python File object. The location of the file is persisted
@@ -79,7 +75,7 @@ class S3File(TypeDecorator):
             return "{}{}{}".format(bucket, self.deliminator, filename)
 
 
-    def process_bind_param(self, value, dialect):
+    def python_value(self, value, dialect):
         """
             Generate a pre-signed url for the s3 file designated by assuming its of the form
             <bucket><self.deliminator><key>.
