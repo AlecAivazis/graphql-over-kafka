@@ -1,7 +1,8 @@
 # external imports
-from sqlalchemy import event
+from playhouse.signals import post_save, post_delete
 # local imports
 from nautilus.network.amqp import dispatch_action
+from nautilus.conventions.actions import getCRUDAction
 
 # peewee support for signals from from a playhouse extension:
 # http://docs.peewee-orm.com/en/latest/peewee/playhouse.html#signals
@@ -15,23 +16,30 @@ class CRUDNotificationCreator:
 
     nautilus_base = True # required to prevent self-application on creation
 
+
     @classmethod
-    def add_listener(cls, db_event, action_type):
-        # on event, dispatch the appropriate action
-        @event.listens_for(cls, db_event)
-        def dispatchCRUDAction(mapper, connection, target):
-            """ notifies the network of the new user model """
-            dispatch_action(
-                action_type='{}_{}'.format(cls.__name__.lower(), type),
-                payload=target.__json__(),
-            )
+    def dispatch_alert(cls, action_type, target):
+        dispatch_action(
+            action_type=getCRUDAction(action_type, cls.__name__),
+            payload=target.__json__(),
+        )
 
 
     @classmethod
-    def onCreation(cls):
+    def on_creation(cls):
         # perform the intended behavior
-        super().onCreation()
-        # add the crud action emitters
-        cls.add_listener('after_insert', 'create_success')
-        cls.add_listener('after_delete', 'delete_success')
-        cls.add_listener('after_update', 'update_success')
+        super().on_creation()
+
+        @post_save(sender=cls)
+        def post_save_handler(model_class, instance, created):
+            # if the model was created for the first time
+            if created:
+                cls.dispatch_alert('create', instance)
+            # otherwise the model was updated
+            else:
+                cls.dispatch_alert('update', instance)
+
+        @post_delete(sender=cls)
+        def post_delete_handler(model_class, instance):
+            # let everyone know
+            cls.dispatch_alert('delete', instance)

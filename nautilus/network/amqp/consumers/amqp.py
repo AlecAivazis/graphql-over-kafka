@@ -38,7 +38,7 @@ class AMQPConsumer(object):
         self._consumer_tag = None
         self._url = amqp_url
 
-    def publish(self, message, route='a', correlation_id=None, **args):
+    def publish(self, message, route='*', correlation_id=None, **args):
         """
             This method publishes a message over the amqp queue.
         """

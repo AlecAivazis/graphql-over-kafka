@@ -16,7 +16,6 @@ class TestUtil(unittest.TestCase):
             name = models.fields.CharField(null=True)
             date = models.fields.CharField(null=False)
 
-
         self.Model = TestUser
 
 

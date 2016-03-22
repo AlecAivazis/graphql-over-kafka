@@ -1,7 +1,7 @@
 # external imports
 import unittest
 # local imports
-import nautilus.db as db
+import nautilus
 import nautilus.models as models
 
 class TestUtil(unittest.TestCase):

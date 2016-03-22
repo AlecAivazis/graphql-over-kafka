@@ -1,5 +1,5 @@
 # external imports
-import peewee
+from playhouse.signals import Model, post_save
 # local imports
 from nautilus import admin
 from ..db import db
@@ -20,13 +20,13 @@ class _Meta(type):
 
         return
 
-class _MixedMeta(_Meta, type(peewee.Model)):
+class _MixedMeta(_Meta, type(Model)):
     """
         This meta class mixes the sqlalchemy model meta class and the nautilus one.
     """
 
 
-class BaseModel(peewee.Model, metaclass=_MixedMeta):
+class BaseModel(Model, metaclass=_MixedMeta):
 
     nautilus_base = True # necessary to prevent meta class behavior on this model
 

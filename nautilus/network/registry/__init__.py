@@ -53,7 +53,7 @@ def service_location_by_name(key):
 def keep_alive(service):
     ''' Ping the registry on an interval to show good health. '''
 
-    # the default tt is 10 sec
+    # the default ttl is 10 sec
     ttl = service.ttl if hasattr(service, 'ttl') else 10
 
     # register the service with consul
