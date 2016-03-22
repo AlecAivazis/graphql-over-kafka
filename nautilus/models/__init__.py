@@ -1,5 +1,6 @@
 # external imports
-from peewee import Model, Field
+from playhouse.signals import Model
+from peewee import Field
 # local imports
 from .mixins import *
 from .base import BaseModel
