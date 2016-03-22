@@ -27,8 +27,12 @@ class CRUDNotificationCreator:
 
     @classmethod
     def on_creation(cls):
-        # perform the intended behavior
-        super().on_creation()
+        try:
+            # perform the intended behavior
+            super().on_creation()
+        except AttributeError:
+            raise ValueError('CRUDNotificationCreator must mix into a ' + \
+                                                                ' base model')
 
         @post_save(sender=cls)
         def post_save_handler(model_class, instance, created):
