@@ -1,2 +1,2 @@
-from .BasicConsumer import BasicConsumer
-from .ActionConsumer import ActionConsumer
+from .actions import ActionHandler
+from .amqp import AMQPConsumer
