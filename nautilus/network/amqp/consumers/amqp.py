@@ -196,20 +196,8 @@ class AMQPConsumer(object):
 
         """
         self._queue_name = method_frame.method.queue
-
-        def bind_key(key):
-            self._channel.queue_bind(self.on_bindok, self._queue_name,
-                                    self.EXCHANGE, key)
-
-        try:
-            # for each key we were given
-            for key in self.ROUTING_KEY:
-                # bind the queue to the key
-                bind_key(key)
-        # if the routing keys aren't iterable
-        except TypeError:
-            # bind the queue to the single key
-            bind_key(self.ROUTING_KEY)
+        self._channel.queue_bind(self.on_bindok, self._queue_name,
+                                 self.EXCHANGE, self.ROUTING_KEY)
 
     def add_on_cancel_callback(self):
         """Add a callback that will be invoked if RabbitMQ cancels the consumer
