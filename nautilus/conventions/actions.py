@@ -3,5 +3,5 @@
 """
 from .models import get_model_string
 
-def getCRUDAction(method, model):
-    return "{}_{}".format(method, get_model_string(model))
+def get_crud_action(method, model, status='pending'):
+    return "%s.%s.%s" % (method, get_model_string(model), status)
