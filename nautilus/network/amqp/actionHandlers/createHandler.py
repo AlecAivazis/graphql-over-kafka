@@ -1,5 +1,5 @@
 # local imports
-from nautilus.conventions.actions import getCRUDAction
+from nautilus.conventions.actions import get_crud_action
 
 def createHandler(Model):
     """
@@ -16,7 +16,7 @@ def createHandler(Model):
     """
     def action_handler(action_type, payload):
         # if the payload represents a new instance of `Model`
-        if action_type == getCRUDAction('create', Model):
+        if action_type == get_crud_action('create', Model):
             # for each required field
             for requirement in Model.requiredFields():
                 # ensure the value is in the payload

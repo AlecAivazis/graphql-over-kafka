@@ -1,5 +1,5 @@
 # local imports
-from nautilus.conventions.actions import getCRUDAction
+from nautilus.conventions.actions import get_crud_action
 
 def updateHandler(Model):
     """
@@ -16,7 +16,7 @@ def updateHandler(Model):
     """
     def action_handler(action_type, payload):
         # if the payload represents a new instance of `Model`
-        if action_type == getCRUDAction('update', Model):
+        if action_type == get_crud_action('update', Model):
 
             # go over each primary key
             for key in Model.primary_keys():

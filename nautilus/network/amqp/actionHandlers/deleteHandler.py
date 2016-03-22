@@ -1,5 +1,5 @@
 # local imports
-from nautilus.conventions.actions import getCRUDAction
+from nautilus.conventions.actions import get_crud_action
 
 def deleteHandler(Model):
     """
@@ -19,7 +19,7 @@ def deleteHandler(Model):
 
     def action_handler(action_type, payload):
         # if the payload represents a new instance of `model`
-        if action_type == getCRUDAction('delete', Model):
+        if action_type == get_crud_action('delete', Model):
 
             # for now only handle a single selector specified by a string
             if not isinstance(payload, str):
