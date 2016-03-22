@@ -51,7 +51,7 @@ class AMQPConsumer(object):
         self._channel.basic_publish(
             exchange=self.EXCHANGE,
             body=message,
-            routing_key=route,
+            routing_key=route or self.ROUTING_KEY,
             properties=message_properties,
             **args,
         )
@@ -196,8 +196,20 @@ class AMQPConsumer(object):
 
         """
         self._queue_name = method_frame.method.queue
-        self._channel.queue_bind(self.on_bindok, self._queue_name,
-                                 self.EXCHANGE, self.ROUTING_KEY)
+
+        def bind_key(key):
+            self._channel.queue_bind(self.on_bindok, self._queue_name,
+                                    self.EXCHANGE, key)
+
+        try:
+            # for each key we were given
+            for key in self.ROUTING_KEY:
+                # bind the queue to the key
+                bind_key(key)
+        # if the routing keys aren't iterable
+        except TypeError:
+            # bind the queue to the single key
+            bind_key(self.ROUTING_KEY)
 
     def add_on_cancel_callback(self):
         """Add a callback that will be invoked if RabbitMQ cancels the consumer
@@ -247,13 +259,16 @@ class AMQPConsumer(object):
         LOGGER.info('Received message # %s from %s: %s',
                     basic_deliver.delivery_tag, properties.app_id, body)
         try:
-            self.handle_event(unused_channel, basic_deliver, properties, body)
+            self.handle_event(dispatcher=self,
+                              action_type=basic_deliver.routing_key,
+                              payload=body.decode('utf-8')
+                             )
         except NotImplementedError:
             pass
 
         self.acknowledge_message(basic_deliver.delivery_tag)
 
-    def handle_event(self, unused_channel, basic_deliver, properties, body):
+    def handle_event(self, dispatcher, action_type, payload):
         raise NotImplementedError
 
     def on_cancelok(self, unused_frame):
@@ -265,6 +280,7 @@ class AMQPConsumer(object):
         :param pika.frame.Method unused_frame: The Basic.CancelOk frame
 
         """
+        print('foo')
         LOGGER.info('RabbitMQ acknowledged the cancellation of the consumer')
         self.close_channel()
 

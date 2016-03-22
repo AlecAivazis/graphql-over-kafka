@@ -3,7 +3,7 @@ from graphene import Schema
 # local imports
 from .executor import TornadoExecutor
 
-class NautilusSchema(Schema):
+class AsyncSchema(Schema):
     """
         This class creates a graphql schema that resolves its fields using
         the natuilus event queue for asynchronous data retrieval.

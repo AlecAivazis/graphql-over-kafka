@@ -3,17 +3,13 @@ from .amqp import AMQPConsumer
 
 
 class ActionHandler(AMQPConsumer):
-    EXCHANGE = 'events'
+    EXCHANGE = 'my_events'
     EXCHANGE_TYPE = 'topic'
     ROUTING_KEY = '*.*.pending'
     DURABLE = True
 
-    def __init__(self, callback, routing_key, **kwds):
+    def __init__(self, callback, routing_key=None, **kwds):
         # save a reference to the callback we were provided
-        self._callback = callback
-        self.ROUTING_KEY = routing_key
+        self.handle_event = callback
+        self.ROUTING_KEY = routing_key or self.ROUTING_KEY
         super().__init__(**kwds)
-
-
-    def handle_event(self, channel, method, properties, body):
-        self._callback(self, channel, method, properties, body)

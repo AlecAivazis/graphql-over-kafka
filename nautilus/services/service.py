@@ -116,6 +116,8 @@ class Service:
 
 
     def run(self, port=8000, **kwargs):
+        print("Running service on http://localhost:%i. " % port + \
+                                            "Press Ctrl+C to terminate.")
         # assign the port to the app instance
         self.app.listen(port)
         # start the ioloop
@@ -125,6 +127,8 @@ class Service:
     def stop(self):
         # stop the ioloop
         self.app.ioloop.stop()
+        # stop the action consumer
+        self.action_consumer.stop()
 
 
     # def setup_db(self):

@@ -15,10 +15,14 @@ class GraphqlRequestHandler(tornado.web.RequestHandler):
             self.finish('no schema!')
             return
 
-        query = '{ hello }'
+        query = '{ goodbye }'
+
+
+        result = self._schema.execute(query)
 
         # resolve the schema in a coroutine
-        result = yield tornado.gen.Task(self._schema.execute, query)
+        # result = yield tornado.gen.Task(self._schema.execute, query)
+
         # send the response to the client and close its connection
         self.finish(json.dumps(result.data))
 
