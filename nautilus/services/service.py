@@ -78,6 +78,7 @@ class Service:
         self.name = name
         self.__name__ = name
         self.action_consumer = None
+        self.keep_alive = None
 
         # apply any necessary flask app config
         # self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
