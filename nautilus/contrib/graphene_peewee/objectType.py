@@ -1,8 +1,9 @@
 # external imports
 from graphene.relay import Node
+from graphene.core.classtypes.objecttype import ObjectType
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
-from nautilus.contrib.graphene.peewee import convert_peewee_type
+from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 VALID_ATTRS = ('model',)
 
@@ -20,7 +21,7 @@ class PeeweeObjectTypeOptions(ObjectTypeOptions):
         cls.model = self.model
 
 
-class PeeweeObjectTypeMeta(type(Node)):
+class PeeweeObjectTypeMeta(type(ObjectType)):
 
     options_class = PeeweeObjectTypeOptions
 
@@ -47,7 +48,7 @@ class PeeweeObjectTypeMeta(type(Node)):
             # for each field in the table
             for field in model.fields():
                 # add an entry for the field we were passed
-                full_attr[field.name] = convert_peewee_type(field.type)
+                full_attr[field.name] = convert_peewee_field(field)
 
         # merge the given attributes ontop of the dynamic ones
         full_attr.update(attributes)
@@ -57,7 +58,7 @@ class PeeweeObjectTypeMeta(type(Node)):
 
 
 
-class PeeweeObjectType(Node, metaclass=PeeweeObjectTypeMeta):
+class PeeweeObjectType(ObjectType, metaclass=PeeweeObjectTypeMeta):
     """
         This class provides support for generating graphql ObjectTypes
         based on peewee models

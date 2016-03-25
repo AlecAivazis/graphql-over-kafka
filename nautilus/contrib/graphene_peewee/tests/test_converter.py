@@ -3,7 +3,7 @@ import unittest
 import graphene.core.types.scalars as graphene
 # local imports
 import nautilus.models.fields as nautilus
-from nautilus.contrib.graphene import convert_peewee_field
+from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 
 
@@ -11,12 +11,11 @@ class TestUtil(unittest.TestCase):
 
     def assert_field_converted(self, nautilus_field, graphene_field):
         # convert the nautilus field to the corresponding graphene type
-        test_graphene_type =  convert_peewee_field(nautilus_field)
+        test_graphene_type = convert_peewee_field(nautilus_field)
         # make sure the converted type matches the graphene field
         assert isinstance(test_graphene_type, graphene_field), (
             "nautilus field was not properly coverted to %s" % graphene_field.__class__
         )
-        print("testing if field converted")
 
 
     def test_can_convert_BigIntegerField(self):

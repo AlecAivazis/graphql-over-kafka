@@ -15,7 +15,7 @@ class GraphqlRequestHandler(tornado.web.RequestHandler):
             self.finish('no schema!')
             return
 
-        query = '{ goodbye }'
+        query = '{ hello }'
 
 
         result = self._schema.execute(query)
