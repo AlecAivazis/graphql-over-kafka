@@ -1,11 +1,10 @@
 # external imports
 import graphene
 from graphene import Field, List
-from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 from sqlalchemy.inspection import inspect
 # local imports
 from nautilus.api.filter import args_for_model, filter_model
-from nautilus.api import convert_sqlalchemy_type
+from nautilus.contrib.graphene_peewee import PeeweeObjectType, convert_peewee_field
 
 
 def create_model_schema(Model):
@@ -20,12 +19,11 @@ def create_model_schema(Model):
     )
 
     # grab the primary key from the Model
-    primary_key = inspect(Model).primary_key[0]
-    primary_key_type = convert_sqlalchemy_type(primary_key.type, primary_key)
+    primary_key = Model.primary_key()
+    primary_key_type = convert_peewee_field(primary_key)
 
-    # create a graphene object registered with the schema
-    @schema.register
-    class ModelObjectType(SQLAlchemyObjectType):
+    # create a graphene object
+    class ModelObjectType(PeeweeObjectType):
         class Meta:
             model = Model
 
@@ -38,9 +36,7 @@ def create_model_schema(Model):
 
     class Query(graphene.ObjectType):
         """ the root level query """
-        all_models = List(ModelObjectType,
-                          args=args_for_model(Model)
-                         )
+        all_models = List(ModelObjectType, args=args_for_model(Model))
 
         def resolve_all_models(self, args, info):
             # filter the model query according to the arguments

@@ -1,8 +1,8 @@
 # external imports
 from graphene import List
-from sqlalchemy.inspection import inspect
 # local imports
 from nautilus.api import convert_sqlalchemy_type
+from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 def args_for_model(Model):
     # the attribute arguments (no filters)
@@ -12,24 +12,18 @@ def args_for_model(Model):
     # add the primary key filter
 
     # the primary keys for the Model
-    primary_keys = inspect(Model).primary_key
-    # make sure there is only one
-    assert len(primary_keys) == 1, "Can only support one primary key - how would I know what to reference for joins?"
-
-    primary_key = primary_keys[0]
-    # figure out the type of the primary key
-    primary_key_type = convert_sqlalchemy_type(primary_key.type, primary_key)
+    primary_keys = Model.primary_key()
     # add the primary key filter to the arg dictionary
-    args['pk'] = primary_key_type
+    args['pk'] = convert_peewee_field(primary_key)
 
     # create a copy of the argument dict we can mutate
     fullArgs = args.copy()
 
     # todo: add type-specific filters
     # go over the arguments
-    for arg, type in args.items():
+    for arg, field_type in args.items():
         # add the list member filter
-        fullArgs[arg + '_in'] = List(type)
+        fullArgs[arg + '_in'] = List(field_type)
 
     # return the complete dictionary of arguments
     return fullArgs
@@ -38,19 +32,20 @@ def args_for_model(Model):
 def filter_model(Model, args):
 
     # convert any args referencing pk to the actual field
-    keys = [key.replace('pk', inspect(Model).primary_key[0].name) for key in args.keys()]
+    keys = [key.replace('pk', Model.primary_key().name) for key in args.keys()]
 
     # start off with the full list of Models
-    models = Model.query
+    models = Model.select()
     # for each argument
     for arg, value in zip(keys, args.values()):
         # if the filter is for a group of values
         if isinstance(value, list):
+            model_attribute = getattr(Model, arg[:-3])
             # filter the query
-            models = models.filter(getattr(Model, arg[:-3]).in_(value))
+            models = models.where(model_attribute.in_(value))
         else:
             # filter the argument
-            models = models.filter(getattr(Model, arg) == value)
+            models = models.where(getattr(Model, arg) == value)
 
     # return the filtered list
     return models.all()
