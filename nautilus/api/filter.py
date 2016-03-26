@@ -5,13 +5,13 @@ from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 def args_for_model(Model):
     # the attribute arguments (no filters)
-    args = { column.name.lower() : convert_sqlalchemy_type(column.type, column) \
-                                        for column in inspect(Model).columns }
+    args = { field.name.lower() : convert_peewee_field(field) \
+                                        for field in Model.fields() }
 
     # add the primary key filter
 
     # the primary keys for the Model
-    primary_keys = Model.primary_key()
+    primary_key = Model.primary_key()
     # add the primary key filter to the arg dictionary
     args['pk'] = convert_peewee_field(primary_key)
 

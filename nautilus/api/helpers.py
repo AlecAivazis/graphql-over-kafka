@@ -1,9 +1,8 @@
 # external imports
 import graphene
 from graphene import Field, List
-from sqlalchemy.inspection import inspect
 # local imports
-from nautilus.api.filter import args_for_model, filter_model
+from .filter import args_for_model, filter_model
 from nautilus.contrib.graphene_peewee import PeeweeObjectType, convert_peewee_field
 
 
@@ -13,10 +12,7 @@ def create_model_schema(Model):
     from nautilus.db import db
 
     # create the schema instance
-    schema = graphene.Schema(
-        session = db.session,
-        auto_camelcase = False
-    )
+    schema = graphene.Schema(auto_camelcase = False)
 
     # grab the primary key from the Model
     primary_key = Model.primary_key()
@@ -31,7 +27,7 @@ def create_model_schema(Model):
 
 
         def resolve_primary_key(self, args, info):
-            return self.primary_key()
+            return self.primary_key
 
 
     class Query(graphene.ObjectType):
