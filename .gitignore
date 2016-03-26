@@ -36,3 +36,6 @@ pip-delete-this-directory.txt
 
 # Local database
 peewee.db
+
+.DS_Store
+node_modules
