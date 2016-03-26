@@ -1,3 +1,8 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 #graphiql-container {
   color: #141823;
   display:         flex;
