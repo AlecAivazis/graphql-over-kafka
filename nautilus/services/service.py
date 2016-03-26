@@ -76,13 +76,12 @@ class Service:
             auto_register=True,
             auth=True,
     ):
-        # base the service on a flask app
-        self.app = self.tornado_app(schema)
 
         self.name = name
         self.__name__ = name
         self.action_consumer = None
         self.keep_alive = None
+        self._schema = schema
 
         # apply any necessary flask app config
         # self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -92,6 +91,8 @@ class Service:
         #     # apply the config object to the flask app
         #     self.app.config.from_object(configObject)
 
+        # base the service on a flask app
+        self.app = self.tornado_app(schema)
         # setup various functionalities
         self.init_action_handler(action_handler)
         self.init_keep_alive()
@@ -100,19 +101,12 @@ class Service:
         # self.setup_auth()
 
 
-    def tornado_app(self, schema):
-
+    def tornado_app(self, graphiql=True):
         # create a tornado web application
-        app = tornado.web.Application([
-            (r"/", GraphQLRequestHandler, dict(schema=schema)),
-            (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
-                                            dict(path=api_endpoint_static)),
-            (r"/graphiql/?", GraphiQLRequestHandler, dict(schema=schema)),
-        ])
-
+        app = tornado.web.Application(self.request_handlers)
         # attach the ioloop to the application
         app.ioloop = tornado.ioloop.IOLoop.instance()
-
+        # return the app instance
         return app
 
 
@@ -151,6 +145,16 @@ class Service:
         self.app.ioloop.stop()
         # stop the action consumer
         self.action_consumer.stop()
+
+
+    @property
+    def request_handlers(self):
+        return [
+            (r"/", GraphQLRequestHandler, dict(schema=self._schema)),
+            (r"/graphiql/?", GraphiQLRequestHandler),
+            (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
+                                            dict(path=api_endpoint_static)),
+        ]
 
 
     # def setup_db(self):
