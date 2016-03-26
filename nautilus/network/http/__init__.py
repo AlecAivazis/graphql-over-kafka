@@ -1,1 +1,2 @@
-from .requestHandler import GraphqlRequestHandler
+from .requestHandlers.graphiql import GraphiQLRequestHandler
+from .requestHandlers.graphql import GraphQLRequestHandler

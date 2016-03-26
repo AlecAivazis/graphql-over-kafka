@@ -5,8 +5,11 @@ import tornado.ioloop
 import tornado.web
 # local imports
 from nautilus.network.amqp.consumers.actions import ActionHandler
-from nautilus.network.http import GraphqlRequestHandler
 import nautilus.network.registry as registry
+from nautilus.network.http import (
+    GraphiQLRequestHandler,
+    GraphQLRequestHandler
+)
 
 class Service:
     """
@@ -100,7 +103,8 @@ class Service:
 
         # create a tornado web application
         app = tornado.web.Application([
-            (r"/", GraphqlRequestHandler, dict(schema=schema)),
+            (r"/", GraphQLRequestHandler, dict(schema=schema)),
+            (r"/graphiql", GraphiQLRequestHandler, dict(schema=schema)),
         ])
 
         # attach the ioloop to the application
