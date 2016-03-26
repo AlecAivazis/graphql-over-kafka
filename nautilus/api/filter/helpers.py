@@ -1,7 +1,6 @@
 # external imports
 from graphene import List
 # local imports
-from nautilus.api import convert_sqlalchemy_type
 from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 def args_for_model(Model):
