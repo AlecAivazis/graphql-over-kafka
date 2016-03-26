@@ -1,7 +1,8 @@
+import json
+import os
 import tornado.web
 import tornado.gen
 from tornado.web import MissingArgumentError
-import json
 from graphql.core.error import (
     GraphQLError,
     format_error as format_graphql_error

@@ -5,8 +5,9 @@ import tornado.ioloop
 import tornado.web
 # local imports
 from nautilus.network.amqp.consumers.actions import ActionHandler
+from nautilus.api.endpoints import static_dir as api_endpoint_static
 import nautilus.network.registry as registry
-from nautilus.network.http import (
+from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
@@ -104,7 +105,9 @@ class Service:
         # create a tornado web application
         app = tornado.web.Application([
             (r"/", GraphQLRequestHandler, dict(schema=schema)),
-            (r"/graphiql", GraphiQLRequestHandler, dict(schema=schema)),
+            (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
+                                            dict(path=api_endpoint_static)),
+            (r"/graphiql/?", GraphiQLRequestHandler, dict(schema=schema)),
         ])
 
         # attach the ioloop to the application
