@@ -4,8 +4,6 @@ import GraphiQL from 'graphiql';
 import fetch from 'isomorphic-fetch';
 
 function graphQLFetcher(graphQLParams) {
-
-console.log(graphQLParams)
   return fetch(window.location.origin + '/?query='+graphQLParams['query'], {
       method: 'get',
   }).then(response => response.json());
