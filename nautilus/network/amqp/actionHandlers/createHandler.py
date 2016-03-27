@@ -18,10 +18,12 @@ def createHandler(Model):
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('create', Model):
             # for each required field
-            for requirement in Model.requiredFields():
+            for requirement in Model.required_fields():
+                # save the name of the field
+                field_name = requirement.name
                 # ensure the value is in the payload
-                if not requirement in payload:
-                    print("Required field not found in payload: {}".format(requirement))
+                if not field_name in payload:
+                    print("Required field not found in payload: {}".format(field_name))
                     # todo: check all required fields rather than failing on the first
                     return
 

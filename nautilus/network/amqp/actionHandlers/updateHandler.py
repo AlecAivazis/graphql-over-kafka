@@ -18,38 +18,38 @@ def updateHandler(Model):
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('update', Model):
 
-            # go over each primary key
-            for key in Model.primary_keys():
-                # if the key is in the payload
-                if key in payload:
-                    # then we can use it to identify the model we are editing
+            # grab the nam eof the primary key for the model
+            pk_field = Model.primary_key().name
 
-                    # figure out the primary key field
-                    primary_key_field = getattr(Model, key)
+            # if the key is in the payload
+            if pk_field in payload:
+                # then we can use it to identify the model we are editing
 
-                    # note: the payload is casted to the same type as the key for equality checks
-                    # todo: add pk filter
-                    try:
-                        model = Model.query.filter(
-                            primary_key_field == type(primary_key_field)(payload[key])
-                        )
-                    # if we couldn't cast the key
-                    except TypeError:
-                        pass
+                # figure out the primary key field
+                model_key = getattr(Model, pk_field)
 
-                    # remove the key from the payload
-                    payload.pop(key, None)
+                # note: the payload is casted to the same type as the key for equality checks
+                # todo: add pk filter
+                payload_key_casted = payload[pk_field]
+                try:
+                    payload_key_casted = type(model_key)(payload[pk_field])
+                # if we couldn't cast the key
+                except TypeError:
+                    pass
 
-                    # for every key,value pair
-                    for key, value in payload.items():
-                        # update the model's attribute
-                        setattr(model, key, value)
+                # grab the matching model
+                model = Model.select().where(model_key == payload_key_casted)
 
-                    # save the updates
-                    model.save()
+                # remove the key from the payload
+                payload.pop(pk_field, None)
 
-                    # don't look for any more identifiers
-                    break
+                # for every key,value pair
+                for key, value in payload.items():
+                    # update the model's attribute
+                    setattr(model, key, value)
+
+                # save the updates
+                model.save()
 
     # return the handler
     return action_handler

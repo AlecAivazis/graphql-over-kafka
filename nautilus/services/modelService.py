@@ -53,12 +53,12 @@ class ModelService(Service):
         schema = create_model_schema(model)
 
         # # the action handler is a combination
-        # action_handler = combine_action_handlers(
-        #     # of the given one
-        #     additonal_action_handler,
-        #     # and a crud handler
-        #     CRUDHandler(model)
-        # )
+        action_handler = combine_action_handlers(
+            # of the given one
+            additonal_action_handler,
+            # and a crud handler
+            CRUDHandler(model)
+        )
 
         # pull the name of the service from kwargs if it was given
         name = kwargs.pop('name', None) or model_service_name(model)

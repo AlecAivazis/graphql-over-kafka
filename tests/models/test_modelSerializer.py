@@ -31,4 +31,3 @@ class TestUtil(unittest.TestCase):
         assert serialized == json.dumps(inner_dict), (
             'ModelSerializer did not return the correct string.'
         )
-

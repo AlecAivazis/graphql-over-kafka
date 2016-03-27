@@ -25,22 +25,18 @@ def deleteHandler(Model):
             if not isinstance(payload, str):
                 return
 
-            # go over each primary key
-            for key in Model.primary_keys():
-                # find the model with the matching primary key
-                # the primary key field
-                primaryKey = getattr(Model, key)
-                try:
-                    # note: the payload is casted to the same type as the key for equality checks
-                    model = Model.query.filter(primaryKey == type(primaryKey)(payload))
-                except TypeError:
-                    # we couldn't cast the key so its not the right one. don't do anything
-                    pass
+            # find the model with the matching primary key
+            # the primary key field
+            primaryKey = Model.primary_key().name
+            try:
+                # note: the payload is casted to the same type as the key for equality checks
+                model = Model.query.filter(primaryKey == type(primaryKey)(payload))
+            except TypeError:
+                # we couldn't cast the key so its not the right one. don't do anything
+                pass
 
-                # remove the model from the databaes
-                # todo: move this inside base model? Can a model remove itself?
-                db.session.delete(model)
-                db.session.commit()
+            # remove the model from the databaes
+            model.delete_instance()
 
 
     # return the handler
