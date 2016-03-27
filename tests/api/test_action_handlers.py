@@ -66,6 +66,7 @@ class TestUtil(unittest.TestCase):
             "There were records matching query after it shoudl have been removed."
         ))
 
+
     def test_update_action_handler(self):
         # create a record in the test database
         record = self.model(first_name='foo')
@@ -73,7 +74,7 @@ class TestUtil(unittest.TestCase):
         record.save()
         # the query to grab the model we changed
         record_query = self.model.select().where(self.model.id == 1)
-
+        # make sure the record was saved and is retrievable
         assert record_query.get().first_name == 'foo'
 
         # create a `create` action handler
