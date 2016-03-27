@@ -143,8 +143,11 @@ class Service:
 
         # stop the ioloop
         self.app.ioloop.stop()
-        # stop the action consumer
-        self.action_consumer.stop()
+        
+        # if there is an action consumer registered with this service
+        if self.action_consumer:
+            # stop the action consumer
+            self.action_consumer.stop()
 
 
     @property
@@ -174,4 +177,3 @@ class Service:
     # def setup_admin(self):
     #     from nautilus.admin import init_service
     #     init_service(self)
-

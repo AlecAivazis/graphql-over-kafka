@@ -13,7 +13,7 @@ def CRUDHandler(Model):
     """
 
     # import the necessary modules
-    from nautilus.network import combine_action_handlers
+    from nautilus.network.amqp import combine_action_handlers
     from . import updateHandler, createHandler, deleteHandler
 
     # combine them into one handler

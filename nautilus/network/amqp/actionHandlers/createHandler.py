@@ -23,7 +23,7 @@ def createHandler(Model):
                 field_name = requirement.name
                 # ensure the value is in the payload
                 if not field_name in payload:
-                    print("Required field not found in payload: {}".format(field_name))
+                    print("Required field not found in payload:{}".format(field_name))
                     # todo: check all required fields rather than failing on the first
                     return
 
