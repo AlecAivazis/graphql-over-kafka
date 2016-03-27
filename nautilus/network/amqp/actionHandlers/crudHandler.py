@@ -1,4 +1,4 @@
-def CRUDHandler(Model):
+def crud_handler(Model):
     """
         This action handler factory reaturns an action handler that
         responds to actions with CRUD types (following nautilus conventions)

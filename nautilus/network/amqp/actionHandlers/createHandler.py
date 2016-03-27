@@ -1,7 +1,7 @@
 # local imports
 from nautilus.conventions.actions import get_crud_action
 
-def createHandler(Model):
+def create_handler(Model):
     """
         This factory returns an action handler that creates a new instance of
         the specified model when a create action is recieved, assuming the
@@ -22,7 +22,7 @@ def createHandler(Model):
                 # save the name of the field
                 field_name = requirement.name
                 # ensure the value is in the payload
-                if not field_name in payload:
+                if not field_name in payload and field_name != 'id':
                     print("Required field not found in payload:{}".format(field_name))
                     # todo: check all required fields rather than failing on the first
                     return

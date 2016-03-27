@@ -1,5 +1,5 @@
 # local imports
-from nautilus.network.amqp import CRUDHandler, combine_action_handlers
+from nautilus.network.amqp import crud_handler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
 from nautilus.network.amqp.actionHandlers import noop_handler
@@ -57,7 +57,7 @@ class ModelService(Service):
             # of the given one
             additonal_action_handler,
             # and a crud handler
-            CRUDHandler(model)
+            crud_handler(model)
         )
 
         # pull the name of the service from kwargs if it was given

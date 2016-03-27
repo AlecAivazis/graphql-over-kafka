@@ -25,9 +25,19 @@ class ServiceManager:
             print("Successfully created database entries.")
 
         @self.commandManager.command
-        def runserver(host = '127.0.0.1', port = 8000, debug = False, secretKey = 'supersecret'):
+        def runserver(
+            host = '127.0.0.1',
+            port = 8000,
+            debug = False,
+            secretKey = 'supersecret'
+        ):
             """ Start the service. """
-            service.run(host = host, port = int(port), debug = debug, secretKey = secretKey)
+            service.run(
+                host = host,
+                port = int(port),
+                debug = debug,
+                secretKey = secretKey
+            )
 
 
     def run(self):

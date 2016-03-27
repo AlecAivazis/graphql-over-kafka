@@ -1,7 +1,7 @@
 # local imports
 from nautilus.conventions.actions import get_crud_action
 
-def updateHandler(Model):
+def update_handler(Model):
     """
         This factory returns an action handler that updates a new instance of
         the specified model when a update action is recieved, assuming the
@@ -19,26 +19,14 @@ def updateHandler(Model):
         if action_type == get_crud_action('update', Model):
 
             # grab the nam eof the primary key for the model
-            pk_field = Model.primary_key().name
+            pk_field = Model.primary_key()
 
             # if the key is in the payload
-            if pk_field in payload:
+            if pk_field.name in payload:
                 # then we can use it to identify the model we are editing
 
-                # figure out the primary key field
-                model_key = getattr(Model, pk_field)
-
-                # note: the payload is casted to the same type as the key for equality checks
-                # todo: add pk filter
-                payload_key_casted = payload[pk_field]
-                try:
-                    payload_key_casted = type(model_key)(payload[pk_field])
-                # if we couldn't cast the key
-                except TypeError:
-                    pass
-
                 # grab the matching model
-                model = Model.select().where(model_key == payload_key_casted)
+                model = Model.select().where(pk_field == payload[pk_field.name]).get()
 
                 # remove the key from the payload
                 payload.pop(pk_field, None)

@@ -1,7 +1,7 @@
 # local imports
 from nautilus.conventions.actions import get_crud_action
 
-def deleteHandler(Model):
+def delete_handler(Model):
     """
         This factory returns an action handler that deletes a new instance of
         the specified model when a delete action is recieved, assuming the
@@ -20,23 +20,10 @@ def deleteHandler(Model):
     def action_handler(action_type, payload):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('delete', Model):
-
-            # for now only handle a single selector specified by a string
-            if not isinstance(payload, str):
-                return
-
-            # find the model with the matching primary key
-            # the primary key field
-            primaryKey = Model.primary_key().name
-            try:
-                # note: the payload is casted to the same type as the key for equality checks
-                model = Model.query.filter(primaryKey == type(primaryKey)(payload))
-            except TypeError:
-                # we couldn't cast the key so its not the right one. don't do anything
-                pass
-
-            # remove the model from the databaes
-            model.delete_instance()
+            # get the model matching the payload
+            model_query = Model.select().where(Model.primary_key() == payload)
+            # remove the model instance
+            model_query.get().delete_instance()
 
 
     # return the handler
