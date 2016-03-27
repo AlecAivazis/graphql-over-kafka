@@ -2,7 +2,7 @@
 from flask.ext.cors import CORS
 # local imports
 from nautilus.conventions.services import api_gateway_name
-from nautilus.network.actionHandlers import noop_handler
+from nautilus.network.amqp.actionHandlers import noop_handler
 from .service import Service
 
 class APIGateway(Service):

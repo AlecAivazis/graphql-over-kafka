@@ -1,6 +1,6 @@
 # local imports
 from .service import Service
-from nautilus.network.actionHandlers import noop_handler
+from nautilus.network.amqp.actionHandlers import noop_handler
 from nautilus.auth.blueprints import service_blueprint
 from nautilus.conventions.services import auth_service_name
 from nautilus.auth.backend import loginManager
@@ -41,5 +41,3 @@ class AuthService(Service):
         self.use_blueprint(service_blueprint)
 
         loginManager.init_app(self.app)
-
-

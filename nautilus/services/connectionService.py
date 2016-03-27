@@ -1,6 +1,6 @@
 # local imports
 from nautilus.api import create_model_schema
-from nautilus.network.actionHandlers import noop_handler
+from nautilus.network.amqp.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
 from .modelService import ModelService
 
