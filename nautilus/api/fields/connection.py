@@ -171,6 +171,7 @@ class Connection(ConnectionField):
 
         # todo: think about doing this at the join step
         # (how to specify both sides of relationship in one spot)
+        
         # if we are on the `one` side of the relationship
         elif self.relationship == 'one':
             # pull the first item out of the list

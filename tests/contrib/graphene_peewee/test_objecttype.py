@@ -27,7 +27,7 @@ class TestUtil(unittest.TestCase):
         service_object_fields = {field.default_name \
                                     for field in self.object_type._meta.fields}
         # the list of fields in the models
-        model_fields = set([field.name for field in self.model.fields()])
+        model_fields = {field.name for field in self.model.fields()}
         # make sure the two lists are the same
         assert model_fields == service_object_fields, (
             "PeeweeObjectType does not have the same fields as the model"

@@ -61,10 +61,10 @@ class TestUtil(unittest.TestCase):
         record_query = self.model.select().where(self.model.id==record.id)
         # fire the action handler
         action_handler(action_type, payload)
-
-        self.assertRaises(Exception, record_query.get, (
+        # make sure there aren't any queries
+        assert record_query.count() == 0, (
             "There were records matching query after it shoudl have been removed."
-        ))
+        )
 
 
     def test_update_action_handler(self):
