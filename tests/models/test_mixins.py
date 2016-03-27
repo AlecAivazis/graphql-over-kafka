@@ -20,11 +20,11 @@ class TestUtil(unittest.TestCase):
             last_name = models.fields.CharField()
 
         # the name of the fields of test models
-        field_names = set([field.name for field in TestModel.fields()])
+        field_names = {field.name for field in TestModel.fields()}
 
         # make sure the mixin was applied to the table
         assert (
-            field_names == set(['address', 'id', 'first_name', 'last_name'])
+            field_names == {'address', 'id', 'first_name', 'last_name'}
         ), (
             'mixin was not properly applied to model' \
         )

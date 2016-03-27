@@ -24,8 +24,8 @@ class TestUtil(unittest.TestCase):
 
     def test_generated_object_has_model_fields(self):
         # the list of fields in the service object
-        service_object_fields = set([field.default_name \
-                                for field in self.object_type._meta.fields])
+        service_object_fields = {field.default_name \
+                                    for field in self.object_type._meta.fields}
         # the list of fields in the models
         model_fields = set([field.name for field in self.model.fields()])
         # make sure the two lists are the same

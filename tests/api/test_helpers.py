@@ -32,4 +32,3 @@ class TestUtil(unittest.TestCase):
         assert 'test_field' in arg_names, (
             "The generated schema cannot be filterd for model fields."
         )
-

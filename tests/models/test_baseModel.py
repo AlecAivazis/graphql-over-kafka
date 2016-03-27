@@ -21,9 +21,9 @@ class TestUtil(unittest.TestCase):
 
     def test_can_retrieve_fields(self):
         # the name of the columns in the models
-        column_names = set([field.name for field in self.Model.fields()])
+        column_names = {field.name for field in self.Model.fields()}
         # check the value
-        assert column_names == set(['name', 'date', 'id']), (
+        assert column_names == {'name', 'date', 'id'}, (
             'Model could not retrieve columns'
         )
 
@@ -36,9 +36,9 @@ class TestUtil(unittest.TestCase):
 
     def test_can_retrieve_requried_fields(self):
         # grab the names of the required fields
-        required_field_names = set([field.name for field in self.Model.required_fields()])
+        required_field_names = {field.name for field in self.Model.required_fields()}
         # make sure it is what it should be
-        assert required_field_names == set(['id', 'date']), (
+        assert required_field_names == {'id', 'date'}, (
             'Model could not retrieve required fields.'
         )
 

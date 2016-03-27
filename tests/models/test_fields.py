@@ -12,16 +12,20 @@ class TestUtil(unittest.TestCase):
 
     def test_password_field(self):
         # create a table with a password
-        class TestClass(models.Model):
+        class TestPassword(models.BaseModel):
             password = models.fields.PasswordField()
 
+
+        # create the table
+        nautilus.db.create_table(TestPassword)
+
         # create an instance of the table with a password
-        record = TestClass(password="foo")
+        record = TestPassword(password="foo")
         # save the record to the database
         record.save()
 
         # retireve the record
-        password = TestClass.get(TestClass.id == record.id).password
+        password = TestPassword.get(TestPassword.id == record.id).password
         # make sure there is a hash assocaited with the password
         assert hasattr(password, 'hash') , (
             "Retrieved record's password did not come with a hash"
@@ -35,4 +39,5 @@ class TestUtil(unittest.TestCase):
             'Password could not checked for equality.'
         )
 
-
+        # remove the table from the database
+        nautilus.db.drop_table(TestPassword)
