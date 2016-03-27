@@ -21,6 +21,11 @@ class TestUtil(unittest.TestCase):
 
         # create the connection model
         connection_model = create_connection_model([Model1, Model2])
+
+        assert issubclass(connection_model, models.BaseModel), (
+            "Generated connection model is not an instance of BaseModel"
+        )
+
         # grab the name of the fields
         connect_fields = {field.name for field in connection_model.fields()}
 
