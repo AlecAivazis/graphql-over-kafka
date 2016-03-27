@@ -47,4 +47,4 @@ def filter_model(Model, args):
             models = models.where(getattr(Model, arg) == value)
 
     # return the filtered list
-    return models.all()
+    return list(models)
