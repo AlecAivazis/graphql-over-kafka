@@ -18,7 +18,9 @@ class _Meta(type):
             # perform the necessary functions
             self.on_creation()
 
-        return
+        # save the name in the class
+        self.name = name
+        
 
 class _MixedMeta(_Meta, type(Model)):
     """
@@ -82,4 +84,3 @@ class BaseModel(Model, metaclass=_MixedMeta):
 
 
     __abstract__ = True
-

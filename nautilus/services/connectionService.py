@@ -50,9 +50,12 @@ class ConnectionService(ModelService):
         if len(services) < 2:
             raise Exception("Please provide more than one service to connect")
 
+        # the models of each service
+        service_models = [service.model for service in services]
+
         # # create the service
         super().__init__(
-            model = create_connection_model(services),
+            model = create_connection_model(service_models),
             name = connection_service_name(*services),
             **kwargs
         )
