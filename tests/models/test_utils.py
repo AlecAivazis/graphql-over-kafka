@@ -6,8 +6,8 @@ import nautilus.models as models
 
 class TestUtil(unittest.TestCase):
     """
-        This test suite checks the behavior of the various mixins that come
-        with nautilus.
+        This test suite checks the behavior of the various model utilities that
+        come with nautilus.
     """
 
     def test_can_create_connection_model(self):
