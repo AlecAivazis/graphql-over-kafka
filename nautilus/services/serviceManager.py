@@ -24,6 +24,8 @@ class ServiceManager:
         @click.option('--port', default=8000, help="The port for the service http server.")
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
         def runserver(port, host):
+            # make sure we clean up the service later on
+            self._running_service = True
             # run the service
             service.run(
                 host = host,
