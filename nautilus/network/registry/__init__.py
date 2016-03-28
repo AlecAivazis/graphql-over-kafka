@@ -50,6 +50,7 @@ def service_location_by_name(key):
     # return a random entry from the possibilities
     return random.choice(services)
 
+
 def keep_alive(service):
     ''' Ping the registry on an interval to show good health. '''
 
@@ -74,6 +75,4 @@ def keep_alive(service):
     # create a period callback that will perform the check every {t} seconds
     periodic_callback = tornado.ioloop.PeriodicCallback(pass_ttl, callback_time=interval)
 
-
     return periodic_callback
-

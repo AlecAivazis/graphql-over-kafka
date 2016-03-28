@@ -26,15 +26,7 @@ class CRUDNotificationCreator:
 
 
     @classmethod
-    def on_creation(cls):
-        try:
-            # perform super behavior before we do anything else
-            super().on_creation()
-        # if on_creation does not exist
-        except AttributeError:
-            # we are not extending a nautilus model - yell loudly
-            raise ValueError('CRUDNotificationCreator must mix into a ' + \
-                                                                ' base model')
+    def __mixin__(cls):
 
         # TODO: failure events????
 

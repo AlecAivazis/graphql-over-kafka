@@ -13,14 +13,22 @@ class _Meta(type):
     def __init__(self, name, bases, attributes, **kwds):
         # create the super class
         super().__init__(name, bases, attributes, **kwds)
-        # if the class is not a nautilus base class
-        if 'nautilus_base' not in attributes or not attributes['nautilus_base']:
-            # perform the necessary functions
-            self.on_creation()
 
+        # for each base we inherit from
+        for base in bases:
+            # if the base defines some mixin behavior
+            if hasattr(base, '__mixin__'):
+                # treat the base like a mixin
+                base.__mixin__()
+
+        # if this class defines mixin behavior
+        if hasattr(self, '__mixin__'):
+            # call the callback
+            self.__mixin__()
+            
         # save the name in the class
         self.name = name
-        
+
 
 class _MixedMeta(_Meta, type(Model)):
     """
@@ -31,13 +39,6 @@ class _MixedMeta(_Meta, type(Model)):
 class BaseModel(Model, metaclass=_MixedMeta):
 
     nautilus_base = True # necessary to prevent meta class behavior on this model
-
-    # def __init__(self, **kwargs):
-    #     """ treat kwargs as attribute assignment """
-    #     # loop over the given kwargs
-    #     for key, value in kwargs.items():
-    #         # treat them like attribute assignments
-    #         setattr(self, key, value)
 
     class Meta:
         database = db
@@ -52,7 +53,7 @@ class BaseModel(Model, metaclass=_MixedMeta):
 
 
     @classmethod
-    def on_creation(cls):
+    def __mixin__(cls):
         """
             This callback allows for customization of the class record defined
             by various subclass of the base model.

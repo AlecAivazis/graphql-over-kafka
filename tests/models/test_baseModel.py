@@ -12,12 +12,17 @@ class TestUtil(unittest.TestCase):
 
     def setUp(self):
 
+        self.spy = unittest.mock.MagicMock()
         class TestUser(models.BaseModel):
             name = models.fields.CharField(null=True)
             date = models.fields.CharField(null=False)
 
-        self.Model = TestUser
+            @classmethod
+            def __mixin__(cls):
+                # call the spy
+                self.spy()
 
+        self.Model = TestUser
 
     def test_can_retrieve_fields(self):
         # the name of the columns in the models
@@ -56,4 +61,9 @@ class TestUtil(unittest.TestCase):
             "name": "foo", "date": "bar", 'id': None
         }, (
             'Model was not correctly serialized'
+        )
+
+    def test_can_add_on_creation_handler(self):
+        assert self.spy.called, (
+            "mixin spy wasn't called."
         )
