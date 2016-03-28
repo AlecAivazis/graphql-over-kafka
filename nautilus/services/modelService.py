@@ -70,3 +70,12 @@ class ModelService(Service):
             name=name,
             **kwargs
         )
+
+    def get_models(self):
+        """
+            Returns the models managed by this service.
+
+            Returns:
+                (list): the models managed by the service
+        """
+        return [self.model]

@@ -20,7 +20,7 @@ class ServiceManager:
         def syncdb():
             print('sync db')
 
-        @group.command()
+        @group.command(help="Run the service.")
         @click.option('--port', default=8000, help="The port for the service http server.")
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
         def runserver(port, host):
@@ -30,15 +30,21 @@ class ServiceManager:
                 port = int(port),
             )
 
-        # @self.commandManager.command
-        # def syncdb():
-        #     """ Create the database entries. """
-        #     # import the db module
-        #     from nautilus.db import db
-        #     # create all of the tables
-        #     db.create_all()
-        #     # notify the user
-        #     print("Successfully created database entries.")
+        @group.command(help="Make sure the models have been written to the db.")
+        def syncdb():
+            """ Create the database entries. """
+            # get the models managed by the service
+            models = getattr(self.service, 'get_models', lambda: [])()
+            # for each model that we are managing
+            for model in models:
+                # if the table is not present in the underlying database
+                if not nautilus.db.table_exists(model):
+                    # create the table in the database
+                    nautilus.db.create_table(model)
+
+            # notify the user
+            print("Successfully created necessary database tables.")
+
 
         # save the command group to the manager
         self.group = group

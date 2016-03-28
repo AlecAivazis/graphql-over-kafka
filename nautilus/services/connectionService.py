@@ -51,11 +51,20 @@ class ConnectionService(ModelService):
             raise Exception("Please provide more than one service to connect")
 
         # the models of each service
-        service_models = [service.model for service in services]
+        self.service_models = [service.model for service in services]
 
         # # create the service
         super().__init__(
-            model = create_connection_model(service_models),
+            model = create_connection_model(self.service_models),
             name = connection_service_name(*services),
             **kwargs
         )
+
+    def get_models(self):
+        """
+            Returns the models managed by this service.
+
+            Returns:
+                (list): the models managed by the service
+        """
+        return self.service_models
