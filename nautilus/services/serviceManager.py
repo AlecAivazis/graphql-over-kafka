@@ -37,15 +37,22 @@ class ServiceManager:
             """ Create the database entries. """
             # get the models managed by the service
             models = getattr(self.service, 'get_models', lambda: [])()
-            # for each model that we are managing
-            for model in models:
-                # if the table is not present in the underlying database
-                if not nautilus.db.table_exists(model):
-                    # create the table in the database
-                    nautilus.db.create_table(model)
 
-            # notify the user
-            print("Successfully created necessary database tables.")
+            # if there are models to create
+            if models:
+                # for each model that we are managing
+                for model in models:
+                    # if the table is not present in the underlying database
+                    if not nautilus.db.table_exists(model):
+                        # create the table in the database
+                        nautilus.db.create_table(model)
+
+                # notify the user
+                print("Successfully created necessary database tables.")
+                
+            # otherwise there are no tables to create
+            else:
+                print("There are no models to add.")
 
 
         # save the command group to the manager
