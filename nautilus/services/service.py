@@ -132,7 +132,19 @@ class Service:
         # assign the port to the app instance
         self.app.listen(port)
         # start the ioloop
-        self.app.ioloop.start()
+        try:
+            self.app.ioloop.start()
+        # if the user interrupts the server
+        except KeyboardInterrupt as err:
+            # stop the service and clean up
+            self.stop()
+            # bubble the exception up to someone who cares
+            raise err
+        except Exception as err:
+            # stop the service and clean up
+            self.stop()
+            # bubble the exception up to someone who cares
+            raise err
 
 
     def stop(self):
@@ -143,7 +155,7 @@ class Service:
 
         # stop the ioloop
         self.app.ioloop.stop()
-        
+
         # if there is an action consumer registered with this service
         if self.action_consumer:
             # stop the action consumer

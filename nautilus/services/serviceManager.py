@@ -10,6 +10,7 @@ class ServiceManager:
 
     def __init__(self, service):
         self.service = service
+        self._running_service = False
 
         @click.group()
         def group():
@@ -23,12 +24,14 @@ class ServiceManager:
         @click.option('--port', default=8000, help="The port for the service http server.")
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
         def runserver(port, host):
+            # add a flag so we know to clean up later
+            self._running_service = True
             # run the service
             service.run(
                 host = host,
                 port = int(port),
             )
-        #
+
         # @self.commandManager.command
         # def syncdb():
         #     """ Create the database entries. """
@@ -50,12 +53,17 @@ class ServiceManager:
             self.group()
         # if the user interrupts the execution
         except KeyboardInterrupt:
-            print()
-            print("Cleaning up service...")
-            # stop the service
-            self.service.stop()
+            print('interrupt!')
+            # if the manager is running a service
+            if self._running_service:
+                print()
+                print("Cleaning up service...")
+                # stop the service and clean up
+                self.service.stop()
         # if there is a normal exception
         except Exception as err:
-            print("Closing due to error: %s" % err)
-            # stop the service and clean up
-            self.service.stop()
+            # if the manager is running a service
+            if self._running_service:
+                print("Closing due to error: %s" % err)
+                # stop the service and clean up
+                self.service.stop()
