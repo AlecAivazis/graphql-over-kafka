@@ -13,13 +13,20 @@ class TestUtil(unittest.TestCase):
             first_name = models.fields.CharField()
             last_name = models.fields.CharField()
 
-
         # save a reference to the test model
         self.model = TestModel
         # generate the arguments for the model
         self.args = args_for_model(TestModel)
         # create a set out of the arguments
         self.arg_names = set(self.args.keys())
+
+        # create a database table to test on
+        nautilus.db.create_table(self.model)
+
+
+    def tearDown(self):
+        # remove the test table
+        nautilus.db.drop_table(self.model)
 
 
     def test_args_match_model(self):
@@ -46,15 +53,13 @@ class TestUtil(unittest.TestCase):
 
 
     def test_can_filter_by_field(self):
-        # create a database table to test on
-        nautilus.db.create_table(self.model)
-
         # some test records
         record1 = self.model(first_name='foo', last_name='bar')
         record2 = self.model(first_name='bar', last_name='foo')
         # save the record to the database
         record1.save()
         record2.save()
+
         # the argument to filter for
         filter_args = dict(first_name=record1.first_name)
         # filter the models
@@ -72,20 +77,15 @@ class TestUtil(unittest.TestCase):
             "The wrong record was retrieved."
         )
 
-        # remove the test table
-        nautilus.db.drop_table(self.model)
-
 
     def test_can_filter_by_contains(self):
-        # create a database table to test on
-        nautilus.db.create_table(self.model)
-
         # some test records
         record1 = self.model(first_name='foo', last_name='bar')
         record2 = self.model(first_name='bar', last_name='foo')
         # save the record to the database
         record1.save()
         record2.save()
+
         # the argument to filter for
         filter_args = dict(first_name_in=[record1.first_name, record2.first_name])
         # filter the models
@@ -96,13 +96,10 @@ class TestUtil(unittest.TestCase):
             "More than one record was returned by filter."
         )
 
+        # figure out the names of the records we retrieved
         retrieved_names = {record.first_name for record in records_filtered}
 
         # make sure the first name matches
         assert retrieved_names == {record1.first_name, record2.first_name}, (
             "The wrong record was retrieved."
         )
-
-        # remove the test table
-        nautilus.db.drop_table(self.model)
-
