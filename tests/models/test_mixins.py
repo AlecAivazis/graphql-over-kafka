@@ -45,12 +45,13 @@ class TestUtil(unittest.TestCase):
         # then number of times the spy was called
         num_called = len(spy.call_args_list)
 
-        assert num_called > 0, (
+        assert len(spy.call_args_list) > 0, (
             "Mixin's method wasn't called."
         )
 
-        assert len(spy.call_args_list) == 1, (
-            "Mixin's method was called too many times."
+        assert spy.called_once_with(TestOnCreationModel), (
+            "Mixin's method was either called too many times or not"+ \
+                                                "passed the class record."
         )
 
 
@@ -73,12 +74,12 @@ class TestUtil(unittest.TestCase):
             @classmethod
             def __mixin__(cls):
                 # call the spy
-                spy1()
+                spy1(cls)
 
-        assert len(spy1.call_args_list) == 1, (
+        assert spy1.called_once_with(TestOnCreationModel), (
             "Base mixin method wasn't called  when there were both."
         )
 
-        assert len(spy2.call_args_list) == 1, (
+        assert spy2.called_once_with(TestOnCreationModel), (
             "Mixin mixin method wasn't called when there were both."
         )
