@@ -24,8 +24,6 @@ class ServiceManager:
         @click.option('--port', default=8000, help="The port for the service http server.")
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
         def runserver(port, host):
-            # add a flag so we know to clean up later
-            self._running_service = True
             # run the service
             service.run(
                 host = host,
@@ -51,19 +49,12 @@ class ServiceManager:
         try:
             # run the command group
             self.group()
-        # if the user interrupts the execution
-        except KeyboardInterrupt:
-            print('interrupt!')
-            # if the manager is running a service
-            if self._running_service:
-                print()
-                print("Cleaning up service...")
-                # stop the service and clean up
-                self.service.stop()
         # if there is a normal exception
         except Exception as err:
-            # if the manager is running a service
+            print("Closing due to error: %s" % err)
+            # if the service is running
             if self._running_service:
-                print("Closing due to error: %s" % err)
                 # stop the service and clean up
                 self.service.stop()
+            # bubble up the exception for someone else
+            raise err
