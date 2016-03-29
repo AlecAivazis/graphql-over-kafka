@@ -93,6 +93,7 @@ class Service:
 
         # base the service on a flask app
         self.app = self.tornado_app
+        # setup various functionalities
         self.init_action_handler(action_handler)
         # self.setup_auth()
 
@@ -207,14 +208,17 @@ class Service:
 
             Example:
 
-                import nautilus
+                .. code-block:: python
 
-                service = nautilus.Service(...)
+                    import nautilus
+                    from nauilus.network.http import RequestHandler
 
-                @service.route('/')
-                class HelloWorld(nautilus.network.http.RequestHandler):
-                    def get(self):
-                        return self.finish('hello world')
+                    service = nautilus.Service(...)
+
+                    @service.route('/')
+                    class HelloWorld(RequestHandler):
+                        def get(self):
+                            return self.finish('hello world')
         """
         def decorator(cls, **kwds):
             # add the endpoint at the given route
