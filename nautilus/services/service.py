@@ -44,11 +44,11 @@ class Service:
 
                 from nautilus import Service
                 from nautilus.api import create_model_schema
-                from nautilus.network import crud_handler 
-                from nautilus.models import BaseModel
+                from nautilus.network import crud_handler
+                import nautilus.models as models
 
-                class Model(BaseModel):
-                    name = Column(Text)
+                class Model(models.BaseModel):
+                    name = models.fields.CharField()
 
 
                 api_schema = create_model_schema(Model)
