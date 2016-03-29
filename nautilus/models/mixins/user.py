@@ -3,10 +3,10 @@
 """
 
 # local imports
-from .. import Model
+from ..base import BaseModel
 from ..fields import CharField
 
-class User(Model):
+class User(BaseModel):
     """ The user model used by Synca. """
     firstname = CharField(null=True)
     lastname = CharField(null=True)

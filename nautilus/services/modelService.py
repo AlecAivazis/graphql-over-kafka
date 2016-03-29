@@ -3,7 +3,6 @@ from nautilus.network.amqp import crud_handler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
 from nautilus.network.amqp.actionHandlers import noop_handler
-from nautilus.admin import add_model as add_model_to_admin
 from .service import Service
 
 class ModelService(Service):

@@ -1,6 +1,6 @@
 # local imports
-import nautilus.models as models
+from ..models import BaseModel
 from ..fields import PasswordField
 
-class HasPassword(models.Model):
+class HasPassword(BaseModel):
     password = PasswordField()

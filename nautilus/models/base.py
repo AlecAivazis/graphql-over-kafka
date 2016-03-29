@@ -1,13 +1,11 @@
 # external imports
-from playhouse.signals import Model, post_save
+from playhouse.signals import Model
 # local imports
-from nautilus import admin
 from ..db import db
 
 class _Meta(type):
     """
-        The base metaclass for the nautilus models. Currently, it's primary use is to
-        automatically register a model class with the admin after it is created.
+        The base metaclass for the nautilus models.
     """
 
     def __init__(self, name, bases, attributes, **kwds):
@@ -25,7 +23,7 @@ class _Meta(type):
         if hasattr(self, '__mixin__'):
             # call the callback
             self.__mixin__()
-            
+
         # save the name in the class
         self.name = name
 

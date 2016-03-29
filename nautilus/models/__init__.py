@@ -1,5 +1,4 @@
 # external imports
-from playhouse.signals import Model
 from peewee import Field
 # local imports
 from .mixins import *
