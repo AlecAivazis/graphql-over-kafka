@@ -93,10 +93,7 @@ class Service:
 
         # base the service on a flask app
         self.app = self.tornado_app
-        # setup various functionalities
         self.init_action_handler(action_handler)
-        # self.setup_db()
-        # self.setup_admin()
         # self.setup_auth()
 
 
@@ -216,7 +213,7 @@ class Service:
 
                 @service.route('/')
                 class HelloWorld(nautilus.network.http.RequestHandler):
-                    def get():
+                    def get(self):
                         return self.finish('hello world')
         """
         def decorator(cls, **kwds):
@@ -229,20 +226,8 @@ class Service:
         return decorator
 
 
-    # def setup_db(self):
-    #     # import the nautilus db configuration
-    #     from nautilus.db import db
-    #     # initialize the service app
-    #     db.init_app(self.app)
-
-
     # def setup_auth(self):
     #     # if we are supposed to enable authentication for the service
     #     if self.auth:
     #         from nautilus.auth import init_service
     #         init_service(self)
-
-
-    # def setup_admin(self):
-    #     from nautilus.admin import init_service
-    #     init_service(self)
