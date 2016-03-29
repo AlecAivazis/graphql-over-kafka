@@ -95,7 +95,6 @@ class Service:
         self.app = self.tornado_app
         # setup various functionalities
         self.init_action_handler(action_handler)
-        self.init_keep_alive()
         # self.setup_db()
         # self.setup_admin()
         # self.setup_auth()
@@ -134,6 +133,9 @@ class Service:
         """
         print("Running service on http://localhost:%i. " % port + \
                                             "Press Ctrl+C to terminate.")
+        # create the keep alive timer
+        self.init_keep_alive()
+
         # start the keep alive timer
         self.keep_alive.start()
         # assign the port to the app instance
@@ -158,10 +160,12 @@ class Service:
         """
             This function stops the service's various network interfaces.
         """
-        # stop the keep_alive timer
-        self.keep_alive.stop()
-        # remove the service entry from the registry
-        registry.deregister_service(self)
+        # if there is a keep alive timer
+        if self.keep_alive:
+            # stop the keep_alive timer
+            self.keep_alive.stop()
+            # remove the service entry from the registry
+            registry.deregister_service(self)
 
         # stop the ioloop
         self.app.ioloop.stop()
