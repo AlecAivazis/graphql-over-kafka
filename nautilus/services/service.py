@@ -92,7 +92,7 @@ class Service:
         #     self.app.config.from_object(configObject)
 
         # base the service on a flask app
-        self.app = self.tornado_app(schema)
+        self.app = self.tornado_app
         # setup various functionalities
         self.init_action_handler(action_handler)
         self.init_keep_alive()
@@ -101,7 +101,8 @@ class Service:
         # self.setup_auth()
 
 
-    def tornado_app(self, graphiql=True):
+    @property
+    def tornado_app(self):
         # create a tornado web application
         app = tornado.web.Application(self.request_handlers)
         # attach the ioloop to the application
@@ -125,6 +126,12 @@ class Service:
 
 
     def run(self, port=8000, **kwargs):
+        """
+            This function starts the service's network intefaces.
+
+            Args:
+                port (int): The port for the http server.
+        """
         print("Running service on http://localhost:%i. " % port + \
                                             "Press Ctrl+C to terminate.")
         # start the keep alive timer
@@ -148,6 +155,9 @@ class Service:
 
 
     def stop(self):
+        """
+            This function stops the service's various network interfaces.
+        """
         # stop the keep_alive timer
         self.keep_alive.stop()
         # remove the service entry from the registry
@@ -170,6 +180,49 @@ class Service:
             (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
                                             dict(path=api_endpoint_static)),
         ]
+
+
+    def add_http_endpoint(self, url, request_handler, config=None, host=".*$"):
+        """
+            This method provides a programatic way of added invidual routes
+            to the http server.
+
+            Args:
+                url (str): the url to be handled by the request_handler
+                request_handler (tornado.web.RequestHandler): The request handler
+                config (dict): A configuration dictionary to pass to the handler
+        """
+        self.app.add_handlers(host, [(url, request_handler, config)])
+
+
+    def route(self, route, config=None):
+        """
+            This method provides a decorator for adding endpoints to the
+            http server.
+
+            Args:
+                route (str): The url to be handled by the RequestHandled
+                config (dict): Configuration for the request handler
+
+            Example:
+
+                import nautilus
+
+                service = nautilus.Service(...)
+
+                @service.route('/')
+                class HelloWorld(nautilus.network.http.RequestHandler):
+                    def get():
+                        return self.finish('hello world')
+        """
+        def decorator(cls, **kwds):
+            # add the endpoint at the given route
+            self.add_http_endpoint(url = route, request_handler=cls, config=kwds)
+            # return the class undecorated
+            return cls
+
+        # return the decorator
+        return decorator
 
 
     # def setup_db(self):
