@@ -27,9 +27,6 @@ class Service:
             auth (optional, bool, default = True): Whether or not the service should add
                 authentication requirements.
 
-            auto_register (optional, bool): Whether or not the service should
-                register itself when ran
-
             configObject (optional, class): A python class to use for configuring the
                 service.
 
@@ -73,7 +70,6 @@ class Service:
             schema=None,
             action_handler=None,
             configObject=None,
-            auto_register=True,
             auth=True,
     ):
 
