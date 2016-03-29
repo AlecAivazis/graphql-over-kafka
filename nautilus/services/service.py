@@ -44,7 +44,7 @@ class Service:
 
                 from nautilus import Service
                 from nautilus.api import create_model_schema
-                from nautilus.network import CRUDHandler
+                from nautilus.network import crud_handler 
                 from nautilus.models import BaseModel
 
                 class Model(BaseModel):
@@ -54,7 +54,7 @@ class Service:
                 api_schema = create_model_schema(Model)
 
 
-                action_handler = CRUDHandler(Model)
+                action_handler = crud_handler(Model)
 
 
                 service = Service(
