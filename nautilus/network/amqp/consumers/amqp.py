@@ -53,7 +53,7 @@ class AMQPConsumer(object):
             body=message,
             routing_key=route or self.ROUTING_KEY,
             properties=message_properties,
-            **args,
+            **args
         )
 
     def connect(self):
