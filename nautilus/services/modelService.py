@@ -23,23 +23,17 @@ class ModelService(Service):
             .. code-block:: python
 
                 from nautilus import ModelService
-                from sqlalchemy import Column, Text
-                from nautilus.models import HasID, BaseModel, CRUDNotificationCreator
+                import nautilus.models as models
 
-
-                # these mixins provide make the model "live". For more information,
-                # see foo_bar.
-                class Model(CRUDNotificationCreator, HasID, BaseModel):
-                    name = Column(Text)
-
+                class Model(models.BaseModel):
+                    name = models.fields.CharField()
 
                 class ServiceConfig:
                     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
 
-
                 service = ModelService(
                     model = Model,
-                    configObject = ServiceConfig,
+                    config = ServiceConfig
                 )
 
     """
