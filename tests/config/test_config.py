@@ -5,19 +5,9 @@ from nautilus.config import Config
 
 class TestUtil(unittest.TestCase):
 
-    def check_configuration(self, config):
-
-        assert 'foo' in config, (
-            "Keyword argument could not be found in config object"
-        )
-
-        assert config['foo'] == 'bar', (
-            "Internal values were incorrect"
-        )
-
-        assert config == {'foo': 'bar'} , (
-            "Internal structure contained too much data."
-        )
+    def check_configuration(self, config, message="Wrong configuration."):
+        # make sure the configuration object looks like we expect
+        assert config == {'foo': 'bar'} , message
 
 
     def test_can_read_keys_as_attribute(self):
@@ -44,7 +34,9 @@ class TestUtil(unittest.TestCase):
         # create a config object to test
         config = Config(foo='bar')
         # validate the config object
-        self.check_configuration(config)
+        self.check_configuration(config,
+            "Configuration object could not accept keywords."
+        )
 
 
     def test_can_accept_dict(self):
@@ -53,7 +45,9 @@ class TestUtil(unittest.TestCase):
         # create a config object out of the dictionary
         config = Config(config_dict)
         # validate the config object
-        self.check_configuration(config)
+        self.check_configuration(config,
+            "Configuration object could not accept dictionaries."
+        )
 
 
     def test_can_accept_type(self):
@@ -66,4 +60,6 @@ class TestUtil(unittest.TestCase):
         # create the config object from the type
         config = Config(ConfigType)
         # validate the config object
-        self.check_configuration(config)
+        self.check_configuration(config,
+            "Configuration object could not accept types."
+        )
