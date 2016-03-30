@@ -113,7 +113,7 @@ class Service:
         self.keep_alive = registry.keep_alive(self)
 
 
-    def run(self, port=8000, **kwargs):
+    def run(self, host="localhost", port=8000, **kwargs):
         """
             This function starts the service's network intefaces.
 
@@ -128,7 +128,7 @@ class Service:
         # start the keep alive timer
         self.keep_alive.start()
         # assign the port to the app instance
-        self.app.listen(port)
+        self.app.listen(port, address=host)
         # start the ioloop
         try:
             self.app.ioloop.start()
