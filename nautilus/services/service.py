@@ -73,16 +73,16 @@ class Service:
         self.keep_alive = None
         self._schema = schema
 
-        # apply any necessary flask app config
-        # self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-
         # if there is a configObject
         if config:
-            # apply the config object to the flask app
-            self.app.config = Config(config)
+            if isinstance(config, Config):
+                self.config = config
+            else:
+                self.config = Config(config)
 
-        # base the service on a flask app
+        # base the service on a tornado app
         self.app = self.tornado_app
+
         # setup various functionalities
         self.init_action_handler(action_handler)
         # self.setup_auth()

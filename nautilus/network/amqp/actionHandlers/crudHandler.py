@@ -14,11 +14,11 @@ def crud_handler(Model):
 
     # import the necessary modules
     from nautilus.network.amqp import combine_action_handlers
-    from . import updateHandler, createHandler, deleteHandler
+    from . import update_handler, create_handler, delete_handler
 
     # combine them into one handler
     return combine_action_handlers(
-        updateHandler(Model),
-        createHandler(Model),
-        deleteHandler(Model),
+        update_handler(Model),
+        create_handler(Model),
+        delete_handler(Model),
     )
