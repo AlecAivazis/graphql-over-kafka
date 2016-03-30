@@ -73,12 +73,10 @@ class Service:
         self.keep_alive = None
         self._schema = schema
 
-        # if there is a configObject
+        # if we were given configuration for this service
         if config:
-            if isinstance(config, Config):
-                self.config = config
-            else:
-                self.config = Config(config)
+            # wrap the given configuration in the nautilus wrapper
+            self.config = Config(config)
 
         # base the service on a tornado app
         self.app = self.tornado_app
@@ -91,7 +89,10 @@ class Service:
     @property
     def tornado_app(self):
         # create a tornado web application
-        app = tornado.web.Application(self.request_handlers)
+        app = tornado.web.Application(
+            self.request_handlers,
+            debug=self.config.get("debug")
+        )
         # attach the ioloop to the application
         app.ioloop = tornado.ioloop.IOLoop.instance()
         # return the app instance

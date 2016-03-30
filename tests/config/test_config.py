@@ -63,3 +63,14 @@ class TestUtil(unittest.TestCase):
         self.check_configuration(config,
             "Configuration object could not accept types."
         )
+
+
+    def test_can_accept_config_object(self):
+        # create a config object
+        config1 = Config(foo='bar')
+        # create a config object out of that object
+        config2 = Config(config1)
+        # validate the config object
+        self.check_configuration(config2,
+            "Configuration object could not accept other config objects."
+        )
