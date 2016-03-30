@@ -91,7 +91,6 @@ class Service:
         # create a tornado web application
         app = tornado.web.Application(
             self.request_handlers,
-            debug=self.config.get("debug")
         )
         # attach the ioloop to the application
         app.ioloop = tornado.ioloop.IOLoop.instance()
