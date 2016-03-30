@@ -7,6 +7,7 @@ import tornado.web
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 import nautilus.network.registry as registry
+from nautilus.config import Config
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
@@ -69,7 +70,7 @@ class Service:
             name,
             schema=None,
             action_handler=None,
-            configObject=None,
+            config=None,
             auth=True,
     ):
 
@@ -83,9 +84,9 @@ class Service:
         # self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
         # if there is a configObject
-        # if configObject:
-        #     # apply the config object to the flask app
-        #     self.app.config.from_object(configObject)
+        if config:
+            # apply the config object to the flask app
+            self.app.config = Config(config)
 
         # base the service on a flask app
         self.app = self.tornado_app
