@@ -51,17 +51,10 @@ class Service:
                 class Model(models.BaseModel):
                     name = models.fields.CharField()
 
-
-                api_schema = create_model_schema(Model)
-
-
-                action_handler = crud_handler(Model)
-
-
                 service = Service(
                     name = 'My Awesome Service',
-                    schema = api_schema,
-                    action_handler = action_handler
+                    schema = create_model_schema(Model),
+                    action_handler = crud_handler(Model)
                 )
     """
 
