@@ -38,27 +38,34 @@ class ModelService(Service):
 
     """
 
-    def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):
-        # save a reference to the model this service is managing
-        self.model = model
+    model = None
+    additonal_action_handler = noop_handler
+    api_schema = None
+
+    def __init__(self, **kwargs):
+        print(self.model)
+        # make sure there is a model
+        assert self.model, (
+            "Please provide a model for the model service."
+        )
 
         # the schema to add to the service
-        schema = create_model_schema(model)
+        self.api_schema = create_model_schema(self.model)
 
         # # the action handler is a combination
         action_handler = combine_action_handlers(
             # of the given one
-            additonal_action_handler,
+            self.additonal_action_handler,
             # and a crud handler
-            crud_handler(model)
+            crud_handler(self.model)
         )
 
         # pull the name of the service from kwargs if it was given
-        name = kwargs.pop('name', None) or model_service_name(model)
+        name = kwargs.pop('name', None) or model_service_name(self.model)
 
         # create the service
         super().__init__(
-            schema=schema,
+            schema=self.api_schema,
             # action_handler=action_handler,
             name=name,
             **kwargs
