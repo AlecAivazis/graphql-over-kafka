@@ -43,7 +43,6 @@ class ModelService(Service):
     api_schema = None
 
     def __init__(self, **kwargs):
-        print(self.model)
         # make sure there is a model
         assert self.model, (
             "Please provide a model for the model service."
@@ -66,7 +65,7 @@ class ModelService(Service):
         # create the service
         super().__init__(
             schema=self.api_schema,
-            # action_handler=action_handler,
+            action_handler=action_handler,
             name=name,
             **kwargs
         )

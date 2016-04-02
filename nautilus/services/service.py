@@ -69,8 +69,9 @@ class Service:
 
         self.name = name
         self.__name__ = name
-        self.action_consumer = None
+        self.action_handler = action_handler
         self.keep_alive = None
+        self._action_handler_loop = None
         self._schema = schema
 
         # if we were given configuration for this service
@@ -102,9 +103,9 @@ class Service:
         # if the service was provided an action handler
         if action_handler:
             # create a wrapper for it
-            self.action_consumer = ActionHandler(callback=action_handler)
+            self._action_handler_loop = ActionHandler(callback=action_handler)
             # add it to the ioloop
-            self.app.ioloop.add_callback(self.action_consumer.run)
+            self.app.ioloop.add_callback(self._action_handler_loop.run)
 
 
     def init_keep_alive(self):
@@ -128,6 +129,7 @@ class Service:
         self.keep_alive.start()
         # assign the port to the app instance
         self.app.listen(port, address=host)
+        
         # start the ioloop
         try:
             self.app.ioloop.start()
@@ -159,9 +161,9 @@ class Service:
         self.app.ioloop.stop()
 
         # if there is an action consumer registered with this service
-        if self.action_consumer:
+        if self._action_handler_loop:
             # stop the action consumer
-            self.action_consumer.stop()
+            self._action_handler_loop.stop()
 
 
     @property

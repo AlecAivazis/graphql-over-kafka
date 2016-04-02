@@ -2,6 +2,7 @@
 import unittest
 # local imports
 import nautilus.models as models
+from ..util import assert_called_once_with
 
 
 class TestUtil(unittest.TestCase):
@@ -64,7 +65,7 @@ class TestUtil(unittest.TestCase):
             @classmethod
             def __mixin__(cls):
                 # call the spy
-                spy2()
+                spy2(cls)
 
         class TestOnCreationModel(models.BaseModel, MyAwesomeMixin):
             first_name = models.fields.CharField()
@@ -75,10 +76,6 @@ class TestUtil(unittest.TestCase):
                 # call the spy
                 spy1(cls)
 
-        assert len(spy1.call_args_list) == 1, (
-            "Base mixin method wasn't called  when there were both."
-        )
-
-        assert len(spy2.call_args_list) == 1, (
-            "Mixin mixin method wasn't called when there were both."
-        )
+        # check that both spies were called
+        assert_called_once_with(spy1, TestOnCreationModel, spy_name='Base spy')
+        assert_called_once_with(spy2, MyAwesomeMixin, spy_name='Mixin spy')
