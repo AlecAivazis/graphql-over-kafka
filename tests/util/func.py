@@ -1,7 +1,6 @@
 # external imports
 from unittest.mock import call
 
-
 def assert_called_once_with(mock, *args, **kwds):
     spy_name = kwds.get('spy_name', 'Spy')
     # make sure the spy is called once

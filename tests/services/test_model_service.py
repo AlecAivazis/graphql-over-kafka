@@ -19,7 +19,7 @@ class TestUtil(unittest.TestCase):
 
         class TestService(nautilus.ModelService):
             model = TestServiceModel
-            additonal_action_handler = self.spy
+            additional_action_handler = self.spy
 
         # save the class records to the suite
         self.model = TestServiceModel
@@ -38,7 +38,7 @@ class TestUtil(unittest.TestCase):
         def test_empty_class():
             class TestModel(nautilus.ModelService): pass
             # instantiate the incorrect service
-            model = TestModel()
+            TestModel()
 
         # expect an error
         self.assertRaises(AssertionError, test_empty_class)
@@ -103,7 +103,7 @@ class TestUtil(unittest.TestCase):
             dict(name='foo')
         )
         # make sure the created record was found and save the id
-        self.model_id = self.model.get(name='foo').id
+        self.model_id = self.model.get(self.model.name == 'foo').id
 
 
     def verify_action_handler_update(self):
@@ -113,14 +113,14 @@ class TestUtil(unittest.TestCase):
             dict(id=self.model_id, name='barz')
         )
         # check that a model matches
-        self.model.get(name='barz')
+        self.model.get(self.model.name == 'barz')
 
 
     def verify_action_handler_delete(self):
         # fire a delete action
         self.service.action_handler(
             conventions.get_crud_action('delete', self.model),
-            payload = self.model_id
+            payload=self.model_id
         )
         # expect an error
         self.assertRaises(Exception, self.model.get, self.model_id)

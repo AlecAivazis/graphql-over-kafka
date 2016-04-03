@@ -39,10 +39,15 @@ class ModelService(Service):
     """
 
     model = None
-    additonal_action_handler = noop_handler
+    additional_action_handler = noop_handler
     api_schema = None
 
-    def __init__(self, **kwargs):
+    def __init__(self, model=None, **kwargs):
+        # if we were given a model for the service
+        if model:
+            # use the given model
+            self.model = model
+
         # make sure there is a model
         assert self.model, (
             "Please provide a model for the model service."
@@ -54,7 +59,7 @@ class ModelService(Service):
         # # the action handler is a combination
         action_handler = combine_action_handlers(
             # of the given one
-            self.additonal_action_handler,
+            self.additional_action_handler,
             # and a crud handler
             crud_handler(self.model)
         )
@@ -69,6 +74,7 @@ class ModelService(Service):
             name=name,
             **kwargs
         )
+
 
     def get_models(self):
         """

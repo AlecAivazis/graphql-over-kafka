@@ -41,30 +41,40 @@ class ConnectionService(ModelService):
 
     """
 
-    def __init__(self, services, additonal_action_handler = noop_handler, **kwargs):
+    services = []
+    additional_action_handler = noop_handler
+
+    def __init__(self,  **kwargs):
+
+        # make sure we were passed more than one service
+        assert len(self.services) >= 2, (
+            "Please provide more than one service to connect."
+        )
 
         # *sigh*
         from nautilus.models import create_connection_model
 
-        # make sure we were passed more than one service
-        if len(services) < 2:
-            raise Exception("Please provide more than one service to connect")
-
         # the models of each service
-        self.service_models = [service.model for service in services]
+        self._service_models = [service.model for service in self.services]
+
+        # make sure there is a unique model name for every service
+        assert len({model.model_name for model in self._service_models}) \
+           == len(self._service_models), (
+           "Can only connect models with different name"
+        )
 
         # # create the service
         super().__init__(
-            model = create_connection_model(self.service_models),
-            name = connection_service_name(*services),
+            model = create_connection_model(self._service_models),
+            name = connection_service_name(*self.services),
             **kwargs
         )
 
-    def get_models(self):
+    def get_base_models(self):
         """
             Returns the models managed by this service.
 
             Returns:
                 (list): the models managed by the service
         """
-        return self.service_models
+        return self._service_models

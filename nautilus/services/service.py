@@ -58,6 +58,8 @@ class Service:
                 )
     """
 
+    name = None
+
     def __init__(
             self,
             name,
@@ -67,7 +69,7 @@ class Service:
             auth=True,
     ):
 
-        self.name = name
+        self.name = self.name or name or self.__name__
         self.__name__ = name
         self.action_handler = action_handler
         self.keep_alive = None
@@ -129,7 +131,7 @@ class Service:
         self.keep_alive.start()
         # assign the port to the app instance
         self.app.listen(port, address=host)
-        
+
         # start the ioloop
         try:
             self.app.ioloop.start()
