@@ -34,3 +34,28 @@ class TestUtil(unittest.TestCase):
         assert self.service(schema=schema).schema == schema, (
             "Service could not be initialized with a specific schema"
         )
+
+    def test_can_accept_config(self):
+        # create a config object
+        config = nautilus.Config(foo='bar')
+        # make sure the config is what we gave it
+        assert self.service(config=config).config == config, (
+            "Service could not be initialized with a specific config."
+        )
+
+    def test_can_merge_config_from_init(self):
+        # the config of the base class
+        base_config = nautilus.Config(foo='bar')
+        # the config to initialize with
+        init_config = nautilus.Config(foo='baz', wakka='flokka')
+
+        class MyConfiguredService(nautilus.Service):
+            config = base_config
+
+        # the mix of the two config
+        mix_config = base_config.copy()
+        mix_config.update(init_config)
+
+        assert MyConfiguredService(config=init_config).config == mix_config, (
+            "Service could not mix the initialized config onto the base one."
+        )

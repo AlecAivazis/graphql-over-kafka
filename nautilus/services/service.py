@@ -66,9 +66,10 @@ class Service(metaclass=ServiceMetaClass):
                 )
     """
 
+    action_handler = None
+    config = None
     name = None
     schema = None
-    action_handler = None
 
     def __init__(
             self,
@@ -86,10 +87,8 @@ class Service(metaclass=ServiceMetaClass):
         self._action_handler_loop = None
         self.schema = schema or self.schema
 
-        # if we were given configuration for this service
-        if config:
-            # wrap the given configuration in the nautilus wrapper
-            self.config = Config(config)
+        # wrap the given configuration in the nautilus wrapper
+        self.config = Config(self.config, config)
 
         # base the service on a tornado app
         self.app = self.tornado_app

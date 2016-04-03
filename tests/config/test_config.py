@@ -29,6 +29,14 @@ class TestUtil(unittest.TestCase):
             "Attributes could not be updated."
         )
 
+    def test_can_accept_multiple_arguments(self):
+        # create a config object with two arguments
+        config = Config({'foo': 'bar'}, {'bar': 'baz'})
+        # make sure both applied
+        assert config['foo'] == 'bar' and config['bar'] == 'baz', (
+            "Config could not mix in multiple values."
+        )
+
 
     def test_can_accept_kwds(self):
         # create a config object to test
@@ -73,4 +81,26 @@ class TestUtil(unittest.TestCase):
         # validate the config object
         self.check_configuration(config2,
             "Configuration object could not accept other config objects."
+        )
+
+    def test_can_update_with_another_config(self):
+        # create a config object
+        config1 = Config(foo='bar')
+        # create a config object out of that object
+        config2 = Config(bar='baz')
+
+        # merge the two configs
+        config1.update({'bar':'baz'})
+        # make sure one can be applied on the other
+        assert config1 == {'foo': 'bar', 'bar': 'baz'}, (
+            "Config could not be updated with another."
+        )
+
+
+    def test_can_accept_none(self):
+        # create a config with nothing
+        config = Config(None)
+        # make sure it created an empty config
+        assert config == {}, (
+            "Config(None) did not create an empty config"
         )

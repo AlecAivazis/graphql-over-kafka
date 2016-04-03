@@ -1,6 +1,3 @@
-# external imports
-from flask import current_app
-from sqlalchemy import MetaData
-# local imports
+from .config import Config
 from .services import *
 from .db import db
