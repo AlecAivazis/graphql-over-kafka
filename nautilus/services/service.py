@@ -13,7 +13,15 @@ from nautilus.api.endpoints import (
     GraphQLRequestHandler
 )
 
-class Service:
+class ServiceMetaClass(type):
+    def __init__(self, name, bases, attributes):
+        # create the super class
+        super().__init__(name, bases, attributes)
+        # save the name to the class record
+        self.name = name
+
+
+class Service(metaclass=ServiceMetaClass):
     """
         This is the base class for all services that are part of a nautilus
         cloud. This class provides basic functionalities such as registration,
@@ -59,22 +67,24 @@ class Service:
     """
 
     name = None
+    schema = None
+    action_handler = None
 
     def __init__(
             self,
-            name,
+            name=None,
             schema=None,
             action_handler=None,
             config=None,
             auth=True,
     ):
 
-        self.name = self.name or name or self.__name__
+        self.name = self.name or name or type(self).name
         self.__name__ = name
-        self.action_handler = action_handler
+        self.action_handler = action_handler or self.action_handler
         self.keep_alive = None
         self._action_handler_loop = None
-        self._schema = schema
+        self.schema = schema or self.schema
 
         # if we were given configuration for this service
         if config:
@@ -85,7 +95,7 @@ class Service:
         self.app = self.tornado_app
 
         # setup various functionalities
-        self.init_action_handler(action_handler)
+        self.init_action_handler(self.action_handler)
         # self.setup_auth()
 
 
@@ -171,7 +181,7 @@ class Service:
     @property
     def request_handlers(self):
         return [
-            (r"/", GraphQLRequestHandler, dict(schema=self._schema)),
+            (r"/", GraphQLRequestHandler, dict(schema=self.schema)),
             (r"/graphiql/?", GraphiQLRequestHandler),
             (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
                                             dict(path=api_endpoint_static)),
