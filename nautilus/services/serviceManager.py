@@ -35,8 +35,10 @@ class ServiceManager:
         @group.command(help="Make sure the models have been written to the db.")
         def syncdb():
             """ Create the database entries. """
+            # instantiate the service before we do anything
+            service = self.service()
             # get the models managed by the service
-            models = getattr(self.service, 'get_models', lambda: [])()
+            models = getattr(service, 'get_models', lambda: [])()
 
             # if there are models to create
             if models:
