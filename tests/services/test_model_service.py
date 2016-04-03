@@ -91,12 +91,12 @@ class TestUtil(unittest.TestCase):
 
 
     def test_action_handler_supports_crud(self):
-        self.verify_action_handler_create()
-        self.verify_action_handler_update()
-        self.verify_action_handler_delete()
+        self.verify_create_action_handler()
+        self.verify_update_action_handler()
+        self.verify_delete_action_handler()
 
 
-    def verify_action_handler_create(self):
+    def verify_create_action_handler(self):
         # fire a create action
         self.service.action_handler(
             conventions.get_crud_action('create', self.model),
@@ -106,7 +106,7 @@ class TestUtil(unittest.TestCase):
         self.model_id = self.model.get(self.model.name == 'foo').id
 
 
-    def verify_action_handler_update(self):
+    def verify_update_action_handler(self):
         # fire an update action
         self.service.action_handler(
             conventions.get_crud_action('update', self.model),
@@ -116,7 +116,7 @@ class TestUtil(unittest.TestCase):
         self.model.get(self.model.name == 'barz')
 
 
-    def verify_action_handler_delete(self):
+    def verify_delete_action_handler(self):
         # fire a delete action
         self.service.action_handler(
             conventions.get_crud_action('delete', self.model),

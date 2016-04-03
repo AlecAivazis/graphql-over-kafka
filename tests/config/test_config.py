@@ -83,6 +83,7 @@ class TestUtil(unittest.TestCase):
             "Configuration object could not accept other config objects."
         )
 
+
     def test_can_update_with_another_config(self):
         # create a config object
         config1 = Config(foo='bar')
@@ -102,5 +103,5 @@ class TestUtil(unittest.TestCase):
         config = Config(None)
         # make sure it created an empty config
         assert config == {}, (
-            "Config(None) did not create an empty config"
+            "Config(None) did not create an empty config."
         )

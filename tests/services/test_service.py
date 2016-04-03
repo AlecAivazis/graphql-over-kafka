@@ -13,11 +13,13 @@ class TestUtil(unittest.TestCase):
         # save the service record to the test suite
         self.service = MyService
 
+
     def test_has_default_name(self):
         # make sure the name matches
         assert self.service.name == 'MyService', (
             "Service did not have the correct name."
         )
+
 
     def test_can_accept_action_handler(self):
 
@@ -27,6 +29,7 @@ class TestUtil(unittest.TestCase):
             "Service could not be initialized with a specific action_handler"
         )
 
+
     def test_can_initialize_with_schema(self):
         # create a mock schema
         schema = MagicMock()
@@ -35,6 +38,7 @@ class TestUtil(unittest.TestCase):
             "Service could not be initialized with a specific schema"
         )
 
+
     def test_can_accept_config(self):
         # create a config object
         config = nautilus.Config(foo='bar')
@@ -42,6 +46,7 @@ class TestUtil(unittest.TestCase):
         assert self.service(config=config).config == config, (
             "Service could not be initialized with a specific config."
         )
+
 
     def test_can_merge_config_from_init(self):
         # the config of the base class
