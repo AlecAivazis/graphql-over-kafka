@@ -31,7 +31,6 @@ class TestUtil(unittest.TestCase):
                 TestService2
             ]
 
-
         # save the class records to the suite
         self.service1 = TestService1
         self.service2 = TestService2
