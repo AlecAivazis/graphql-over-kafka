@@ -2,6 +2,7 @@
 import unittest
 from unittest.mock import MagicMock
 # local imports
+from nautilus import conventions
 import nautilus
 import nautilus.models as models
 import nautilus.network.amqp.actionHandlers as action_handlers
@@ -13,15 +14,15 @@ class TestUtil(unittest.TestCase):
         # create a spy we can check for later
         self.spy = MagicMock()
 
-        class TestModel(nautilus.models.BaseModel):
+        class TestServiceModel(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 
         class TestService(nautilus.ModelService):
-            model = TestModel
+            model = TestServiceModel
             additonal_action_handler = self.spy
 
         # save the class records to the suite
-        self.model = TestModel
+        self.model = TestServiceModel
         self.service = TestService()
 
         # create the test table
@@ -89,4 +90,37 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_action_handler_handles_crud(self): pass
+    def test_action_handler_supports_crud(self):
+        self.verify_action_handler_create()
+        self.verify_action_handler_update()
+        self.verify_action_handler_delete()
+
+
+    def verify_action_handler_create(self):
+        # fire a create action
+        self.service.action_handler(
+            conventions.get_crud_action('create', self.model),
+            dict(name='foo')
+        )
+        # make sure the created record was found and save the id
+        self.model_id = self.model.get(name='foo').id
+
+
+    def verify_action_handler_update(self):
+        # fire an update action
+        self.service.action_handler(
+            conventions.get_crud_action('update', self.model),
+            dict(id=self.model_id, name='barz')
+        )
+        # check that a model matches
+        self.model.get(name='barz')
+
+
+    def verify_action_handler_delete(self):
+        # fire a delete action
+        self.service.action_handler(
+            conventions.get_crud_action('delete', self.model),
+            payload = self.model_id
+        )
+        # expect an error
+        self.assertRaises(Exception, self.model.get, self.model_id)

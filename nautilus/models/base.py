@@ -1,5 +1,6 @@
 # external imports
 from playhouse.signals import Model
+import peewee
 # local imports
 from ..db import db
 
@@ -8,9 +9,9 @@ class _Meta(type):
         The base metaclass for the nautilus models.
     """
 
-    def __init__(self, name, bases, attributes, **kwds):
+    def __init__(self, name, bases, attributes):
         # create the super class
-        super().__init__(name, bases, attributes, **kwds)
+        super().__init__(name, bases, attributes)
 
         # for each base we inherit from
         for base in bases:
@@ -25,18 +26,15 @@ class _Meta(type):
             self.__mixin__()
 
         # save the name in the class
-        self.name = name
+        self.model_name = name
 
 
-class _MixedMeta(_Meta, type(Model)):
+class _MixedMeta(_Meta, peewee.BaseModel):
     """
         This meta class mixes the sqlalchemy model meta class and the nautilus one.
     """
 
-
 class BaseModel(Model, metaclass=_MixedMeta):
-
-    nautilus_base = True # necessary to prevent meta class behavior on this model
 
     class Meta:
         database = db
@@ -80,6 +78,3 @@ class BaseModel(Model, metaclass=_MixedMeta):
             Returns the fields of the table.
         """
         return cls._meta.fields.values()
-
-
-    __abstract__ = True

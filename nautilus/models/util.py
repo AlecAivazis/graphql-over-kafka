@@ -13,7 +13,7 @@ def create_connection_model(models):
     # the mixins / base for the model
     bases = (BaseModel,)
     # the fields of the derived
-    attributes = {model.name: fields.CharField() for model in models}
+    attributes = {model.model_name: fields.CharField() for model in models}
 
     # create an instance of base model with the right attributes
     return type(BaseModel)(connection_service_name(*models), bases, attributes)

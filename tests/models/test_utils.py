@@ -29,6 +29,6 @@ class TestUtil(unittest.TestCase):
         # grab the name of the fields
         connect_fields = {field.name for field in connection_model.fields()}
 
-        assert connect_fields == {Model1.name, Model2.name, 'id'}, (
+        assert connect_fields == {Model1.model_name, Model2.model_name, 'id'}, (
             "Connection model did not have the correct fields."
         )

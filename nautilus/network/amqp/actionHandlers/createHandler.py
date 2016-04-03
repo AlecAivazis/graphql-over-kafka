@@ -15,6 +15,7 @@ def create_handler(Model):
             function(action_type, payload): The action handler for this model
     """
     def action_handler(action_type, payload):
+
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('create', Model):
             # for each required field
@@ -29,7 +30,6 @@ def create_handler(Model):
 
             # create a new model
             new_model = Model(**payload)
-
             # save the new model instance
             new_model.save()
 

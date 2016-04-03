@@ -7,7 +7,7 @@ from ..base import BaseModel
 from ..fields import CharField
 
 class User(BaseModel):
-    """ The user model used by Synca. """
+    """ The user model used by """
     firstname = CharField(null=True)
     lastname = CharField(null=True)
     email = CharField(null=False)

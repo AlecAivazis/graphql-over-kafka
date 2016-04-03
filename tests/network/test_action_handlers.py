@@ -42,6 +42,10 @@ class TestUtil(unittest.TestCase):
         assert record_query.count() == 1, (
             "Record was not created by action handler"
         )
+        assert record_query[0].first_name == 'foo', (
+            "Record did not have the correct attribute value"
+        )
+        
 
 
     def test_delete_action_handler(self):
