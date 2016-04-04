@@ -6,10 +6,10 @@ from graphql.core.error import (
     format_error as format_graphql_error
 )
 # local imports
-from nautilus.network.http import RequestHandler
+from nautilus.auth import AuthRequestHandler
 
 
-class GraphQLRequestHandler(RequestHandler):
+class GraphQLRequestHandler(AuthRequestHandler):
 
     def initialize(self, schema=None, async=False):
         self._schema = schema

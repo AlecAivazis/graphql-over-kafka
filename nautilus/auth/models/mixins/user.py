@@ -3,8 +3,8 @@
 """
 
 # local imports
-from ..base import BaseModel
-from ..fields import CharField
+from nautilus.models import BaseModel
+from nautilus.models.fields import CharField
 
 class User(BaseModel):
     """ The user model used by """

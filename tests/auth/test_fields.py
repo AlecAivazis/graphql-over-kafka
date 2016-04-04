@@ -13,16 +13,15 @@ class TestUtil(unittest.TestCase):
     def setUp(self):
         # point the database to a in-memory sqlite database
         nautilus.database.init_db('sqlite:///test.db')
-        
+
 
     def test_password_field(self):
         # create a table with a password
         class TestPassword(models.BaseModel):
-            password = models.fields.PasswordField()
-
+            password = nautilus.auth.PasswordField()
 
         # create the table
-        nautilus.db.create_table(TestPassword)
+        TestPassword.create_table(True)
 
         # create an instance of the table with a password
         record = TestPassword(password="foo")
@@ -45,4 +44,4 @@ class TestUtil(unittest.TestCase):
         )
 
         # remove the table from the database
-        nautilus.db.drop_table(TestPassword)
+        TestPassword.drop_table()

@@ -2,7 +2,7 @@
 
 # local imports
 from nautilus.models import Field
-from nautilus.auth.primitives import PasswordHash
+from ...primitives import PasswordHash
 # from nautilus.api import convert_sqlalchemy_type
 
 class PasswordField(Field):
