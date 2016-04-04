@@ -1,8 +1,10 @@
 # external imports
 import tornado.template
+# local imports
+from nautilus.network.http import RequestHandler
 
 
-class GraphiQLRequestHandler(tornado.web.RequestHandler):
+class GraphiQLRequestHandler(RequestHandler):
 
     def initialize(self, schema=None, async=False):
         self._schema = schema

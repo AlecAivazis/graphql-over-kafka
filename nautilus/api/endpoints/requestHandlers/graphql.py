@@ -1,20 +1,23 @@
 import json
-import os
-import tornado.web
 import tornado.gen
 from tornado.web import MissingArgumentError
 from graphql.core.error import (
     GraphQLError,
     format_error as format_graphql_error
 )
+# local imports
+from nautilus.network.http import RequestHandler
 
 
-class GraphQLRequestHandler(tornado.web.RequestHandler):
+class GraphQLRequestHandler(RequestHandler):
 
     def initialize(self, schema=None, async=False):
         self._schema = schema
         # TODO: check for async executor in schema
         self._async = async
+
+    def get_request_context(self):
+        return self
 
     @tornado.web.asynchronous
     @tornado.gen.engine
@@ -27,7 +30,10 @@ class GraphQLRequestHandler(tornado.web.RequestHandler):
             # if the schema is synchronously executed
             if not self._async:
                 # execute the
-                result = self._schema.execute(query)
+                result = self._schema.execute(
+                    query,
+                    requres_context=self.get_request_context()
+                )
             # otherwise the schema is asynchronously executed
             else:
                 # resolve the schema in a coroutine
@@ -53,4 +59,3 @@ class GraphQLRequestHandler(tornado.web.RequestHandler):
 
             # its an exception that isn't our responsibility
             raise err
-

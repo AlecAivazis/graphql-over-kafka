@@ -96,7 +96,6 @@ class Service(metaclass=ServiceMetaClass):
 
         # setup various functionalities
         self.init_action_handler(self.action_handler)
-        # self.setup_auth()
 
 
     @property
@@ -104,7 +103,8 @@ class Service(metaclass=ServiceMetaClass):
         # create a tornado web application
         app = tornado.web.Application(
             self.request_handlers,
-            debug= self.config.debug if 'debug' in self.config else False,
+            debug=self.config.get('debug',False),
+            cookie_secret=self.config.get('secret_key', 'default_secret')
         )
         # attach the ioloop to the application
         app.ioloop = tornado.ioloop.IOLoop.instance()

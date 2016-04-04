@@ -2,7 +2,6 @@
 from graphene import Field, List, relay
 from graphene.relay import ConnectionField, Node
 # local imports
-from nautilus.auth import current_user
 from nautilus.network import query_service
 from nautilus.api.objectTypes import ServiceObjectType
 from nautilus.api.objectTypes.serviceObjectType import serivce_objects
@@ -158,6 +157,18 @@ class Connection(ConnectionField):
 
         # if we need to apply some sort of authorization
         if hasattr(target, 'auth'):
+            try:
+                # grab the current user from the request_context
+                current_user = info.request_context.current_user
+            # if there is no user
+            except AttributeError:
+                raise Exception("User is not accessible.")
+
+            # # if there is not current_user
+            # if not current_user:
+            #     # shout loudly
+            #     raise Exception("User is not logged in.")
+
             # apply the authorization criteria to the result
             results = [result for result in results \
                                 if target.auth(target(**result), current_user)]
@@ -171,7 +182,7 @@ class Connection(ConnectionField):
 
         # todo: think about doing this at the join step
         # (how to specify both sides of relationship in one spot)
-        
+
         # if we are on the `one` side of the relationship
         elif self.relationship == 'one':
             # pull the first item out of the list
