@@ -103,6 +103,7 @@ class Service(metaclass=ServiceMetaClass):
         # create a tornado web application
         app = tornado.web.Application(
             self.request_handlers,
+            debug= self.config.debug if 'debug' in self.config else False,
         )
         # attach the ioloop to the application
         app.ioloop = tornado.ioloop.IOLoop.instance()

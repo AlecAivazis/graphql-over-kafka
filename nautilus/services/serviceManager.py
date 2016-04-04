@@ -5,11 +5,14 @@
 
 # external imports
 import click
+# local imports
+from ..config import Config
 
 class ServiceManager:
 
-    def __init__(self, service):
+    def __init__(self, service, config=None):
         self.service = service
+        self.service_config = Config(config)
         self._running_service = False
 
         @click.group()
@@ -23,9 +26,18 @@ class ServiceManager:
         @group.command(help="Run the service.")
         @click.option('--port', default=8000, help="The port for the service http server.")
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
-        def runserver(port, host):
+        @click.option('--debug', default=False, is_flag=True, help="Run the service in debug mode.")
+        def runserver(port, host, debug):
             # make sure we clean up the service later on
             self._running_service = True
+            # the service configuration based on cli args
+            self.service_config.update(dict(
+                debug=debug
+            ))
+
+            # initialize the service with the config
+            service = self.service(config=self.service_config)
+
             # run the service
             service.run(
                 host = host,
@@ -49,7 +61,7 @@ class ServiceManager:
 
                 # notify the user
                 print("Successfully created necessary database tables.")
-                
+
             # otherwise there are no tables to create
             else:
                 print("There are no models to add.")
