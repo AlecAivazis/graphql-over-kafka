@@ -9,7 +9,7 @@ from nautilus.contrib.graphene_peewee import PeeweeObjectType, convert_peewee_fi
 def create_model_schema(Model):
     """ This function creates a graphql schema that provides a single model """
 
-    from nautilus.db import db
+    from nautilus.database import db
 
     # create the schema instance
     schema = graphene.Schema(auto_camelcase = False)
@@ -43,4 +43,3 @@ def create_model_schema(Model):
     schema.query = Query
 
     return schema
-

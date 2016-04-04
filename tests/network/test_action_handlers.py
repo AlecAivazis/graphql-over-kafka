@@ -8,6 +8,8 @@ import nautilus.network.amqp.actionHandlers as action_handlers
 class TestUtil(unittest.TestCase):
 
     def setUp(self):
+        # point the database to a in-memory sqlite database
+        nautilus.database.init_db('sqlite:///test.db')
 
         # the model to test
         class ActionHandlerTestModel(models.BaseModel):
@@ -45,7 +47,7 @@ class TestUtil(unittest.TestCase):
         assert record_query[0].first_name == 'foo', (
             "Record did not have the correct attribute value"
         )
-        
+
 
 
     def test_delete_action_handler(self):

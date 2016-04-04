@@ -1,4 +1,5 @@
 # local imports
+import nautilus
 from nautilus.network.amqp import crud_handler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
@@ -74,6 +75,23 @@ class ModelService(Service):
             name=name,
             **kwargs
         )
+
+        # initialize the database
+        self.init_db()
+
+
+    def init_db(self):
+        """
+            This function configures the database used for models to make
+            the configuration parameters.
+        """
+        # if the database has not been configured yet
+        if not hasattr(nautilus.db, 'obj'):
+            # get the database url from the configuration
+            db_url = self.config.get('database_url', 'sqlite:///test.db')
+            # configure the nautilus database to the url
+            nautilus.database.init_db(db_url)
+
 
 
     def get_models(self):

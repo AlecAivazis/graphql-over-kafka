@@ -2,7 +2,7 @@
 from playhouse.signals import Model
 import peewee
 # local imports
-from ..db import db
+from ..database import db
 
 class _Meta(type):
     """

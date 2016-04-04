@@ -3,7 +3,7 @@ from types import new_class
 from sqlalchemy.orm import mapper
 from sqlalchemy import Table, Column, Integer, Text
 # local imports
-from nautilus.db import db
+from nautilus.database import db
 from nautilus.conventions.services import connection_service_name
 from nautilus.models import BaseModel, CRUDNotificationCreator, fields
 

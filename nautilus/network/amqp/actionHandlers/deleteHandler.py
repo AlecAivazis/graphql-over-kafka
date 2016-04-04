@@ -15,7 +15,7 @@ def delete_handler(Model):
             function(type, payload): The action handler for this model
     """
     # necessary imports
-    from nautilus.db import db
+    from nautilus.database import db
 
     def action_handler(action_type, payload):
         # if the payload represents a new instance of `model`

@@ -19,10 +19,6 @@ class ServiceManager:
         def group():
             pass
 
-        @group.command()
-        def syncdb():
-            print('sync db')
-
         @group.command(help="Run the service.")
         @click.option('--port', default=8000, help="The port for the service http server.")
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
@@ -36,10 +32,10 @@ class ServiceManager:
             ))
 
             # initialize the service with the config
-            service = self.service(config=self.service_config)
+            self.service_instance = self.service(config=self.service_config)
 
             # run the service
-            service.run(
+            self.service_instance.run(
                 host = host,
                 port = int(port),
             )
@@ -82,6 +78,6 @@ class ServiceManager:
             # if the service is running
             if self._running_service:
                 # stop the service and clean up
-                self.service.stop()
+                self.service_instance.stop()
             # bubble up the exception for someone else
             raise err

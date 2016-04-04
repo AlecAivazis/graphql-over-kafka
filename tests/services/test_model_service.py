@@ -11,6 +11,9 @@ from ..util import assert_called_once_with
 class TestUtil(unittest.TestCase):
 
     def setUp(self):
+        # point the database to a in-memory sqlite database
+        nautilus.database.init_db('sqlite:///test.db')
+
         # create a spy we can check for later
         self.spy = MagicMock()
 

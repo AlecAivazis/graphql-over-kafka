@@ -8,6 +8,9 @@ from nautilus.api.filter import args_for_model, filter_model
 class TestUtil(unittest.TestCase):
 
     def setUp(self):
+        # point the database to a in-memory sqlite database
+        nautilus.database.init_db('sqlite:///test.db')
+
         # the model to test
         class TestModel(models.BaseModel):
             first_name = models.fields.CharField()

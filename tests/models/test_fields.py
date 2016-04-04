@@ -10,6 +10,11 @@ class TestUtil(unittest.TestCase):
         with nautilus.
     """
 
+    def setUp(self):
+        # point the database to a in-memory sqlite database
+        nautilus.database.init_db('sqlite:///test.db')
+        
+
     def test_password_field(self):
         # create a table with a password
         class TestPassword(models.BaseModel):

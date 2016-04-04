@@ -4,6 +4,7 @@ import requests
 import tornado.ioloop
 import tornado.web
 # local imports
+import nautilus
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 import nautilus.network.registry as registry
