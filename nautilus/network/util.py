@@ -40,7 +40,7 @@ def query_graphql_service(url, name, fields, filters=None):
         return data_request['data'][name]
 
 
-def query_service(service, fields, filters = {}):
+def query_service(service, fields, filters = None):
     '''
         Apply the given filters to a query of a model service given its name
         and the desired fields.
@@ -50,10 +50,10 @@ def query_service(service, fields, filters = {}):
 
     # query the target using model service conventions
     return query_graphql_service(
-        url = 'http://{}'.format(service_location_by_name(service)),
-        name = root_query(service),
-        fields = fields,
-        filters = filters
+        url='http://{}'.format(service_location_by_name(service)),
+        name=root_query(service),
+        fields=fields,
+        filters=filters or {}
     )
 
 def query_api(query, mutation = None):
@@ -87,4 +87,3 @@ def combine_action_handlers(*args):
 
     # return the combined action handler
     return combinedActionHandler
-
