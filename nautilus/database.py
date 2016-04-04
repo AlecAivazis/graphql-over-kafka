@@ -6,8 +6,7 @@ db = Proxy()
 
 def init_db(database_url):
     """
-        This function initializes the global database to point to the given url
-        and associated parameters.
+        This function initializes the global database with the given url.
     """
     # utility function to parse database urls
     from playhouse.db_url import connect
