@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
-{% block title %}Create an Account{% endblock %}
-{% block description %}Create a new account.{% endblock %}
-{% block bodytag %}register{% endblock %}
+{% block title %}Create an Account{% end %}
+{% block description %}Create a new account.{% end %}
+{% block bodytag %}register{% end %}
 
 {% block body %}
   <div class="container custom-container">
@@ -15,15 +15,6 @@
             </div>
             <form class="registration-form form-horizontal sp-form" role="form" method="post">
               {{ form.hidden_tag() }}
-              {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                  <div class="alert alert-danger">
-                    {% for message in messages %}
-                      {{ message }}
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              {% endwith %}
               <div class="form-group group-email" form-group>
                 <label class="col-sm-4">Email</label>
                 <div class="col-sm-8">
@@ -43,4 +34,4 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% end %}
