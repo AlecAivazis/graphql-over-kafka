@@ -68,6 +68,8 @@ class Service(metaclass=ServiceMetaClass):
     name = None
     schema = None
 
+    _routes = []
+
     def __init__(
             self,
             name=None,
@@ -78,6 +80,7 @@ class Service(metaclass=ServiceMetaClass):
     ):
 
         self.name = self.name or name or type(self).name
+        self.app = None
         self.__name__ = name
         self.action_handler = action_handler or self.action_handler
         self.keep_alive = None
@@ -87,25 +90,25 @@ class Service(metaclass=ServiceMetaClass):
         # wrap the given configuration in the nautilus wrapper
         self.config = Config(self.config, config)
 
-        # base the service on a tornado app
-        self.app = self.tornado_app
-
-        # setup various functionalities
+        # initialize the service
+        self.init_app()
         self.init_action_handler(self.action_handler)
 
 
-    @property
-    def tornado_app(self):
+    def init_app(self):
         # create a tornado web application
-        app = tornado.web.Application(
-            self.request_handlers,
+        self.app = tornado.web.Application(
+            self._request_handlers,
             debug=self.config.get('debug',False),
             cookie_secret=self.config.get('secret_key', 'default_secret')
         )
         # attach the ioloop to the application
-        app.ioloop = tornado.ioloop.IOLoop.instance()
-        # return the app instance
-        return app
+        self.app.ioloop = tornado.ioloop.IOLoop.instance()
+
+        # for each route that was registered
+        for route in self._routes:
+            # add the corresponding http endpoint
+            self.add_http_endpoint(**route)
 
 
     def init_action_handler(self, action_handler):
@@ -176,7 +179,7 @@ class Service(metaclass=ServiceMetaClass):
 
 
     @property
-    def request_handlers(self):
+    def _request_handlers(self):
         return [
             (r"/", GraphQLRequestHandler, dict(schema=self.schema)),
             (r"/graphiql/?", GraphiQLRequestHandler),
@@ -198,7 +201,8 @@ class Service(metaclass=ServiceMetaClass):
         self.app.add_handlers(host, [(url, request_handler, config)])
 
 
-    def route(self, route, config=None):
+    @classmethod
+    def route(cls, route, config=None):
         """
             This method provides a decorator for adding endpoints to the
             http server.
@@ -222,11 +226,13 @@ class Service(metaclass=ServiceMetaClass):
                         def get(self):
                             return self.finish('hello world')
         """
-        def decorator(cls, **kwds):
+        def decorator(wrapped_class, **kwds):
             # add the endpoint at the given route
-            self.add_http_endpoint(url = route, request_handler=cls, config=kwds)
+            cls._routes.append(
+                dict(url = route, request_handler=wrapped_class, config=kwds)
+            )
             # return the class undecorated
-            return cls
+            return wrapped_class
 
         # return the decorator
         return decorator
