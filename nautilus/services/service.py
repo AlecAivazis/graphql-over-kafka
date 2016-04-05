@@ -236,10 +236,3 @@ class Service(metaclass=ServiceMetaClass):
 
         # return the decorator
         return decorator
-
-
-    # def setup_auth(self):
-    #     # if we are supposed to enable authentication for the service
-    #     if self.auth:
-    #         from nautilus.auth import init_service
-    #         init_service(self)
