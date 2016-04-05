@@ -29,11 +29,11 @@ class APIGateway(Service, metaclass=APIGatewayMeta):
             .. code-block:: python
 
                 # external imports
-                from nautilus import APIGateway
+                import nautilus
+
                 # local imports
                 from .schema import schema
 
-                # create a nautilus service with just the schema
-                service = APIGateway(schema=schema)
-
+                class MyAPIGateway(nautilus.APIGateway):
+                    schema = schema
     """

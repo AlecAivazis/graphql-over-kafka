@@ -23,7 +23,7 @@ class ModelService(Service):
 
             .. code-block:: python
 
-                from nautilus import ModelService
+                import nautilus
                 import nautilus.models as models
 
                 class Model(models.BaseModel):
@@ -32,10 +32,9 @@ class ModelService(Service):
                 class ServiceConfig:
                     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
 
-                service = ModelService(
-                    model = Model,
+                class MyModelService(nautilus.ModelService):
+                    model = Model
                     config = ServiceConfig
-                )
 
     """
 

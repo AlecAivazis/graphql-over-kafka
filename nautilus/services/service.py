@@ -52,7 +52,7 @@ class Service(metaclass=ServiceMetaClass):
 
             .. code-block:: python
 
-                from nautilus import Service
+                import nautilus
                 from nautilus.api import create_model_schema
                 from nautilus.network import crud_handler
                 import nautilus.models as models
@@ -60,11 +60,10 @@ class Service(metaclass=ServiceMetaClass):
                 class Model(models.BaseModel):
                     name = models.fields.CharField()
 
-                service = Service(
-                    name = 'My Awesome Service',
-                    schema = create_model_schema(Model),
+                class MyService(nautilus.Service):
+                    name = 'My Awesome Service'
+                    schema = create_model_schema(Model)
                     action_handler = crud_handler(Model)
-                )
     """
 
     action_handler = None
@@ -218,9 +217,10 @@ class Service(metaclass=ServiceMetaClass):
                     import nautilus
                     from nauilus.network.http import RequestHandler
 
-                    service = nautilus.Service(...)
+                    class MyService(nautilus.Service):
+                        # ...
 
-                    @service.route('/')
+                    @MyService.route('/')
                     class HelloWorld(RequestHandler):
                         def get(self):
                             return self.finish('hello world')

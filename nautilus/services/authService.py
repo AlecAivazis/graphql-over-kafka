@@ -21,14 +21,13 @@ class AuthService(Service):
 
             .. code-block:: python
 
-                from nautilus import AuthService
+                import nautilus
 
                 class ServiceConfig:
                     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
 
-                service = AuthService(
-                    configObject = ServiceConfig,
-                )
+                class MyAuth(nautilus.AuthService):
+                    config = ServiceConfig
     """
     name = auth_service_name()
 
