@@ -31,11 +31,11 @@ class AuthService(Service):
     """
     name = auth_service_name()
 
-    @self.route('/login')
-    class Login(LoginHandler): pass
+@AuthService.route('/login')
+class Login(LoginHandler): pass
 
-    @self.route('/logout')
-    class Logout(LogoutHandler): pass
+@AuthService.route('/logout')
+class Logout(LogoutHandler): pass
 
-    @self.route('/register')
-    class Register(RegisterHandler): pass
+@AuthService.route('/register')
+class Register(RegisterHandler): pass
