@@ -1,12 +1,9 @@
 # local imports
 from nautilus.network.http import RequestHandler
-from nautilus.network import query_service
 from nautilus.conventions.services import auth_service_name
 from nautilus.network.registry import service_location_by_name
 
 class AuthRequestHandler(RequestHandler):
-    # NEED SOME FORM OF:
-    # app.config['REMEMBER_COOKIE_DOMAIN'] = '.syncatech.com'
 
     def get_current_user(self):
         """
@@ -28,7 +25,12 @@ class AuthRequestHandler(RequestHandler):
         """
             This function logs the given user in on the request request.
         """
-        self.set_secure_cookie(self._token_name, self._token_contents(user))
+        # TODO: pass domain from service config
+        self.set_secure_cookie(
+            self._token_name,
+            self._token_contents(user),
+            domain="",
+    )
 
 
     def logout_user(self):

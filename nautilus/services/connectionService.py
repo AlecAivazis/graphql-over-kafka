@@ -3,6 +3,7 @@ from nautilus.api import create_model_schema
 from nautilus.network.amqp.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
 from .modelService import ModelService
+from nautilus.models.util import create_connection_model
 
 class ConnectionService(ModelService):
     """
@@ -51,9 +52,6 @@ class ConnectionService(ModelService):
             "Please provide more than one service to connect."
         )
 
-        # *sigh*
-        from nautilus.models import create_connection_model
-
         # the models of each service
         self._service_models = [service.model for service in self.services]
 
@@ -63,7 +61,7 @@ class ConnectionService(ModelService):
            "Can only connect models with different name"
         )
 
-        # # create the service
+        # create the service
         super().__init__(
             model = create_connection_model(self._service_models),
             name = connection_service_name(*self.services),
