@@ -34,10 +34,7 @@ class Service(metaclass=ServiceMetaClass):
                 an action is recieved. If None, the service does not connect to the
                 action queue.
 
-            auth (optional, bool, default = True): Whether or not the service should add
-                authentication requirements.
-
-            configObject (optional, class): A python class to use for configuring the
+            config (optional, class): A python class to use for configuring the
                 service.
 
             name (string): The name of the service. This will be used to
