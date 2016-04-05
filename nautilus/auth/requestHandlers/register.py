@@ -1,9 +1,7 @@
-# external imports
-from tornado.web import redirect
 # local imports
 from .base import AuthRequestHandler
 from ..models import UserPassword
-from .forms import RegistrationForm,
+from .forms import RegistrationForm
 
 class RegisterHandler(AuthRequestHandler):
     """
@@ -39,7 +37,7 @@ class RegisterHandler(AuthRequestHandler):
             password.save()
 
             # move the user along
-            return redirect(request.args.get('next'))
+            return self.redirect(request.args.get('next'))
 
 
         # the username and password do not match

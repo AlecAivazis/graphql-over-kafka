@@ -1,5 +1,3 @@
-# external imports
-from tornado.web import redirect
 # local imports
 from nautilus.network import query_service
 from nautilus.conventions.services import api_gateway_name
@@ -10,7 +8,7 @@ from .forms import (
     RegistrationForm,
 )
 
-class LoginForm(AuthRequestHandler):
+class LoginHandler(AuthRequestHandler):
     """
         This class handles the basic login form.
     """
@@ -57,7 +55,7 @@ class LoginForm(AuthRequestHandler):
                 # log in the user
                 self.login_user(user)
                 # redirect the user to the url parameter
-                return redirect(request.args.get('next'))
+                return self.redirect(request.args.get('next'))
 
         # the username and password do not match
         raise tornado.httputil.HTTPInputError(

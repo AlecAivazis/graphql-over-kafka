@@ -1,7 +1,5 @@
-# external imports
-from tornado.web import redirect
 # local imports
-from .base import AuthRequestHandlerd
+from .base import AuthRequestHandler
 
 class LogoutHandler(AuthRequestHandler):
     """
@@ -14,4 +12,4 @@ class LogoutHandler(AuthRequestHandler):
         # the next url for the user
         next_url = '/'
         # redirect the user to root
-        return redirect(next_url)
+        return self.redirect(next_url)

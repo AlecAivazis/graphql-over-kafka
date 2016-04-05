@@ -4,7 +4,6 @@ import string
 # local imports
 from .decorators import *
 from .primitives import *
-from .forms import *
 from .models import *
 from .requestHandlers import *
 

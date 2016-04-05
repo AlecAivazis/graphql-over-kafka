@@ -1,1 +1,2 @@
-import tornado.web.authentciated as login_required
+import tornado.web
+from tornado.web import authenticated as login_required
