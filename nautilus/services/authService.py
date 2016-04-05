@@ -1,9 +1,12 @@
 # local imports
 from .service import Service
-from nautilus.network.amqp.actionHandlers import noop_handler
-from nautilus.auth.blueprints import service_blueprint
 from nautilus.conventions.services import auth_service_name
-from nautilus.auth.backend import loginManager
+from nautilus.auth.requestHandlers import (
+    AuthRequestHandler,
+    LoginHandler,
+    LogoutHandler,
+    RegisterHandler,
+)
 
 class AuthService(Service):
     """
@@ -27,17 +30,13 @@ class AuthService(Service):
                     configObject = ServiceConfig,
                 )
     """
+    name = auth_service_name()
 
-    def __init__(self, action_handler = noop_handler, **kwargs):
+    @self.route('/login')
+    class Login(LoginHandler): pass
 
-        # perform any necessary configuration first
-        super().__init__(
-            name = auth_service_name(),
-            auth = False,
-            **kwargs
-        )
+    @self.route('/logout')
+    class Logout(LogoutHandler): pass
 
-        # add the authentication blueprint to the service
-        self.use_blueprint(service_blueprint)
-
-        loginManager.init_app(self.app)
+    @self.route('/register')
+    class Register(RegisterHandler): pass
