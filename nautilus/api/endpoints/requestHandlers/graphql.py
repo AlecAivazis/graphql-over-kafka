@@ -49,13 +49,9 @@ class GraphQLRequestHandler(AuthRequestHandler):
                 'errors': ','.join(errors) or []
             }))
 
-        # when something goes wrong
-        except Exception as err:
-            # if the user forgot to specify a query
-            if isinstance(err, MissingArgumentError):
-                return self.finish(json.dumps({
-                    'errors': ['No query given.']
-                }))
-
-            # its an exception that isn't our responsibility
-            raise err
+        # if the user forgot to specify a query
+        except MissingArgumentError:
+            # return a graphql response with the error
+            return self.finish(json.dumps({
+                'errors': ['No query given.']
+            }))
