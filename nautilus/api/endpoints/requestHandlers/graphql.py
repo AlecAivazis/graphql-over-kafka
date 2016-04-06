@@ -32,7 +32,7 @@ class GraphQLRequestHandler(AuthRequestHandler):
                 # execute the
                 result = self._schema.execute(
                     query,
-                    requres_context=self.get_request_context()
+                    request_context=self.get_request_context()
                 )
             # otherwise the schema is asynchronously executed
             else:
