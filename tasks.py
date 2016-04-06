@@ -23,6 +23,7 @@ def build_api_styles():
 
 @task
 def build_static(docs=False):
+    run('mkdir -p nautilus/api/endpoints/static/build/scripts/')
     build_api_scripts()
     build_api_styles()
 
