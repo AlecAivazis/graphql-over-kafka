@@ -2,13 +2,21 @@
 from .service import Service
 from nautilus.conventions.services import auth_service_name
 from nautilus.auth.requestHandlers import (
-    AuthRequestHandler,
     LoginHandler,
     LogoutHandler,
     RegisterHandler,
 )
 
-class AuthService(Service):
+
+
+class AuthMeta(type(Service)):
+    def __init__(self, name, bases, attributes):
+        # create the super class
+        super().__init__(name, bases, attributes)
+        # the default name for this class is conventional
+        self.name = auth_service_name()
+
+class AuthService(Service, metaclass=AuthMeta):
     """
         This service handles user authentication for the entire cloud and is
         the only service with access to the users passwords. As such, this
@@ -29,7 +37,6 @@ class AuthService(Service):
                 class MyAuth(nautilus.AuthService):
                     config = ServiceConfig
     """
-    name = auth_service_name()
 
 @AuthService.route('/login')
 class Login(LoginHandler): pass
