@@ -16,7 +16,8 @@ class GraphQLRequestHandler(AuthRequestHandler):
         # TODO: check for async executor in schema
         self._async = async
 
-    def get_request_context(self):
+    @property
+    def request_context(self):
         return self
 
     @tornado.web.asynchronous
@@ -32,7 +33,7 @@ class GraphQLRequestHandler(AuthRequestHandler):
                 # execute the
                 result = self._schema.execute(
                     query,
-                    request_context=self.get_request_context()
+                    request_context=self.request_context
                 )
             # otherwise the schema is asynchronously executed
             else:
