@@ -164,10 +164,10 @@ class Connection(ConnectionField):
             except AttributeError:
                 raise Exception("User is not accessible.")
 
-            # # if there is not current_user
-            # if not current_user:
-            #     # shout loudly
-            #     raise Exception("User is not logged in.")
+            # if there is not current_user
+            if not current_user:
+                # shout loudly
+                raise Exception("User is not logged in.")
 
             # apply the authorization criteria to the result
             results = [result for result in results \
