@@ -1,3 +1,5 @@
+# external imports
+import tornado
 # local imports
 from nautilus.network import query_service
 from nautilus.conventions.services import api_gateway_name
@@ -14,17 +16,8 @@ class LoginHandler(AuthRequestHandler):
     """
 
     def get(self):
-        # import the template directory
-        from nautilus.auth.requestHandlers import template_dir
-        # create the template loader
-        template_loader = tornado.template.Loader(template_dir)
-        # load the template from the file system
-        template = template_loader.load('login.html')
-
-        # create a login form to show in the view
-        form = LoginForm()
-        # write the template to the client
-        return self.finish(template.generate(form=form))
+        # render an empty login form to the view
+        return self.render('templates/login.html', form=LoginForm())
 
 
     def post(self):

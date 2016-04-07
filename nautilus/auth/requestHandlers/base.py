@@ -18,7 +18,9 @@ class AuthRequestHandler(RequestHandler):
             This method returns the url that handles logging-in.
         """
         # return the location of the service with the conventional auth name
-        return "http://" + service_location_by_name(auth_service_name())
+        return "http://{}/login".format(
+            service_location_by_name(auth_service_name())
+        )
 
 
     def login_user(self, user):
