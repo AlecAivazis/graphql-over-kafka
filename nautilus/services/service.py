@@ -103,7 +103,7 @@ class Service(metaclass=ServiceMetaClass):
             cookie_secret=self.config.get('secret_key', 'default_secret')
         )
         # attach the ioloop to the application
-        self.app.ioloop = tornado.ioloop.IOLoop.instance()
+        self.ioloop = tornado.ioloop.IOLoop.instance()
 
         # for each route that was registered
         for route in self._routes:
@@ -117,7 +117,7 @@ class Service(metaclass=ServiceMetaClass):
             # create a wrapper for it
             self._action_handler_loop = ActionHandler(callback=action_handler)
             # add it to the ioloop
-            self.app.ioloop.add_callback(self._action_handler_loop.run)
+            self.ioloop.add_callback(self._action_handler_loop.run)
 
 
     def init_keep_alive(self):
@@ -144,7 +144,7 @@ class Service(metaclass=ServiceMetaClass):
 
         # start the ioloop
         try:
-            self.app.ioloop.start()
+            self.ioloop.start()
         # if the user interrupts the server
         except KeyboardInterrupt as err:
             # stop the service and clean up
@@ -170,7 +170,7 @@ class Service(metaclass=ServiceMetaClass):
             registry.deregister_service(self)
 
         # stop the ioloop
-        self.app.ioloop.stop()
+        self.ioloop.stop()
 
         # if there is an action consumer registered with this service
         if self._action_handler_loop:
