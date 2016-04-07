@@ -21,8 +21,10 @@ class LoginHandler(AuthRequestHandler):
 
 
     def post(self):
+        # make sure we do anything important
+        super().post()
         # createa a form from the request parameters
-        form = LoginForm(self.arguments)
+        form = LoginForm(**self.request.arguments)
         # if we recieved valid information
         if form.validate():
             # the form data

@@ -15,6 +15,7 @@
               <a>Create an Account</a>
             </div>
             <form class="login-form form-horizontal" role="form" method="post">
+              {% module xsrf_form_html() %}
               <div class="form-group group-email">
                 <label class="col-sm-4">
                   Email

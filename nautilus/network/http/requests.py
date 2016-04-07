@@ -16,3 +16,6 @@ class RequestHandler(TornadoRequestHandler):
                 def get(self):
                     self.finish('hello')
     """
+
+    def post(self):
+        self.check_xsrf_cookie()
