@@ -23,7 +23,7 @@ def register_service(service):
         name=service.name,
         service_id=service.consul_name,
         # port=service.app.config['PORT'],
-        port=8000
+        port=service.config.port
     )
 
 

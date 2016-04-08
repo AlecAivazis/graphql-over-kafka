@@ -137,6 +137,11 @@ class Service(metaclass=ServiceMetaClass):
         """
         print("Running service on http://localhost:%i. " % port + \
                                             "Press Ctrl+C to terminate.")
+
+        # apply the configuration to the service config
+        self.config.port = port
+        self.config.host = host
+
         # create the keep alive timer
         self.init_keep_alive()
 
