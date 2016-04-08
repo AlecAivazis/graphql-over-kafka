@@ -1,5 +1,5 @@
 # external imports
-from nautilus import APIGateway
+import nautilus
 # local imports
 from .schema import schema
 
