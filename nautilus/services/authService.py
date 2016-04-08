@@ -1,5 +1,6 @@
 # local imports
 from .service import Service
+import nautilus
 from nautilus.conventions.services import auth_service_name
 from nautilus.auth.requestHandlers import (
     LoginHandler,
@@ -30,6 +31,28 @@ class AuthService(Service):
                     config = ServiceConfig
     """
     name = auth_service_name()
+
+    def __init__(self, *args, **kwds):
+        # bubble up
+        super().__init__(*args, **kwds)
+        # create the database
+        self.init_db()
+
+
+    def init_db(self):
+        """
+            This function configures the database used for models to make
+            the configuration parameters.
+        """
+        # get the database url from the configuration
+        db_url = self.config.get('database_url', 'sqlite:///nautilus.db')
+        # configure the nautilus database to the url
+        nautilus.database.init_db(db_url)
+
+
+    def get_models(self):
+        return [nautilus.auth.models.UserPassword]
+
 
 @AuthService.route('/login')
 class Login(LoginHandler): pass
