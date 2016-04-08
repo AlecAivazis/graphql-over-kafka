@@ -20,6 +20,14 @@ class TestUtil(unittest.TestCase):
             "Service did not have the correct name."
         )
 
+    def test_can_accept_name(self):
+        class MyService(nautilus.Service):
+            name = 'foo'
+
+        assert MyService.name == 'foo', (
+            "Service could not recieve custom name."
+        )
+
 
     def test_can_accept_action_handler(self):
 

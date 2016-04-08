@@ -18,8 +18,11 @@ class ServiceMetaClass(type):
     def __init__(self, name, bases, attributes):
         # create the super class
         super().__init__(name, bases, attributes)
-        # save the name to the class record
-        self.name = name
+
+        # if the object does not yet have a name
+        if not self.name or self.name == 'Service':
+            # use the name of the class record
+            self.name = name
 
 
 class Service(metaclass=ServiceMetaClass):

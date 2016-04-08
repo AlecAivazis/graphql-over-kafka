@@ -3,14 +3,8 @@ from nautilus.conventions.services import api_gateway_name
 from nautilus.network.amqp.actionHandlers import noop_handler
 from .service import Service
 
-class APIGatewayMeta(type(Service)):
-    def __init__(self, name, bases, attributes):
-        # create the super class
-        super().__init__(name, bases, attributes)
-        # the default name for this class is conventional
-        self.name = api_gateway_name()
 
-class APIGateway(Service, metaclass=APIGatewayMeta):
+class APIGateway(Service):
     """
         This provides a single endpoint that other services and clients can
         use to query the cloud without worrying about the distributed nature
@@ -37,3 +31,4 @@ class APIGateway(Service, metaclass=APIGatewayMeta):
                 class MyAPIGateway(nautilus.APIGateway):
                     schema = schema
     """
+    name = api_gateway_name()
