@@ -26,7 +26,7 @@ class CRUDNotificationCreator:
 
 
     @classmethod
-    def __mixin__(cls):
+    def __mixin__(cls, target):
 
         # TODO: failure events????
 

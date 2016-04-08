@@ -1,5 +1,6 @@
 # external imports
 import unittest
+from unittest.mock import call
 # local imports
 import nautilus.models as models
 from ..util import assert_called_once_with
@@ -35,9 +36,9 @@ class TestUtil(unittest.TestCase):
 
         class Mixin:
             @classmethod
-            def __mixin__(cls):
+            def __mixin__(cls, target):
                 # call the spy
-                spy()
+                spy(target)
 
         class TestOnCreationModel(models.BaseModel, Mixin):
             first_name = models.fields.CharField()
@@ -49,13 +50,15 @@ class TestUtil(unittest.TestCase):
         assert num_called > 0, (
             "Mixin's method wasn't called."
         )
-
         assert len(spy.call_args_list) == 1, (
             "Mixin's method was called too many times."
         )
+        assert spy.call_args_list == [call(TestOnCreationModel)], (
+            "Mixin method was not passed the correct class record."
+        )
 
 
-    def test_both_on_success_handlers(self):
+    def test_multiple_mixins(self):
 
         # spies to check if the handler was called
         spy1 = unittest.mock.MagicMock()
@@ -63,19 +66,21 @@ class TestUtil(unittest.TestCase):
 
         class MyAwesomeMixin:
             @classmethod
-            def __mixin__(cls):
+            def __mixin__(cls, target):
                 # call the spy
-                spy2(cls)
+                spy2(target)
 
-        class TestOnCreationModel(models.BaseModel, MyAwesomeMixin):
+        class MyOtherAwesomeMixin:
+            @classmethod
+            def __mixin__(cls, target):
+                # call the spy
+                spy1(target)
+
+        class TestOnCreationModel(models.BaseModel, MyAwesomeMixin, MyOtherAwesomeMixin):
             first_name = models.fields.CharField()
             last_name = models.fields.CharField()
 
-            @classmethod
-            def __mixin__(cls):
-                # call the spy
-                spy1(cls)
 
         # check that both spies were called
         assert_called_once_with(spy1, TestOnCreationModel, spy_name='Base spy')
-        assert_called_once_with(spy2, MyAwesomeMixin, spy_name='Mixin spy')
+        assert_called_once_with(spy2, TestOnCreationModel, spy_name='Mixin spy')

@@ -17,10 +17,6 @@ class TestUtil(unittest.TestCase):
             name = models.fields.CharField(null=True)
             date = models.fields.CharField(null=False)
 
-            @classmethod
-            def __mixin__(cls):
-                # call the spy
-                self.spy()
 
         self.Model = TestUser
 
@@ -61,9 +57,4 @@ class TestUtil(unittest.TestCase):
             "name": "foo", "date": "bar", 'id': None
         }, (
             'Model was not correctly serialized'
-        )
-
-    def test_can_add_on_creation_handler(self):
-        assert self.spy.called, (
-            "mixin spy wasn't called."
         )

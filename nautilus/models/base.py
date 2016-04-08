@@ -12,18 +12,12 @@ class _Meta(type):
     def __init__(self, name, bases, attributes):
         # create the super class
         super().__init__(name, bases, attributes)
-
         # for each base we inherit from
         for base in bases:
             # if the base defines some mixin behavior
             if hasattr(base, '__mixin__'):
                 # treat the base like a mixin
-                base.__mixin__()
-
-        # if this class defines mixin behavior
-        if hasattr(self, '__mixin__'):
-            # call the callback
-            self.__mixin__()
+                base.__mixin__(self)
 
         # save the name in the class
         self.model_name = name
@@ -46,14 +40,6 @@ class BaseModel(Model, metaclass=_MixedMeta):
             field.name: getattr(self, field.name) \
                 for field in type(self).fields()
         }
-
-
-    @classmethod
-    def __mixin__(cls):
-        """
-            This callback allows for customization of the class record defined
-            by various subclass of the base model.
-        """
 
 
     @classmethod
