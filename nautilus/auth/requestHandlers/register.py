@@ -1,6 +1,8 @@
 # external imports
 import tornado
 # local imports
+from nautilus.network.util import query_service
+from nautilus.conventions.services import api_gateway_name
 from .base import AuthRequestHandler
 from ..models import UserPassword
 from .forms import RegistrationForm
@@ -11,30 +13,34 @@ class RegisterHandler(AuthRequestHandler):
     """
 
     def get(self):
-        # import the template directory
-        from nautilus.auth.requestHandlers import template_dir
-        # create the template loader
-        template_loader = tornado.template.Loader(template_dir)
-        # load the template from the file system
-        template = template_loader.load('register.html')
-
-        # create a login form to show in the view
-        form = RegistrationForm()
-        # write the template to the client
-        return self.finish(template.generate(form=form))
+        # render an empty login form to the view
+        return self.render('templates/register.html', form=RegistrationForm())
 
 
     def post(self):
+        form_args = {
+            'email': self.request.arguments['email'][0].decode('utf-8'),
+            'password': self.request.arguments['password'][0].decode('utf-8'),
+        }
+
         # create a form from the request parameters
-        form = RegistrationForm(self.arguments)
+        form = RegistrationForm(**form_args)
 
         # if we recieved a post request with valid information
         if form.validate():
             # the form data
             data = form.data
 
+            # get the user with matching email
+            user_data = query_service(api_gateway_name(), 'users', [
+                'id',
+                'email',
+            ], {
+                'email': data['email']
+            })[0]
+
             # create an entry in the user password table
-            password = UserPassword(**data)
+            password = UserPassword(**data, user=user_data['id'])
             # save it to the database
             password.save()
 

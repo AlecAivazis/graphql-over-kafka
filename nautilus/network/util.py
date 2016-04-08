@@ -40,7 +40,7 @@ def query_graphql_service(url, name, fields, filters=None):
         return data_request['data'][name]
 
 
-def query_service(service, fields, filters = None):
+def query_service(service, fields, name=None, filters = None):
     '''
         Apply the given filters to a query of a model service given its name
         and the desired fields.
@@ -51,26 +51,18 @@ def query_service(service, fields, filters = None):
     # query the target using model service conventions
     return query_graphql_service(
         url='http://{}'.format(service_location_by_name(service)),
-        name=root_query(service),
+        name=name or root_query(service),
         fields=fields,
         filters=filters or {}
     )
 
-def query_api(query, mutation = None):
+def query_api(model, fields, filters = None):
     '''
         Perform the given query on the api gateway and turn the results.
         Use this function to avoid hard coding the name of the api gateway.
     '''
-    # grab the location of the api service from the registry
-    api_location = service_location_by_name(api_gateway_name())
-    # construct the url out of the location
-    url = 'http://{}'.format(api_location)
-    print(url + '?query='   + query)
-    # query the service to retrieve the data
-    dataRequest = requests.get(url + '?query='   + query).json()
-
-
-    return query_service(api_gateway_name(), query)
+    # query the api
+    return query_service(api_gateway_name(), fields, filters, name=model)
 
 
 def combine_action_handlers(*args):
