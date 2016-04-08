@@ -182,9 +182,9 @@ class Service(metaclass=ServiceMetaClass):
     def _request_handlers(self):
         return [
             (r"/", GraphQLRequestHandler, dict(schema=self.schema)),
-            (r"/graphiql/?", GraphiQLRequestHandler),
             (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
                                             dict(path=api_endpoint_static)),
+            (r"/graphiql/?", GraphiQLRequestHandler),
         ]
 
 
