@@ -12,7 +12,7 @@ class RequestHandler(TornadoRequestHandler):
             service = nautilus.Service(...)
 
             @service.route('/')
-            class RequestHandler:
+            class MyRequestHandler(RequestHandler):
                 def get(self):
                     self.finish('hello')
     """

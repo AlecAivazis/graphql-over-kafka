@@ -1,11 +1,10 @@
 import json
 import requests
-import socket
 
 from nautilus.conventions.services import api_gateway_name
 from nautilus.network.registry import service_location_by_name
 
-def query_graphql_service(url, name, fields, filters=None):
+def query_graphql_service(url, name, fields, filters=None, query_type='query'):
     """ A graphql query wrapper factory """
 
     # by default there are no args to add to the query
@@ -21,13 +20,7 @@ def query_graphql_service(url, name, fields, filters=None):
     field_list = ', '.join(fields)
 
     # build the query out of the given paramters
-    query = """
-        query {
-            %s %s {
-                %s
-            }
-        }
-    """ % (name, args, field_list)
+    query = "%s { %s %s { %s } }" % (query_type, name, args, field_list)
 
     # query the service to retrieve the data
     data_request = requests.get(url + '?query='   + query).json()
@@ -55,6 +48,7 @@ def query_service(service, fields, name=None, filters = None):
         filters=filters or {}
     )
 
+
 def query_api(model, fields, filters = None):
     '''
         Perform the given query on the api gateway and turn the results.
@@ -62,6 +56,9 @@ def query_api(model, fields, filters = None):
     '''
     # query the api
     return query_service(api_gateway_name(), fields, filters, name=model)
+
+
+def wait_for_response(): pass
 
 
 def combine_action_handlers(*args):

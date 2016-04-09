@@ -35,8 +35,8 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Local database
-peewee.db
 test.db
+nautilus.db
 
 .DS_Store
 node_modules
