@@ -1,6 +1,17 @@
-from invoke import run, task
+#! /usr/bin/env python3
 
+# external imports
+from os import system as run
+import click
+
+# the group of commands
+@click.group()
+def command_group(): pass
+
+
+@command_group.command()
 def build_api_scripts():
+    run('mkdir -p nautilus/api/endpoints/static/build/scripts/')
     # the build targets
     script_src = 'nautilus/api/endpoints/static/src/scripts/graphiql.js'
     script_build = 'nautilus/api/endpoints/static/build/scripts/graphiql.js'
@@ -11,30 +22,27 @@ def build_api_scripts():
     # run the build command
     run(cmd)
 
-def build_api_styles():
-    # the build targets
-    src_dir = 'nautilus/api/endpoints/static/src/styles'
-    build_dir = 'nautilus/api/endpoints/static/build/styles'
-    # the build command
-    cmd = 'cp -r %s %s' % (src_dir, build_dir)
-    # run the build command
-    run(cmd)
+
+@command_group.command()
+@click.pass_context
+def build_static(context):
+    # call the underlying functions
+    context.forward(build_api_scripts)
 
 
-@task
-def build_static(docs=False):
-    run('mkdir -p nautilus/api/endpoints/static/build/scripts/')
-    build_api_scripts()
-    build_api_styles()
-
-
-@task
+@command_group.command()
 def build(docs=False):
     run('rm -rf dist')
     run('./setup.py sdist')
     run('./setup.py bdist_wheel')
 
 
-@task
+@command_group.command()
 def deploy(docs=False):
     run('twine upload dist/*')
+
+
+# if executing this file from the command lien
+if __name__ == '__main__':
+    # start the command group
+    command_group()
