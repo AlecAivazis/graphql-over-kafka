@@ -23,7 +23,6 @@ class GraphQLRequestHandler(AuthRequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine
     def get(self):
-
         try:
             # grab the query from the request parameters
             query = self.get_query_argument('query')

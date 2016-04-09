@@ -29,14 +29,21 @@ class LoginHandler(AuthRequestHandler):
         if form.validate():
             # the form data
             data = form.data
+            # grab the given email
+            supplied_email = data['email'][0].decode('utf-8')
+            supplied_password = data['password'][0].decode('utf-8')
 
             # get the user with matching email
-            user_data = query_service(api_gateway_name(), 'users', [
-                'id',
-                'email',
-            ], {
-                'email': data['email']
-            })[0]
+            user_data = query_service(
+                service='user',
+                fields=[
+                    'id',
+                    'email',
+                ],
+                filters={
+                    'email': supplied_email
+                }
+            )[0]
 
             # look for a matching entry in the local database
             passwordEntry = UserPassword.select().where(
@@ -44,13 +51,13 @@ class LoginHandler(AuthRequestHandler):
             )[0]
 
             # if the given password matches the stored hash
-            if passwordEntry and passwordEntry.password == data['password']:
-                # create a user object out of the remote user data
-                user = User(**user_data)
+            if passwordEntry and passwordEntry.password == supplied_password:
                 # log in the user
-                self.login_user(user)
+                self.login_user(user_data)
+                # grab the redirect url from the url arguments
+                redirect_url = self.request.arguments.get('next', ['/'])[0]
                 # redirect the user to the url parameter
-                return self.redirect(request.args.get('next'))
+                return self.redirect(redirect_url)
 
         # the username and password do not match
         raise tornado.httputil.HTTPInputError(

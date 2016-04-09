@@ -43,7 +43,6 @@ def get_services():
 
 def service_location_by_name(key):
     ''' Return the service entry matching the given key '''
-    print(get_services())
     # grab the registry of services
     # todo: go through service proxy service for more efficient loadbalancing
     services = ["localhost:{}".format(service['Port']) \

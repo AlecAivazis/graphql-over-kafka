@@ -54,5 +54,4 @@ class AuthRequestHandler(RequestHandler):
         """
             This method provides the jwt contents for the given user.
         """
-        print(user.id)
-        return str(user.id)
+        return str(user['id'])

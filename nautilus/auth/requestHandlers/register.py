@@ -31,21 +31,43 @@ class RegisterHandler(AuthRequestHandler):
             # the form data
             data = form.data
 
-            # get the user with matching email
-            user_data = query_service(api_gateway_name(), 'users', [
-                'id',
-                'email',
-            ], {
-                'email': data['email']
-            })[0]
+            try:
+                # get the user with matching email
+                user_data = query_service(
+                    service='user',
+                    fields=[
+                        'id',
+                        'email',
+                    ],
+                    filters={
+                        'email': data['email']
+                    }
+                )[0]
+            # if there wasn't a matching user
+            except IndexError:
+                return self.finish(
+                    'Could not find corresponding user in remote service'
+                )
+
+            # the query to find a matching query
+            match_query = UserPassword.user == user_data['id']
+            # yell if there is already a password recorded for the user
+            assert UserPassword.select().where(match_query).count() == 0, (
+                "The user is already registered."
+            )
 
             # create an entry in the user password table
             password = UserPassword(**data, user=user_data['id'])
             # save it to the database
             password.save()
 
+            # log in the user we just authorized
+            self.login_user(user_data)
+
+            # the url to redirect to when we're done
+            redirect_url = self.request.arguments.get('next', '/')
             # move the user along
-            return self.redirect(request.args.get('next'))
+            return self.redirect(redirect_url)
 
 
         # the username and password do not match

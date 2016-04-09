@@ -6,10 +6,10 @@ from nautilus.conventions.services import api_gateway_name
 from nautilus.network.registry import service_location_by_name
 
 def query_graphql_service(url, name, fields, filters=None):
-    """ A graphql query wrapper factory"""
+    """ A graphql query wrapper factory """
 
     # by default there are no args to add to the query
-    args = None
+    args = ''
     # if there are filters defined for the query
     if filters:
         # construct the argument string out of the given dictionary
@@ -27,12 +27,12 @@ def query_graphql_service(url, name, fields, filters=None):
                 %s
             }
         }
-    """ % (name, args or '', field_list)
+    """ % (name, args, field_list)
 
     # query the service to retrieve the data
     data_request = requests.get(url + '?query='   + query).json()
     # if there is an error
-    if 'errors' in data_request:
+    if 'errors' in data_request and data_request['errors']:
         raise RuntimeError(data_request['errors'])
     # otherwise there is no error
     else:
@@ -47,7 +47,6 @@ def query_service(service, fields, name=None, filters = None):
     '''
     # necessary imports
     from nautilus.conventions import root_query
-
     # query the target using model service conventions
     return query_graphql_service(
         url='http://{}'.format(service_location_by_name(service)),

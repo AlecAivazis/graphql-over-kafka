@@ -40,7 +40,6 @@ class ModelService(Service):
 
     model = None
     additional_action_handler = noop_handler
-    api_schema = None
 
     def __init__(self, model=None, **kwargs):
         # if we were given a model for the service

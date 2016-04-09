@@ -5,5 +5,5 @@ from wtforms.validators import InputRequired
 
 class LoginForm(Form):
     """ Log in an existing user. """
-    email = StringField('Login', validators=[InputRequired()])
-    password = PasswordField('Password', validators=[InputRequired()])
+    email = StringField('Login')
+    password = PasswordField('Password')

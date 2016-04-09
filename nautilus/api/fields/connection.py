@@ -80,7 +80,6 @@ class Connection(ConnectionField):
 
         # the target class for the connection
         target = self.target
-
         # if we were given a string to target
         if isinstance(target, str):
             # if the string points to a service object we recognize
@@ -123,7 +122,7 @@ class Connection(ConnectionField):
             related = query_service(
                 connection_service,
                 [target_service_name],
-                join_filter
+                filters=join_filter
             )
 
             # if there were no related fields
@@ -154,9 +153,9 @@ class Connection(ConnectionField):
                                         "resolving a foreign key reference")
 
         ## remove instances of the target that the user is not allowed to see
-
         # if we need to apply some sort of authorization
         if hasattr(target, 'auth'):
+
             try:
                 # grab the current user from the request_context
                 current_user = info.request_context.current_user
@@ -164,14 +163,15 @@ class Connection(ConnectionField):
             except AttributeError:
                 raise Exception("User is not accessible.")
 
-            # if there is not current_user
-            if not current_user:
-                # shout loudly
-                raise Exception("User is not logged in.")
+            # make sure the user is logged in
+            assert current_user, "User is not logged in."
 
             # apply the authorization criteria to the result
             results = [result for result in results \
-                                if target.auth(target(**result), current_user)]
+                if target.auth(
+                    target(**result),
+                    current_user.decode('utf-8')
+            )]
 
         ## deal with target relationship types
 
