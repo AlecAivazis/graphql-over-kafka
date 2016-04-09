@@ -6,8 +6,6 @@ from graphene.core.classtypes.objecttype import ObjectTypeOptions
 from nautilus.api.filter import args_for_model
 from nautilus.network import query_service
 
-VALID_ATTRS = ('service',)
-
 # collect the created service objects in a list
 serivce_objects = {}
 
@@ -15,7 +13,7 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        self.valid_attrs += VALID_ATTRS
+        self.valid_attrs += ('service',)
         self.service = None
 
     def contribute_to_class(self, cls, name):
@@ -150,4 +148,3 @@ class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
         fields = cls._meta.fields
         # grab the fields that are not connections
         return [field for field in fields if isinstance(field, Connection)]
-

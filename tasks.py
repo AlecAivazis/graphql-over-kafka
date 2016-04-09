@@ -18,9 +18,13 @@ def build_api_scripts():
     # babel presents
     presets = ' '.join(['es2015', 'react', 'stage-0'])
     # the build command
-    cmd = 'browserify %s -o %s -t [ babelify --presets [ %s ] ]' % (script_src, script_build, presets)
-    # run the build command
-    run(cmd)
+    build_cmd = 'browserify %s -t [ babelify --presets [ %s ] ]' % (script_src, presets)
+    # the command to minify the code
+    minify_cmd = 'uglifyjs'
+    # minify the build and put the result in the right place
+    run('%s | %s > %s' % (build_cmd, minify_cmd, script_build))
+    # let the user know we're finished
+    print("Successfully built api script files.")
 
 
 @command_group.command()
