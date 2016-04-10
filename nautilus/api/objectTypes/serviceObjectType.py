@@ -3,7 +3,7 @@ from graphene import ObjectType, Field, String
 from graphene.relay import Node
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
-from nautilus.api.filter import args_for_model
+from nautilus.api import fields_for_model
 from nautilus.network import query_service
 
 # collect the created service objects in a list
@@ -42,15 +42,10 @@ class ServiceObjectTypeMeta(type(Node)):
             service = attributes['Meta'].service
             # and that service has a model attributes
             if hasattr(service, 'model'):
-                # for each argument corresponding to a service field
-                # TODO: this can probably be done with a better method than
-                # args_for_model
-                for key, value in args_for_model(service.model).items():
-                    # ignore dynamically created fields
-                    # TODO: make this cleaner
-                    if 'pk' not in key and 'in' not in key and 'id' not in key:
-                        # add an attribute to the cls that matches the argument
-                        attributes[key] = value
+                # add the appropriates fields to the class record for the given
+                # model
+                attributes.update(fields_for_model(service.model))
+
 
         # create the nex class records
         return super().__new__(cls, name, bases, attributes, **kwds)
@@ -106,9 +101,7 @@ class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
         }
 
         # the fields of the service to request
-        service_fields = [arg for arg in args_for_model(cls.service.model).items() \
-                            if 'pk' not in arg and 'in' not in arg \
-                            and 'id' not in arg]
+        service_fields = fields_for_model(cls.service.model).keys()
 
         # query the connection service for related data
         return query_service(

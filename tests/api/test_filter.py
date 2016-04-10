@@ -26,6 +26,9 @@ class TestUtil(unittest.TestCase):
         # create a database table to test on
         nautilus.db.create_table(self.model)
 
+        # generate test data
+        self._gen_testdata()
+
 
     def tearDown(self):
         # remove the test table
@@ -56,15 +59,8 @@ class TestUtil(unittest.TestCase):
 
 
     def test_can_filter_by_field(self):
-        # some test records
-        record1 = self.model(first_name='foo', last_name='bar')
-        record2 = self.model(first_name='bar', last_name='foo')
-        # save the record to the database
-        record1.save()
-        record2.save()
-
         # the argument to filter for
-        filter_args = dict(first_name=record1.first_name)
+        filter_args = dict(first_name='foo1')
         # filter the models
         records_filtered = filter_model(self.model, filter_args)
 
@@ -74,23 +70,17 @@ class TestUtil(unittest.TestCase):
         )
 
         # pull out the retrieved record
-        retrieved_record = records_filtered[0]
+        retrieved_record_first_name = records_filtered[0].first_name
         # make sure the first name matches
-        assert retrieved_record.first_name == record1.first_name, (
-            "The wrong record was retrieved."
+        expected = 'foo1'
+        assert retrieved_record_first_name == expected, (
+            "Got %(retrieved_record_first_name)s instead of %(expected)s" % locals()
         )
 
 
     def test_can_filter_by_contains(self):
-        # some test records
-        record1 = self.model(first_name='foo', last_name='bar')
-        record2 = self.model(first_name='bar', last_name='foo')
-        # save the record to the database
-        record1.save()
-        record2.save()
-
         # the argument to filter for
-        filter_args = dict(first_name_in=[record1.first_name, record2.first_name])
+        filter_args = dict(first_name_in=['foo1', 'foo2'])
         # filter the models
         records_filtered = filter_model(self.model, filter_args)
 
@@ -103,6 +93,84 @@ class TestUtil(unittest.TestCase):
         retrieved_names = {record.first_name for record in records_filtered}
 
         # make sure the first name matches
-        assert retrieved_names == {record1.first_name, record2.first_name}, (
-            "The wrong record was retrieved."
+        expected = {'foo1', 'foo2'}
+        assert retrieved_names == expected, (
+            "Got %(retrieved_names)s instead of %(expected)s" % locals()
         )
+
+
+    def test_can_handle_first(self):
+        # the argument to filter for
+        filter_args = dict(first=2, offset=0)
+        # filter the models
+        records_filtered = filter_model(self.model, filter_args)
+
+        # figure out the names of the records we retrieved
+        retrieved_names = [record.first_name for record in records_filtered]
+        expected = ['foo1', 'bar1']
+        assert retrieved_names == expected, (
+            "Got %(retrieved_names)s instead of %(expected)s" % locals()
+        )
+
+
+    def test_can_handle_last(self):
+        # the argument to filter for
+        filter_args = dict(last=2, offset=0)
+        # filter the models
+        records_filtered = filter_model(self.model, filter_args)
+
+        # figure out the names of the records we retrieved
+        retrieved_names = [record.first_name for record in records_filtered]
+        expected = ['bar10', 'foo10']
+        assert retrieved_names == expected, (
+            "Got %(retrieved_names)s instead of %(expected)s" % locals()
+        )
+
+
+    def test_can_handle_last_offset(self):
+        # the argument to filter for
+        filter_args = dict(last=2, offset=2)
+        # filter the models
+        records_filtered = filter_model(self.model, filter_args)
+
+        # figure out the names of the records we retrieved
+        retrieved_names = [record.first_name for record in records_filtered]
+        expected = ['bar9', 'foo9']
+        assert retrieved_names == expected, (
+            "Got %(retrieved_names)s instead of %(expected)s" % locals()
+        )
+
+
+    def test_can_handle_first_offset(self):
+        # the argument to filter for
+        filter_args = dict(first=4, offset=2)
+        # filter the models
+        records_filtered = filter_model(self.model, filter_args)
+
+        # figure out the names of the records we retrieved
+        retrieved_names = [record.first_name for record in records_filtered]
+        expected = ['foo2', 'bar2', 'foo3', 'bar3']
+        assert retrieved_names == expected, (
+            "Got %(retrieved_names)s instead of %(expected)s" % locals()
+        )
+
+
+    def test_can_handle_first_offset_order_by(self):
+        # the argument to filter for
+        filter_args = dict(first=4, offset=2, order_by=["last_name", "-first_name"])
+        # filter the models
+        records_filtered = filter_model(self.model, filter_args)
+
+        # figure out the names of the records we retrieved
+        retrieved_names = [record.first_name for record in records_filtered]
+        expected = ['foo7', 'foo6', 'foo5', 'foo4']
+        assert retrieved_names == expected, (
+            "Got %(retrieved_names)s instead of %(expected)s" % locals()
+        )
+
+
+    def _gen_testdata(self):
+        # some test records
+        for i in range(10):
+            self.model(first_name='foo%s' % (i+1), last_name='bar').save()
+            self.model(first_name='bar%s' % (i+1), last_name='foo').save()
