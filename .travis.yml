@@ -1,0 +1,14 @@
+langauge: python
+python:
+    - "3.5"
+
+install:
+    - python setup.py install
+    - pip install cov-core
+    - pip install coveralls
+
+script:
+    - python setup.py test --with-coverage
+
+after_success:
+    coveralls
