@@ -1,11 +1,6 @@
-# external imports
-from types import new_class
-from sqlalchemy.orm import mapper
-from sqlalchemy import Table, Column, Integer, Text
 # local imports
-from nautilus.database import db
 from nautilus.conventions.services import connection_service_name
-from nautilus.models import BaseModel, CRUDNotificationCreator, fields
+from nautilus.models import BaseModel, fields
 
 def create_connection_model(models):
     """ Create an SQL Alchemy table that connects the provides services """

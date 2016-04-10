@@ -1,14 +1,15 @@
-langauge: python
+language: python
 python:
-    - "3.5"
-
+  - "3.5.0"
+# command to install dependencies
 install:
-    - python setup.py install
-    - pip install cov-core
-    - pip install coveralls
-
+  - pip install -r docs/requirements/travis.dep
+  - pip install cov-core
+  - pip install coveralls
+  - pip install nose2
+# command to run tests
 script:
-    - python setup.py test --with-coverage
+  - nose2 --with-coverage
 
 after_success:
-    coveralls
+  coveralls
