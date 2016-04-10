@@ -27,23 +27,13 @@ class TestUtil(unittest.TestCase):
         nautilus.db.create_table(self.model)
 
         # generate test data
-        self.gen_testdata()
+        self._gen_testdata()
 
 
     def tearDown(self):
         # remove the test table
         nautilus.db.drop_table(self.model)
 
-
-    def gen_testdata(self):
-        # some test records
-        i = 1
-        while i < 10:
-            record = self.model(first_name='foo%s' % (i), last_name='bar')
-            record.save()
-            record = self.model(first_name='bar%s' % (i), last_name='foo')
-            record.save()
-            i +=1
 
     def test_args_match_model(self):
         # make sure the argument contain the model fields
@@ -131,7 +121,7 @@ class TestUtil(unittest.TestCase):
 
         # figure out the names of the records we retrieved
         retrieved_names = [record.first_name for record in records_filtered]
-        expected = ['bar9', 'foo9']
+        expected = ['bar10', 'foo10']
         assert retrieved_names == expected, (
             "Got %(retrieved_names)s instead of %(expected)s" % locals()
         )
@@ -145,7 +135,7 @@ class TestUtil(unittest.TestCase):
 
         # figure out the names of the records we retrieved
         retrieved_names = [record.first_name for record in records_filtered]
-        expected = ['bar8', 'foo8']
+        expected = ['bar9', 'foo9']
         assert retrieved_names == expected, (
             "Got %(retrieved_names)s instead of %(expected)s" % locals()
         )
@@ -167,7 +157,7 @@ class TestUtil(unittest.TestCase):
 
     def test_can_handle_first_offset_order_by(self):
         # the argument to filter for
-        filter_args = dict(first=4, offset=2, order_by="last_name, -first_name")
+        filter_args = dict(first=4, offset=2, order_by=["last_name", "-first_name"])
         # filter the models
         records_filtered = filter_model(self.model, filter_args)
 
@@ -177,3 +167,10 @@ class TestUtil(unittest.TestCase):
         assert retrieved_names == expected, (
             "Got %(retrieved_names)s instead of %(expected)s" % locals()
         )
+
+
+    def _gen_testdata(self):
+        # some test records
+        for i in range(10):
+            self.model(first_name='foo%s' % (i+1), last_name='bar').save()
+            self.model(first_name='bar%s' % (i+1), last_name='foo').save()
