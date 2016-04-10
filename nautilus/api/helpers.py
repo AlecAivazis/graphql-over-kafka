@@ -43,3 +43,22 @@ def create_model_schema(Model):
     schema.query = Query
 
     return schema
+
+
+def fields_for_model(model):
+    """
+        This function returns the fields for a schema that matches the provided
+        nautilus model.
+
+        Args:
+            model (nautilus.model.BaseModel): The model to base the field list on
+
+        Returns:
+            (dict<field_name: str, graphqlType>): A mapping of field names to
+                graphql types
+    """
+    # use the field arguments, without the segments
+    return {key: value for key,value in args_for_model(model).items() \
+        if key not in ['pk', 'id', 'first', 'last', 'offset', 'order_by'] \
+                and not key.endswith("_in")
+    }
