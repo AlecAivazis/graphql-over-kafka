@@ -73,15 +73,16 @@ class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
             This is overwritten to check for connection fields which don't
             make it to the class record.
         """
-        # figure out the connections for this service
-        connection = [connection for connection in type(self).connections() \
-                                    if connection.attname == attr]
-        # if the attribute that was asked for was a connection
-        if connection:
-            # return the resolved value
-            return connection[0].resolver(self, {}, {})
-        else:
-            # Default behaviour
+        try:
+            # figure out the connections for this service
+            connection = [connection for connection in type(self).connections() \
+                                        if connection.attname == attr][0]
+            # resolve the connection
+            return connection.resolver(self, {}, {})
+            
+        # if there was no connection
+        except KeyError:
+            # then we're looking at an attribute we dont know about
             raise AttributeError
 
 
