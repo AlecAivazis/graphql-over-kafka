@@ -268,7 +268,6 @@ class AMQPConsumer(object):
         :param pika.frame.Method unused_frame: The Basic.CancelOk frame
 
         """
-        print('foo')
         LOGGER.info('RabbitMQ acknowledged the cancellation of the consumer')
         self.close_channel()
 

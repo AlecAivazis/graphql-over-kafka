@@ -1,5 +1,6 @@
-
-
+"""
+    This module defines various utilities for dealing with the network.
+"""
 def combine_action_handlers(*args):
     """
         This function combines the given action handlers into a single function
