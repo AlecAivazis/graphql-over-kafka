@@ -3,8 +3,8 @@ from nautilus import APIGateway
 from graphene import Schema, ObjectType, String, Mutation, Boolean, Field
 from nautilus.api import ServiceObjectType
 from nautilus.api.fields import Connection
-from nautilus.network import dispatch_action
-from nautilus.conventions import getCRUDAction
+from nautilus.network.amqp import dispatch_action
+from nautilus.conventions import get_crud_action
 # local imports
 from .recipes import service as RecipeService
 from .ingredients import service as IngredientService
@@ -60,7 +60,7 @@ class AddRecipeMutation(Mutation):
         """ perform the mutation """
         # send the new recipe action into the queue
         dispatch_action(
-            action_type=getCRUDAction('create', RecipeService.model),
+            action_type=get_crud_action('create', RecipeService.model),
             payload=args
         )
 
@@ -72,5 +72,7 @@ class ApiMutations(ObjectType):
 
 schema.mutation = ApiMutations
 
-# create a nautilus service with just the schema
-service = APIGateway(schema=schema)
+
+# create an api gateway with just the schema
+class RecipeBookAPIGateway(APIGateway):
+    schema = schema

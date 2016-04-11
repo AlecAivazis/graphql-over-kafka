@@ -5,16 +5,14 @@
 # third party imports
 from nautilus import ModelService
 # third party imports
-from sqlalchemy import Column, Text
-from nautilus.models import HasID, BaseModel, CRUDNotificationCreator
+from nautilus.models import BaseModel, CRUDNotificationCreator, fields
 
-class Ingredient(CRUDNotificationCreator, HasID, BaseModel):
-    name = Column(Text)
+class Ingredient(BaseModel, CRUDNotificationCreator):
+    name = fields.CharField()
 
 class ServiceConfig:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/ingredients.db'
+    database_url = 'sqlite:///ingredients.db'
 
-service = ModelService(
+class IngredientService(ModelService):
     model = Ingredient,
-    configObject = ServiceConfig,
-)
+    config = ServiceConfig
