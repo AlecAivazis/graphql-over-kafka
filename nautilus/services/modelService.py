@@ -47,10 +47,10 @@ class ModelService(Service):
             # use the given model
             self.model = model
 
-        # make sure there is a model
-        assert self.model, (
-            "Please provide a model for the model service."
-        )
+        # if there is no model associated with this service
+        if not self.model:
+            # yell loudly
+            raise ValueError("Please provide a model for the model service.")
 
         # the schema to add to the service
         self.api_schema = create_model_schema(self.model)

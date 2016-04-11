@@ -59,7 +59,10 @@ class Connection(ConnectionField):
 
         # we are supposed to perform the resolve
 
-        assert relationship == 'many', 'single relationships are not yet supported'
+        # if the relationship is a value we dont yet support
+        if relationship != 'many':
+            # yell loudly
+            raise ValueError('single relationships are not yet supported')
 
         # save references to constructor arguments
         self.target = target

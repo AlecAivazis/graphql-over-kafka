@@ -50,10 +50,11 @@ class RegisterHandler(AuthRequestHandler):
 
             # the query to find a matching query
             match_query = UserPassword.user == user_data['id']
-            # yell if there is already a password recorded for the user
-            assert UserPassword.select().where(match_query).count() == 0, (
-                "The user is already registered."
-            )
+
+            # if the user has already been registered
+            if UserPassword.select().where(match_query).count() > 0:
+                # yell loudly
+                raise ValueError("The user is already registered.")
 
             # create an entry in the user password table
             password = UserPassword(**data, user=user_data['id'])

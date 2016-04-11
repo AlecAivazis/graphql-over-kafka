@@ -44,7 +44,7 @@ class TestUtil(unittest.TestCase):
             TestModel()
 
         # expect an error
-        self.assertRaises(AssertionError, test_empty_class)
+        self.assertRaises(ValueError, test_empty_class)
 
 
     def test_has_valid_schema(self):

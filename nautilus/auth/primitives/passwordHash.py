@@ -7,8 +7,10 @@ class PasswordHash:
 
     def __init__(self, hash_, rounds=None):
         # make sure the hash is valid
-        assert len(hash_) == 60, 'bcrypt hash should be 60 chars.'
-        assert hash_.count('$'.encode('utf-8')) == 3, 'bcrypt hash should have 3x "$".'
+        if len(hash_) != 60:
+            raise ValueError('bcrypt hash should be 60 chars.')
+        elif hash_.count('$'.encode('utf-8')) != 3:
+            raise ValueError('bcrypt hash should have 3x "$".')
 
         # save the required instance variables
         self.hash = hash_

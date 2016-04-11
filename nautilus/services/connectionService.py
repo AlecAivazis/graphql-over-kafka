@@ -47,18 +47,16 @@ class ConnectionService(ModelService):
     def __init__(self, **kwargs):
 
         # make sure we were passed more than one service
-        assert len(self.services) >= 2, (
-            "Please provide more than one service to connect."
-        )
+        if len(self.services) < 2:
+            raise ValueError("Please provide more than one service to connect.")
 
         # the models of each service
         self._service_models = [service.model for service in self.services]
 
-        # make sure there is a unique model name for every service
-        assert len({model.model_name for model in self._service_models}) \
-               == len(self._service_models), (
-                   "Can only connect models with different name"
-        )
+        # make sure there is a unique name for every service
+        if len({model.model_name for model in self._service_models}) \
+               != len(self._service_models):
+            raise ValueError("Can only connect models with different name")
 
         # create the service
         super().__init__(
