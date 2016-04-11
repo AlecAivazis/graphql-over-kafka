@@ -5,9 +5,9 @@
 # third party imports
 from nautilus import ModelService
 # third party imports
-from nautilus.models import BaseModel, CRUDNotificationCreator, fields
+from nautilus.models import BaseModel, fields
 
-class Recipe(BaseModel, CRUDNotificationCreator):
+class Recipe(BaseModel):
     name = fields.CharField()
 
 class ServiceConfig:

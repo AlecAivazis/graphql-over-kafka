@@ -1,5 +1,6 @@
 # local imports
-from nautilus.conventions.actions import get_crud_action
+from nautilus.conventions.actions import get_crud_action, change_action_status
+from nautilus.models.serializers import ModelSerializer
 
 def update_handler(Model):
     """
@@ -14,16 +15,14 @@ def update_handler(Model):
         Returns:
             function(type, payload): The action handler for this model
     """
-    def action_handler(action_type, payload):
+    def action_handler(action_type, payload, dispatcher):
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('update', Model):
+            try:
+                # grab the nam eof the primary key for the model
+                pk_field = Model.primary_key()
 
-            # grab the nam eof the primary key for the model
-            pk_field = Model.primary_key()
-
-            # if the key is in the payload
-            if pk_field.name in payload:
-                # then we can use it to identify the model we are editing
+                # assume we have an id to identify the model we are editing
 
                 # grab the matching model
                 model = Model.select().where(pk_field == payload[pk_field.name]).get()
@@ -33,11 +32,26 @@ def update_handler(Model):
 
                 # for every key,value pair
                 for key, value in payload.items():
-                    # update the model's attribute
+                    # TODO: add protection for certain fields from being
+                    # changed by the api
                     setattr(model, key, value)
 
                 # save the updates
                 model.save()
+
+                # publish the scucess event
+                dispatcher.publish(
+                    ModelSerializer().serialize(model),
+                    route=change_action_status(action_type, 'success')
+                )
+
+            # if something goes wrong
+            except Exception as err:
+                # publish the error as an event
+                dispatcher.publish(
+                    str(err),
+                    route=change_action_status(action_type, 'error')
+                )
 
     # return the handler
     return action_handler

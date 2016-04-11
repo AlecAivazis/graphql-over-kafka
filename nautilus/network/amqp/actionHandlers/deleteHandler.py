@@ -1,5 +1,6 @@
 # local imports
-from nautilus.conventions.actions import get_crud_action
+from nautilus.conventions.actions import get_crud_action, change_action_status
+from nautilus.models.serializers import ModelSerializer
 
 def delete_handler(Model):
     """
@@ -17,13 +18,28 @@ def delete_handler(Model):
     # necessary imports
     from nautilus.database import db
 
-    def action_handler(action_type, payload):
+    def action_handler(action_type, payload, dispatcher):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('delete', Model):
-            # get the model matching the payload
-            model_query = Model.select().where(Model.primary_key() == payload)
-            # remove the model instance
-            model_query.get().delete_instance()
+            try:
+                # get the model matching the payload
+                model_query = Model.select().where(Model.primary_key() == payload)
+                # remove the model instance
+                model_query.get().delete_instance()
+
+                # publish the scucess event
+                dispatcher.publish(
+                    ModelSerializer().serialize(model),
+                    route=change_action_status(action_type, 'success')
+                )
+
+            # if something goes wrong
+            except Exception as err:
+                # publish the error as an event
+                dispatcher.publish(
+                    str(err),
+                    route=change_action_status(action_type, 'error')
+                )
 
 
     # return the handler

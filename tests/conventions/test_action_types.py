@@ -30,8 +30,8 @@ class TestUtil(unittest.TestCase):
             model=self.model
         )
 
-        assert isinstance(action_type, str), (
-            "Generated action type was not a string"
+        assert action_type == 'create.testmodel.pending', (
+            "New action type did not have the correct form."
         )
 
 

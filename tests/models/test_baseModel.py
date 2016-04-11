@@ -18,11 +18,32 @@ class TestUtil(unittest.TestCase):
             date = models.fields.CharField(null=False)
 
 
-        self.Model = TestUser
+
+        # create the test table
+        TestUser.create_table(True)
+
+        self.model_record = TestUser
+        self.model = TestUser()
+
+
+    def tearDown(self):
+        self.model_record.drop_table()
+
+
+    def test_can_be_saved_and_retrieved(self):
+        # fill the model with test values
+        self.model.name = 'foo'
+        self.model.date = 'bar'
+        # save it to the database
+        self.model.save()
+
+        # make sure we can get the corresponding record
+        self.model_record.get(self.model_record.id == self.model.id)
+
 
     def test_can_retrieve_fields(self):
         # the name of the columns in the models
-        column_names = {field.name for field in self.Model.fields()}
+        column_names = {field.name for field in self.model_record.fields()}
         # check the value
         assert column_names == {'name', 'date', 'id'}, (
             'Model could not retrieve columns'
@@ -30,14 +51,14 @@ class TestUtil(unittest.TestCase):
 
 
     def test_can_retrieve_primary_key(self):
-        assert self.Model.primary_key().name == 'id', (
+        assert self.model_record.primary_key().name == 'id', (
             'Model could not return primary keys'
         )
 
 
     def test_can_retrieve_requried_fields(self):
         # grab the names of the required fields
-        required_field_names = {field.name for field in self.Model.required_fields()}
+        required_field_names = {field.name for field in self.model_record.required_fields()}
         # make sure it is what it should be
         assert required_field_names == {'id', 'date'}, (
             'Model could not retrieve required fields.'
@@ -49,7 +70,7 @@ class TestUtil(unittest.TestCase):
         from nautilus.models import ModelSerializer
         import json
         # create an instance of a model that we can serialize
-        model = self.Model(name="foo", date="bar")
+        model = self.model_record(name="foo", date="bar")
         # serialize the model
         serialized = ModelSerializer().serialize(model)
         # check that the serialized model can be hydrated as expected

@@ -19,4 +19,4 @@ class ModelSerializer(JSONEncoder):
         """
             This function performs the serialization on the given object.
         """
-        return self.encode(obj)    
+        return self.encode(obj)
