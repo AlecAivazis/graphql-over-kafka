@@ -1,58 +1,44 @@
 # external imports
 import graphene
 from graphene import Field, List
-from flask_graphql import GraphQLView, GraphQL
-from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
-from sqlalchemy.inspection import inspect
 # local imports
-from nautilus.api.filter import args_for_model, filter_model
-from nautilus.api import convert_sqlalchemy_type
-
-def init_service(service, schema):
-    """ Add GraphQL support to the given Flask app """
-    # add default graphql endpoints
-    GraphQL(service.app, schema=schema)
-    # add the index query per service agreement
-    service.app.add_url_rule('/', view_func=GraphQLView.as_view('index', schema=schema))
+from .filter import filter_model, args_for_model
+from nautilus.contrib.graphene_peewee import PeeweeObjectType, convert_peewee_field
 
 
-def create_model_schema(Model):
+def create_model_schema(target_model):
     """ This function creates a graphql schema that provides a single model """
 
-    from nautilus.db import db
+    from nautilus.database import db
 
     # create the schema instance
-    schema = graphene.Schema(
-        session = db.session,
-        auto_camelcase = False
-    )
+    schema = graphene.Schema(auto_camelcase=False)
 
-    # grab the primary key from the Model
-    primary_key = inspect(Model).primary_key[0]
-    primary_key_type = convert_sqlalchemy_type(primary_key.type, primary_key)
+    # grab the primary key from the model
+    primary_key = target_model.primary_key()
+    primary_key_type = convert_peewee_field(primary_key)
 
-    # create a graphene object registered with the schema
-    @schema.register
-    class ModelObjectType(SQLAlchemyObjectType):
+    # create a graphene object
+    class ModelObjectType(PeeweeObjectType):
         class Meta:
-            model = Model
+            model = target_model
 
-        primary_key = Field(primary_key_type, description = "The primary key for this object.")
+        primary_key = Field(primary_key_type, description="The primary key for this object.")
 
-
-        def resolve_primary_key(self, args, info):
-            return self.primary_key()
+        @graphene.resolve_only_args
+        def resolve_primary_key(self):
+            return self.primary_key
 
 
     class Query(graphene.ObjectType):
         """ the root level query """
-        all_models = List(ModelObjectType,
-                          args=args_for_model(Model)
-                         )
+        all_models = List(ModelObjectType, args=args_for_model(target_model))
 
-        def resolve_all_models(self, args, info):
+
+        @graphene.resolve_only_args
+        def resolve_all_models(self, **args):
             # filter the model query according to the arguments
-            return filter_model(Model, args)
+            return filter_model(target_model, args)
 
 
     # add the query to the schema
@@ -60,3 +46,30 @@ def create_model_schema(Model):
 
     return schema
 
+
+def fields_for_model(model):
+    """
+        This function returns the fields for a schema that matches the provided
+        nautilus model.
+
+        Args:
+            model (nautilus.model.BaseModel): The model to base the field list on
+
+        Returns:
+            (dict<field_name: str, graphqlType>): A mapping of field names to
+                graphql types
+    """
+
+    # the attribute arguments (no filters)
+    args = {field.name.lower() : convert_peewee_field(field) \
+                                        for field in model.fields()}
+
+    # add the primary key field
+
+    # the primary keys for the Model
+    primary_key = model.primary_key()
+    # add the primary key filter to the arg dictionary
+    args['pk'] = convert_peewee_field(primary_key)
+
+    # use the field arguments, without the segments
+    return args

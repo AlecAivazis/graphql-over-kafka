@@ -1,12 +1,28 @@
 # external imports
-import os
-import requests
-from flask import Flask
+import tornado.ioloop
+import tornado.web
 # local imports
-from nautilus.network.consumers import ActionConsumer
-from nautilus.network import registry
+from nautilus.network.amqp.consumers.actions import ActionHandler
+from nautilus.api.endpoints import static_dir as api_endpoint_static
+import nautilus.network.registry as registry
+from nautilus.config import Config
+from nautilus.api.endpoints import (
+    GraphiQLRequestHandler,
+    GraphQLRequestHandler
+)
 
-class Service:
+class ServiceMetaClass(type):
+    def __init__(cls, name, bases, attributes):
+        # create the super class
+        super().__init__(name, bases, attributes)
+
+        # if the object does not yet have a name
+        if not cls.name or cls.name == 'Service':
+            # use the name of the class record
+            cls.name = name
+
+
+class Service(metaclass=ServiceMetaClass):
     """
         This is the base class for all services that are part of a nautilus
         cloud. This class provides basic functionalities such as registration,
@@ -18,13 +34,7 @@ class Service:
                 an action is recieved. If None, the service does not connect to the
                 action queue.
 
-            auth (optional, bool, default = True): Whether or not the service should add
-                authentication requirements.
-
-            auto_register (optional, bool): Whether or not the service should
-                register itself when ran
-
-            configObject (optional, class): A python class to use for configuring the
+            config (optional, class): A python class to use for configuring the
                 service.
 
             name (string): The name of the service. This will be used to
@@ -39,168 +49,195 @@ class Service:
 
             .. code-block:: python
 
-                from nautilus import Service
+                import nautilus
                 from nautilus.api import create_model_schema
-                from nautilus.network import CRUDHandler
-                from nautilus.models import BaseModel
+                from nautilus.network import crud_handler
+                import nautilus.models as models
 
+                class Model(models.BaseModel):
+                    name = models.fields.CharField()
 
-                class Model(BaseModel):
-                    name = Column(Text)
-
-
-                # you could also make your own
-                api_schema = create_model_schema(Model)
-                action_handler = CRUDHandler(Model)
-
-
-                service = Service(
-                    name = 'My Awesome Service',
-                    schema = api_schema,
-                    action_handler = action_handler
-                )
+                class MyService(nautilus.Service):
+                    name = 'My Awesome Service'
+                    schema = create_model_schema(Model)
+                    action_handler = crud_handler(Model)
     """
+
+    action_handler = None
+    config = None
+    name = None
+    schema = None
+
+    _routes = []
 
     def __init__(
             self,
-            name,
+            name=None,
             schema=None,
             action_handler=None,
-            configObject=None,
-            auto_register=True,
+            config=None,
             auth=True,
     ):
-        # base the service on a flask app
-        self.app = Flask(__name__)
 
-        self.name = name
+        self.name = self.name or name or type(self).name
+        self.app = None
         self.__name__ = name
-        self.auto_register = auto_register
-        self.auth = auth
-        self.subprocesses = []
+        self.action_handler = action_handler or self.action_handler
+        self.keep_alive = None
+        self._action_handler_loop = None
+        self.schema = schema or self.schema
 
-        # apply any necessary flask app config
-        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+        # wrap the given configuration in the nautilus wrapper
+        self.config = Config(self.config, config)
 
-        # if there is a configObject
-        if configObject:
-            # apply the config object to the flask app
-            self.app.config.from_object(configObject)
-
-        # if there is an action consumer, create a wrapper for it
-        self.action_consumer = ActionConsumer(action_handler=action_handler) \
-                                                  if action_handler else None
-        # setup various functionalities
-        self.setup_db()
-        self.setup_admin()
-        self.setup_auth()
-        self.setup_api(schema)
+        # initialize the service
+        self.init_app()
+        self.init_action_handler(self.action_handler)
 
 
-    def run(self,
-            host='127.0.0.1',
-            port=8000,
-            debug=False,
-            secret_key='supersecret',
-            **kwargs
-           ):
+    def init_app(self):
+        # create a tornado web application
+        self.app = tornado.web.Application(
+            self._request_handlers,
+            debug=self.config.get('debug', False),
+            cookie_secret=self.config.get('secret_key', 'default_secret')
+        )
+        # attach the ioloop to the application
+        self.ioloop = tornado.ioloop.IOLoop.instance()
 
-        # save command line arguments
-        self.app.config['DEBUG'] = debug
-        self.app.config['HOST'] = host
-        self.app.config['PORT'] = port
-        self.app.config['SECRET_KEY'] = secret_key
+        # for each route that was registered
+        for route in self._routes:
+            # add the corresponding http endpoint
+            self.add_http_endpoint(**route)
 
-        # don't assume we are going to spawn a subprocess
-        pid = None
 
-        # if we need to spin up an action consumer
-        if self.action_consumer:
-            # create a subprocess
-            self.subprocesses.append(os.fork())
-            # if we are on the subprocess
-            if self.subprocesses[-1] == 0:
-                # start the action consumer
-                self.action_consumer.run()
-                # when we're done with what we're doing
-                raise SystemExit(0)
+    def init_action_handler(self, action_handler):
+        # if the service was provided an action handler
+        if action_handler:
+            # create a wrapper for it
+            self._action_handler_loop = ActionHandler(callback=action_handler)
+            # add it to the ioloop
+            self.ioloop.add_callback(self._action_handler_loop.run)
 
-            # if the service needs to register itself
-            if self.auto_register:
-                # register with the service registry
-                registry.keep_alive(self)
 
-            # run the service at the designated port
-            self.app.run(
-                host=self.app.config['HOST'],
-                port=self.app.config['PORT'],
-                use_reloader=False
-            )
+    def init_keep_alive(self):
+        # create the period callback
+        self.keep_alive = registry.keep_alive(self)
 
-            # app.run is blocking while the server is running.
-            # the lines afterwards are executed when the server stops so it is a
-            # perfect time to clean up and ensure no leaks
+
+    def run(self, host="localhost", port=8000, **kwargs):
+        """
+            This function starts the service's network intefaces.
+
+            Args:
+                port (int): The port for the http server.
+        """
+        print("Running service on http://localhost:%i. " % port + \
+                                            "Press Ctrl+C to terminate.")
+
+        # apply the configuration to the service config
+        self.config.port = port
+        self.config.host = host
+
+        # create the keep alive timer
+        self.init_keep_alive()
+
+        # start the keep alive timer
+        self.keep_alive.start()
+        # assign the port to the app instance
+        self.app.listen(port, address=host)
+
+        # start the ioloop
+        try:
+            self.ioloop.start()
+        # if the user interrupts the server
+        except KeyboardInterrupt as err:
+            # stop the service and clean up
             self.stop()
+            # bubble the exception up to someone who cares
+            raise err
+        except Exception as err:
+            # stop the service and clean up
+            self.stop()
+            # bubble the exception up to someone who cares
+            raise err
 
 
     def stop(self):
-        try:
-            # for each subprocess id we know about
-            for pid in self.subprocesses:
-                # if its a child process
-                if pid != 0:
-                    # send a sigterm to the child process
-                    os.kill(pid, 2)
-                    # collect the status so we don't create a zombie
-                    status, sub_pid = os.waitpid(pid, 0)
-                    # remove the subprocess from the list
-                    self.subprocesses.remove(pid)
-
-            # if the service is responsible for registering itself
-            if self.auto_register:
-                # remove the service from the registry
-                registry.deregister_service(self)
-
-        # if there is no server to disconnect from
-        except requests.exceptions.ConnectionError:
-            pass
-
-
-    def setup_db(self):
-        # import the nautilus db configuration
-        from nautilus.db import db
-        # initialize the service app
-        db.init_app(self.app)
-
-
-    def use_blueprint(self, blueprint):
-        """ Apply a flask blueprint to the internal application """
-        self.app.register_blueprint(blueprint)
-
-
-    def setup_auth(self):
-        # if we are supposed to enable authentication for the service
-        if self.auth:
-            from nautilus.auth import init_service
-            init_service(self)
-
-
-    def setup_admin(self):
-        from nautilus.admin import init_service
-        init_service(self)
-
-
-    def setup_api(self, schema=None):
-        # if there is a schema for the service
-        if schema:
-            # configure the service api with the schema
-            from nautilus.api import init_service
-            init_service(self, schema=schema)
-
-
-    def route(self, **options):
         """
-            A wrapper over Flask's @app.route(**options).
+            This function stops the service's various network interfaces.
         """
+        # if there is a keep alive timer
+        if self.keep_alive:
+            # stop the keep_alive timer
+            self.keep_alive.stop()
+            # remove the service entry from the registry
+            registry.deregister_service(self)
 
-        return self.app.route(**options)
+        # stop the ioloop
+        self.ioloop.stop()
+
+        # if there is an action consumer registered with this service
+        if self._action_handler_loop:
+            # stop the action consumer
+            self._action_handler_loop.stop()
+
+
+    @property
+    def _request_handlers(self):
+        return [
+            (r"/", GraphQLRequestHandler, dict(schema=self.schema)),
+            (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
+                                                dict(path=api_endpoint_static)),
+            (r"/graphiql/?", GraphiQLRequestHandler),
+        ]
+
+
+    def add_http_endpoint(self, url, request_handler, config=None, host=".*$"):
+        """
+            This method provides a programatic way of added invidual routes
+            to the http server.
+
+            Args:
+                url (str): the url to be handled by the request_handler
+                request_handler (tornado.web.RequestHandler): The request handler
+                config (dict): A configuration dictionary to pass to the handler
+        """
+        self.app.add_handlers(host, [(url, request_handler, config)])
+
+
+    @classmethod
+    def route(cls, route, config=None):
+        """
+            This method provides a decorator for adding endpoints to the
+            http server.
+
+            Args:
+                route (str): The url to be handled by the RequestHandled
+                config (dict): Configuration for the request handler
+
+            Example:
+
+                .. code-block:: python
+
+                    import nautilus
+                    from nauilus.network.http import RequestHandler
+
+                    class MyService(nautilus.Service):
+                        # ...
+
+                    @MyService.route('/')
+                    class HelloWorld(RequestHandler):
+                        def get(self):
+                            return self.finish('hello world')
+        """
+        def decorator(wrapped_class, **kwds):
+            # add the endpoint at the given route
+            cls._routes.append(
+                dict(url=route, request_handler=wrapped_class, config=kwds)
+            )
+            # return the class undecorated
+            return wrapped_class
+
+        # return the decorator
+        return decorator

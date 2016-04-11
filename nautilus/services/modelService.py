@@ -1,9 +1,9 @@
 # local imports
-from nautilus.network import CRUDHandler, combine_action_handlers
+import nautilus
+from nautilus.network.amqp import crud_handler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
-from nautilus.network.actionHandlers import noop_handler
-from nautilus.admin import add_model as add_model_to_admin
+from nautilus.network.amqp.actionHandlers import noop_handler
 from .service import Service
 
 class ModelService(Service):
@@ -23,58 +23,77 @@ class ModelService(Service):
 
             .. code-block:: python
 
-                from nautilus import ModelService
-                from sqlalchemy import Column, Text
-                from nautilus.models import HasID, BaseModel, CRUDNotificationCreator
+                import nautilus
+                import nautilus.models as models
 
-
-                # these mixins provide make the model "live". For more information,
-                # see foo_bar.
-                class Model(CRUDNotificationCreator, HasID, BaseModel):
-                    name = Column(Text)
-
+                class Model(models.BaseModel):
+                    name = models.fields.CharField()
 
                 class ServiceConfig:
                     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
 
-
-                service = ModelService(
-                    model = Model,
-                    configObject = ServiceConfig,
-                )
+                class MyModelService(nautilus.ModelService):
+                    model = Model
+                    config = ServiceConfig
 
     """
 
-    def __init__(self, model, additonal_action_handler = noop_handler, **kwargs):
-        # save a reference to the model this service is managing
-        self.model = model
+    model = None
+    additional_action_handler = noop_handler
+
+    def __init__(self, model=None, **kwargs):
+        # if we were given a model for the service
+        if model:
+            # use the given model
+            self.model = model
+
+        # if there is no model associated with this service
+        if not self.model:
+            # yell loudly
+            raise ValueError("Please provide a model for the model service.")
 
         # the schema to add to the service
-        schema = create_model_schema(model)
+        self.api_schema = create_model_schema(self.model)
 
-        # the action handler is a combination
+        # # the action handler is a combination
         action_handler = combine_action_handlers(
             # of the given one
-            additonal_action_handler,
+            self.additional_action_handler,
             # and a crud handler
-            CRUDHandler(model)
+            crud_handler(self.model)
         )
 
         # pull the name of the service from kwargs if it was given
-        name = kwargs.pop('name', None) or model_service_name(model)
+        name = kwargs.pop('name', None) or model_service_name(self.model)
 
         # create the service
         super().__init__(
-            schema=schema,
+            schema=self.api_schema,
             action_handler=action_handler,
             name=name,
             **kwargs
         )
 
-    def run(self, **kwargs):
-
-        # register the class with the admin interface
-        add_model_to_admin(self.model)
+        # initialize the database
+        self.init_db()
 
 
-        super().run(**kwargs)
+    def init_db(self):
+        """
+            This function configures the database used for models to make
+            the configuration parameters.
+        """
+        # get the database url from the configuration
+        db_url = self.config.get('database_url', 'sqlite:///nautilus.db')
+        # configure the nautilus database to the url
+        nautilus.database.init_db(db_url)
+
+
+    def get_models(self):
+        """
+            Returns the models managed by this service.
+
+            Returns:
+                (list): the models managed by the service
+        """
+        return [self.model]

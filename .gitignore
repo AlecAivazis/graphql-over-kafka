@@ -9,7 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-build/
+./build/
 develop-eggs/
 dist/
 downloads/
@@ -33,3 +33,10 @@ var/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+
+# Local database
+test.db
+nautilus.db
+
+.DS_Store
+node_modules

@@ -1,12 +1,12 @@
 # external imports
-import consul
 import threading
 import time
 import random
-from consul import Check
+import consul
+import tornado
 
 # create a consul session
-consulSession = consul.Consul()
+consul_session = consul.Consul()
 
 def register_service(service):
     ''' Add a service to the registry service. '''
@@ -19,10 +19,11 @@ def register_service(service):
                                  .replace('_', '-')
 
     # the consul service entry
-    consulSession.agent.service.register(
+    consul_session.agent.service.register(
         name=service.name,
         service_id=service.consul_name,
-        port=service.app.config['PORT'],
+        # port=service.app.config['PORT'],
+        port=service.config.port
     )
 
 
@@ -31,21 +32,22 @@ def deregister_service(service):
     # if the service has been registered
     if hasattr(service, 'consul_name'):
         # deregister it
-        consulSession.agent.service.deregister(service.consul_name)
-        consulSession.agent.check.deregister(service.consul_name)
+        consul_session.agent.service.deregister(service.consul_name)
+        consul_session.agent.check.deregister(service.consul_name)
 
 
 def get_services():
     ''' Return a list of the active services. '''
-    return consulSession.agent.services()
+    return consul_session.agent.services()
 
 
 def service_location_by_name(key):
     ''' Return the service entry matching the given key '''
     # grab the registry of services
     # todo: go through service proxy service for more efficient loadbalancing
-    services = ["localhost:{}".format(service['Port']) for service in get_services().values() \
-                                                    if service['Service'] == key ]
+    services = ["localhost:{}".format(service['Port']) \
+                                for service in get_services().values() \
+                                                if service['Service'] == key]
     # return a random entry from the possibilities
     return random.choice(services)
 
@@ -53,27 +55,25 @@ def service_location_by_name(key):
 def keep_alive(service):
     ''' Ping the registry on an interval to show good health. '''
 
-    # the default tt is 10 sec
+    # the default ttl is 10 sec
     ttl = service.ttl if hasattr(service, 'ttl') else 10
 
     # register the service with consul
     register_service(service)
     # add a ttl check for the service in case we die
-    consulSession.agent.check.register(
-        name = service.consul_name,
-        check = Check.ttl(str(ttl) + 's'),
+    consul_session.agent.check.register(
+        name=service.consul_name,
+        check=consul.Check.ttl(str(ttl) + 's'),
     )
 
-    # the keep alive check
-    def run_check():
-        # continuously run
-        while True:
-            # sleep every 2 seconds
-            time.sleep(2)
-            # tell the agent that we are passing the ttl check
-            consulSession.agent.check.ttl_pass(service.consul_name, 'Agent alive and reachable.')
+    def pass_ttl():
+        # tell the agent that we are passing the ttl check
+        consul_session.agent.check.ttl_pass(service.consul_name, 'Agent alive and reachable.')
 
-    # create a thread that will run the consumer
-    thread = threading.Thread(target=run_check)
-    # start the thread
-    thread.start()
+    # the interval to perform the check (in millisecons)
+    interval = 2000
+
+    # create a period callback that will perform the check every {t} seconds
+    periodic_callback = tornado.ioloop.PeriodicCallback(pass_ttl, callback_time=interval)
+
+    return periodic_callback

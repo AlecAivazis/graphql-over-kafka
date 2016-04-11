@@ -1,7 +1,7 @@
 # external imports
-from nautilus import APIGateway
+import nautilus
 # local imports
 from .schema import schema
 
-# create a nautilus service with just the schema
-service = APIGateway(schema=schema)
+class {{name.title()}}(nautilus.APIGateway):
+    schema = schema

@@ -1,8 +1,9 @@
 # local imports
 from nautilus.api import create_model_schema
-from nautilus.network.actionHandlers import noop_handler
+from nautilus.network.amqp.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
 from .modelService import ModelService
+from nautilus.models.util import create_connection_model
 
 class ConnectionService(ModelService):
     """
@@ -25,7 +26,7 @@ class ConnectionService(ModelService):
             .. code-block:: python
 
                 # external imports
-                from nautilus import ConnectionService
+                import nautilus
 
                 # the services to connect
                 from local.directory import service as service_one
@@ -34,25 +35,42 @@ class ConnectionService(ModelService):
                 class ServiceConfig:
                     SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/connections.db'
 
-                service = ConnectionService(
-                    services = [service_one, service_two],
-                    configObject = ServiceConfig
-                )
+                class MyConnection(nautilus.ConnectionService):
+                    services = [service_one, service_two]
+                    config = ServiceConfig
 
     """
 
-    def __init__(self, services, additonal_action_handler = noop_handler, **kwargs):
+    services = []
+    additional_action_handler = noop_handler
 
-        # *sigh*
-        from nautilus.models import create_connection_model
+    def __init__(self, **kwargs):
 
         # make sure we were passed more than one service
-        if len(services) < 2:
-            raise Exception("Please provide more than one service to connect")
+        if len(self.services) < 2:
+            raise ValueError("Please provide more than one service to connect.")
 
-        # # create the service
+        # the models of each service
+        self._service_models = [service.model for service in self.services]
+
+        # make sure there is a unique name for every service
+        if len({model.model_name for model in self._service_models}) \
+               != len(self._service_models):
+            raise ValueError("Can only connect models with different name")
+
+        # create the service
         super().__init__(
-            model = create_connection_model(services),
-            name = connection_service_name(*services),
+            model=create_connection_model(self._service_models),
+            name=connection_service_name(*self.services),
             **kwargs
         )
+
+
+    def get_base_models(self):
+        """
+            Returns the models managed by this service.
+
+            Returns:
+                (list): the models managed by the service
+        """
+        return self._service_models

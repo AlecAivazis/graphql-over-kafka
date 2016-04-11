@@ -1,8 +1,8 @@
 # external imports
-from graphene import Field, List, relay
-from graphene.relay import ConnectionField, Node
+from graphene import List
+from graphene.relay import ConnectionField
 # local imports
-from nautilus.auth import current_user
+import nautilus
 from nautilus.network import query_service
 from nautilus.api.objectTypes import ServiceObjectType
 from nautilus.api.objectTypes.serviceObjectType import serivce_objects
@@ -59,7 +59,10 @@ class Connection(ConnectionField):
 
         # we are supposed to perform the resolve
 
-        assert relationship == 'many', 'single relationships are not yet supported'
+        # if the relationship is a value we dont yet support
+        if relationship != 'many':
+            # yell loudly
+            raise ValueError('single relationships are not yet supported')
 
         # save references to constructor arguments
         self.target = target
@@ -81,7 +84,6 @@ class Connection(ConnectionField):
 
         # the target class for the connection
         target = self.target
-
         # if we were given a string to target
         if isinstance(target, str):
             # if the string points to a service object we recognize
@@ -124,7 +126,7 @@ class Connection(ConnectionField):
             related = query_service(
                 connection_service,
                 [target_service_name],
-                join_filter
+                filters=join_filter
             )
 
             # if there were no related fields
@@ -151,16 +153,32 @@ class Connection(ConnectionField):
         # if there is more than one result for a "one" relation
         elif len(results) > 1 and self.relationship == 'one':
             # yell loudly
-            raise Exception("Inconsistent state reached: multiple entries " + \
+            raise ValueError("Inconsistent state reached: multiple entries " + \
                                         "resolving a foreign key reference")
 
         ## remove instances of the target that the user is not allowed to see
-
         # if we need to apply some sort of authorization
         if hasattr(target, 'auth'):
+
+            try:
+                # grab the current user from the request_context
+                current_user = info.request_context.current_user
+            # if there is no user
+            except AttributeError:
+                raise Exception("User is not accessible.")
+
+            # if the current reqeust is not logged in
+            if not current_user:
+                # yell loudly
+                raise nautilus.auth.AuthorizationError("User is not logged in.")
+
             # apply the authorization criteria to the result
-            results = [result for result in results \
-                                if target.auth(target(**result), current_user)]
+            results = [
+                result for result in results \
+                if target.auth(
+                    target(**result),
+                    current_user.decode('utf-8'))
+            ]
 
         ## deal with target relationship types
 
@@ -171,6 +189,7 @@ class Connection(ConnectionField):
 
         # todo: think about doing this at the join step
         # (how to specify both sides of relationship in one spot)
+
         # if we are on the `one` side of the relationship
         elif self.relationship == 'one':
             # pull the first item out of the list

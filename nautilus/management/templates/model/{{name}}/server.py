@@ -1,18 +1,15 @@
 # third party imports
-from nautilus import ModelService
-# third party imports
-from sqlalchemy import Column, Text
-from nautilus.models import HasID, BaseModel, CRUDNotificationCreator
+import nautilus
+from nautilus.models import BaseModel, CRUDNotificationCreator, fields
 
-class {{name.title()}}(CRUDNotificationCreator, HasID, BaseModel):
+class {{name.title()}}(CRUDNotificationCreator, BaseModel):
     pass
 
 
 class ServiceConfig:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/{{name}}.db'
+    databuse_url = 'sqlite:////tmp/{{name}}.db'
 
 
-service = ModelService(
-    configObject = ServiceConfig,
-    model = {{name.title()}},
-)
+class {{name.title()}}Service(nautilus.ModelService):
+    model = {{name.title()}}
+    config = ServiceConfig

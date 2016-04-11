@@ -3,10 +3,10 @@
 # third party imports
 from nautilus import ServiceManager
 # local imports
-from server import service
+from server import {{name.title()}}
 
 # create a manager wrapping the service
-manager = ServiceManager(service)
+manager = ServiceManager({{name.title()}})
 
 if __name__ == '__main__':
     manager.run()

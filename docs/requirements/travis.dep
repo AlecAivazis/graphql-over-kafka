@@ -1,0 +1,16 @@
+bcrypt==2.0.0
+click==6.3
+graphene==0.8.0
+graphql-core==0.4.12.1
+graphql-relay==0.3.3
+Jinja2==2.8
+nose==1.3.7
+nose2==0.6.4
+peewee==2.8.0
+peewee-async==0.4.1
+pika==0.10.0
+python-consul==0.6.0
+requests==2.9.1
+tornado==4.3
+wtf-peewee==0.2.6
+WTForms==2.1

@@ -1,83 +1,66 @@
 # external imports
-from sqlalchemy.ext.declarative import declared_attr
-from flask.ext.jsontools import JsonSerializableBase
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.inspection import inspect
+from playhouse.signals import Model
+import peewee
 # local imports
-from nautilus import admin
-from ..db import db
+from ..database import db
 
 class _Meta(type):
     """
-        The base metaclass for the nautilus models. Currently, it's primary use is to
-        automatically register a model class with the admin after it is created.
+        The base metaclass for the nautilus models.
     """
 
-    def __init__(self, name, bases, attributes, **kwds):
+    def __init__(self, name, bases, attributes):
         # create the super class
-        super().__init__(name, bases, attributes, **kwds)
-        # if the class is not a nautilus base class
-        if 'nautilus_base' not in attributes or not attributes['nautilus_base']:
-            # perform the necessary functions
-            self.onCreation()
+        super().__init__(name, bases, attributes)
+        # for each base we inherit from
+        for base in bases:
+            # if the base defines some mixin behavior
+            if hasattr(base, '__mixin__'):
+                # treat the base like a mixin
+                base.__mixin__(self)
 
-        return
+        # save the name in the class
+        self.model_name = name
 
-class _MixedMeta(_Meta, type(db.Model)):
+
+class _MixedMeta(_Meta, peewee.BaseModel):
     """
         This meta class mixes the sqlalchemy model meta class and the nautilus one.
     """
 
+class BaseModel(Model, metaclass=_MixedMeta):
 
-JsonBase = declarative_base(cls=(JsonSerializableBase,))
+    class Meta:
+        database = db
 
-class BaseModel(db.Model, JsonBase, metaclass=_MixedMeta):
-
-    nautilus_base = True # necessary to prevent meta class behavior on this model
-
-    def __init__(self, **kwargs):
-        """ treat kwargs as attribute assignment """
-        # loop over the given kwargs
-        for key, value in kwargs.items():
-            # treat them like attribute assignments
-            setattr(self, key, value)
 
     def _json(self):
         # build a dictionary out of just the columns in the table
         return {
-            column.name: getattr(self, column.name) \
-                for column in type(self).columns()
+            field.name: getattr(self, field.name) \
+                for field in type(self).fields()
         }
-        
+
 
     @classmethod
-    def onCreation(cls): pass
+    def primary_key(cls):
+        """
+            Retrieve the primary key of the database table.
+        """
+        return cls._meta.primary_key
+
 
     @classmethod
-    def primary_keys(cls):
-        return [key.name for key in inspect(cls).primary_key]
+    def required_fields(cls):
+        """
+            Retrieve the required fields for this model.
+        """
+        return [field for field in cls.fields() if not field.null]
+
 
     @classmethod
-    def requiredFields(cls):
-        return [key.name for key in inspect(cls).columns if not key.nullable]
-
-    @classmethod
-    def columns(cls):
-        return inspect(cls).columns
-
-    def primary_key(self):
-        return getattr(self, type(self).primary_keys()[0])
-
-    def save(self):
-        # add the entry to the db session
-        db.session.add(self)
-        # commit the entry
-        db.session.commit()
-
-    @declared_attr
-    def __tablename__(self):
-        return '{}_{}'.format(self.__module__.split('.')[-1], self.__name__.lower())
-
-    __abstract__ = True
-    __table_args__ = dict(mysql_charset='utf8')
-
+    def fields(cls):
+        """
+            Returns the fields of the table.
+        """
+        return cls._meta.fields.values()

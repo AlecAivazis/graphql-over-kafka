@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Create an Account{% end %}
+{% block description %}Create a new account.{% end %}
+{% block bodytag %}register{% end %}
+
+{% block body %}
+  <div class="container custom-container">
+    <div class="va-wrapper">
+      <div class="view registration-view container">
+        <div class="box row">
+          <div class="col-sm-12">
+            <div class="header">
+              <span>Create an Account</span>
+            </div>
+            <form class="registration-form form-horizontal sp-form" role="form" method="post">
+              {% module xsrf_form_html() %}
+              <div class="form-group group-email" form-group>
+                <label class="col-sm-4">Email</label>
+                <div class="col-sm-8">
+                  {% raw form.email(placeholder='Email', required='true', type='email') %}
+                </div>
+              </div>
+              <div class="form-group group-password" form-group>
+                <label class="col-sm-4">Password</label>
+                <div class="col-sm-8">
+                  {% raw form.password(placeholder='Password', required='true', type='password') %}
+                </div>
+              </div>
+              <button class="btn btn-register btn-sp-green" type="submit">Create Account</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% end %}
