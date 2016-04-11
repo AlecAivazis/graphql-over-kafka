@@ -44,7 +44,7 @@ class ConnectionService(ModelService):
     services = []
     additional_action_handler = noop_handler
 
-    def __init__(self,  **kwargs):
+    def __init__(self, **kwargs):
 
         # make sure we were passed more than one service
         assert len(self.services) >= 2, (
@@ -56,14 +56,14 @@ class ConnectionService(ModelService):
 
         # make sure there is a unique model name for every service
         assert len({model.model_name for model in self._service_models}) \
-           == len(self._service_models), (
-           "Can only connect models with different name"
+               == len(self._service_models), (
+                   "Can only connect models with different name"
         )
 
         # create the service
         super().__init__(
-            model = create_connection_model(self._service_models),
-            name = connection_service_name(*self.services),
+            model=create_connection_model(self._service_models),
+            name=connection_service_name(*self.services),
             **kwargs
         )
 

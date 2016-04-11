@@ -1,5 +1,3 @@
-# external imports
-import tornado
 # local imports
 from .base import AuthRequestHandler
 

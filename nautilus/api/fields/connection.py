@@ -1,7 +1,8 @@
 # external imports
-from graphene import Field, List, relay
-from graphene.relay import ConnectionField, Node
+from graphene import List
+from graphene.relay import ConnectionField
 # local imports
+import nautilus
 from nautilus.network import query_service
 from nautilus.api.objectTypes import ServiceObjectType
 from nautilus.api.objectTypes.serviceObjectType import serivce_objects
@@ -149,7 +150,7 @@ class Connection(ConnectionField):
         # if there is more than one result for a "one" relation
         elif len(results) > 1 and self.relationship == 'one':
             # yell loudly
-            raise Exception("Inconsistent state reached: multiple entries " + \
+            raise ValueError("Inconsistent state reached: multiple entries " + \
                                         "resolving a foreign key reference")
 
         ## remove instances of the target that the user is not allowed to see
@@ -163,15 +164,18 @@ class Connection(ConnectionField):
             except AttributeError:
                 raise Exception("User is not accessible.")
 
-            # make sure the user is logged in
-            assert current_user, "User is not logged in."
+            # if the current reqeust is not logged in
+            if not current_user:
+                # yell loudly
+                raise nautilus.auth.AuthorizationError("User is not logged in.")
 
             # apply the authorization criteria to the result
-            results = [result for result in results \
+            results = [
+                result for result in results \
                 if target.auth(
                     target(**result),
-                    current_user.decode('utf-8')
-            )]
+                    current_user.decode('utf-8'))
+            ]
 
         ## deal with target relationship types
 

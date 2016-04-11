@@ -1,5 +1,4 @@
 # external imports
-from graphene.relay import Node
 from graphene.core.classtypes.objecttype import ObjectType
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports

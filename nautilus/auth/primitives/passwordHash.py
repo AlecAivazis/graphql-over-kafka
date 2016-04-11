@@ -5,7 +5,7 @@ import bcrypt
 class PasswordHash:
     """ This is a wrapper class over password hashes that abstracts equality """
 
-    def __init__(self, hash_, rounds = None):
+    def __init__(self, hash_, rounds=None):
         # make sure the hash is valid
         assert len(hash_) == 60, 'bcrypt hash should be 60 chars.'
         assert hash_.count('$'.encode('utf-8')) == 3, 'bcrypt hash should have 3x "$".'

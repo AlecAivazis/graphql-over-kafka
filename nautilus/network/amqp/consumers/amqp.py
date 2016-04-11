@@ -1,6 +1,6 @@
-from pika import adapters
-import pika
 import logging
+import pika
+from pika import adapters
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')

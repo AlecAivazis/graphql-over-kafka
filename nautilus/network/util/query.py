@@ -33,7 +33,7 @@ def query_graphql_service(url, name, fields, filters=None, query_type='query'):
         return data_request['data'][name]
 
 
-def query_service(service, fields, name=None, filters = None):
+def query_service(service, fields, name=None, filters=None):
     '''
         Apply the given filters to a query of a model service given its name
         and the desired fields.
@@ -49,7 +49,7 @@ def query_service(service, fields, name=None, filters = None):
     )
 
 
-def query_api(model, fields, filters = None):
+def query_api(model, fields, filters=None):
     '''
         Perform the given query on the api gateway and turn the results.
         Use this function to avoid hard coding the name of the api gateway.
@@ -67,11 +67,11 @@ def combine_action_handlers(*args):
         which will call all of them.
     """
     # the combined action handler
-    def combinedActionHandler(action_type, payload):
+    def combined_action_handler(action_type, payload):
         # goes over every given handler
         for handler in args:
             # call the handler
             handler(action_type, payload)
 
     # return the combined action handler
-    return combinedActionHandler
+    return combined_action_handler

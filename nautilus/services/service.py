@@ -1,10 +1,7 @@
 # external imports
-import os
-import requests
 import tornado.ioloop
 import tornado.web
 # local imports
-import nautilus
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 import nautilus.network.registry as registry
@@ -15,14 +12,14 @@ from nautilus.api.endpoints import (
 )
 
 class ServiceMetaClass(type):
-    def __init__(self, name, bases, attributes):
+    def __init__(cls, name, bases, attributes):
         # create the super class
         super().__init__(name, bases, attributes)
 
         # if the object does not yet have a name
-        if not self.name or self.name == 'Service':
+        if not cls.name or cls.name == 'Service':
             # use the name of the class record
-            self.name = name
+            cls.name = name
 
 
 class Service(metaclass=ServiceMetaClass):
@@ -102,7 +99,7 @@ class Service(metaclass=ServiceMetaClass):
         # create a tornado web application
         self.app = tornado.web.Application(
             self._request_handlers,
-            debug=self.config.get('debug',False),
+            debug=self.config.get('debug', False),
             cookie_secret=self.config.get('secret_key', 'default_secret')
         )
         # attach the ioloop to the application
@@ -191,7 +188,7 @@ class Service(metaclass=ServiceMetaClass):
         return [
             (r"/", GraphQLRequestHandler, dict(schema=self.schema)),
             (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
-                                            dict(path=api_endpoint_static)),
+                                                dict(path=api_endpoint_static)),
             (r"/graphiql/?", GraphiQLRequestHandler),
         ]
 
@@ -237,7 +234,7 @@ class Service(metaclass=ServiceMetaClass):
         def decorator(wrapped_class, **kwds):
             # add the endpoint at the given route
             cls._routes.append(
-                dict(url = route, request_handler=wrapped_class, config=kwds)
+                dict(url=route, request_handler=wrapped_class, config=kwds)
             )
             # return the class undecorated
             return wrapped_class

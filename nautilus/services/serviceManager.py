@@ -36,8 +36,8 @@ class ServiceManager:
 
             # run the service
             self.service_instance.run(
-                host = host,
-                port = int(port),
+                host=host,
+                port=int(port),
             )
 
         @group.command(help="Make sure the models have been written to the db.")

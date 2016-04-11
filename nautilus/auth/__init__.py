@@ -3,6 +3,7 @@ import random
 import string
 # local imports
 from .decorators import *
+from .exceptions import *
 from .primitives import *
 from .models import *
 from .requestHandlers import *

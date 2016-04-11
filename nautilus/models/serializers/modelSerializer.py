@@ -2,7 +2,7 @@ from json import JSONEncoder
 
 class ModelSerializer(JSONEncoder):
     """
-        This encoder serializes nautilus models to JSON 
+        This encoder serializes nautilus models to JSON
     """
 
     def default(self, obj):
@@ -19,4 +19,4 @@ class ModelSerializer(JSONEncoder):
         """
             This function performs the serialization on the given object.
         """
-        return self.encode(obj)
+        return self.encode(obj)    

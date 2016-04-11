@@ -3,7 +3,7 @@ import os
 import errno
 from jinja2 import Template
 
-def render_template(template, out_dir='.', context={}):
+def render_template(template, out_dir='.', context=None):
     '''
         This function renders the template desginated by the argument to the
         designated directory using the given context.
@@ -41,7 +41,7 @@ def render_template(template, out_dir='.', context={}):
             # create a template out of the source file contents
             template = Template(file.read())
             # render the template with the given contents
-            template_rendered = template.render(**context)
+            template_rendered = template.render(**(context or {}))
 
             # the location of the source relative to the template directory
             source_relpath = os.path.relpath(source_file, template_directory)

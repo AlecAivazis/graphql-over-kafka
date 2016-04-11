@@ -1,6 +1,5 @@
 # local imports
 from nautilus.conventions.services import api_gateway_name
-from nautilus.network.amqp.actionHandlers import noop_handler
 from .service import Service
 
 

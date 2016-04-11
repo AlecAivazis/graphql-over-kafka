@@ -6,7 +6,7 @@ import consul
 import tornado
 
 # create a consul session
-consulSession = consul.Consul()
+consul_session = consul.Consul()
 
 def register_service(service):
     ''' Add a service to the registry service. '''
@@ -19,7 +19,7 @@ def register_service(service):
                                  .replace('_', '-')
 
     # the consul service entry
-    consulSession.agent.service.register(
+    consul_session.agent.service.register(
         name=service.name,
         service_id=service.consul_name,
         # port=service.app.config['PORT'],
@@ -32,13 +32,13 @@ def deregister_service(service):
     # if the service has been registered
     if hasattr(service, 'consul_name'):
         # deregister it
-        consulSession.agent.service.deregister(service.consul_name)
-        consulSession.agent.check.deregister(service.consul_name)
+        consul_session.agent.service.deregister(service.consul_name)
+        consul_session.agent.check.deregister(service.consul_name)
 
 
 def get_services():
     ''' Return a list of the active services. '''
-    return consulSession.agent.services()
+    return consul_session.agent.services()
 
 
 def service_location_by_name(key):
@@ -47,7 +47,7 @@ def service_location_by_name(key):
     # todo: go through service proxy service for more efficient loadbalancing
     services = ["localhost:{}".format(service['Port']) \
                                 for service in get_services().values() \
-                                                if service['Service'] == key ]
+                                                if service['Service'] == key]
     # return a random entry from the possibilities
     return random.choice(services)
 
@@ -61,14 +61,14 @@ def keep_alive(service):
     # register the service with consul
     register_service(service)
     # add a ttl check for the service in case we die
-    consulSession.agent.check.register(
+    consul_session.agent.check.register(
         name=service.consul_name,
         check=consul.Check.ttl(str(ttl) + 's'),
     )
 
     def pass_ttl():
         # tell the agent that we are passing the ttl check
-        consulSession.agent.check.ttl_pass(service.consul_name, 'Agent alive and reachable.')
+        consul_session.agent.check.ttl_pass(service.consul_name, 'Agent alive and reachable.')
 
     # the interval to perform the check (in millisecons)
     interval = 2000

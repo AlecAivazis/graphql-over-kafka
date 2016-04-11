@@ -48,5 +48,5 @@ class Config(dict):
                 not isinstance(getattr(config, attr), collections.abc.Callable)
             )
 
-        return { attr: getattr(config, attr) for attr in dir(config) \
+        return {attr: getattr(config, attr) for attr in dir(config) \
                                                     if is_user_attribute(attr)}

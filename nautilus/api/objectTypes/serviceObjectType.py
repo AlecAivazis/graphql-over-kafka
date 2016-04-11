@@ -1,5 +1,5 @@
 # external imports
-from graphene import ObjectType, Field, String
+from graphene import String
 from graphene.relay import Node
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
@@ -58,7 +58,7 @@ class ServiceObjectTypeMeta(type(Node)):
         serivce_objects[name] = self
 
 
-class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
+class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
     """
         This object type represents data maintained by a remote service.
         `Connection`s to and from other `ServiceObjectType`s are resolved
@@ -79,7 +79,7 @@ class ServiceObjectType(Node, metaclass = ServiceObjectTypeMeta):
                                         if connection.attname == attr][0]
             # resolve the connection
             return connection.resolver(self, {}, {})
-            
+
         # if there was no connection
         except KeyError:
             # then we're looking at an attribute we dont know about

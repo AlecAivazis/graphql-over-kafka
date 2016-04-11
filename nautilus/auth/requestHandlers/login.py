@@ -2,13 +2,9 @@
 import tornado
 # local imports
 from nautilus.network import query_service
-from nautilus.conventions.services import api_gateway_name
 from .base import AuthRequestHandler
 from ..models import UserPassword
-from .forms import (
-    LoginForm,
-    RegistrationForm,
-)
+from .forms import LoginForm
 
 class LoginHandler(AuthRequestHandler):
     """

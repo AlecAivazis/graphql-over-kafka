@@ -1,6 +1,5 @@
-import uuid
+# external imports
 import tornado
-import time
 from tornado.concurrent import Future
 from graphql.core.pyutils.defer import Deferred
 from graphql.core.execution.middlewares.utils import resolver_has_tag, tag_resolver
@@ -8,14 +7,14 @@ from graphql.core.execution.middlewares.utils import resolver_has_tag, tag_resol
 
 _nautilus_tag = 'nautilus_service'
 
-def nautilus_service(f):
+def nautilus_service(func):
     """
         Marks a resolver to run inside the ioloop.
     """
-    return tag_resolver(f, _nautilus_tag)
+    return tag_resolver(func, _nautilus_tag)
 
 @tornado.gen.coroutine
-def execute_resolver(resolver, deffered):
+def execute_resolver(resolver, deferred):
     """
         This function executes the given resolver, passing it
     """
@@ -63,11 +62,12 @@ class TornadoExecutionMiddleware:
         # retrieve the deffered execution
         deferred = executor()
 
-        # make sure it is a deffered object
-        assert isinstance(deferred, Deferred), (
-            'Another middleware has converted the execution result ' + \
-                                               'away from a Deferred.'
-        )
+        # if the executor is not a deffered
+        if not isinstance(deferred, Deferred):
+            # yell loudly
+            raise ValueError('Another middleware has converted the ' +
+                             'execution result away from a Deferred.'
+                            )
 
         # when the deferred is finished update the future
         deferred.add_callbacks(future.set_result, future.set_exception)

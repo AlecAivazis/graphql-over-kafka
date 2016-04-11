@@ -1,10 +1,7 @@
 import json
 import tornado.gen
 from tornado.web import MissingArgumentError
-from graphql.core.error import (
-    GraphQLError,
-    format_error as format_graphql_error
-)
+from graphql.core.error import format_error as format_graphql_error
 # local imports
 from nautilus.auth import AuthRequestHandler
 

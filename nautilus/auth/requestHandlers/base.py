@@ -32,7 +32,7 @@ class AuthRequestHandler(RequestHandler):
             self._token_name,
             self._token_contents(user),
             domain="",
-    )
+        )
 
 
     def logout_user(self):

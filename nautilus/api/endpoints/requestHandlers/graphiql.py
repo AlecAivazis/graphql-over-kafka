@@ -6,7 +6,7 @@ from nautilus.network.http import RequestHandler
 
 class GraphiQLRequestHandler(RequestHandler):
 
-    def initialize(self, schema=None, async=False):
+    def initialize(self, schema=None):
         self._schema = schema
 
     def get(self):
