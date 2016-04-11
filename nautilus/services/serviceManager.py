@@ -40,6 +40,7 @@ class ServiceManager:
                 port=int(port),
             )
 
+
         @group.command(help="Make sure the models have been written to the db.")
         def syncdb():
             """ Create the database entries. """
@@ -63,9 +64,31 @@ class ServiceManager:
                 print("There are no models to add.")
 
 
+        @group.command(help="Drop the database tables associated with this service.")
+        def cleardb():
+            """ Drop the tables associated with this service. """
+            # instantiate the service before we do anything
+            service = self.service()
+            # get the models managed by the service
+            models = getattr(service, 'get_models', lambda: [])()
+
+            # if there are models to create
+            if models:
+                # for each model that we are managing
+                for model in models:
+                    # create the table in the database
+                    model.drop_table(True)
+
+                # notify the user
+                print("Successfully dropped necessary database tables.")
+
+            # otherwise there are no tables to create
+            else:
+                print("There are no models to drop.")
+
+
         # save the command group to the manager
         self.group = group
-
 
     def run(self):
         """ run the command manager """
