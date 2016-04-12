@@ -52,15 +52,12 @@ class ModelService(Service):
             # yell loudly
             raise ValueError("Please provide a model for the model service.")
 
-        # the schema to add to the service
-        self.api_schema = create_model_schema(self.model)
-
         # pull the name of the service from kwargs if it was given
         name = kwargs.pop('name', None) or model_service_name(self.model)
 
         # create the service
         super().__init__(
-            schema=self.api_schema,
+            schema=create_model_schema(self.model),
             name=name,
             **kwargs
         )

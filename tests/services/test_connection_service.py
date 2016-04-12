@@ -79,7 +79,7 @@ class TestUtil(unittest.TestCase):
 
 
     def test_has_valid_schema(self):
-        assert hasattr(self.service, 'api_schema') and self.service.api_schema, (
+        assert hasattr(self.service, 'schema') and self.service.schema, (
             "Model Service did not have a schema."
         )
 
@@ -93,7 +93,7 @@ class TestUtil(unittest.TestCase):
         """ % self.service1.model.model_name
 
 
-        parsed_query = self.service.api_schema.execute(query)
+        parsed_query = self.service.schema.execute(query)
         # make sure there are no errors
         assert parsed_query.errors == [], (
             "Model service schema is invalid: " + str(parsed_query.errors)

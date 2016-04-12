@@ -72,7 +72,6 @@ class ConnectionService(ModelService):
         return combine_action_handlers(
             # combine the default model handlers
             super().action_handler,
-
         )
 
 
