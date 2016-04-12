@@ -1,5 +1,6 @@
 # local imports
 from nautilus.api import create_model_schema
+from nautilus.network.amqp import combine_action_handlers
 from nautilus.network.amqp.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
 from .modelService import ModelService
@@ -42,7 +43,6 @@ class ConnectionService(ModelService):
     """
 
     services = []
-    additional_action_handler = noop_handler
 
     def __init__(self, **kwargs):
 
@@ -58,11 +58,21 @@ class ConnectionService(ModelService):
                != len(self._service_models):
             raise ValueError("Can only connect models with different name")
 
+
         # create the service
         super().__init__(
             model=create_connection_model(self._service_models),
             name=connection_service_name(*self.services),
             **kwargs
+        )
+
+
+    @property
+    def action_handler(self):
+        return combine_action_handlers(
+            # combine the default model handlers
+            super().action_handler,
+
         )
 
 

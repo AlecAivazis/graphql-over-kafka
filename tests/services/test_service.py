@@ -29,15 +29,6 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_can_accept_action_handler(self):
-
-        def foo(): pass
-
-        assert self.service(action_handler=foo).action_handler == foo, (
-            "Service could not be initialized with a specific action_handler"
-        )
-
-
     def test_can_initialize_with_schema(self):
         # create a mock schema
         schema = MagicMock()
