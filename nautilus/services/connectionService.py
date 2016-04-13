@@ -69,10 +69,19 @@ class ConnectionService(ModelService):
 
     @property
     def action_handler(self):
+        # a connection service should listen for deletes on linked services
+        connected_action_handlers = [self._create_linked_handler(model)
+                                     for model in self._service_models]
+        # print(connected_action_handlers)
+
         return combine_action_handlers(
             # combine the default model handlers
-            super().action_handler,
+            super().action_handler
         )
+
+
+    def _create_linked_handler(self, model): pass
+
 
 
     def get_base_models(self):
