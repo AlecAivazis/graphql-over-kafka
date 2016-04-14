@@ -180,14 +180,18 @@ class TestUtil(unittest.TestCase):
         )
 
         # the action data for a related delete
-        action_type = conventions.get_crud_action('delete', self.service1.model)
-        payload = {self.service1.model.model_name: model1.id}
+        action_type = conventions.get_crud_action(
+            'delete', 
+            self.service1.model,
+            status='success'
+        )
+        payload = dict(id=model1.id)
 
         # fire the action
         self.service.action_handler(action_type, payload, dispatcher=MagicMock())
 
         # make sure the model can't be found
-        self.assertRaises(self.model.get, self.service1_value == model1.id)
+        self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
 
 
     ### Utilities / Test tasks
@@ -198,13 +202,12 @@ class TestUtil(unittest.TestCase):
             self.service1.model.model_name: 'foo',
             self.service2.model.model_name: 'bar'
         }
-        print(self.service.action_handler)
         # fire a create action
         self.service.action_handler(action_type, payload, dispatcher=MagicMock())
+        # the query to find a matching model
+        matching_model = self.service1_value == 'foo'
         # make sure the created record was found and save the id
-        self.model_id = self.model_id = self.model.get(
-            self.service1_value == 'foo'
-        ).id
+        self.model_id = self.model_id = self.model.get(matching_model).id
 
 
     def _verify_action_handler_update(self):

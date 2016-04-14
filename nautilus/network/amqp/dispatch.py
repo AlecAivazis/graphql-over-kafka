@@ -20,6 +20,7 @@ def dispatch(body, exchange, routing_key=''):
     # close the connection
     connection.close()
 
+
 def dispatch_action(action_type, payload):
     """
         This function dispatches an event over the action exchange with the designated

@@ -3,6 +3,7 @@ from nautilus.api import create_model_schema
 from nautilus.network.amqp import combine_action_handlers
 from nautilus.network.amqp.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
+from nautilus.conventions.actions import get_crud_action
 from .modelService import ModelService
 from nautilus.models.util import create_connection_model
 
@@ -58,7 +59,6 @@ class ConnectionService(ModelService):
                != len(self._service_models):
             raise ValueError("Can only connect models with different name")
 
-
         # create the service
         super().__init__(
             model=create_connection_model(self._service_models),
@@ -72,15 +72,35 @@ class ConnectionService(ModelService):
         # a connection service should listen for deletes on linked services
         connected_action_handlers = [self._create_linked_handler(model)
                                      for model in self._service_models]
-        # print(connected_action_handlers)
 
+        # mix the related action handlers into supers
         return combine_action_handlers(
-            # combine the default model handlers
-            super().action_handler
+            super().action_handler,
+            *connected_action_handlers
         )
 
 
-    def _create_linked_handler(self, model): pass
+    def _create_linked_handler(self, model):
+        # the related action type
+        related_action_type = get_crud_action('delete', model, status='success')
+        # the action handler
+        def action_handler(action_type, payload, dispatcher):
+            """ 
+                an action handler to remove related entries in the 
+                connection db. 
+            """
+            # if the action designates a successful delete of the model
+            if action_type == related_action_type:
+                # the id of the deleted model
+                related_id = payload['id']
+                # the query for matching fields
+                matching_records = getattr(self.model, model.model_name) == related_id
+                # find the matching records
+                self.model.delete().where(matching_records).execute()
+
+
+        # pass the action handler
+        return action_handler
 
 
 
