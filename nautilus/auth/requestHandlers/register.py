@@ -55,9 +55,8 @@ class RegisterHandler(AuthRequestHandler):
             if UserPassword.select().where(match_query).count() > 0:
                 # yell loudly
                 raise ValueError("The user is already registered.")
-
             # create an entry in the user password table
-            password = UserPassword(**data, user=user_data['id'])
+            password = UserPassword(user=user_data['id'], **data)
             # save it to the database
             password.save()
 
