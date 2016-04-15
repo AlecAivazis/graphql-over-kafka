@@ -30,7 +30,7 @@ class ModelService(Service):
                     name = models.fields.CharField()
 
                 class ServiceConfig:
-                    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
+                    database_url = 'sqlite:////tmp/models.db'
 
                 class MyModelService(nautilus.ModelService):
                     model = Model

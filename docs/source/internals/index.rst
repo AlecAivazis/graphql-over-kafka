@@ -1,4 +1,4 @@
-nautilus package
+Module Index
 ================
 
 Subpackages

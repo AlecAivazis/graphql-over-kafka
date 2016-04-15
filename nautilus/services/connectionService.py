@@ -35,7 +35,7 @@ class ConnectionService(ModelService):
                 from other.local.directory import service as service_two
 
                 class ServiceConfig:
-                    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/connections.db'
+                    database_url = 'sqlite:////tmp/connections.db'
 
                 class MyConnection(nautilus.ConnectionService):
                     services = [service_one, service_two]

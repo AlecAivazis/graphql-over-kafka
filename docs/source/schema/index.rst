@@ -22,28 +22,25 @@ base class for the object type that represents remote data.
     :members:
 
 
-Designating a GraphQL Equivalent of an SQLAlchemy Type
+Designating a GraphQL Equivalent of a Nautilus Field
 -------------------------------------------------------
 
-Due to the early age of the Graphene/GraphQL community, not all SQLAlchemy types
-have conversions already specified. If you encounter such a type, consider
-posting a PR. If that's not your style, you can always register it yourself:
+If you create (or find) a custom field that is compatible with peewee, the ORM
+used by nautilus internally, you might find the need to provide a custom handler
+in order for the schema generator to be able to convert it to the correct GraphQL
+type. 
 
 
-.. autofunction:: nautilus.api.convert_sqlalchemy_type
+.. autofunction:: nautilus.contrib.graphene_peewee.converter
 
+This function follows the [singledispatch] pattern. Registering a new type looks 
+something like:
 
 .. code-block:: python
 
-    from nautilus.models import BaseModel
-    from nautilus.api import convert_sqlalchemy_type
-    from sqlalchemy import Column
-    from sqlalchemy.dialects.postgresql import UUID
-    from graphene.core.types.scalars import String
+    from awesomepackage import AwesomeField
+    from nautilus.contrib.graphene_peewee import converter
 
-    class Product(BaseModel):
-        id = Column(UUID, primary_key = True)
-
-    @convert_sqlalchemy_type.register(UUID)
+    @converter.register(AwesomeField)
     def convert_column_to_string(type, column):
         return String(description = column.doc)
