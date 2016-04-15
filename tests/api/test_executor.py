@@ -1,12 +1,18 @@
 # external imports
 import unittest
+import tornado.testing
 from graphene import Schema, ObjectType, String, resolve_only_args
+from graphql.core.execution.middlewares.utils import resolver_has_tag
+from graphql.core.error import format_error
 # local imports
 import nautilus
+from nautilus.api.executor import async_field, is_async_field
 
-class TestUtil(unittest.TestCase):
+class TestUtil(tornado.testing.AsyncTestCase):
 
     def setUp(self):
+        # create an ioloop to use
+        self.io_loop = self.get_new_ioloop()
 
         # import the executor
         from nautilus.api.executor import TornadoExecutor
@@ -22,44 +28,55 @@ class TestUtil(unittest.TestCase):
             def resolve_sync(self):
                 return 'hello'
 
+            @async_field
+            def resolve_async(deferred, ):
+                deferred.callback('hello')
 
-            @resolve_only_args
-            def resolve_async(self):
-                return 'hello'
 
         # attach the query to the schema
         self.schema.query = TestQuery
 
 
+    def test_can_tag_functions_as_async(self):
+        @async_field
+        def test_func(): 
+            "a function to test"
+
+        assert is_async_field(test_func), (
+            "Test function could not be tagged as an aync field."
+        )
+
+
+
+    @tornado.testing.gen_test
     def test_can_execute_sync_query(self):
 
         # the query to test the schema
         test_query = "query{ sync }"
         # resolve the query in the schema
-        resolved_query = self.schema.execute(test_query)
+        resolved_query = yield self.schema.execute(test_query)
 
         # assert that there are no errors
         assert len(resolved_query.errors) == 0, (
             "Schema contained errors."
         )
-
         assert resolved_query.data['sync'] == 'hello', (
             "Sync query did not have the correct data value."
         )
 
 
+    @tornado.testing.gen_test
     def test_can_execute_async_query(self):
 
         # the query to test the schema
         test_query = "query{ async }"
         # resolve the query in the schema
-        resolved_query = self.schema.execute(test_query)
+        resolved_query = yield self.schema.execute(test_query)
 
         # assert that there are no errors
         assert len(resolved_query.errors) == 0, (
-            "Schema contained errors."
+            "Schema contained errors: " + ','.join(resolved_query.errors)
         )
-
         assert resolved_query.data['async'] == 'hello', (
             "Async query did not have the correct data value."
         )
