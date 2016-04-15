@@ -4,6 +4,22 @@ nautilus.services package
 Submodules
 ----------
 
+nautilus.services.apiGateway module
+-----------------------------------
+
+.. automodule:: nautilus.services.apiGateway
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+nautilus.services.authService module
+------------------------------------
+
+.. automodule:: nautilus.services.authService
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 nautilus.services.connectionService module
 ------------------------------------------
 

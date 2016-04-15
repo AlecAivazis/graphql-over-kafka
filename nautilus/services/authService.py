@@ -25,7 +25,7 @@ class AuthService(Service):
                 import nautilus
 
                 class ServiceConfig:
-                    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/models.db'
+                    database_url = 'sqlite:////tmp/models.db'
 
                 class MyAuth(nautilus.AuthService):
                     config = ServiceConfig
