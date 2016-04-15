@@ -132,25 +132,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.models.util</h1><div class="highlight"><pre>
-<span></span><span class="c1"># external imports</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">new_class</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">mapper</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">Text</span>
-<span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.db</span> <span class="kn">import</span> <span class="n">db</span>
+<span></span><span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">connection_service_name</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">CRUDNotificationCreator</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
 
-<div class="viewcode-block" id="create_connection_model"><a class="viewcode-back" href="../../../internals/nautilus.models.html#nautilus.models.util.create_connection_model">[docs]</a><span class="k">def</span> <span class="nf">create_connection_model</span><span class="p">(</span><span class="n">services</span><span class="p">):</span>
+<div class="viewcode-block" id="create_connection_model"><a class="viewcode-back" href="../../../internals/nautilus.models.html#nautilus.models.util.create_connection_model">[docs]</a><span class="k">def</span> <span class="nf">create_connection_model</span><span class="p">(</span><span class="n">models</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Create an SQL Alchemy table that connects the provides services &quot;&quot;&quot;</span>
 
     <span class="c1"># the mixins / base for the model</span>
-    <span class="n">bases</span> <span class="o">=</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span>
+    <span class="n">bases</span> <span class="o">=</span> <span class="p">(</span><span class="n">BaseModel</span><span class="p">,)</span>
     <span class="c1"># the fields of the derived</span>
-    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">service</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">services</span><span class="p">}</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="n">model</span><span class="o">.</span><span class="n">model_name</span><span class="p">:</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">}</span>
 
     <span class="c1"># create an instance of base model with the right attributes</span>
-    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">)(</span><span class="n">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="n">services</span><span class="p">),</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">)(</span><span class="n">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="n">models</span><span class="p">),</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -132,12 +132,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.services.apiGateway</h1><div class="highlight"><pre>
-<span></span><span class="c1"># external imports</span>
-<span class="kn">from</span> <span class="nn">flask.ext.cors</span> <span class="kn">import</span> <span class="n">CORS</span>
-<span class="c1"># local imports</span>
+<span></span><span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">api_gateway_name</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
+
 
 <div class="viewcode-block" id="APIGateway"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway">[docs]</a><span class="k">class</span> <span class="nc">APIGateway</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -158,30 +156,15 @@
 <span class="sd">            .. code-block:: python</span>
 
 <span class="sd">                # external imports</span>
-<span class="sd">                from nautilus import APIGateway</span>
+<span class="sd">                import nautilus</span>
+
 <span class="sd">                # local imports</span>
 <span class="sd">                from .schema import schema</span>
 
-<span class="sd">                # create a nautilus service with just the schema</span>
-<span class="sd">                service = APIGateway(schema=schema)</span>
-
+<span class="sd">                class MyAPIGateway(nautilus.APIGateway):</span>
+<span class="sd">                    schema = schema</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-        <span class="c1"># use the name kwarg if it was given</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">api_gateway_name</span><span class="p">()</span>
-
-        <span class="c1"># create the service</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="n">action_handler</span><span class="o">=</span><span class="n">action_handler</span><span class="p">,</span>
-            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span>
-
-        <span class="c1"># add cors headers to the app</span>
-        <span class="n">CORS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span></div>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">api_gateway_name</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

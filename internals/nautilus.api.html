@@ -169,7 +169,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.api.filter.html">nautilus.api.filter package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#module-nautilus.api.filter.helpers">nautilus.api.filter.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#nautilus-api-filter-helpers-module">nautilus.api.filter.helpers module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#module-nautilus.api.filter">Module contents</a></li>
 </ul>
 </li>
@@ -189,14 +189,28 @@
 <span id="nautilus-api-helpers-module"></span><h2>nautilus.api.helpers module<a class="headerlink" href="#module-nautilus.api.helpers" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="nautilus.api.helpers.create_model_schema">
-<code class="descclassname">nautilus.api.helpers.</code><code class="descname">create_model_schema</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/helpers.html#create_model_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.helpers.create_model_schema" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nautilus.api.helpers.</code><code class="descname">create_model_schema</code><span class="sig-paren">(</span><em>target_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/helpers.html#create_model_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.helpers.create_model_schema" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a graphql schema that provides a single model</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.api.helpers.init_service">
-<code class="descclassname">nautilus.api.helpers.</code><code class="descname">init_service</code><span class="sig-paren">(</span><em>service</em>, <em>schema</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/helpers.html#init_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.helpers.init_service" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add GraphQL support to the given Flask app</p>
+<dt id="nautilus.api.helpers.fields_for_model">
+<code class="descclassname">nautilus.api.helpers.</code><code class="descname">fields_for_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/helpers.html#fields_for_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.helpers.fields_for_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the fields for a schema that matches the provided
+nautilus model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>nautilus.model.BaseModel</em>) &#8211; The model to base the field list on</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str, graphqlType&gt;): A mapping of field names to
+graphql types</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(dict&lt;field_name</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

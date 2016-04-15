@@ -134,60 +134,45 @@
   <h1>Source code for nautilus.api.helpers</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">graphene</span>
-<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Field</span>
-<span class="kn">from</span> <span class="nn">flask_graphql</span> <span class="kn">import</span> <span class="n">GraphQLView</span><span class="p">,</span> <span class="n">GraphQL</span>
-<span class="kn">from</span> <span class="nn">graphene.contrib.sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemyObjectType</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.inspection</span> <span class="kn">import</span> <span class="n">inspect</span>
+<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">List</span>
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.filter</span> <span class="kn">import</span> <span class="n">args_for_model</span><span class="p">,</span> <span class="n">filter_model</span>
-<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">convert_sqlalchemy_type</span>
-
-<div class="viewcode-block" id="init_service"><a class="viewcode-back" href="../../../internals/nautilus.api.html#nautilus.api.helpers.init_service">[docs]</a><span class="k">def</span> <span class="nf">init_service</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Add GraphQL support to the given Flask app &quot;&quot;&quot;</span>
-    <span class="c1"># add default graphql endpoints</span>
-    <span class="n">GraphQL</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
-    <span class="c1"># add the index query per service agreement</span>
-    <span class="n">service</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">add_url_rule</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">view_func</span><span class="o">=</span><span class="n">GraphQLView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">))</span></div>
+<span class="kn">from</span> <span class="nn">.filter</span> <span class="kn">import</span> <span class="n">filter_model</span><span class="p">,</span> <span class="n">args_for_model</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">PeeweeObjectType</span><span class="p">,</span> <span class="n">convert_peewee_field</span>
 
 
-<div class="viewcode-block" id="create_model_schema"><a class="viewcode-back" href="../../../schema/index.html#nautilus.api.helpers.create_model_schema">[docs]</a><span class="k">def</span> <span class="nf">create_model_schema</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="create_model_schema"><a class="viewcode-back" href="../../../schema/index.html#nautilus.api.helpers.create_model_schema">[docs]</a><span class="k">def</span> <span class="nf">create_model_schema</span><span class="p">(</span><span class="n">target_model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; This function creates a graphql schema that provides a single model &quot;&quot;&quot;</span>
 
-    <span class="kn">from</span> <span class="nn">nautilus.db</span> <span class="kn">import</span> <span class="n">db</span>
+    <span class="kn">from</span> <span class="nn">nautilus.database</span> <span class="kn">import</span> <span class="n">db</span>
 
     <span class="c1"># create the schema instance</span>
-    <span class="n">schema</span> <span class="o">=</span> <span class="n">graphene</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
-        <span class="n">auto_camelcase</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="p">)</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">graphene</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span><span class="n">auto_camelcase</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-    <span class="c1"># grab the primary key from the Model</span>
-    <span class="n">primary_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span><span class="o">.</span><span class="n">primary_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">primary_key_type</span> <span class="o">=</span> <span class="n">convert_sqlalchemy_type</span><span class="p">(</span><span class="n">primary_key</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">)</span>
+    <span class="c1"># grab the primary key from the model</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="n">target_model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span>
+    <span class="n">primary_key_type</span> <span class="o">=</span> <span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">primary_key</span><span class="p">)</span>
 
-    <span class="c1"># create a graphene object registered with the schema</span>
-    <span class="nd">@schema.register</span>
-    <span class="k">class</span> <span class="nc">ModelObjectType</span><span class="p">(</span><span class="n">SQLAlchemyObjectType</span><span class="p">):</span>
+    <span class="c1"># create a graphene object</span>
+    <span class="k">class</span> <span class="nc">ModelObjectType</span><span class="p">(</span><span class="n">PeeweeObjectType</span><span class="p">):</span>
         <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">target_model</span>
 
-        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">primary_key_type</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;The primary key for this object.&quot;</span><span class="p">)</span>
+        <span class="n">primary_key</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">primary_key_type</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The primary key for this object.&quot;</span><span class="p">)</span>
 
-
-        <span class="k">def</span> <span class="nf">resolve_primary_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span>
+        <span class="nd">@graphene.resolve_only_args</span>
+        <span class="k">def</span> <span class="nf">resolve_primary_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_key</span>
 
 
     <span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">graphene</span><span class="o">.</span><span class="n">ObjectType</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; the root level query &quot;&quot;&quot;</span>
-        <span class="n">all_models</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">ModelObjectType</span><span class="p">,</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="n">args_for_model</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">all_models</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">ModelObjectType</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args_for_model</span><span class="p">(</span><span class="n">target_model</span><span class="p">))</span>
 
-        <span class="k">def</span> <span class="nf">resolve_all_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+
+        <span class="nd">@graphene.resolve_only_args</span>
+        <span class="k">def</span> <span class="nf">resolve_all_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
             <span class="c1"># filter the model query according to the arguments</span>
-            <span class="k">return</span> <span class="n">filter_model</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">filter_model</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 
     <span class="c1"># add the query to the schema</span>
@@ -195,6 +180,33 @@
 
     <span class="k">return</span> <span class="n">schema</span></div>
 
+
+<div class="viewcode-block" id="fields_for_model"><a class="viewcode-back" href="../../../internals/nautilus.api.html#nautilus.api.helpers.fields_for_model">[docs]</a><span class="k">def</span> <span class="nf">fields_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns the fields for a schema that matches the provided</span>
+<span class="sd">        nautilus model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (nautilus.model.BaseModel): The model to base the field list on</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict&lt;field_name: str, graphqlType&gt;): A mapping of field names to</span>
+<span class="sd">                graphql types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># the attribute arguments (no filters)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="p">:</span> <span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> \
+                                        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">fields</span><span class="p">()}</span>
+
+    <span class="c1"># add the primary key field</span>
+
+    <span class="c1"># the primary keys for the Model</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span>
+    <span class="c1"># add the primary key filter to the arg dictionary</span>
+    <span class="n">args</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">primary_key</span><span class="p">)</span>
+
+    <span class="c1"># use the field arguments, without the segments</span>
+    <span class="k">return</span> <span class="n">args</span></div>
 </pre></div>
 
            </div>

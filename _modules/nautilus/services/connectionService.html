@@ -134,9 +134,12 @@
   <h1>Source code for nautilus.services.connectionService</h1><div class="highlight"><pre>
 <span></span><span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.amqp</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.amqp.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">connection_service_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">get_crud_action</span>
 <span class="kn">from</span> <span class="nn">.modelService</span> <span class="kn">import</span> <span class="n">ModelService</span>
+<span class="kn">from</span> <span class="nn">nautilus.models.util</span> <span class="kn">import</span> <span class="n">create_connection_model</span>
 
 <div class="viewcode-block" id="ConnectionService"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.connectionService.ConnectionService">[docs]</a><span class="k">class</span> <span class="nc">ConnectionService</span><span class="p">(</span><span class="n">ModelService</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -159,7 +162,7 @@
 <span class="sd">            .. code-block:: python</span>
 
 <span class="sd">                # external imports</span>
-<span class="sd">                from nautilus import ConnectionService</span>
+<span class="sd">                import nautilus</span>
 
 <span class="sd">                # the services to connect</span>
 <span class="sd">                from local.directory import service as service_one</span>
@@ -168,28 +171,81 @@
 <span class="sd">                class ServiceConfig:</span>
 <span class="sd">                    SQLALCHEMY_DATABASE_URI = &#39;sqlite:////tmp/connections.db&#39;</span>
 
-<span class="sd">                service = ConnectionService(</span>
-<span class="sd">                    services = [service_one, service_two],</span>
-<span class="sd">                    configObject = ServiceConfig</span>
-<span class="sd">                )</span>
+<span class="sd">                class MyConnection(nautilus.ConnectionService):</span>
+<span class="sd">                    services = [service_one, service_two]</span>
+<span class="sd">                    config = ServiceConfig</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">services</span><span class="p">,</span> <span class="n">additonal_action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># *sigh*</span>
-        <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">create_connection_model</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="c1"># make sure we were passed more than one service</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">services</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Please provide more than one service to connect&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">services</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Please provide more than one service to connect.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># # create the service</span>
+        <span class="c1"># the models of each service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_service_models</span> <span class="o">=</span> <span class="p">[</span><span class="n">service</span><span class="o">.</span><span class="n">model</span> <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">services</span><span class="p">]</span>
+
+        <span class="c1"># make sure there is a unique name for every service</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">({</span><span class="n">model</span><span class="o">.</span><span class="n">model_name</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_models</span><span class="p">})</span> \
+               <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_models</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can only connect models with different name&quot;</span><span class="p">)</span>
+
+        <span class="c1"># create the service</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">create_connection_model</span><span class="p">(</span><span class="n">services</span><span class="p">),</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="n">services</span><span class="p">),</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">create_connection_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_models</span><span class="p">),</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">services</span><span class="p">),</span>
             <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a connection service should listen for deletes on linked services</span>
+        <span class="n">connected_action_handlers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_linked_handler</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+                                     <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_models</span><span class="p">]</span>
+
+        <span class="c1"># mix the related action handlers into supers</span>
+        <span class="k">return</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">action_handler</span><span class="p">,</span>
+            <span class="o">*</span><span class="n">connected_action_handlers</span>
+        <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_create_linked_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># the related action type</span>
+        <span class="n">related_action_type</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;success&#39;</span><span class="p">)</span>
+        <span class="c1"># the action handler</span>
+        <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">                an action handler to remove related entries in the </span>
+<span class="sd">                connection db. </span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c1"># if the action designates a successful delete of the model</span>
+            <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="n">related_action_type</span><span class="p">:</span>
+                <span class="c1"># the id of the deleted model</span>
+                <span class="n">related_id</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+                <span class="c1"># the query for matching fields</span>
+                <span class="n">matching_records</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">related_id</span>
+                <span class="c1"># find the matching records</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">matching_records</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+
+        <span class="c1"># pass the action handler</span>
+        <span class="k">return</span> <span class="n">action_handler</span>
+
+
+
+<div class="viewcode-block" id="ConnectionService.get_base_models"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.connectionService.ConnectionService.get_base_models">[docs]</a>    <span class="k">def</span> <span class="nf">get_base_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the models managed by this service.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                (list): the models managed by the service</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_models</span></div></div>
 </pre></div>
 
            </div>

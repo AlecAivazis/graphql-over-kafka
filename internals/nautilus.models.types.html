@@ -162,99 +162,14 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.types.password">
-<span id="nautilus-models-types-password-module"></span><h2>nautilus.models.types.password module<a class="headerlink" href="#module-nautilus.models.types.password" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.models.types.password.Password">
-<em class="property">class </em><code class="descclassname">nautilus.models.types.password.</code><code class="descname">Password</code><span class="sig-paren">(</span><em>rounds=12</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/password.html#Password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.password.Password" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.sql.type_api.TypeDecorator</span></code></p>
-<p>Allows storing and retrieving password hashes using PasswordHash.</p>
-<dl class="attribute">
-<dt id="nautilus.models.types.password.Password.impl">
-<code class="descname">impl</code><a class="headerlink" href="#nautilus.models.types.password.Password.impl" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Text</span></code></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.types.password.Password.process_bind_param">
-<code class="descname">process_bind_param</code><span class="sig-paren">(</span><em>value</em>, <em>dialect</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/password.html#Password.process_bind_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.password.Password.process_bind_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensure the value is a PasswordHash and then return its hash.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.types.password.Password.process_result_value">
-<code class="descname">process_result_value</code><span class="sig-paren">(</span><em>value</em>, <em>dialect</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/password.html#Password.process_result_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.password.Password.process_result_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert the hash to a PasswordHash, if it&#8217;s non-NULL.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.types.password.Password.validator">
-<code class="descname">validator</code><span class="sig-paren">(</span><em>password</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/password.html#Password.validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.password.Password.validator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides a validator/converter for &#64;validates usage.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="nautilus.models.types.password.convert_column_to_string">
-<code class="descclassname">nautilus.models.types.password.</code><code class="descname">convert_column_to_string</code><span class="sig-paren">(</span><em>type</em>, <em>column</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/password.html#convert_column_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.password.convert_column_to_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make sure the password is never included in a schema.</p>
-</dd></dl>
-
+<div class="section" id="nautilus-models-types-password-module">
+<h2>nautilus.models.types.password module<a class="headerlink" href="#nautilus-models-types-password-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.types.s3File">
-<span id="nautilus-models-types-s3file-module"></span><h2>nautilus.models.types.s3File module<a class="headerlink" href="#module-nautilus.models.types.s3File" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.models.types.s3File.S3File">
-<em class="property">class </em><code class="descclassname">nautilus.models.types.s3File.</code><code class="descname">S3File</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/s3File.html#S3File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.s3File.S3File" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">sqlalchemy.sql.type_api.TypeDecorator</span></code></p>
-<p>This type decorator takes a python file and uploads it to the service&#8217;s bucket
-(specified in the config). If a string is given instead, this field will parse
-the string for image information and create a temporary file to upload. When
-retrieving the value from the database, a string will be returned with a
-pre-signed url for universal-access of the file.</p>
-<dl class="attribute">
-<dt id="nautilus.models.types.s3File.S3File.deliminator">
-<code class="descname">deliminator</code><em class="property"> = ':'</em><a class="headerlink" href="#nautilus.models.types.s3File.S3File.deliminator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.models.types.s3File.S3File.folder">
-<code class="descname">folder</code><em class="property"> = ''</em><a class="headerlink" href="#nautilus.models.types.s3File.S3File.folder" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.models.types.s3File.S3File.impl">
-<code class="descname">impl</code><a class="headerlink" href="#nautilus.models.types.s3File.S3File.impl" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Text</span></code></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.types.s3File.S3File.process_bind_param">
-<code class="descname">process_bind_param</code><span class="sig-paren">(</span><em>value</em>, <em>dialect</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/s3File.html#S3File.process_bind_param"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.s3File.S3File.process_bind_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a pre-signed url for the s3 file designated by assuming its of the form
-&lt;bucket&gt;&lt;self.deliminator&gt;&lt;key&gt;.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="nautilus.models.types.s3File.S3File.process_result_value">
-<code class="descname">process_result_value</code><span class="sig-paren">(</span><em>value</em>, <em>dialect</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/s3File.html#S3File.process_result_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.s3File.S3File.process_result_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upload the given file to s3 and turn it into the necessary data to persist
-an s3 location given a python File object. The location of the file is persisted
-in the database as a string of the form &lt;bucket&gt;&lt;self.deliminator&gt;&lt;key&gt;.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="nautilus.models.types.s3File.convert_column_to_string">
-<code class="descclassname">nautilus.models.types.s3File.</code><code class="descname">convert_column_to_string</code><span class="sig-paren">(</span><em>type</em>, <em>column</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/types/s3File.html#convert_column_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.types.s3File.convert_column_to_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Covert the column to a string.</p>
-</dd></dl>
-
+<div class="section" id="nautilus-models-types-s3file-module">
+<h2>nautilus.models.types.s3File module<a class="headerlink" href="#nautilus-models-types-s3file-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.types">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.models.types" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

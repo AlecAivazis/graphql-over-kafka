@@ -164,7 +164,7 @@
 <span id="nautilus-services-connectionservice-module"></span><h2>nautilus.services.connectionService module<a class="headerlink" href="#module-nautilus.services.connectionService" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.services.connectionService.ConnectionService">
-<em class="property">class </em><code class="descclassname">nautilus.services.connectionService.</code><code class="descname">ConnectionService</code><span class="sig-paren">(</span><em>services</em>, <em>additonal_action_handler=&lt;function noop_handler&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/connectionService.html#ConnectionService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.connectionService.ConnectionService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.services.connectionService.</code><code class="descname">ConnectionService</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/connectionService.html#ConnectionService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.connectionService.ConnectionService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nautilus.services.modelService.ModelService" title="nautilus.services.modelService.ModelService"><code class="xref py py-class docutils literal"><span class="pre">nautilus.services.modelService.ModelService</span></code></a></p>
 <p>This service manages a connection between any number of other services.
 The underlying schema and database are automatically generated to
@@ -188,7 +188,7 @@ to be called alongside the internal ones.</li>
 </table>
 <p class="rubric">Example</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># external imports</span>
-<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ConnectionService</span>
+<span class="kn">import</span> <span class="nn">nautilus</span>
 
 <span class="c1"># the services to connect</span>
 <span class="kn">from</span> <span class="nn">local.directory</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">service_one</span>
@@ -197,12 +197,37 @@ to be called alongside the internal ones.</li>
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
     <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/connections.db&#39;</span>
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">ConnectionService</span><span class="p">(</span>
-    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_one</span><span class="p">,</span> <span class="n">service_two</span><span class="p">],</span>
-    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
-<span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyConnection</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">ConnectionService</span><span class="p">):</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_one</span><span class="p">,</span> <span class="n">service_two</span><span class="p">]</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
 </pre></div>
 </div>
+<dl class="attribute">
+<dt id="nautilus.services.connectionService.ConnectionService.action_handler">
+<code class="descname">action_handler</code><a class="headerlink" href="#nautilus.services.connectionService.ConnectionService.action_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.connectionService.ConnectionService.get_base_models">
+<code class="descname">get_base_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/connectionService.html#ConnectionService.get_base_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.connectionService.ConnectionService.get_base_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the models managed by this service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the models managed by the service</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.connectionService.ConnectionService.services">
+<code class="descname">services</code><em class="property"> = []</em><a class="headerlink" href="#nautilus.services.connectionService.ConnectionService.services" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -210,7 +235,7 @@ to be called alongside the internal ones.</li>
 <span id="nautilus-services-modelservice-module"></span><h2>nautilus.services.modelService module<a class="headerlink" href="#module-nautilus.services.modelService" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.services.modelService.ModelService">
-<em class="property">class </em><code class="descclassname">nautilus.services.modelService.</code><code class="descname">ModelService</code><span class="sig-paren">(</span><em>model</em>, <em>additonal_action_handler=&lt;function noop_handler&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.services.modelService.</code><code class="descname">ModelService</code><span class="sig-paren">(</span><em>model=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nautilus.services.service.Service" title="nautilus.services.service.Service"><code class="xref py py-class docutils literal"><span class="pre">nautilus.services.service.Service</span></code></a></p>
 <p>This service acts as the primary data store in your cloud. It manages
 the records of a single model by listening for actions that indicate
@@ -231,30 +256,61 @@ to be called alongside the internal ones.</li>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">CRUDNotificationCreator</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">import</span> <span class="nn">nautilus.models</span> <span class="kn">as</span> <span class="nn">models</span>
 
-
-<span class="c1"># these mixins provide make the model &quot;live&quot;. For more information,</span>
-<span class="c1"># see foo_bar.</span>
-<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">CRUDNotificationCreator</span><span class="p">,</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
     <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
 
-
-<span class="n">service</span> <span class="o">=</span> <span class="n">ModelService</span><span class="p">(</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">,</span>
-    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyModelService</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">ModelService</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
 </pre></div>
 </div>
+<dl class="attribute">
+<dt id="nautilus.services.modelService.ModelService.action_handler">
+<code class="descname">action_handler</code><a class="headerlink" href="#nautilus.services.modelService.ModelService.action_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
-<dt id="nautilus.services.modelService.ModelService.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService.run" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.services.modelService.ModelService.additional_action_handler">
+<code class="descname">additional_action_handler</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em>, <em>dispatcher=None</em><span class="sig-paren">)</span><a class="headerlink" href="#nautilus.services.modelService.ModelService.additional_action_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.modelService.ModelService.get_models">
+<code class="descname">get_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService.get_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService.get_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the models managed by this service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the models managed by the service</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.modelService.ModelService.init_db">
+<code class="descname">init_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/modelService.html#ModelService.init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.modelService.ModelService.init_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function configures the database used for models to make
+the configuration parameters.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.modelService.ModelService.model">
+<code class="descname">model</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.services.modelService.ModelService.model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.modelService.ModelService.name">
+<code class="descname">name</code><em class="property"> = 'ModelService'</em><a class="headerlink" href="#nautilus.services.modelService.ModelService.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -264,7 +320,7 @@ to be called alongside the internal ones.</li>
 <span id="nautilus-services-service-module"></span><h2>nautilus.services.service module<a class="headerlink" href="#module-nautilus.services.service" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.services.service.Service">
-<em class="property">class </em><code class="descclassname">nautilus.services.service.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name</em>, <em>schema=None</em>, <em>action_handler=None</em>, <em>configObject=None</em>, <em>auto_register=True</em>, <em>auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.services.service.</code><code class="descname">Service</code><span class="sig-paren">(</span><em>name=None</em>, <em>schema=None</em>, <em>action_handler=None</em>, <em>config=None</em>, <em>auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>This is the base class for all services that are part of a nautilus
 cloud. This class provides basic functionalities such as registration,
@@ -277,11 +333,7 @@ responding to actions, and predictable api endpoints.</p>
 <li><strong>action_handler</strong> (<em>optional, function</em>) &#8211; The callback function fired when
 an action is recieved. If None, the service does not connect to the
 action queue.</li>
-<li><strong>auth</strong> (<em>optional, bool, default = True</em>) &#8211; Whether or not the service should add
-authentication requirements.</li>
-<li><strong>auto_register</strong> (<em>optional, bool</em>) &#8211; Whether or not the service should
-register itself when ran</li>
-<li><strong>configObject</strong> (<em>optional, class</em>) &#8211; A python class to use for configuring the
+<li><strong>config</strong> (<em>optional, class</em>) &#8211; A python class to use for configuring the
 service.</li>
 <li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The name of the service. This will be used to
 register the service with the registry as act as the designator
@@ -295,65 +347,133 @@ added to the service.</li>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
-<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">CRUDHandler</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">crud_handler</span>
+<span class="kn">import</span> <span class="nn">nautilus.models</span> <span class="kn">as</span> <span class="nn">models</span>
 
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
-<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-
-
-<span class="c1"># you could also make your own</span>
-<span class="n">api_schema</span> <span class="o">=</span> <span class="n">create_model_schema</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
-<span class="n">action_handler</span> <span class="o">=</span> <span class="n">CRUDHandler</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
-
-
-<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;My Awesome Service&#39;</span><span class="p">,</span>
-    <span class="n">schema</span> <span class="o">=</span> <span class="n">api_schema</span><span class="p">,</span>
-    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
-<span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">Service</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;My Awesome Service&#39;</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">create_model_schema</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">crud_handler</span><span class="p">(</span><span class="n">Model</span><span class="p">)</span>
 </pre></div>
 </div>
+<dl class="attribute">
+<dt id="nautilus.services.service.Service.action_handler">
+<code class="descname">action_handler</code><a class="headerlink" href="#nautilus.services.service.Service.action_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
+<dt id="nautilus.services.service.Service.add_http_endpoint">
+<code class="descname">add_http_endpoint</code><span class="sig-paren">(</span><em>url</em>, <em>request_handler</em>, <em>config=None</em>, <em>host='.*$'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.add_http_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.add_http_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method provides a programatic way of added invidual routes
+to the http server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the url to be handled by the request_handler</li>
+<li><strong>request_handler</strong> (<em>tornado.web.RequestHandler</em>) &#8211; The request handler</li>
+<li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; A configuration dictionary to pass to the handler</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.service.Service.config">
+<code class="descname">config</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.services.service.Service.config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.init_action_handler">
+<code class="descname">init_action_handler</code><span class="sig-paren">(</span><em>action_handler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.init_action_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.init_action_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.init_app">
+<code class="descname">init_app</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.init_app" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.service.Service.init_keep_alive">
+<code class="descname">init_keep_alive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.init_keep_alive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.init_keep_alive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.service.Service.name">
+<code class="descname">name</code><em class="property"> = 'Service'</em><a class="headerlink" href="#nautilus.services.service.Service.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
 <dt id="nautilus.services.service.Service.route">
-<code class="descname">route</code><span class="sig-paren">(</span><em>**options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.route" title="Permalink to this definition">¶</a></dt>
-<dd><p>A wrapper over Flask&#8217;s &#64;app.route(<a href="#id1"><span class="problematic" id="id2">**</span></a>options).</p>
+<em class="property">classmethod </em><code class="descname">route</code><span class="sig-paren">(</span><em>route</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.route"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.route" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method provides a decorator for adding endpoints to the
+http server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>route</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The url to be handled by the RequestHandled</li>
+<li><strong>config</strong> (<a class="reference external" href="https://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Configuration for the request handler</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">from</span> <span class="nn">nauilus.network.http</span> <span class="kn">import</span> <span class="n">RequestHandler</span>
+
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">Service</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+
+<span class="nd">@MyService.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">HelloWorld</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="nautilus.services.service.Service.run">
-<code class="descname">run</code><span class="sig-paren">(</span><em>host='127.0.0.1'</em>, <em>port=8000</em>, <em>debug=False</em>, <em>secret_key='supersecret'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">run</code><span class="sig-paren">(</span><em>host='localhost'</em>, <em>port=8000</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function starts the service&#8217;s network intefaces.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>port</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The port for the http server.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<dl class="method">
-<dt id="nautilus.services.service.Service.setup_admin">
-<code class="descname">setup_admin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setup_admin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setup_admin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.services.service.Service.setup_api">
-<code class="descname">setup_api</code><span class="sig-paren">(</span><em>schema=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setup_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setup_api" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.services.service.Service.setup_auth">
-<code class="descname">setup_auth</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.setup_auth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.setup_auth" title="Permalink to this definition">¶</a></dt>
+<dl class="attribute">
+<dt id="nautilus.services.service.Service.schema">
+<code class="descname">schema</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.services.service.Service.schema" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="nautilus.services.service.Service.stop">
 <code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.stop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.services.service.Service.use_blueprint">
-<code class="descname">use_blueprint</code><span class="sig-paren">(</span><em>blueprint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#Service.use_blueprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.Service.use_blueprint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a flask blueprint to the internal application</p>
+<dd><p>This function stops the service&#8217;s various network interfaces.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="nautilus.services.service.ServiceMetaClass">
+<em class="property">class </em><code class="descclassname">nautilus.services.service.</code><code class="descname">ServiceMetaClass</code><span class="sig-paren">(</span><em>name</em>, <em>bases</em>, <em>attributes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/service.html#ServiceMetaClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.service.ServiceMetaClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#type" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">type</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -363,7 +483,7 @@ added to the service.</li>
 context of the service.</p>
 <dl class="class">
 <dt id="nautilus.services.serviceManager.ServiceManager">
-<em class="property">class </em><code class="descclassname">nautilus.services.serviceManager.</code><code class="descname">ServiceManager</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/serviceManager.html#ServiceManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.serviceManager.ServiceManager" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.services.serviceManager.</code><code class="descname">ServiceManager</code><span class="sig-paren">(</span><em>service</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/serviceManager.html#ServiceManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.serviceManager.ServiceManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <dl class="method">
 <dt id="nautilus.services.serviceManager.ServiceManager.run">

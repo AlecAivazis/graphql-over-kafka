@@ -138,39 +138,106 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># external imports</span>
-<span class="kn">from</span> <span class="nn">flask.ext.script</span> <span class="kn">import</span> <span class="n">Manager</span>
-<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">..config</span> <span class="kn">import</span> <span class="n">Config</span>
 
 <div class="viewcode-block" id="ServiceManager"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.serviceManager.ServiceManager">[docs]</a><span class="k">class</span> <span class="nc">ServiceManager</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="p">):</span>
-        <span class="c1"># create and attach a command manager for the service</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">commandManager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_running_service</span> <span class="o">=</span> <span class="bp">False</span>
 
-        <span class="nd">@self.commandManager.command</span>
+        <span class="nd">@click.group</span><span class="p">()</span>
+        <span class="k">def</span> <span class="nf">group</span><span class="p">():</span>
+            <span class="k">pass</span>
+
+        <span class="nd">@group.command</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run the service.&quot;</span><span class="p">)</span>
+        <span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--port&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The port for the service http server.&quot;</span><span class="p">)</span>
+        <span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--host&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The host for the http server.&quot;</span><span class="p">)</span>
+        <span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--debug&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run the service in debug mode.&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">runserver</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">debug</span><span class="p">):</span>
+            <span class="c1"># make sure we clean up the service later on</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_running_service</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="c1"># the service configuration based on cli args</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+                <span class="n">debug</span><span class="o">=</span><span class="n">debug</span>
+            <span class="p">))</span>
+
+            <span class="c1"># initialize the service with the config</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">service_config</span><span class="p">)</span>
+
+            <span class="c1"># run the service</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service_instance</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+                <span class="n">port</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">),</span>
+            <span class="p">)</span>
+
+
+        <span class="nd">@group.command</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;Make sure the models have been written to the db.&quot;</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">syncdb</span><span class="p">():</span>
             <span class="sd">&quot;&quot;&quot; Create the database entries. &quot;&quot;&quot;</span>
-            <span class="c1"># import the db module</span>
-            <span class="kn">from</span> <span class="nn">nautilus.db</span> <span class="kn">import</span> <span class="n">db</span>
-            <span class="c1"># create all of the tables</span>
-            <span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
-            <span class="c1"># notify the user</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Successfully created database entries.&quot;</span><span class="p">)</span>
+            <span class="c1"># instantiate the service before we do anything</span>
+            <span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">()</span>
+            <span class="c1"># get the models managed by the service</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;get_models&#39;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">[])()</span>
 
-        <span class="nd">@self.commandManager.command</span>
-        <span class="k">def</span> <span class="nf">runserver</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">secretKey</span> <span class="o">=</span> <span class="s1">&#39;supersecret&#39;</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; Start the service. &quot;&quot;&quot;</span>
-            <span class="n">service</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">),</span> <span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span><span class="p">,</span> <span class="n">secretKey</span> <span class="o">=</span> <span class="n">secretKey</span><span class="p">)</span>
+            <span class="c1"># if there are models to create</span>
+            <span class="k">if</span> <span class="n">models</span><span class="p">:</span>
+                <span class="c1"># for each model that we are managing</span>
+                <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+                    <span class="c1"># create the table in the database</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">create_table</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 
+                <span class="c1"># notify the user</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Successfully created necessary database tables.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># otherwise there are no tables to create</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;There are no models to add.&quot;</span><span class="p">)</span>
+
+
+        <span class="nd">@group.command</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s2">&quot;Drop the database tables associated with this service.&quot;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">cleardb</span><span class="p">():</span>
+            <span class="sd">&quot;&quot;&quot; Drop the tables associated with this service. &quot;&quot;&quot;</span>
+            <span class="c1"># instantiate the service before we do anything</span>
+            <span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">()</span>
+            <span class="c1"># get the models managed by the service</span>
+            <span class="n">models</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;get_models&#39;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="p">[])()</span>
+
+            <span class="c1"># if there are models to create</span>
+            <span class="k">if</span> <span class="n">models</span><span class="p">:</span>
+                <span class="c1"># for each model that we are managing</span>
+                <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+                    <span class="c1"># create the table in the database</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">drop_table</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+                <span class="c1"># notify the user</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Successfully dropped necessary database tables.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># otherwise there are no tables to create</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;There are no models to drop.&quot;</span><span class="p">)</span>
+
+
+        <span class="c1"># save the command group to the manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
 
 <div class="viewcode-block" id="ServiceManager.run"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.serviceManager.ServiceManager.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; run the command manager &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">commandManager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="c1"># run the command group</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+        <span class="c1"># if there is a normal exception</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div></div>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Closing due to error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
+            <span class="c1"># if the service is running</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_service</span><span class="p">:</span>
+                <span class="c1"># stop the service and clean up</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">service_instance</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="c1"># bubble up the exception for someone else</span>
+            <span class="k">raise</span> <span class="n">err</span></div></div>
 </pre></div>
 
            </div>

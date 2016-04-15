@@ -133,14 +133,14 @@
             
   <h1>Source code for nautilus.network.registry</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
-<span class="kn">import</span> <span class="nn">consul</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">consul</span> <span class="kn">import</span> <span class="n">Check</span>
+<span class="kn">import</span> <span class="nn">consul</span>
+<span class="kn">import</span> <span class="nn">tornado</span>
 
 <span class="c1"># create a consul session</span>
-<span class="n">consulSession</span> <span class="o">=</span> <span class="n">consul</span><span class="o">.</span><span class="n">Consul</span><span class="p">()</span>
+<span class="n">consul_session</span> <span class="o">=</span> <span class="n">consul</span><span class="o">.</span><span class="n">Consul</span><span class="p">()</span>
 
 <div class="viewcode-block" id="register_service"><a class="viewcode-back" href="../../../internals/nautilus.network.registry.html#nautilus.network.registry.register_service">[docs]</a><span class="k">def</span> <span class="nf">register_service</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Add a service to the registry service. &#39;&#39;&#39;</span>
@@ -149,13 +149,15 @@
     <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">random_string</span>
 
     <span class="c1"># compute and save the consul identifier for the service</span>
-    <span class="n">service</span><span class="o">.</span><span class="n">consul_name</span> <span class="o">=</span> <span class="s2">&quot;{}-{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">random_string</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">service</span><span class="o">.</span><span class="n">consul_name</span> <span class="o">=</span> <span class="s2">&quot;{}-{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">random_string</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>\
+                                 <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
 
     <span class="c1"># the consul service entry</span>
-    <span class="n">consulSession</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">service_id</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">,</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PORT&#39;</span><span class="p">],</span>
+    <span class="n">consul_session</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">service</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">service_id</span><span class="o">=</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">,</span>
+        <span class="c1"># port=service.app.config[&#39;PORT&#39;],</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">service</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">port</span>
     <span class="p">)</span></div>
 
 
@@ -164,21 +166,22 @@
     <span class="c1"># if the service has been registered</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;consul_name&#39;</span><span class="p">):</span>
         <span class="c1"># deregister it</span>
-        <span class="n">consulSession</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">deregister</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">)</span>
-        <span class="n">consulSession</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">check</span><span class="o">.</span><span class="n">deregister</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">)</span></div>
+        <span class="n">consul_session</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">deregister</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">)</span>
+        <span class="n">consul_session</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">check</span><span class="o">.</span><span class="n">deregister</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_services"><a class="viewcode-back" href="../../../internals/nautilus.network.registry.html#nautilus.network.registry.get_services">[docs]</a><span class="k">def</span> <span class="nf">get_services</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39; Return a list of the active services. &#39;&#39;&#39;</span>
-    <span class="k">return</span> <span class="n">consulSession</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">services</span><span class="p">()</span></div>
+    <span class="k">return</span> <span class="n">consul_session</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">services</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="service_location_by_name"><a class="viewcode-back" href="../../../internals/nautilus.network.registry.html#nautilus.network.registry.service_location_by_name">[docs]</a><span class="k">def</span> <span class="nf">service_location_by_name</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Return the service entry matching the given key &#39;&#39;&#39;</span>
     <span class="c1"># grab the registry of services</span>
     <span class="c1"># todo: go through service proxy service for more efficient loadbalancing</span>
-    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;localhost:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service</span><span class="p">[</span><span class="s1">&#39;Port&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">get_services</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> \
-                                                    <span class="k">if</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;Service&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span> <span class="p">]</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;localhost:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service</span><span class="p">[</span><span class="s1">&#39;Port&#39;</span><span class="p">])</span> \
+                                <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">get_services</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> \
+                                                <span class="k">if</span> <span class="n">service</span><span class="p">[</span><span class="s1">&#39;Service&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">]</span>
     <span class="c1"># return a random entry from the possibilities</span>
     <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">services</span><span class="p">)</span></div>
 
@@ -186,30 +189,28 @@
 <div class="viewcode-block" id="keep_alive"><a class="viewcode-back" href="../../../internals/nautilus.network.registry.html#nautilus.network.registry.keep_alive">[docs]</a><span class="k">def</span> <span class="nf">keep_alive</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Ping the registry on an interval to show good health. &#39;&#39;&#39;</span>
 
-    <span class="c1"># the default tt is 10 sec</span>
+    <span class="c1"># the default ttl is 10 sec</span>
     <span class="n">ttl</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">ttl</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;ttl&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">10</span>
 
     <span class="c1"># register the service with consul</span>
     <span class="n">register_service</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
     <span class="c1"># add a ttl check for the service in case we die</span>
-    <span class="n">consulSession</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">check</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">,</span>
-        <span class="n">check</span> <span class="o">=</span> <span class="n">Check</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ttl</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+    <span class="n">consul_session</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">check</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">,</span>
+        <span class="n">check</span><span class="o">=</span><span class="n">consul</span><span class="o">.</span><span class="n">Check</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ttl</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="c1"># the keep alive check</span>
-    <span class="k">def</span> <span class="nf">run_check</span><span class="p">():</span>
-        <span class="c1"># continuously run</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="c1"># sleep every 2 seconds</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-            <span class="c1"># tell the agent that we are passing the ttl check</span>
-            <span class="n">consulSession</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">check</span><span class="o">.</span><span class="n">ttl_pass</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">,</span> <span class="s1">&#39;Agent alive and reachable.&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">pass_ttl</span><span class="p">():</span>
+        <span class="c1"># tell the agent that we are passing the ttl check</span>
+        <span class="n">consul_session</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">check</span><span class="o">.</span><span class="n">ttl_pass</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">consul_name</span><span class="p">,</span> <span class="s1">&#39;Agent alive and reachable.&#39;</span><span class="p">)</span>
 
-    <span class="c1"># create a thread that will run the consumer</span>
-    <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">run_check</span><span class="p">)</span>
-    <span class="c1"># start the thread</span>
-    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+    <span class="c1"># the interval to perform the check (in millisecons)</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="mi">2000</span>
+
+    <span class="c1"># create a period callback that will perform the check every {t} seconds</span>
+    <span class="n">periodic_callback</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">PeriodicCallback</span><span class="p">(</span><span class="n">pass_ttl</span><span class="p">,</span> <span class="n">callback_time</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">periodic_callback</span></div>
 </pre></div>
 
            </div>

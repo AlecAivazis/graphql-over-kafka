@@ -166,7 +166,7 @@
 <dl class="class">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType">
 <em class="property">class </em><code class="descclassname">nautilus.api.objectTypes.serviceObjectType.</code><code class="descname">ServiceObjectType</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.core.classtypes.objecttype.ObjectType</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.relay.types.Node</span></code></p>
 <p>This object type represents data maintained by a remote service.
 <a href="#id1"><span class="problematic" id="id2">`</span></a>Connection`s to and from other <a href="#id3"><span class="problematic" id="id4">`</span></a>ServiceObjectType`s are resolved
 through a specified a connection service assuming nautilus naming
@@ -205,6 +205,13 @@ connections to other objects.</td>
 </table>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.get_node">
+<em class="property">classmethod </em><code class="descname">get_node</code><span class="sig-paren">(</span><em>id</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectType.get_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.get_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the node with the corresponding id by querying the
+appropriate service.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.service">
 <code class="descname">service</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.service" title="Permalink to this definition">¶</a></dt>
@@ -232,7 +239,7 @@ not connections to other objects.</td>
 <dl class="class">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta">
 <em class="property">class </em><code class="descclassname">nautilus.api.objectTypes.serviceObjectType.</code><code class="descname">ServiceObjectTypeMeta</code><span class="sig-paren">(</span><em>name</em>, <em>bases</em>, <em>dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectTypeMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.core.classtypes.objecttype.ObjectTypeMeta</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.relay.types.NodeMeta</span></code></p>
 <dl class="method">
 <dt id="nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta.construct">
 <code class="descname">construct</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/objectTypes/serviceObjectType.html#ServiceObjectTypeMeta.construct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta.construct" title="Permalink to this definition">¶</a></dt>

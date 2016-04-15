@@ -162,89 +162,20 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.mixins.crudNotificationCreator">
-<span id="nautilus-models-mixins-crudnotificationcreator-module"></span><h2>nautilus.models.mixins.crudNotificationCreator module<a class="headerlink" href="#module-nautilus.models.mixins.crudNotificationCreator" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator">
-<em class="property">class </em><code class="descclassname">nautilus.models.mixins.crudNotificationCreator.</code><code class="descname">CRUDNotificationCreator</code><a class="reference internal" href="../_modules/nautilus/models/mixins/crudNotificationCreator.html#CRUDNotificationCreator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>This mixin class provides basic crus event publishing when the model
-is mutated, following nautilus conventions.</p>
-<dl class="classmethod">
-<dt id="nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.add_listener">
-<em class="property">classmethod </em><code class="descname">add_listener</code><span class="sig-paren">(</span><em>db_event</em>, <em>action_type</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/mixins/crudNotificationCreator.html#CRUDNotificationCreator.add_listener"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.add_listener" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.nautilus_base">
-<code class="descname">nautilus_base</code><em class="property"> = True</em><a class="headerlink" href="#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.nautilus_base" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="classmethod">
-<dt id="nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.onCreation">
-<em class="property">classmethod </em><code class="descname">onCreation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/models/mixins/crudNotificationCreator.html#CRUDNotificationCreator.onCreation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.mixins.crudNotificationCreator.CRUDNotificationCreator.onCreation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-models-mixins-crudnotificationcreator-module">
+<h2>nautilus.models.mixins.crudNotificationCreator module<a class="headerlink" href="#nautilus-models-mixins-crudnotificationcreator-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.mixins.hasID">
-<span id="nautilus-models-mixins-hasid-module"></span><h2>nautilus.models.mixins.hasID module<a class="headerlink" href="#module-nautilus.models.mixins.hasID" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.models.mixins.hasID.HasID">
-<em class="property">class </em><code class="descclassname">nautilus.models.mixins.hasID.</code><code class="descname">HasID</code><a class="reference internal" href="../_modules/nautilus/models/mixins/hasID.html#HasID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.mixins.hasID.HasID" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>This mixing adds an auto-incrementing primary key called <cite>id</cite></p>
-<dl class="attribute">
-<dt id="nautilus.models.mixins.hasID.HasID.id">
-<code class="descname">id</code><em class="property"> = Column(None, Integer(), table=None, primary_key=True)</em><a class="headerlink" href="#nautilus.models.mixins.hasID.HasID.id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-models-mixins-hasid-module">
+<h2>nautilus.models.mixins.hasID module<a class="headerlink" href="#nautilus-models-mixins-hasid-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.mixins.hasPassword">
-<span id="nautilus-models-mixins-haspassword-module"></span><h2>nautilus.models.mixins.hasPassword module<a class="headerlink" href="#module-nautilus.models.mixins.hasPassword" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.models.mixins.hasPassword.HasPassword">
-<em class="property">class </em><code class="descclassname">nautilus.models.mixins.hasPassword.</code><code class="descname">HasPassword</code><a class="reference internal" href="../_modules/nautilus/models/mixins/hasPassword.html#HasPassword"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.mixins.hasPassword.HasPassword" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<dl class="attribute">
-<dt id="nautilus.models.mixins.hasPassword.HasPassword.password">
-<code class="descname">password</code><em class="property"> = Column(None, Password(), table=None)</em><a class="headerlink" href="#nautilus.models.mixins.hasPassword.HasPassword.password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-models-mixins-haspassword-module">
+<h2>nautilus.models.mixins.hasPassword module<a class="headerlink" href="#nautilus-models-mixins-haspassword-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.mixins.user">
-<span id="nautilus-models-mixins-user-module"></span><h2>nautilus.models.mixins.user module<a class="headerlink" href="#module-nautilus.models.mixins.user" title="Permalink to this headline">¶</a></h2>
-<p>This file defines the models used by the user service.</p>
-<dl class="class">
-<dt id="nautilus.models.mixins.user.User">
-<em class="property">class </em><code class="descclassname">nautilus.models.mixins.user.</code><code class="descname">User</code><a class="reference internal" href="../_modules/nautilus/models/mixins/user.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.models.mixins.user.User" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#nautilus.models.mixins.hasID.HasID" title="nautilus.models.mixins.hasID.HasID"><code class="xref py py-class docutils literal"><span class="pre">nautilus.models.mixins.hasID.HasID</span></code></a></p>
-<p>The user model used by Synca.</p>
-<dl class="attribute">
-<dt id="nautilus.models.mixins.user.User.email">
-<code class="descname">email</code><em class="property"> = Column(None, Text(), table=None, nullable=False)</em><a class="headerlink" href="#nautilus.models.mixins.user.User.email" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.models.mixins.user.User.firstname">
-<code class="descname">firstname</code><em class="property"> = Column(None, Text(), table=None)</em><a class="headerlink" href="#nautilus.models.mixins.user.User.firstname" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.models.mixins.user.User.lastname">
-<code class="descname">lastname</code><em class="property"> = Column(None, Text(), table=None)</em><a class="headerlink" href="#nautilus.models.mixins.user.User.lastname" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-models-mixins-user-module">
+<h2>nautilus.models.mixins.user module<a class="headerlink" href="#nautilus-models-mixins-user-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.models.mixins">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.models.mixins" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

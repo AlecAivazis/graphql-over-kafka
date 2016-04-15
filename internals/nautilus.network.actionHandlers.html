@@ -98,7 +98,7 @@
 <li class="toctree-l3 current"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="nautilus.network.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#module-nautilus.network.dispatch">nautilus.network.dispatch module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#nautilus-network-dispatch-module">nautilus.network.dispatch module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#module-nautilus.network.util">nautilus.network.util module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.network.html#module-nautilus.network">Module contents</a></li>
 </ul>
@@ -162,113 +162,20 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.network.actionHandlers.createHandler">
-<span id="nautilus-network-actionhandlers-createhandler-module"></span><h2>nautilus.network.actionHandlers.createHandler module<a class="headerlink" href="#module-nautilus.network.actionHandlers.createHandler" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="nautilus.network.actionHandlers.createHandler.createHandler">
-<code class="descclassname">nautilus.network.actionHandlers.createHandler.</code><code class="descname">createHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/createHandler.html#createHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.actionHandlers.createHandler.createHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>This factory returns an action handler that creates a new instance of
-the specified model when a create action is recieved, assuming the
-action follows nautilus convetions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to create when the action
-received.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
-The action handler for this model</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">action_type, payload</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="nautilus-network-actionhandlers-createhandler-module">
+<h2>nautilus.network.actionHandlers.createHandler module<a class="headerlink" href="#nautilus-network-actionhandlers-createhandler-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.network.actionHandlers.crudHandler">
-<span id="nautilus-network-actionhandlers-crudhandler-module"></span><h2>nautilus.network.actionHandlers.crudHandler module<a class="headerlink" href="#module-nautilus.network.actionHandlers.crudHandler" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="nautilus.network.actionHandlers.crudHandler.CRUDHandler">
-<code class="descclassname">nautilus.network.actionHandlers.crudHandler.</code><code class="descname">CRUDHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/crudHandler.html#CRUDHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.actionHandlers.crudHandler.CRUDHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>This action handler factory reaturns an action handler that
-responds to actions with CRUD types (following nautilus conventions)
-and performs the necessary mutation on the model&#8217;s database.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
-received.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
-The action handler for this model</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="nautilus-network-actionhandlers-crudhandler-module">
+<h2>nautilus.network.actionHandlers.crudHandler module<a class="headerlink" href="#nautilus-network-actionhandlers-crudhandler-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.network.actionHandlers.deleteHandler">
-<span id="nautilus-network-actionhandlers-deletehandler-module"></span><h2>nautilus.network.actionHandlers.deleteHandler module<a class="headerlink" href="#module-nautilus.network.actionHandlers.deleteHandler" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="nautilus.network.actionHandlers.deleteHandler.deleteHandler">
-<code class="descclassname">nautilus.network.actionHandlers.deleteHandler.</code><code class="descname">deleteHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/deleteHandler.html#deleteHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.actionHandlers.deleteHandler.deleteHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>This factory returns an action handler that deletes a new instance of
-the specified model when a delete action is recieved, assuming the
-action follows nautilus convetions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
-received.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
-The action handler for this model</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="nautilus-network-actionhandlers-deletehandler-module">
+<h2>nautilus.network.actionHandlers.deleteHandler module<a class="headerlink" href="#nautilus-network-actionhandlers-deletehandler-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.network.actionHandlers.updateHandler">
-<span id="nautilus-network-actionhandlers-updatehandler-module"></span><h2>nautilus.network.actionHandlers.updateHandler module<a class="headerlink" href="#module-nautilus.network.actionHandlers.updateHandler" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="nautilus.network.actionHandlers.updateHandler.updateHandler">
-<code class="descclassname">nautilus.network.actionHandlers.updateHandler.</code><code class="descname">updateHandler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers/updateHandler.html#updateHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.actionHandlers.updateHandler.updateHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>This factory returns an action handler that updates a new instance of
-the specified model when a update action is recieved, assuming the
-action follows nautilus convetions.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to update when the action
-received.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
-The action handler for this model</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="nautilus-network-actionhandlers-updatehandler-module">
+<h2>nautilus.network.actionHandlers.updateHandler module<a class="headerlink" href="#nautilus-network-actionhandlers-updatehandler-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.network.actionHandlers">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.network.actionHandlers" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="nautilus.network.actionHandlers.noop_handler">
-<code class="descclassname">nautilus.network.actionHandlers.</code><code class="descname">noop_handler</code><span class="sig-paren">(</span><em>type</em>, <em>payload</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/actionHandlers.html#noop_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.actionHandlers.noop_handler" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 

@@ -165,8 +165,14 @@
 <span id="nautilus-conventions-actions-module"></span><h2>nautilus.conventions.actions module<a class="headerlink" href="#module-nautilus.conventions.actions" title="Permalink to this headline">¶</a></h2>
 <p>This file is responsible for centralizing the action conventions used in nautilus.</p>
 <dl class="function">
-<dt id="nautilus.conventions.actions.getCRUDAction">
-<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">getCRUDAction</code><span class="sig-paren">(</span><em>method</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#getCRUDAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.getCRUDAction" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.conventions.actions.change_action_status">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">change_action_status</code><span class="sig-paren">(</span><em>action_type</em>, <em>new_status</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#change_action_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.change_action_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function changes the status of an action type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.get_crud_action">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">get_crud_action</code><span class="sig-paren">(</span><em>method</em>, <em>model</em>, <em>status='pending'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#get_crud_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.get_crud_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -185,7 +191,7 @@
 <p>This file is responsible for centralizing the schema conventions used in nautilus.</p>
 <dl class="function">
 <dt id="nautilus.conventions.schema.root_query">
-<code class="descclassname">nautilus.conventions.schema.</code><code class="descname">root_query</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/schema.html#root_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.schema.root_query" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nautilus.conventions.schema.</code><code class="descname">root_query</code><span class="sig-paren">(</span><em>*service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/schema.html#root_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.schema.root_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the name of the root query for a model service.</p>
 </dd></dl>
 
