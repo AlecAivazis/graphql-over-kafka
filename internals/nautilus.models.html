@@ -32,8 +32,8 @@
   
     <link rel="top" title="nautilus v0.3.0 documentation" href="../index.html"/>
         <link rel="up" title="Module Index" href="index.html"/>
-        <link rel="next" title="nautilus.models.mixins package" href="nautilus.models.mixins.html"/>
-        <link rel="prev" title="nautilus.conventions package" href="nautilus.conventions.html"/> 
+        <link rel="next" title="nautilus.models.fields package" href="nautilus.models.fields.html"/>
+        <link rel="prev" title="nautilus.management.util package" href="nautilus.management.util.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -90,10 +90,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="nautilus.admin.html">nautilus.admin package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.models package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -106,6 +108,8 @@
 <li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus.database">nautilus.database module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
 </ul>
 </li>
@@ -161,20 +165,16 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="nautilus.models.mixins.html">nautilus.models.mixins package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-crudnotificationcreator-module">nautilus.models.mixins.crudNotificationCreator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-hasid-module">nautilus.models.mixins.hasID module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-haspassword-module">nautilus.models.mixins.hasPassword module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-user-module">nautilus.models.mixins.user module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.mixins.html#module-contents">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.models.fields.html">nautilus.models.fields package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.fields.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.fields.html#nautilus-models-fields-s3file-module">nautilus.models.fields.s3File module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.fields.html#module-nautilus.models.fields">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="nautilus.models.types.html">nautilus.models.types package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#nautilus-models-types-password-module">nautilus.models.types.password module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#nautilus-models-types-s3file-module">nautilus.models.types.s3File module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.types.html#module-contents">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.models.serializers.html">nautilus.models.serializers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.serializers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.serializers.html#module-nautilus.models.serializers.modelSerializer">nautilus.models.serializers.modelSerializer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.serializers.html#module-nautilus.models.serializers">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -247,10 +247,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="nautilus.models.mixins.html" class="btn btn-neutral float-right" title="nautilus.models.mixins package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="nautilus.models.fields.html" class="btn btn-neutral float-right" title="nautilus.models.fields package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="nautilus.conventions.html" class="btn btn-neutral" title="nautilus.conventions package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="nautilus.management.util.html" class="btn btn-neutral" title="nautilus.management.util package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

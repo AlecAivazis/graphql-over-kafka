@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.network.amqp.consumers.amqp &mdash; nautilus v0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.3.0 documentation" href="../../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../../index.html"/> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>nautilus.network.amqp.consumers.amqp</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.network.amqp.consumers.amqp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pika</span>
+<span class="kn">from</span> <span class="nn">pika</span> <span class="kn">import</span> <span class="n">adapters</span>
+
+<span class="n">LOG_FORMAT</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%(levelname) -10s</span><span class="s1"> </span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(name) -30s</span><span class="s1"> %(funcName) &#39;</span>
+              <span class="s1">&#39;-35s </span><span class="si">%(lineno) -5d</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AMQPConsumer"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer">[docs]</a><span class="k">class</span> <span class="nc">AMQPConsumer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is an example consumer that will handle unexpected interactions</span>
+<span class="sd">    with RabbitMQ such as channel and connection closures.</span>
+
+<span class="sd">    If RabbitMQ closes the connection, it will reopen it. You should</span>
+<span class="sd">    look at the output, as there are limited reasons why the connection may</span>
+<span class="sd">    be closed, which usually are tied to permission related issues or</span>
+<span class="sd">    socket timeouts.</span>
+
+<span class="sd">    If the channel is closed, it will indicate a problem with one of the</span>
+<span class="sd">    commands that were issued and that should surface in the output as well.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">EXCHANGE</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">EXCHANGE_TYPE</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">ROUTING_KEY</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">DURABLE</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amqp_url</span><span class="o">=</span><span class="s1">&#39;amqp://127.0.0.1&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new instance of the consumer class, passing in the AMQP</span>
+<span class="sd">        URL used to connect to RabbitMQ.</span>
+
+<span class="sd">        :param str amqp_url: The AMQP url to connect with</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_closing</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_tag</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">amqp_url</span>
+
+<div class="viewcode-block" id="AMQPConsumer.publish"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.publish">[docs]</a>    <span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">route</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method publishes a message over the amqp queue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the properties for the message</span>
+        <span class="n">message_properties</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">BasicProperties</span><span class="p">(</span>
+            <span class="n">correlation_id</span><span class="o">=</span><span class="n">correlation_id</span>
+        <span class="p">)</span> <span class="k">if</span> <span class="n">correlation_id</span> <span class="k">else</span> <span class="bp">None</span>
+
+        <span class="c1"># publish the message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span>
+            <span class="n">exchange</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EXCHANGE</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+            <span class="n">routing_key</span><span class="o">=</span><span class="n">route</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">ROUTING_KEY</span><span class="p">,</span>
+            <span class="n">properties</span><span class="o">=</span><span class="n">message_properties</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">args</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.connect"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method connects to RabbitMQ, returning the connection handle.</span>
+<span class="sd">        When the connection is established, the on_connection_open method</span>
+<span class="sd">        will be invoked by pika.</span>
+
+<span class="sd">        :rtype: pika.SelectConnection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Connecting to </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">adapters</span><span class="o">.</span><span class="n">TornadoConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">URLParameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">on_connection_open</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.close_connection"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.close_connection">[docs]</a>    <span class="k">def</span> <span class="nf">close_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method closes the connection to RabbitMQ.&quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Closing connection&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.add_on_connection_close_callback"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.add_on_connection_close_callback">[docs]</a>    <span class="k">def</span> <span class="nf">add_on_connection_close_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method adds an on close callback that will be invoked by pika</span>
+<span class="sd">        when RabbitMQ closes the connection to the publisher unexpectedly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Adding connection close callback&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">add_on_close_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_connection_closed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_connection_closed"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_connection_closed">[docs]</a>    <span class="k">def</span> <span class="nf">on_connection_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">reply_code</span><span class="p">,</span> <span class="n">reply_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is invoked by pika when the connection to RabbitMQ is</span>
+<span class="sd">        closed unexpectedly. Since it is unexpected, we will reconnect to</span>
+<span class="sd">        RabbitMQ if it disconnects.</span>
+
+<span class="sd">        :param pika.connection.Connection connection: The closed connection obj</span>
+<span class="sd">        :param int reply_code: The server provided reply_code if given</span>
+<span class="sd">        :param str reply_text: The server provided reply_text if given</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closing</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Connection closed, reopening in 5 seconds: (</span><span class="si">%s</span><span class="s1">) </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                           <span class="n">reply_code</span><span class="p">,</span> <span class="n">reply_text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">add_timeout</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconnect</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_connection_open"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_connection_open">[docs]</a>    <span class="k">def</span> <span class="nf">on_connection_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_connection</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is called by pika once the connection to RabbitMQ has</span>
+<span class="sd">        been established. It passes the handle to the connection object in</span>
+<span class="sd">        case we need it, but in this case, we&#39;ll just mark it unused.</span>
+
+<span class="sd">        :type unused_connection: pika.SelectConnection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Connection opened&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_on_connection_close_callback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_channel</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.reconnect"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.reconnect">[docs]</a>    <span class="k">def</span> <span class="nf">reconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Will be invoked by the IOLoop timer if the connection is</span>
+<span class="sd">        closed. See the on_connection_closed method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closing</span><span class="p">:</span>
+
+            <span class="c1"># Create a new connection</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.add_on_channel_close_callback"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.add_on_channel_close_callback">[docs]</a>    <span class="k">def</span> <span class="nf">add_on_channel_close_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method tells pika to call the on_channel_closed method if</span>
+<span class="sd">        RabbitMQ unexpectedly closes the channel.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Adding channel close callback&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">add_on_close_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_channel_closed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_channel_closed"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_channel_closed">[docs]</a>    <span class="k">def</span> <span class="nf">on_channel_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">reply_code</span><span class="p">,</span> <span class="n">reply_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Invoked by pika when RabbitMQ unexpectedly closes the channel.</span>
+<span class="sd">        Channels are usually closed if you attempt to do something that</span>
+<span class="sd">        violates the protocol, such as re-declare an exchange or queue with</span>
+<span class="sd">        different parameters. In this case, we&#39;ll close the connection</span>
+<span class="sd">        to shutdown the object.</span>
+
+<span class="sd">        :param pika.channel.Channel: The closed channel</span>
+<span class="sd">        :param int reply_code: The numeric reason the channel was closed</span>
+<span class="sd">        :param str reply_text: The text reason the channel was closed</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Channel </span><span class="si">%i</span><span class="s1"> was closed: (</span><span class="si">%s</span><span class="s1">) </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                       <span class="n">channel</span><span class="p">,</span> <span class="n">reply_code</span><span class="p">,</span> <span class="n">reply_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_channel_open"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_channel_open">[docs]</a>    <span class="k">def</span> <span class="nf">on_channel_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is invoked by pika when the channel has been opened.</span>
+<span class="sd">        The channel object is passed in so we can make use of it.</span>
+
+<span class="sd">        Since the channel is now open, we&#39;ll declare the exchange to use.</span>
+
+<span class="sd">        :param pika.channel.Channel channel: The channel object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Channel opened&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">channel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_on_channel_close_callback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_exchange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EXCHANGE</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.setup_exchange"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.setup_exchange">[docs]</a>    <span class="k">def</span> <span class="nf">setup_exchange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exchange_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup the exchange on RabbitMQ by invoking the Exchange.Declare RPC</span>
+<span class="sd">        command. When it is complete, the on_exchange_declareok method will</span>
+<span class="sd">        be invoked by pika.</span>
+
+<span class="sd">        :param str|unicode exchange_name: The name of the exchange to declare</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Declaring exchange </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">exchange_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">exchange_declare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_exchange_declareok</span><span class="p">,</span>
+                                       <span class="n">exchange_name</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">EXCHANGE_TYPE</span><span class="p">,</span>
+                                       <span class="n">durable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DURABLE</span>
+                                      <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_exchange_declareok"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_exchange_declareok">[docs]</a>    <span class="k">def</span> <span class="nf">on_exchange_declareok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Invoked by pika when RabbitMQ has finished the Exchange.Declare RPC</span>
+<span class="sd">        command.</span>
+
+<span class="sd">        :param pika.Frame.Method unused_frame: Exchange.DeclareOk response frame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Exchange declared&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">queue_declare</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_queue_declareok</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_queue_declareok"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_queue_declareok">[docs]</a>    <span class="k">def</span> <span class="nf">on_queue_declareok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method invoked by pika when the Queue.Declare RPC call made in</span>
+<span class="sd">        setup_queue has completed. In this method we will bind the queue</span>
+<span class="sd">        and exchange together with the routing key by issuing the Queue.Bind</span>
+<span class="sd">        RPC command. When this command is complete, the on_bindok method will</span>
+<span class="sd">        be invoked by pika.</span>
+
+<span class="sd">        :param pika.frame.Method method_frame: The Queue.DeclareOk frame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_queue_name</span> <span class="o">=</span> <span class="n">method_frame</span><span class="o">.</span><span class="n">method</span><span class="o">.</span><span class="n">queue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">queue_bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_bindok</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue_name</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">EXCHANGE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ROUTING_KEY</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.add_on_cancel_callback"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.add_on_cancel_callback">[docs]</a>    <span class="k">def</span> <span class="nf">add_on_cancel_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a callback that will be invoked if RabbitMQ cancels the consumer</span>
+<span class="sd">        for some reason. If RabbitMQ does cancel the consumer,</span>
+<span class="sd">        on_consumer_cancelled will be invoked by pika.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Adding consumer cancellation callback&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">add_on_cancel_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_consumer_cancelled</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_consumer_cancelled"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_consumer_cancelled">[docs]</a>    <span class="k">def</span> <span class="nf">on_consumer_cancelled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Invoked by pika when RabbitMQ sends a Basic.Cancel for a consumer</span>
+<span class="sd">        receiving messages.</span>
+
+<span class="sd">        :param pika.frame.Method method_frame: The Basic.Cancel frame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Consumer was cancelled remotely, shutting down: </span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">method_frame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.acknowledge_message"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.acknowledge_message">[docs]</a>    <span class="k">def</span> <span class="nf">acknowledge_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delivery_tag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Acknowledge the message delivery from RabbitMQ by sending a</span>
+<span class="sd">        Basic.Ack RPC method for the delivery tag.</span>
+
+<span class="sd">        :param int delivery_tag: The delivery tag from the Basic.Deliver frame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Acknowledging message </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">delivery_tag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">basic_ack</span><span class="p">(</span><span class="n">delivery_tag</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_message"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_message">[docs]</a>    <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_channel</span><span class="p">,</span> <span class="n">basic_deliver</span><span class="p">,</span> <span class="n">properties</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Invoked by pika when a message is delivered from RabbitMQ. The</span>
+<span class="sd">        channel is passed for your convenience. The basic_deliver object that</span>
+<span class="sd">        is passed in carries the exchange, routing key, delivery tag and</span>
+<span class="sd">        a redelivered flag for the message. The properties passed in is an</span>
+<span class="sd">        instance of BasicProperties with the message properties and the body</span>
+<span class="sd">        is the message that was sent.</span>
+
+<span class="sd">        :param pika.channel.Channel unused_channel: The channel object</span>
+<span class="sd">        :param pika.Spec.Basic.Deliver: basic_deliver method</span>
+<span class="sd">        :param pika.Spec.BasicProperties: properties</span>
+<span class="sd">        :param str|unicode body: The message body</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Received message # </span><span class="si">%s</span><span class="s1"> from </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">basic_deliver</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">,</span> <span class="n">properties</span><span class="o">.</span><span class="n">app_id</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_event</span><span class="p">(</span><span class="n">dispatcher</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">action_type</span><span class="o">=</span><span class="n">basic_deliver</span><span class="o">.</span><span class="n">routing_key</span><span class="p">,</span>
+                              <span class="n">payload</span><span class="o">=</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+                             <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">acknowledge_message</span><span class="p">(</span><span class="n">basic_deliver</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.handle_event"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.handle_event">[docs]</a>    <span class="k">def</span> <span class="nf">handle_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_cancelok"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_cancelok">[docs]</a>    <span class="k">def</span> <span class="nf">on_cancelok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is invoked by pika when RabbitMQ acknowledges the</span>
+<span class="sd">        cancellation of a consumer. At this point we will close the channel.</span>
+<span class="sd">        This will invoke the on_channel_closed method once the channel has been</span>
+<span class="sd">        closed, which will in-turn close the connection.</span>
+
+<span class="sd">        :param pika.frame.Method unused_frame: The Basic.CancelOk frame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;RabbitMQ acknowledged the cancellation of the consumer&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_channel</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.stop_consuming"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.stop_consuming">[docs]</a>    <span class="k">def</span> <span class="nf">stop_consuming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tell RabbitMQ that you would like to stop consuming by sending the</span>
+<span class="sd">        Basic.Cancel RPC command.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Sending a Basic.Cancel RPC command to RabbitMQ&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">basic_cancel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_cancelok</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_tag</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.start_consuming"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.start_consuming">[docs]</a>    <span class="k">def</span> <span class="nf">start_consuming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method sets up the consumer by first calling</span>
+<span class="sd">        add_on_cancel_callback so that the object is notified if RabbitMQ</span>
+<span class="sd">        cancels the consumer. It then issues the Basic.Consume RPC command</span>
+<span class="sd">        which returns the consumer tag that is used to uniquely identify the</span>
+<span class="sd">        consumer with RabbitMQ. We keep the value to use it when we want to</span>
+<span class="sd">        cancel consuming. The on_message method is passed in as a callback pika</span>
+<span class="sd">        will invoke when a message is fully received.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Issuing consumer related RPC commands&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_on_cancel_callback</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">basic_consume</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_message</span><span class="p">,</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">_queue_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.on_bindok"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_bindok">[docs]</a>    <span class="k">def</span> <span class="nf">on_bindok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Invoked by pika when the Queue.Bind method has completed. At this</span>
+<span class="sd">        point we will start consuming messages by calling start_consuming</span>
+<span class="sd">        which will invoke the needed RPC commands to start the process.</span>
+
+<span class="sd">        :param pika.frame.Method unused_frame: The Queue.BindOk response frame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Queue bound&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_consuming</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.close_channel"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.close_channel">[docs]</a>    <span class="k">def</span> <span class="nf">close_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call to close the channel with RabbitMQ cleanly by issuing the</span>
+<span class="sd">        Channel.Close RPC command.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Closing the channel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.open_channel"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.open_channel">[docs]</a>    <span class="k">def</span> <span class="nf">open_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Open a new channel with RabbitMQ by issuing the Channel.Open RPC</span>
+<span class="sd">        command. When RabbitMQ responds that the channel is open, the</span>
+<span class="sd">        on_channel_open callback will be invoked by pika.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Creating a new channel&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">channel</span><span class="p">(</span><span class="n">on_open_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_channel_open</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AMQPConsumer.run"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the example consumer by connecting to RabbitMQ and then</span>
+<span class="sd">        starting the IOLoop to block and allow the SelectConnection to operate.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AMQPConsumer.stop"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cleanly shutdown the connection to RabbitMQ by stopping the consumer</span>
+<span class="sd">        with RabbitMQ. When RabbitMQ confirms the cancellation, on_cancelok</span>
+<span class="sd">        will be invoked by pika, which will then closing the channel and</span>
+<span class="sd">        connection. The IOLoop is started again because this method is invoked</span>
+<span class="sd">        when CTRL-C is pressed raising a KeyboardInterrupt exception. This</span>
+<span class="sd">        exception stops the IOLoop which needs to be running for pika to</span>
+<span class="sd">        communicate with RabbitMQ. All of the commands issued prior to starting</span>
+<span class="sd">        the IOLoop will be buffered but not processed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Stopping&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_closing</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_consuming</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Stopped&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'v0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

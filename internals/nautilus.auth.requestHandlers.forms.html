@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.auth.requestHandlers.forms package &mdash; nautilus v0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.3.0 documentation" href="../index.html"/>
+        <link rel="up" title="nautilus.auth.requestHandlers package" href="nautilus.auth.requestHandlers.html"/>
+        <link rel="next" title="nautilus.config package" href="nautilus.config.html"/>
+        <link rel="prev" title="nautilus.auth.requestHandlers package" href="nautilus.auth.requestHandlers.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="nautilus.auth.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth.decorators">nautilus.auth.decorators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus.database">nautilus.database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module Index</a> &raquo;</li>
+      
+          <li><a href="nautilus.auth.html">nautilus.auth package</a> &raquo;</li>
+      
+          <li><a href="nautilus.auth.requestHandlers.html">nautilus.auth.requestHandlers package</a> &raquo;</li>
+      
+    <li>nautilus.auth.requestHandlers.forms package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/internals/nautilus.auth.requestHandlers.forms.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nautilus-auth-requesthandlers-forms-package">
+<h1>nautilus.auth.requestHandlers.forms package<a class="headerlink" href="#nautilus-auth-requesthandlers-forms-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nautilus.auth.requestHandlers.forms.change">
+<span id="nautilus-auth-requesthandlers-forms-change-module"></span><h2>nautilus.auth.requestHandlers.forms.change module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.change" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm">
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.change.</code><code class="descname">ChangePasswordForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/change.html#ChangePasswordForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
+<p>Change a user&#8217;s password.
+This class is used to retrieve a user&#8217;s password twice to ensure it&#8217;s valid
+before making a change.</p>
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password">
+<code class="descname">password</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password',), {'validators': [&lt;wtforms.validators.InputRequired object at 0x109214390&gt;]})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password_again">
+<code class="descname">password_again</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password (again)',), {'validators': [&lt;wtforms.validators.InputRequired object at 0x109132550&gt;]})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password_again" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.validate_password_again">
+<code class="descname">validate_password_again</code><span class="sig-paren">(</span><em>field</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/change.html#ChangePasswordForm.validate_password_again"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.validate_password_again" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure both password fields match, otherwise raise a ValidationError.
+:raises: ValidationError if passwords don&#8217;t match.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.auth.requestHandlers.forms.forgot">
+<span id="nautilus-auth-requesthandlers-forms-forgot-module"></span><h2>nautilus.auth.requestHandlers.forms.forgot module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.forgot" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm">
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.forgot.</code><code class="descname">ForgotPasswordForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/forgot.html#ForgotPasswordForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
+<p>Retrieve a user&#8217;s email address for initializing the password reset
+workflow.
+This class is used to retrieve a user&#8217;s email address.</p>
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm.email">
+<code class="descname">email</code><em class="property"> = &lt;UnboundField(StringField, ('Email',), {'validators': [&lt;wtforms.validators.InputRequired object at 0x109132748&gt;]})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.auth.requestHandlers.forms.login">
+<span id="nautilus-auth-requesthandlers-forms-login-module"></span><h2>nautilus.auth.requestHandlers.forms.login module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.login" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.auth.requestHandlers.forms.login.LoginForm">
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.login.</code><code class="descname">LoginForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/login.html#LoginForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.login.LoginForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
+<p>Log in an existing user.</p>
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.login.LoginForm.email">
+<code class="descname">email</code><em class="property"> = &lt;UnboundField(StringField, ('Login',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.login.LoginForm.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.login.LoginForm.password">
+<code class="descname">password</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.login.LoginForm.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.auth.requestHandlers.forms.register">
+<span id="nautilus-auth-requesthandlers-forms-register-module"></span><h2>nautilus.auth.requestHandlers.forms.register module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.register" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.auth.requestHandlers.forms.register.RegistrationForm">
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.register.</code><code class="descname">RegistrationForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/register.html#RegistrationForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.register.RegistrationForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
+<p>Register a new user.</p>
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.register.RegistrationForm.email">
+<code class="descname">email</code><em class="property"> = &lt;UnboundField(StringField, ('Email',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.register.RegistrationForm.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.auth.requestHandlers.forms.register.RegistrationForm.password">
+<code class="descname">password</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.register.RegistrationForm.password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.auth.requestHandlers.forms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="nautilus.config.html" class="btn btn-neutral float-right" title="nautilus.config package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nautilus.auth.requestHandlers.html" class="btn btn-neutral" title="nautilus.auth.requestHandlers package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

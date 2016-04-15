@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.auth.requestHandlers.base &mdash; nautilus v0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="nautilus.auth" href="../../auth.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../auth.html">nautilus.auth</a> &raquo;</li>
+      
+    <li>nautilus.auth.requestHandlers.base</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.auth.requestHandlers.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">RequestHandler</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">auth_service_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.registry</span> <span class="kn">import</span> <span class="n">service_location_by_name</span>
+
+<div class="viewcode-block" id="AuthRequestHandler"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler">[docs]</a><span class="k">class</span> <span class="nc">AuthRequestHandler</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AuthRequestHandler.get_current_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function retrieves the user identifier from the request</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get the id of the user form the token</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_secure_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AuthRequestHandler.get_login_url"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_login_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_login_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method returns the url that handles logging-in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># return the location of the service with the conventional auth name</span>
+        <span class="k">return</span> <span class="s2">&quot;http://{}/login&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">service_location_by_name</span><span class="p">(</span><span class="n">auth_service_name</span><span class="p">())</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AuthRequestHandler.login_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">[docs]</a>    <span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function logs the given user in on the request request.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: pass domain from service config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_secure_cookie</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_token_contents</span><span class="p">(</span><span class="n">user</span><span class="p">),</span>
+            <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AuthRequestHandler.logout_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user">[docs]</a>    <span class="k">def</span> <span class="nf">logout_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method logs the current user out by clearing the cookie.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_token_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            The name of the authentication cookie</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;nautilus_jwt&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">_token_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method provides the jwt contents for the given user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'v0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

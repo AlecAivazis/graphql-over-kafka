@@ -32,8 +32,8 @@
   
     <link rel="top" title="nautilus v0.3.0 documentation" href="../index.html"/>
         <link rel="up" title="Module Index" href="index.html"/>
-        <link rel="next" title="nautilus.api.fields package" href="nautilus.api.fields.html"/>
-        <link rel="prev" title="nautilus.admin package" href="nautilus.admin.html"/> 
+        <link rel="next" title="nautilus.api.endpoints package" href="nautilus.api.endpoints.html"/>
+        <link rel="prev" title="Module Index" href="index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -90,21 +90,27 @@
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="nautilus.admin.html">nautilus.admin package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.api package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.api.filter">nautilus.api.filter module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nautilus.api.helpers">nautilus.api.helpers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.api.schema">nautilus.api.schema module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nautilus.api">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus.database">nautilus.database module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
 </ul>
 </li>
@@ -160,17 +166,32 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.api.endpoints.html">nautilus.api.endpoints package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.endpoints.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html">nautilus.api.endpoints.requestHandlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers.graphiql">nautilus.api.endpoints.requestHandlers.graphiql module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers.graphql">nautilus.api.endpoints.requestHandlers.graphql module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.endpoints.html#module-nautilus.api.endpoints">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.api.executor.html">nautilus.api.executor package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.executor.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.executor.html#module-nautilus.api.executor.executor">nautilus.api.executor.executor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.executor.html#module-nautilus.api.executor.executorMiddleware">nautilus.api.executor.executorMiddleware module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.executor.html#module-nautilus.api.executor">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.api.fields.html">nautilus.api.fields package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.fields.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.fields.html#module-nautilus.api.fields.connection">nautilus.api.fields.connection module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.fields.html#module-nautilus.api.fields.list">nautilus.api.fields.list module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.fields.html#module-nautilus.api.fields">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nautilus.api.filter.html">nautilus.api.filter package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#nautilus-api-filter-helpers-module">nautilus.api.filter.helpers module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.api.filter.html#module-nautilus.api.filter">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.api.objectTypes.html">nautilus.api.objectTypes package</a><ul>
@@ -184,6 +205,19 @@
 </div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nautilus.api.filter">
+<span id="nautilus-api-filter-module"></span><h2>nautilus.api.filter module<a class="headerlink" href="#module-nautilus.api.filter" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.api.filter.args_for_model">
+<code class="descclassname">nautilus.api.filter.</code><code class="descname">args_for_model</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/filter.html#args_for_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.filter.args_for_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nautilus.api.filter.filter_model">
+<code class="descclassname">nautilus.api.filter.</code><code class="descname">filter_model</code><span class="sig-paren">(</span><em>model</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/filter.html#filter_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.filter.filter_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-nautilus.api.helpers">
 <span id="nautilus-api-helpers-module"></span><h2>nautilus.api.helpers module<a class="headerlink" href="#module-nautilus.api.helpers" title="Permalink to this headline">¶</a></h2>
@@ -214,6 +248,17 @@ graphql types</td>
 </dd></dl>
 
 </div>
+<div class="section" id="module-nautilus.api.schema">
+<span id="nautilus-api-schema-module"></span><h2>nautilus.api.schema module<a class="headerlink" href="#module-nautilus.api.schema" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.api.schema.AsyncSchema">
+<em class="property">class </em><code class="descclassname">nautilus.api.schema.</code><code class="descname">AsyncSchema</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/schema.html#AsyncSchema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.schema.AsyncSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphene.core.schema.Schema</span></code></p>
+<p>This class creates a graphql schema that resolves its fields using
+the natuilus event queue for asynchronous data retrieval.</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-nautilus.api">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.api" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -226,10 +271,10 @@ graphql types</td>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="nautilus.api.fields.html" class="btn btn-neutral float-right" title="nautilus.api.fields package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="nautilus.api.endpoints.html" class="btn btn-neutral float-right" title="nautilus.api.endpoints package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="nautilus.admin.html" class="btn btn-neutral" title="nautilus.admin package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Module Index" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

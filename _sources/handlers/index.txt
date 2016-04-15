@@ -32,7 +32,7 @@ As your services get more complex, you'll want to split your action handler into
 separate functions which each get called. Nautilus provides a function called
 ``combine_action_handlers`` which serves just this case:
 
-.. autofunction:: nautilus.network.combine_action_handlers
+.. autofunction:: nautilus.network.amqp.combine_action_handlers
 
 .. code-block:: python
 
@@ -62,7 +62,7 @@ Factories
 
 The following are functions that take a paramter and return an an action creator.
 
-.. autofunction:: nautilus.network.CRUDHandler
-.. autofunction:: nautilus.network.createHandler
-.. autofunction:: nautilus.network.updateHandler
-.. autofunction:: nautilus.network.deleteHandler
+.. autofunction:: nautilus.network.amqp.crud_handler
+.. autofunction:: nautilus.network.amqp.create_handler
+.. autofunction:: nautilus.network.amqp.update_handler
+.. autofunction:: nautilus.network.amqp.delete_handler

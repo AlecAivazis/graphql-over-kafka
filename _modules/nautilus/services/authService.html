@@ -143,7 +143,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="AuthService"><a class="viewcode-back" href="../../../services/index.html#nautilus.AuthService">[docs]</a><span class="k">class</span> <span class="nc">AuthService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthService"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.authService.AuthService">[docs]</a><span class="k">class</span> <span class="nc">AuthService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This service handles user authentication for the entire cloud and is</span>
 <span class="sd">        the only service with access to the users passwords. As such, this</span>
@@ -159,7 +159,7 @@
 <span class="sd">                import nautilus</span>
 
 <span class="sd">                class ServiceConfig:</span>
-<span class="sd">                    SQLALCHEMY_DATABASE_URI = &#39;sqlite:////tmp/models.db&#39;</span>
+<span class="sd">                    database_url = &#39;sqlite:////tmp/models.db&#39;</span>
 
 <span class="sd">                class MyAuth(nautilus.AuthService):</span>
 <span class="sd">                    config = ServiceConfig</span>
@@ -173,7 +173,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">init_db</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="AuthService.init_db"><a class="viewcode-back" href="../../../services/index.html#nautilus.AuthService.init_db">[docs]</a>    <span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthService.init_db"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.authService.AuthService.init_db">[docs]</a>    <span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This function configures the database used for models to make</span>
 <span class="sd">            the configuration parameters.</span>
@@ -184,18 +184,18 @@
         <span class="n">nautilus</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">init_db</span><span class="p">(</span><span class="n">db_url</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">get_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">nautilus</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">UserPassword</span><span class="p">]</span></div>
+<div class="viewcode-block" id="AuthService.get_models"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.authService.AuthService.get_models">[docs]</a>    <span class="k">def</span> <span class="nf">get_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">nautilus</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">UserPassword</span><span class="p">]</span></div></div>
 
 
 <span class="nd">@AuthService.route</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">LoginHandler</span><span class="p">):</span> <span class="k">pass</span>
+<div class="viewcode-block" id="Login"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.authService.Login">[docs]</a><span class="k">class</span> <span class="nc">Login</span><span class="p">(</span><span class="n">LoginHandler</span><span class="p">):</span> <span class="k">pass</span></div>
 
 <span class="nd">@AuthService.route</span><span class="p">(</span><span class="s1">&#39;/logout&#39;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Logout</span><span class="p">(</span><span class="n">LogoutHandler</span><span class="p">):</span> <span class="k">pass</span>
+<div class="viewcode-block" id="Logout"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.authService.Logout">[docs]</a><span class="k">class</span> <span class="nc">Logout</span><span class="p">(</span><span class="n">LogoutHandler</span><span class="p">):</span> <span class="k">pass</span></div>
 
 <span class="nd">@AuthService.route</span><span class="p">(</span><span class="s1">&#39;/register&#39;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Register</span><span class="p">(</span><span class="n">RegisterHandler</span><span class="p">):</span> <span class="k">pass</span>
+<div class="viewcode-block" id="Register"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.authService.Register">[docs]</a><span class="k">class</span> <span class="nc">Register</span><span class="p">(</span><span class="n">RegisterHandler</span><span class="p">):</span> <span class="k">pass</span></div>
 </pre></div>
 
            </div>

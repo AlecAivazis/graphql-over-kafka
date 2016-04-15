@@ -6,18 +6,13 @@ Subpackages
 
 .. toctree::
 
+    nautilus.auth.exceptions
+    nautilus.auth.models
     nautilus.auth.primitives
+    nautilus.auth.requestHandlers
 
 Submodules
 ----------
-
-nautilus.auth.backend module
-----------------------------
-
-.. automodule:: nautilus.auth.backend
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 nautilus.auth.decorators module
 -------------------------------

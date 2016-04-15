@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.contrib.graphene_peewee.converter &mdash; nautilus v0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>nautilus.contrib.graphene_peewee.converter</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.contrib.graphene_peewee.converter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This module defines various patches for peewee to easily interact with</span>
+<span class="sd">    graphene.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># external imports</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">singledispatch</span>
+<span class="kn">from</span> <span class="nn">graphene.core.types.scalars</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Boolean</span><span class="p">,</span>
+    <span class="n">Float</span><span class="p">,</span>
+    <span class="n">ID</span><span class="p">,</span>
+    <span class="n">Int</span><span class="p">,</span>
+    <span class="n">String</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># local imports</span>
+<span class="kn">import</span> <span class="nn">nautilus.models.fields</span> <span class="kn">as</span> <span class="nn">fields</span>
+
+<span class="nd">@singledispatch</span>
+<div class="viewcode-block" id="convert_peewee_field"><a class="viewcode-back" href="../../../../internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_peewee_field">[docs]</a><span class="k">def</span> <span class="nf">convert_peewee_field</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This helper converts a peewee field type into the appropriate type</span>
+<span class="sd">        for a graphql schema.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;Unable to convert peewee field </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">field</span>
+    <span class="p">)</span></div>
+
+
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">DateField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">FixedCharField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">TextField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">TimeField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">UUIDField</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_field_to_string"><a class="viewcode-back" href="../../../../internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_field_to_string">[docs]</a><span class="k">def</span> <span class="nf">convert_field_to_string</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">help_text</span><span class="p">)</span></div>
+
+
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">PrimaryKeyField</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_field_to_pk"><a class="viewcode-back" href="../../../../internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_field_to_pk">[docs]</a><span class="k">def</span> <span class="nf">convert_field_to_pk</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ID</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">help_text</span><span class="p">)</span></div>
+
+
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_field_to_int"><a class="viewcode-back" href="../../../../internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_field_to_int">[docs]</a><span class="k">def</span> <span class="nf">convert_field_to_int</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Int</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">help_text</span><span class="p">)</span></div>
+
+
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">DoubleField</span><span class="p">)</span>
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">FloatField</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_field_to_float"><a class="viewcode-back" href="../../../../internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_field_to_float">[docs]</a><span class="k">def</span> <span class="nf">convert_field_to_float</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Float</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">help_text</span><span class="p">)</span></div>
+
+
+<span class="nd">@convert_peewee_field.register</span><span class="p">(</span><span class="n">fields</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">)</span>
+<div class="viewcode-block" id="convert_field_to_bool"><a class="viewcode-back" href="../../../../internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_field_to_bool">[docs]</a><span class="k">def</span> <span class="nf">convert_field_to_bool</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Boolean</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">help_text</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'v0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

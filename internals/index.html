@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="nautilus v0.3.0 documentation" href="../index.html"/>
-        <link rel="next" title="nautilus.admin package" href="nautilus.admin.html"/>
+        <link rel="next" title="nautilus.api package" href="nautilus.api.html"/>
         <link rel="prev" title="Utilities" href="../utilities/index.html"/> 
 
   
@@ -89,15 +89,19 @@
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Module Index</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.admin.html">nautilus.admin package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-nautilus.database">nautilus.database module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-nautilus">Module contents</a></li>
 </ul>
 </li>
@@ -151,23 +155,34 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="nautilus.admin.html">nautilus.admin package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.admin.html#module-contents">Module contents</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.api.endpoints.html">nautilus.api.endpoints package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.endpoints.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html">nautilus.api.endpoints.requestHandlers package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers.graphiql">nautilus.api.endpoints.requestHandlers.graphiql module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers.graphql">nautilus.api.endpoints.requestHandlers.graphql module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.endpoints.html#module-nautilus.api.endpoints">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.api.executor.html">nautilus.api.executor package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.executor.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.executor.html#module-nautilus.api.executor.executor">nautilus.api.executor.executor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.executor.html#module-nautilus.api.executor.executorMiddleware">nautilus.api.executor.executorMiddleware module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.api.executor.html#module-nautilus.api.executor">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.api.fields.html">nautilus.api.fields package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.api.fields.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.api.fields.html#module-nautilus.api.fields.connection">nautilus.api.fields.connection module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.api.fields.html#module-nautilus.api.fields.list">nautilus.api.fields.list module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.api.fields.html#module-nautilus.api.fields">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.api.filter.html">nautilus.api.filter package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.api.filter.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.api.filter.html#nautilus-api-filter-helpers-module">nautilus.api.filter.helpers module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.api.filter.html#module-nautilus.api.filter">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.api.objectTypes.html">nautilus.api.objectTypes package</a><ul>
@@ -179,25 +194,92 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.html#module-nautilus.api.filter">nautilus.api.filter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.html#module-nautilus.api.helpers">nautilus.api.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.api.html#module-nautilus.api.schema">nautilus.api.schema module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.api.html#module-nautilus.api">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.auth.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.auth.exceptions.html">nautilus.auth.exceptions package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.exceptions.html#module-nautilus.auth.exceptions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.auth.models.html">nautilus.auth.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.models.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nautilus.auth.models.fields.html">nautilus.auth.models.fields package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.fields.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.fields.html#module-nautilus.auth.models.fields.password">nautilus.auth.models.fields.password module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.fields.html#module-nautilus.auth.models.fields">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="nautilus.auth.models.mixins.html">nautilus.auth.models.mixins package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.mixins.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.mixins.html#module-nautilus.auth.models.mixins.hasPassword">nautilus.auth.models.mixins.hasPassword module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.mixins.html#module-nautilus.auth.models.mixins.user">nautilus.auth.models.mixins.user module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.models.mixins.html#module-nautilus.auth.models.mixins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.models.html#module-nautilus.auth.models.userPassword">nautilus.auth.models.userPassword module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.models.html#module-nautilus.auth.models">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.auth.primitives.html">nautilus.auth.primitives package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.auth.primitives.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.auth.primitives.html#module-nautilus.auth.primitives.passwordHash">nautilus.auth.primitives.passwordHash module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.primitives.html#nautilus-auth-primitives-user-module">nautilus.auth.primitives.user module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.auth.primitives.html#module-nautilus.auth.primitives">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.auth.requestHandlers.html">nautilus.auth.requestHandlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html">nautilus.auth.requestHandlers.forms package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.change">nautilus.auth.requestHandlers.forms.change module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.forgot">nautilus.auth.requestHandlers.forms.forgot module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.login">nautilus.auth.requestHandlers.forms.login module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.register">nautilus.auth.requestHandlers.forms.register module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.base">nautilus.auth.requestHandlers.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.login">nautilus.auth.requestHandlers.login module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.logout">nautilus.auth.requestHandlers.logout module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.register">nautilus.auth.requestHandlers.register module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.auth.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.auth.html#nautilus-auth-backend-module">nautilus.auth.backend module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth.decorators">nautilus.auth.decorators module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.config.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.config.html#module-nautilus.config.config">nautilus.config.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.config.html#module-nautilus.config">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.contrib.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.graphene_peewee.html">nautilus.contrib.graphene_peewee package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.contrib.graphene_peewee.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.contrib.graphene_peewee.html#module-nautilus.contrib.graphene_peewee.converter">nautilus.contrib.graphene_peewee.converter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.contrib.graphene_peewee.html#module-nautilus.contrib.graphene_peewee.objectType">nautilus.contrib.graphene_peewee.objectType module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.contrib.graphene_peewee.html#module-nautilus.contrib.graphene_peewee">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.contrib.html#module-nautilus.contrib">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a><ul>
@@ -209,22 +291,35 @@
 <li class="toctree-l2"><a class="reference internal" href="nautilus.conventions.html#module-nautilus.conventions">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.models.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.models.mixins.html">nautilus.models.mixins package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.mixins.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-crudnotificationcreator-module">nautilus.models.mixins.crudNotificationCreator module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-hasid-module">nautilus.models.mixins.hasID module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-haspassword-module">nautilus.models.mixins.hasPassword module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.mixins.html#nautilus-models-mixins-user-module">nautilus.models.mixins.user module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.mixins.html#module-contents">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.management.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.management.scripts.html">nautilus.management.scripts package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.management.scripts.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.management.scripts.html#module-nautilus.management.scripts.create">nautilus.management.scripts.create module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.management.scripts.html#module-nautilus.management.scripts">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.models.types.html">nautilus.models.types package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.types.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.types.html#nautilus-models-types-password-module">nautilus.models.types.password module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.types.html#nautilus-models-types-s3file-module">nautilus.models.types.s3File module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.models.types.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.management.util.html">nautilus.management.util package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.management.util.html#module-nautilus.management.util">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.management.html#module-nautilus.management">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.models.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.models.fields.html">nautilus.models.fields package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.models.fields.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.models.fields.html#nautilus-models-fields-s3file-module">nautilus.models.fields.s3File module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.models.fields.html#module-nautilus.models.fields">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.models.serializers.html">nautilus.models.serializers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.models.serializers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.models.serializers.html#module-nautilus.models.serializers.modelSerializer">nautilus.models.serializers.modelSerializer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.models.serializers.html#module-nautilus.models.serializers">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -237,42 +332,57 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.network.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.network.actionHandlers.html">nautilus.network.actionHandlers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.actionHandlers.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.actionHandlers.html#nautilus-network-actionhandlers-createhandler-module">nautilus.network.actionHandlers.createHandler module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.actionHandlers.html#nautilus-network-actionhandlers-crudhandler-module">nautilus.network.actionHandlers.crudHandler module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.actionHandlers.html#nautilus-network-actionhandlers-deletehandler-module">nautilus.network.actionHandlers.deleteHandler module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.actionHandlers.html#nautilus-network-actionhandlers-updatehandler-module">nautilus.network.actionHandlers.updateHandler module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.actionHandlers.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.network.amqp.html">nautilus.network.amqp package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.amqp.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html">nautilus.network.amqp.actionHandlers package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.createHandler">nautilus.network.amqp.actionHandlers.createHandler module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.crudHandler">nautilus.network.amqp.actionHandlers.crudHandler module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.deleteHandler">nautilus.network.amqp.actionHandlers.deleteHandler module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.updateHandler">nautilus.network.amqp.actionHandlers.updateHandler module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.network.consumers.html">nautilus.network.consumers package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.consumers.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.consumers.html#nautilus-network-consumers-actionconsumer-module">nautilus.network.consumers.ActionConsumer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.consumers.html#nautilus-network-consumers-basicconsumer-module">nautilus.network.consumers.BasicConsumer module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.consumers.html#module-contents">Module contents</a></li>
+<li class="toctree-l5"><a class="reference internal" href="nautilus.network.amqp.consumers.html">nautilus.network.amqp.consumers package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.consumers.html#submodules">Submodules</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.consumers.html#module-nautilus.network.amqp.consumers.actions">nautilus.network.amqp.consumers.actions module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.consumers.html#module-nautilus.network.amqp.consumers.amqp">nautilus.network.amqp.consumers.amqp module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="nautilus.network.amqp.consumers.html#module-nautilus.network.amqp.consumers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.amqp.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.amqp.html#module-nautilus.network.amqp.dispatch">nautilus.network.amqp.dispatch module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.amqp.html#module-nautilus.network.amqp.util">nautilus.network.amqp.util module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.amqp.html#module-nautilus.network.amqp">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.network.http.html">nautilus.network.http package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.http.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.http.html#module-nautilus.network.http.requestHandler">nautilus.network.http.requestHandler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.http.html#module-nautilus.network.http">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="nautilus.network.registry.html">nautilus.network.registry package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="nautilus.network.registry.html#module-nautilus.network.registry">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.network.tests.html">nautilus.network.tests package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.tests.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.tests.html#nautilus-network-tests-test-util-module">nautilus.network.tests.test_util module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.network.tests.html#module-contents">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nautilus.network.util.html">nautilus.network.util package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.util.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.util.html#module-nautilus.network.util.query">nautilus.network.util.query module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nautilus.network.util.html#module-nautilus.network.util">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.network.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.network.html#nautilus-network-dispatch-module">nautilus.network.dispatch module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nautilus.network.html#module-nautilus.network.util">nautilus.network.util module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.network.html#module-nautilus.network">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.services.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.services.html#module-nautilus.services.apiGateway">nautilus.services.apiGateway module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nautilus.services.html#module-nautilus.services.authService">nautilus.services.authService module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.services.html#module-nautilus.services.connectionService">nautilus.services.connectionService module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.services.html#module-nautilus.services.modelService">nautilus.services.modelService module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nautilus.services.html#module-nautilus.services.service">nautilus.services.service module</a></li>
@@ -282,6 +392,18 @@
 </li>
 </ul>
 </div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nautilus.database">
+<span id="nautilus-database-module"></span><h2>nautilus.database module<a class="headerlink" href="#module-nautilus.database" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.database.init_db">
+<code class="descclassname">nautilus.database.</code><code class="descname">init_db</code><span class="sig-paren">(</span><em>database_url</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/database.html#init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.database.init_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function initializes the global database with the given url.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-nautilus">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus" title="Permalink to this headline">¶</a></h2>
@@ -295,7 +417,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="nautilus.admin.html" class="btn btn-neutral float-right" title="nautilus.admin package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="nautilus.api.html" class="btn btn-neutral float-right" title="nautilus.api package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../utilities/index.html" class="btn btn-neutral" title="Utilities" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

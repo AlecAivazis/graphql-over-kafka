@@ -12,14 +12,6 @@ nautilus.auth.primitives.passwordHash module
     :undoc-members:
     :show-inheritance:
 
-nautilus.auth.primitives.user module
-------------------------------------
-
-.. automodule:: nautilus.auth.primitives.user
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -137,7 +137,7 @@
 <span class="kn">from</span> <span class="nn">graphql.core.type.scalars</span> <span class="kn">import</span> <span class="n">GraphQLString</span>
 <span class="kn">from</span> <span class="nn">graphene.core.types.scalars</span> <span class="kn">import</span> <span class="n">Int</span>
 
-<div class="viewcode-block" id="args_for_model"><a class="viewcode-back" href="../../../internals/nautilus.api.filter.html#nautilus.api.filter.args_for_model">[docs]</a><span class="k">def</span> <span class="nf">args_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="args_for_model"><a class="viewcode-back" href="../../../internals/nautilus.api.html#nautilus.api.filter.args_for_model">[docs]</a><span class="k">def</span> <span class="nf">args_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
     <span class="c1"># import the model field helper</span>
     <span class="kn">from</span> <span class="nn">.helpers</span> <span class="kn">import</span> <span class="n">fields_for_model</span>
 
@@ -166,7 +166,7 @@
     <span class="k">return</span> <span class="n">full_args</span></div>
 
 
-<div class="viewcode-block" id="filter_model"><a class="viewcode-back" href="../../../internals/nautilus.api.filter.html#nautilus.api.filter.filter_model">[docs]</a><span class="k">def</span> <span class="nf">filter_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="filter_model"><a class="viewcode-back" href="../../../internals/nautilus.api.html#nautilus.api.filter.filter_model">[docs]</a><span class="k">def</span> <span class="nf">filter_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
 
     <span class="c1"># convert any args referencing pk to the actual field</span>
     <span class="n">filter_args</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">):</span> <span class="n">value</span> \

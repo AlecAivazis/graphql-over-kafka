@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.api.executor.executorMiddleware &mdash; nautilus v0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">Service API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>nautilus.api.executor.executorMiddleware</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.api.executor.executorMiddleware</h1><div class="highlight"><pre>
+<span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">tornado</span>
+<span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">Future</span>
+<span class="kn">from</span> <span class="nn">graphql.core.pyutils.defer</span> <span class="kn">import</span> <span class="n">Deferred</span>
+<span class="kn">from</span> <span class="nn">graphql.core.execution.middlewares.utils</span> <span class="kn">import</span> <span class="n">resolver_has_tag</span><span class="p">,</span> <span class="n">tag_resolver</span>
+
+
+<span class="n">_nautilus_tag</span> <span class="o">=</span> <span class="s1">&#39;nautilus_service&#39;</span>
+
+<div class="viewcode-block" id="nautilus_service"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.nautilus_service">[docs]</a><span class="k">def</span> <span class="nf">nautilus_service</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Marks a resolver to run inside the ioloop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tag_resolver</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_nautilus_tag</span><span class="p">)</span></div>
+
+<span class="nd">@tornado.gen.coroutine</span>
+<div class="viewcode-block" id="execute_resolver"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.execute_resolver">[docs]</a><span class="k">def</span> <span class="nf">execute_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">deferred</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function executes the given resolver, passing it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">resolver</span><span class="p">(</span><span class="n">deferred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TornadoExecutionMiddleware"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware">[docs]</a><span class="k">class</span> <span class="nc">TornadoExecutionMiddleware</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This middleware executes the fields using the tornado ioloop for</span>
+<span class="sd">        deffered executions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="TornadoExecutionMiddleware.run_resolve_fn"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware.run_resolve_fn">[docs]</a>    <span class="k">def</span> <span class="nf">run_resolve_fn</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">original_resolver</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method acts as a wrapper over the fields resolve function.</span>
+<span class="sd">            In order to integrate seemlessly with graphql.core, the result</span>
+<span class="sd">            is wrapped in &lt;graphql.core.pyutils.Deferred&gt; when necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the field is an asynchronous one</span>
+        <span class="k">if</span> <span class="n">resolver_has_tag</span><span class="p">(</span><span class="n">original_resolver</span><span class="p">,</span> <span class="n">_nautilus_tag</span><span class="p">):</span>
+            <span class="c1"># create a deffered object</span>
+            <span class="n">deferred</span> <span class="o">=</span> <span class="n">Deferred</span><span class="p">()</span>
+            <span class="c1"># execute the resolver and hand it the deferred so it can use the</span>
+            <span class="c1"># callback</span>
+            <span class="n">execute_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">deferred</span><span class="p">)</span>
+            <span class="c1"># return the deferred object</span>
+            <span class="k">return</span> <span class="n">deferred</span>
+
+        <span class="c1"># otherwise the field should be executed synchrnously</span>
+        <span class="k">return</span> <span class="n">resolver</span><span class="p">()</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="TornadoExecutionMiddleware.execution_result"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware.execution_result">[docs]</a>    <span class="k">def</span> <span class="nf">execution_result</span><span class="p">(</span><span class="n">executor</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method waits for the deffered execution. Unfortunately,</span>
+<span class="sd">            this method is not forced asynchronous so we have wrap the</span>
+<span class="sd">            execution in a future.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create a tornado future</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="n">Future</span><span class="p">()</span>
+
+        <span class="c1"># retrieve the deffered execution</span>
+        <span class="n">deferred</span> <span class="o">=</span> <span class="n">executor</span><span class="p">()</span>
+
+        <span class="c1"># if the executor is not a deffered</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deferred</span><span class="p">,</span> <span class="n">Deferred</span><span class="p">):</span>
+            <span class="c1"># yell loudly</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Another middleware has converted the &#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;execution result away from a Deferred.&#39;</span>
+                            <span class="p">)</span>
+
+        <span class="c1"># when the deferred is finished update the future</span>
+        <span class="n">deferred</span><span class="o">.</span><span class="n">add_callbacks</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">,</span> <span class="n">future</span><span class="o">.</span><span class="n">set_exception</span><span class="p">)</span>
+
+        <span class="c1"># wait for the result of the async action</span>
+        <span class="k">return</span> <span class="n">future</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'v0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

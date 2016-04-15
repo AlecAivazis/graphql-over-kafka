@@ -87,7 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Service API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#summarizing-an-external-service-in-a-schema">Summarizing an External Service in A Schema</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#designating-a-graphql-equivalent-of-an-sqlalchemy-type">Designating a GraphQL Equivalent of an SQLAlchemy Type</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#designating-a-graphql-equivalent-of-a-nautilus-field">Designating a GraphQL Equivalent of a Nautilus Field</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
@@ -211,21 +211,25 @@ not connections to other objects.</td>
 </dd></dl>
 
 </div>
-<div class="section" id="designating-a-graphql-equivalent-of-an-sqlalchemy-type">
-<h2>Designating a GraphQL Equivalent of an SQLAlchemy Type<a class="headerlink" href="#designating-a-graphql-equivalent-of-an-sqlalchemy-type" title="Permalink to this headline">¶</a></h2>
-<p>Due to the early age of the Graphene/GraphQL community, not all SQLAlchemy types
-have conversions already specified. If you encounter such a type, consider
-posting a PR. If that&#8217;s not your style, you can always register it yourself:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span>
-<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">convert_sqlalchemy_type</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="kn">import</span> <span class="n">UUID</span>
-<span class="kn">from</span> <span class="nn">graphene.core.types.scalars</span> <span class="kn">import</span> <span class="n">String</span>
+<div class="section" id="designating-a-graphql-equivalent-of-a-nautilus-field">
+<h2>Designating a GraphQL Equivalent of a Nautilus Field<a class="headerlink" href="#designating-a-graphql-equivalent-of-a-nautilus-field" title="Permalink to this headline">¶</a></h2>
+<p>If you create (or find) a custom field that is compatible with peewee, the ORM
+used by nautilus internally, you might find the need to provide a custom handler
+in order for the schema generator to be able to convert it to the correct GraphQL
+type.</p>
+<dl class="function">
+<dt id="nautilus.contrib.graphene_peewee.converter">
+<code class="descclassname">nautilus.contrib.graphene_peewee.</code><code class="descname">converter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nautilus.contrib.graphene_peewee.converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module defines various patches for peewee to easily interact with
+graphene.</p>
+</dd></dl>
 
-<span class="k">class</span> <span class="nc">Product</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">UUID</span><span class="p">,</span> <span class="n">primary_key</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<p>This function follows the [singledispatch] pattern. Registering a new type looks
+something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">awesomepackage</span> <span class="kn">import</span> <span class="n">AwesomeField</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">converter</span>
 
-<span class="nd">@convert_sqlalchemy_type.register</span><span class="p">(</span><span class="n">UUID</span><span class="p">)</span>
+<span class="nd">@converter.register</span><span class="p">(</span><span class="n">AwesomeField</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">convert_column_to_string</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
 </pre></div>

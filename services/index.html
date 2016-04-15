@@ -170,7 +170,7 @@ to be called alongside the internal ones.</li>
     <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
 
 <span class="k">class</span> <span class="nc">MyModelService</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">ModelService</span><span class="p">):</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span>
@@ -234,7 +234,7 @@ to be called alongside the internal ones.</li>
 <span class="kn">from</span> <span class="nn">other.local.directory</span> <span class="kn">import</span> <span class="n">service</span> <span class="k">as</span> <span class="n">service_two</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/connections.db&#39;</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/connections.db&#39;</span>
 
 <span class="k">class</span> <span class="nc">MyConnection</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">ConnectionService</span><span class="p">):</span>
     <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service_one</span><span class="p">,</span> <span class="n">service_two</span><span class="p">]</span>
@@ -306,7 +306,7 @@ to provid valid credentials to other services.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
 
 <span class="k">class</span> <span class="nc">MyAuth</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">AuthService</span><span class="p">):</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
