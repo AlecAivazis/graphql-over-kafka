@@ -35,7 +35,7 @@ def execute_async_resolver(resolver, deferred):
     """
         This function executes the given resolver, passing it
     """
-    resolver()(deferred)
+    resolver()(deferred.callback, deferred.errback)
 
 
 class TornadoExecutionMiddleware:
@@ -53,7 +53,6 @@ class TornadoExecutionMiddleware:
         """
         # if the field is an asynchronous one
         if resolver_has_tag(original_resolver, _async_tag):
-            print("looking at async field")
             # create a deffered object
             deferred = Deferred()
             # execute the resolver and hand it the deferred so it can use the

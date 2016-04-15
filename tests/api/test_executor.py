@@ -23,14 +23,19 @@ class TestUtil(tornado.testing.AsyncTestCase):
         class TestQuery(ObjectType):
             sync = String()
             async = String()
+            async_fail = String()
 
             @resolve_only_args
             def resolve_sync(self):
                 return 'hello'
 
             @async_field
-            def resolve_async(deferred, ):
-                deferred.callback('hello')
+            def resolve_async(success, error):
+                success('hello')
+
+            @async_field
+            def resolve_async_fail(success, error):
+                error(Exception('hello'))
 
 
         # attach the query to the schema
@@ -80,3 +85,22 @@ class TestUtil(tornado.testing.AsyncTestCase):
         assert resolved_query.data['async'] == 'hello', (
             "Async query did not have the correct data value."
         )
+
+
+    @tornado.testing.gen_test
+    def test_async_query_can_call_errback(self):
+
+        # the query to test the schema
+        test_query = "query{ asyncFail }"
+        # resolve the query in the schema
+        resolved_query = yield self.schema.execute(test_query)
+        
+        # assert that there are no errors
+        assert len(resolved_query.errors) == 1, (
+            "Schema did not contain errors."
+        )
+        # make sure the error text matches up
+        assert format_error(resolved_query.errors[0])['message'] == 'hello', (
+            "Error text does not match up with what I expected."
+        )
+
