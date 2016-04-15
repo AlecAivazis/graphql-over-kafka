@@ -44,7 +44,7 @@ class TestUtil(unittest.TestCase):
         )
 
         assert resolved_query.data['sync'] == 'hello', (
-            "Resolved query did not have the correct data value."
+            "Sync query did not have the correct data value."
         )
 
 
@@ -61,5 +61,5 @@ class TestUtil(unittest.TestCase):
         )
 
         assert resolved_query.data['async'] == 'hello', (
-            "Resolved query did not have the correct data value."
+            "Async query did not have the correct data value."
         )
