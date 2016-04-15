@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nautilus',
-    version='0.4.1',
+    version='0.4.2',
     description='A library for creating microservice applications',
     author='Alec Aivazis',
     author_email='alec@aivazis.com',
@@ -26,5 +26,6 @@ setup(
         'jinja2',
         'nose2',
         'pika',
+        'python-consul',
     ]
 )
