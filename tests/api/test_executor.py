@@ -23,7 +23,7 @@ class TestUtil(tornado.testing.AsyncTestCase):
         class TestQuery(ObjectType):
             sync = String()
             async = String()
-            async_fail = String()
+            fail = String()
 
             @resolve_only_args
             def resolve_sync(self):
@@ -34,7 +34,7 @@ class TestUtil(tornado.testing.AsyncTestCase):
                 success('hello')
 
             @async_field
-            def resolve_async_fail(success, error):
+            def resolve_fail(success, error):
                 error(Exception('hello'))
 
 
@@ -91,10 +91,10 @@ class TestUtil(tornado.testing.AsyncTestCase):
     def test_async_query_can_call_errback(self):
 
         # the query to test the schema
-        test_query = "query{ asyncFail }"
+        test_query = "query{ fail }"
         # resolve the query in the schema
         resolved_query = yield self.schema.execute(test_query)
-        
+
         # assert that there are no errors
         assert len(resolved_query.errors) == 1, (
             "Schema did not contain errors."
