@@ -27,5 +27,6 @@ setup(
         'nose2',
         'pika',
         'python-consul',
+        'wtforms',
     ]
 )
