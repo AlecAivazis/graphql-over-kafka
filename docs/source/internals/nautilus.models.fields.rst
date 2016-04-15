@@ -1,13 +1,13 @@
-nautilus.network.tests package
+nautilus.models.fields package
 ==============================
 
 Submodules
 ----------
 
-nautilus.network.tests.test_util module
----------------------------------------
+nautilus.models.fields.s3File module
+------------------------------------
 
-.. automodule:: nautilus.network.tests.test_util
+.. automodule:: nautilus.models.fields.s3File
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ nautilus.network.tests.test_util module
 Module contents
 ---------------
 
-.. automodule:: nautilus.network.tests
+.. automodule:: nautilus.models.fields
     :members:
     :undoc-members:
     :show-inheritance:

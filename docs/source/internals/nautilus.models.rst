@@ -6,8 +6,8 @@ Subpackages
 
 .. toctree::
 
-    nautilus.models.mixins
-    nautilus.models.types
+    nautilus.models.fields
+    nautilus.models.serializers
 
 Submodules
 ----------

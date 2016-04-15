@@ -6,30 +6,10 @@ Subpackages
 
 .. toctree::
 
-    nautilus.network.actionHandlers
-    nautilus.network.consumers
+    nautilus.network.amqp
+    nautilus.network.http
     nautilus.network.registry
-    nautilus.network.tests
-
-Submodules
-----------
-
-nautilus.network.dispatch module
---------------------------------
-
-.. automodule:: nautilus.network.dispatch
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-nautilus.network.util module
-----------------------------
-
-.. automodule:: nautilus.network.util
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+    nautilus.network.util
 
 Module contents
 ---------------

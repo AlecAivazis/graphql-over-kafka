@@ -1,13 +1,13 @@
-nautilus.api.filter package
-===========================
+nautilus.network.util package
+=============================
 
 Submodules
 ----------
 
-nautilus.api.filter.helpers module
+nautilus.network.util.query module
 ----------------------------------
 
-.. automodule:: nautilus.api.filter.helpers
+.. automodule:: nautilus.network.util.query
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ nautilus.api.filter.helpers module
 Module contents
 ---------------
 
-.. automodule:: nautilus.api.filter
+.. automodule:: nautilus.network.util
     :members:
     :undoc-members:
     :show-inheritance:

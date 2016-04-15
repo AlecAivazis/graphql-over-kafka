@@ -1,4 +1,4 @@
-Module Index
+nautilus package
 ================
 
 Subpackages
@@ -6,13 +6,27 @@ Subpackages
 
 .. toctree::
 
-    nautilus.admin
     nautilus.api
     nautilus.auth
+    nautilus.config
+    nautilus.contrib
     nautilus.conventions
+    nautilus.management
     nautilus.models
     nautilus.network
     nautilus.services
+
+Submodules
+----------
+
+nautilus.database module
+------------------------
+
+.. automodule:: nautilus.database
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
@@ -21,4 +35,3 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
-    :private-members:
