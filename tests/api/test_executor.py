@@ -1,12 +1,18 @@
 # external imports
 import unittest
 import tornado.testing
+import tornado.gen
 from graphene import Schema, ObjectType, String, resolve_only_args
 from graphql.core.execution.middlewares.utils import resolver_has_tag
 from graphql.core.error import format_error
 # local imports
 import nautilus
 from nautilus.api.executor import async_field, is_async_field
+
+@tornado.gen.coroutine
+def _coroutine():
+    return 'hello'
+
 
 class TestUtil(tornado.testing.AsyncTestCase):
 
@@ -24,6 +30,7 @@ class TestUtil(tornado.testing.AsyncTestCase):
             sync = String()
             async = String()
             fail = String()
+            chained = String()
 
             @resolve_only_args
             def resolve_sync(self):
@@ -36,6 +43,14 @@ class TestUtil(tornado.testing.AsyncTestCase):
             @async_field
             def resolve_fail(success, error):
                 error(Exception('hello'))
+
+            @async_field
+            @tornado.gen.coroutine
+            def resolve_chained(success, error):
+                result = yield _coroutine()
+
+                success(result)
+
 
 
         # attach the query to the schema
@@ -103,4 +118,23 @@ class TestUtil(tornado.testing.AsyncTestCase):
         assert format_error(resolved_query.errors[0])['message'] == 'hello', (
             "Error text does not match up with what I expected."
         )
+
+
+    @tornado.testing.gen_test
+    def test_async_query_can_call_chained(self):
+
+        # the query to test the schema
+        test_query = "query{ chained }"
+        # resolve the query in the schema
+        resolved_query = yield self.schema.execute(test_query)
+        
+        # assert that there are no errors
+        assert len(resolved_query.errors) == 0, (
+            "Schema contained errors: " + ','.join(resolved_query.errors)
+        )
+        assert resolved_query.data['chained'] == 'hello', (
+            "Async query did not have the correct data value."
+        )
+
+
 
