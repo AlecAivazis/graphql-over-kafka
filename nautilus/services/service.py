@@ -4,6 +4,7 @@ import tornado.web
 # local imports
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
+from nautilus.network.amqp.actionHandlers import noop_handler
 import nautilus.network.registry as registry
 from nautilus.config import Config
 from nautilus.api.endpoints import (
@@ -63,7 +64,6 @@ class Service(metaclass=ServiceMetaClass):
                     action_handler = crud_handler(Model)
     """
 
-    action_handler = None
     config = None
     name = None
     schema = None
@@ -82,7 +82,6 @@ class Service(metaclass=ServiceMetaClass):
         self.name = self.name or name or type(self).name
         self.app = None
         self.__name__ = name
-        self.action_handler = action_handler or self.action_handler
         self.keep_alive = None
         self._action_handler_loop = None
         self.schema = schema or self.schema
@@ -123,6 +122,12 @@ class Service(metaclass=ServiceMetaClass):
     def init_keep_alive(self):
         # create the period callback
         self.keep_alive = registry.keep_alive(self)
+
+
+    @property
+    def action_handler(self):
+        # by default, a service does not have a response to actions
+        return noop_handler
 
 
     def run(self, host="localhost", port=8000, **kwargs):

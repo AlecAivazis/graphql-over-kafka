@@ -52,30 +52,31 @@ class ModelService(Service):
             # yell loudly
             raise ValueError("Please provide a model for the model service.")
 
-        # the schema to add to the service
-        self.api_schema = create_model_schema(self.model)
-
-        # # the action handler is a combination
-        action_handler = combine_action_handlers(
-            # of the given one
-            self.additional_action_handler,
-            # and a crud handler
-            crud_handler(self.model)
-        )
-
         # pull the name of the service from kwargs if it was given
         name = kwargs.pop('name', None) or model_service_name(self.model)
 
         # create the service
         super().__init__(
-            schema=self.api_schema,
-            action_handler=action_handler,
+            schema=create_model_schema(self.model),
             name=name,
             **kwargs
         )
 
         # initialize the database
         self.init_db()
+
+
+    @property
+    def action_handler(self):
+        # combine the additional super handler with the crud one
+        return combine_action_handlers(
+            # combine the old action_handler
+            super().action_handler,
+            # allow for additional action handlers
+            self.additional_action_handler,
+            # and a crud handler
+            crud_handler(self.model)
+        )
 
 
     def init_db(self):

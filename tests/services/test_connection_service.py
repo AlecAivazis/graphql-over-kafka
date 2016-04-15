@@ -42,6 +42,8 @@ class TestUtil(unittest.TestCase):
 
         # create the test table
         self.model.create_table()
+        self.service1.model.create_table()
+        self.service2.model.create_table()
 
         # save the attribute we'll use to test against
         self.service1_value = getattr(self.model, self.service1.model.model_name)
@@ -49,6 +51,8 @@ class TestUtil(unittest.TestCase):
 
     def tearDown(self):
         self.model.drop_table()
+        self.service1.model.drop_table()
+        self.service2.model.drop_table()
 
 
     def test_must_provide_services(self):
@@ -79,7 +83,7 @@ class TestUtil(unittest.TestCase):
 
 
     def test_has_valid_schema(self):
-        assert hasattr(self.service, 'api_schema') and self.service.api_schema, (
+        assert hasattr(self.service, 'schema') and self.service.schema, (
             "Model Service did not have a schema."
         )
 
@@ -93,7 +97,7 @@ class TestUtil(unittest.TestCase):
         """ % self.service1.model.model_name
 
 
-        parsed_query = self.service.api_schema.execute(query)
+        parsed_query = self.service.schema.execute(query)
         # make sure there are no errors
         assert parsed_query.errors == [], (
             "Model service schema is invalid: " + str(parsed_query.errors)
@@ -157,6 +161,39 @@ class TestUtil(unittest.TestCase):
         self.assertRaises(Exception, create_false_service)
 
 
+    def test_listens_for_related_deletes(self):
+        # make an instance of model1 to connect
+        model1 = self.service1.model(name='foo')
+        model1.save()
+        # make an instance of model2 to connect
+        model2 = self.service2.model(name='bar')
+        model2.save()
+        # the model connecting the two
+        connection_model = self.model()
+        setattr(connection_model, self.service1.model.model_name, model1.id)
+        setattr(connection_model, self.service2.model.model_name, model2.id)
+        connection_model.save()
+
+        # make sure the connection model can be found
+        assert self.model.get(self.service1_value == model1.id), (
+            "Test record could not be created before deleting."
+        )
+
+        # the action data for a related delete
+        action_type = conventions.get_crud_action(
+            'delete', 
+            self.service1.model,
+            status='success'
+        )
+        payload = dict(id=model1.id)
+
+        # fire the action
+        self.service.action_handler(action_type, payload, dispatcher=MagicMock())
+
+        # make sure the model can't be found
+        self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
+
+
     ### Utilities / Test tasks
 
     def _verify_action_handler_create(self):
@@ -167,10 +204,10 @@ class TestUtil(unittest.TestCase):
         }
         # fire a create action
         self.service.action_handler(action_type, payload, dispatcher=MagicMock())
+        # the query to find a matching model
+        matching_model = self.service1_value == 'foo'
         # make sure the created record was found and save the id
-        self.model_id = self.model_id = self.model.get(
-            self.service1_value == 'foo'
-        ).id
+        self.model_id = self.model_id = self.model.get(matching_model).id
 
 
     def _verify_action_handler_update(self):
