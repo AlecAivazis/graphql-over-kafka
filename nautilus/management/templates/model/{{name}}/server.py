@@ -1,14 +1,12 @@
 # third party imports
 import nautilus
-from nautilus.models import BaseModel, CRUDNotificationCreator, fields
+from nautilus.models import BaseModel, fields
 
-class {{name.title()}}(CRUDNotificationCreator, BaseModel):
+class {{name.title()}}(BaseModel):
     pass
 
-
 class ServiceConfig:
-    databuse_url = 'sqlite:////tmp/{{name}}.db'
-
+    database_url = 'sqlite:///{{name}}.db'
 
 class {{name.title()}}Service(nautilus.ModelService):
     model = {{name.title()}}
