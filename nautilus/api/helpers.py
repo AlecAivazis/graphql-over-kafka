@@ -63,6 +63,5 @@ def fields_for_model(model):
     # the attribute arguments (no filters)
     args = {field.name.lower() : convert_peewee_field(field) \
                                         for field in model.fields()}
-
     # use the field arguments, without the segments
     return args

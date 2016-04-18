@@ -34,20 +34,23 @@ class PeeweeObjectTypeMeta(type(ObjectType)):
     def __new__(cls, name, bases, attributes, **kwds):
 
         full_attr = {}
-        # if there is a Meta class defined
-        if 'Meta' in attributes:
-            try:
-                # if the meta class designates a model
-                model = attributes['Meta'].model
-            # if there is no model defined
-            except AttributeError:
-                # yell loudly
-                raise ValueError("PeeweeObjectsTypes must have a model.")
 
+        try:
             # for each field in the table
-            for field in model.fields():
+            for field in attributes['Meta'].model.fields():
+                # the name of the field in the schema
+                field_name = field.name[0].lower() + field.name[1:]
                 # add an entry for the field we were passed
-                full_attr[field.name] = convert_peewee_field(field)
+                full_attr[field_name] = convert_peewee_field(field)
+        # if there is no meta type defined
+        except KeyError:
+            # keep going
+            pass
+        # if there is no model defined
+        except AttributeError:
+            # yell loudly
+            raise ValueError("PeeweeObjectsTypes must have a model.")
+
 
         # merge the given attributes ontop of the dynamic ones
         full_attr.update(attributes)

@@ -16,17 +16,17 @@ class TestUtil(unittest.TestCase):
         # create a spy we can check for later
         self.spy = MagicMock()
 
-        class TestServiceModel1(nautilus.models.BaseModel):
+        class ModelTest1(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 
-        class TestServiceModel2(nautilus.models.BaseModel):
+        class ModelTest2(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 
         class TestService1(nautilus.ModelService):
-            model = TestServiceModel1
+            model = ModelTest1
 
         class TestService2(nautilus.ModelService):
-            model = TestServiceModel2
+            model = ModelTest2
 
         class TestConnectionService(nautilus.ConnectionService):
             additional_action_handler = self.spy
@@ -39,13 +39,14 @@ class TestUtil(unittest.TestCase):
         self.service1 = TestService1
         self.service2 = TestService2
         self.services = [self.service1, self.service2]
+        self.base_models = [ModelTest1, ModelTest2]
         self.service = TestConnectionService()
         self.model = self.service.model
 
         # create the test table
-        self.model.create_table()
-        self.service1.model.create_table()
-        self.service2.model.create_table()
+        self.model.create_table(True)
+        self.service1.model.create_table(True)
+        self.service2.model.create_table(True)
 
         # save the attribute we'll use to test against
         self.service1_value = getattr(self.model, self.service1.model.model_name)
@@ -77,7 +78,6 @@ class TestUtil(unittest.TestCase):
             self.service1.model.model_name,
             self.service2.model.model_name
         }
-
         # for each model managed by this service
         assert model_fields == target_fields, (
             "Connection model did not have the correct fields"
@@ -86,7 +86,7 @@ class TestUtil(unittest.TestCase):
 
     def test_has_conventional_name(self):
         assert self.service.name == \
-                    service_conventions.connection_service_name(*self.services), (
+                    service_conventions.connection_service_name(*self.base_models), (
             "Connection service did not have the correct name."
         )
 
@@ -95,7 +95,10 @@ class TestUtil(unittest.TestCase):
         assert hasattr(self.service, 'schema') and self.service.schema, (
             "Model Service did not have a schema."
         )
-
+        # the name of the service model
+        model_name = self.service1.model.model_name
+        # the field to query 
+        field_name = model_name[0].lower() + model_name[1:]
         # the query to test the schema
         query = """
             query {
@@ -103,7 +106,7 @@ class TestUtil(unittest.TestCase):
                     %s
                 }
             }
-        """ % self.service1.model.model_name
+        """ % field_name
 
 
         parsed_query = self.service.schema.execute(query)

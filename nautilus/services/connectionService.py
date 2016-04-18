@@ -64,7 +64,7 @@ class ConnectionService(ModelService):
         # create the service
         super().__init__(
             model=create_connection_model(self._service_models),
-            name=connection_service_name(*self.services),
+            name=connection_service_name(*self._service_models),
             **kwargs
         )
 

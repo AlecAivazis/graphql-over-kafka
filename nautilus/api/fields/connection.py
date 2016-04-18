@@ -108,6 +108,7 @@ class Connection(List):
                                     else target.service
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
+
             # the target service
             instance_service_name = instance.service.name \
                                             if hasattr(instance.service, 'name') \
@@ -116,10 +117,11 @@ class Connection(List):
             # the name of the service that manages the connection
             connection_service = connection_service_name(target_service_name,
                                                          instance_service_name)
-
+            # the primary key of the instance we are refering from
+            instance_pk = getattr(instance, instance.service.model.primary_key().name)
             # look for connections originating from this object
             join_filter = {}
-            join_filter[instance_service_name] = instance.primary_key
+            join_filter[instance_service_name] = instance_pk
 
             # query the connection service for related data
             related = query_service(
@@ -142,7 +144,6 @@ class Connection(List):
 
         # only query the backend service for the fields that are not connections
         fields = [field.attname for field in target.true_fields()]
-
         # grab the final list of entries
         results = query_service(target_service_name, fields, filters=args)
 

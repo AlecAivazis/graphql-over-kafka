@@ -98,7 +98,7 @@ class ServiceObjectType(ObjectType, metaclass=ServiceObjectTypeMeta):
         # todo: avoid internal _meta pointer since its potentially weak
         fields = cls._meta.fields
         # grab the fields that are not connections
-        return [field for field in fields if not isinstance(field, Connection)]
+        return [field for field in fields if not isinstance(field.type, Connection)]
 
 
     @classmethod
