@@ -1,6 +1,5 @@
 # external imports
-from graphene import String
-from graphene.relay import Node
+from graphene import String, ObjectType
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
 from nautilus.api import fields_for_model
@@ -23,7 +22,7 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
         cls.service = self.service
 
 
-class ServiceObjectTypeMeta(type(Node)):
+class ServiceObjectTypeMeta(type(ObjectType)):
 
     options_class = ServiceObjectTypeOptions
 
@@ -58,7 +57,7 @@ class ServiceObjectTypeMeta(type(Node)):
         serivce_objects[name] = self
 
 
-class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
+class ServiceObjectType(ObjectType, metaclass=ServiceObjectTypeMeta):
     """
         This object type represents data maintained by a remote service.
         `Connection`s to and from other `ServiceObjectType`s are resolved
@@ -84,32 +83,6 @@ class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
         except KeyError:
             # then we're looking at an attribute we dont know about
             raise AttributeError
-
-
-    @classmethod
-    def get_node(cls, id, info):
-        """
-            Returns the node with the corresponding id by querying the
-            appropriate service.
-        """
-        from nautilus.conventions import model_service_name
-
-        # the name of the service to query
-        service_name = model_service_name(cls.service)
-        # the filter to apply to the query to retrieve the object by id
-        object_filter = {
-            'primary_key': id,
-        }
-
-        # the fields of the service to request
-        service_fields = fields_for_model(cls.service.model).keys()
-
-        # query the connection service for related data
-        return query_service(
-            service_name,
-            [service_fields],
-            object_filter
-        )[0]
 
 
     @classmethod
