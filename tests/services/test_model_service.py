@@ -2,8 +2,9 @@
 import unittest
 from unittest.mock import MagicMock
 # local imports
-from nautilus import conventions
 import nautilus
+from nautilus import conventions
+from nautilus.conventions import services as service_conventions
 import nautilus.models as models
 import nautilus.network.amqp.actionHandlers as action_handlers
 from ..util import assert_called_once_with
@@ -17,15 +18,15 @@ class TestUtil(unittest.TestCase):
         # create a spy we can check for later
         self.spy = MagicMock()
 
-        class TestServiceModel(nautilus.models.BaseModel):
+        class TestModelService(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 
         class TestService(nautilus.ModelService):
-            model = TestServiceModel
+            model = TestModelService
             additional_action_handler = self.spy
 
         # save the class records to the suite
-        self.model = TestServiceModel
+        self.model = TestModelService
         self.service = TestService()
 
         # create the test table
@@ -45,6 +46,13 @@ class TestUtil(unittest.TestCase):
 
         # expect an error
         self.assertRaises(ValueError, test_empty_class)
+
+
+    def test_has_name_from_model(self):
+        assert self.service.name == \
+                    service_conventions.model_service_name(self.model), (
+            "Model service did not have the correct name."
+        )
 
 
     def test_has_valid_schema(self):
