@@ -7,7 +7,16 @@ from nautilus.conventions.actions import get_crud_action
 from .modelService import ModelService
 from nautilus.models.util import create_connection_model
 
-class ConnectionService(ModelService):
+class ConnectionServiceMeta(type(ModelService)):
+    def __init__(cls, name, bases, attributes):
+        # create the super class
+        super().__init__(name, bases, attributes)
+
+        # use the name of the class record
+        cls.name = cls.name if cls.name != 'ModelService' else 'asdf'
+
+
+class ConnectionService(ModelService, metaclass=ConnectionServiceMeta):
     """
         This service manages a connection between any number of other services.
         The underlying schema and database are automatically generated to
@@ -44,6 +53,7 @@ class ConnectionService(ModelService):
     """
 
     services = []
+
 
     def __init__(self, **kwargs):
 

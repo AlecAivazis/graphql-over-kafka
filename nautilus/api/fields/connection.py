@@ -106,7 +106,6 @@ class Connection(List):
         target_service_name = target.service.name \
                                     if hasattr(target.service, 'name') \
                                     else target.service
-        print(target.service)
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
             # the target service
@@ -143,7 +142,7 @@ class Connection(List):
 
         # only query the backend service for the fields that are not connections
         fields = [field.attname for field in target.true_fields()]
-        print(target_service_name)
+
         # grab the final list of entries
         results = query_service(target_service_name, fields, filters=args)
 

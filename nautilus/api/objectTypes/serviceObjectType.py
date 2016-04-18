@@ -28,7 +28,7 @@ class ServiceObjectTypeMeta(type(ObjectType)):
 
     def construct(self, *args, **kwds):
         # pass the service to the class record
-        self.service = self._meta.service
+        self.service = self._meta.service() if self._meta.service else None
         # return the full class record
         return super().construct(*args, **kwds)
 

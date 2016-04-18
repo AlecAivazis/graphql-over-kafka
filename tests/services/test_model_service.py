@@ -28,6 +28,7 @@ class TestUtil(unittest.TestCase):
         # save the class records to the suite
         self.model = TestModelService
         self.service = TestService()
+        self.service_record = TestService
 
         # create the test table
         self.model.create_table(True)
@@ -48,8 +49,8 @@ class TestUtil(unittest.TestCase):
         self.assertRaises(ValueError, test_empty_class)
 
 
-    def test_has_name_from_model(self):
-        assert self.service.name == \
+    def test_has_conventional_name(self):
+        assert self.service_record.name == \
                     service_conventions.model_service_name(self.model), (
             "Model service did not have the correct name."
         )

@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import MagicMock
 # local imports
 from nautilus import conventions
+from nautilus.conventions import services as service_conventions
 import nautilus
 from ..util import assert_called_once_with
 
@@ -27,7 +28,7 @@ class TestUtil(unittest.TestCase):
         class TestService2(nautilus.ModelService):
             model = TestServiceModel2
 
-        class Connection(nautilus.ConnectionService):
+        class TestConnectionService(nautilus.ConnectionService):
             additional_action_handler = self.spy
             services = [
                 TestService1,
@@ -37,7 +38,8 @@ class TestUtil(unittest.TestCase):
         # save the class records to the suite
         self.service1 = TestService1
         self.service2 = TestService2
-        self.service = Connection()
+        self.services = [self.service1, self.service2]
+        self.service = TestConnectionService()
         self.model = self.service.model
 
         # create the test table
@@ -79,6 +81,13 @@ class TestUtil(unittest.TestCase):
         # for each model managed by this service
         assert model_fields == target_fields, (
             "Connection model did not have the correct fields"
+        )
+
+
+    def test_has_conventional_name(self):
+        assert self.service.name == \
+                    service_conventions.connection_service_name(*self.services), (
+            "Connection service did not have the correct name."
         )
 
 

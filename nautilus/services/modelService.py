@@ -6,6 +6,7 @@ from nautilus.conventions.services import model_service_name
 from nautilus.network.amqp.actionHandlers import noop_handler
 from .service import Service
 
+
 class ModelService(Service):
     """
         This service acts as the primary data store in your cloud. It manages
@@ -38,8 +39,17 @@ class ModelService(Service):
 
     """
 
+
+
     model = None
     additional_action_handler = noop_handler
+
+    def __new__(cls, *args, **kwds):
+        # make sure the service has the right name
+        cls.name = model_service_name(cls.model) if cls.model else ''
+        # bubble up
+        return super().__new__(cls, *args)
+
 
     def __init__(self, model=None, **kwargs):
         # if we were given a model for the service
@@ -61,7 +71,6 @@ class ModelService(Service):
             name=name,
             **kwargs
         )
-
         # initialize the database
         self.init_db()
 
