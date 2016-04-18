@@ -65,7 +65,7 @@ class ServiceObjectType(ObjectType, metaclass=ServiceObjectTypeMeta):
         conventions.
     """
 
-    primary_key = String()
+    pk = String()
 
     def __getattr__(self, attr):
         """

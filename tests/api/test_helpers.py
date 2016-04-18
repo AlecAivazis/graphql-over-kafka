@@ -28,7 +28,9 @@ class TestUtil(unittest.TestCase):
 
         # grab the arguments for the field
         arg_names = {arg['name'] for arg in field['args']}
+
         # make sure the test field is present
         assert 'test_field' in arg_names, (
             "The generated schema cannot be filterd for model fields."
         )
+

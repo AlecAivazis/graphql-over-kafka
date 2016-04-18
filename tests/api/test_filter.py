@@ -42,16 +42,11 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_args_have_primary_key_attr(self):
-        # make sure there is a pk arg
-        assert 'pk' in self.arg_names, (
-            "Generated args doesn't have a pk filter."
-        )
 
 
     def test_args_has_oneof_filter(self):
         # the filters we would exepect for the contains arg
-        contains_filter_args = {'first_name_in', 'last_name_in', 'pk_in'}
+        contains_filter_args = {'first_name_in', 'last_name_in'}
         # make sure the arguments exist for the contains filter
         assert self.arg_names >= contains_filter_args, (
             "Generated args do not have contains filter."
