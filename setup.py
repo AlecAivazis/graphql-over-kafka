@@ -15,7 +15,7 @@ setup(
     test_suite='nose2.collector.collector',
     packages=find_packages(exclude=['example', 'tests']),
     entry_points={'console_scripts': [
-        'naut = nautilus.management:cloud_manager',
+        'naut = nautilus.management:cli',
     ]},
     install_requires=[
         'bcrypt',
