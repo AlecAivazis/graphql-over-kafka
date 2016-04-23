@@ -49,7 +49,7 @@ class TestUtil(unittest.TestCase):
         self.service2.model.create_table(True)
 
         # save the attribute we'll use to test against
-        self.service1_value = getattr(self.model, self.service1.model.model_name)
+        self.service1_value = getattr(self.model, self.service1.model.model_name.lower())
 
 
     def tearDown(self):
@@ -75,8 +75,8 @@ class TestUtil(unittest.TestCase):
         # the target field names
         target_fields = {
             'id',
-            self.service1.model.model_name,
-            self.service2.model.model_name
+            self.service1.model.model_name.lower(),
+            self.service2.model.model_name.lower()
         }
         # for each model managed by this service
         assert model_fields == target_fields, (
@@ -96,8 +96,8 @@ class TestUtil(unittest.TestCase):
             "Model Service did not have a schema."
         )
         # the name of the service model
-        model_name = self.service1.model.model_name
-        # the field to query 
+        model_name = self.service1.model.model_name.lower()
+        # the field to query
         field_name = model_name[0].lower() + model_name[1:]
         # the query to test the schema
         query = """
@@ -182,8 +182,8 @@ class TestUtil(unittest.TestCase):
         model2.save()
         # the model connecting the two
         connection_model = self.model()
-        setattr(connection_model, self.service1.model.model_name, model1.id)
-        setattr(connection_model, self.service2.model.model_name, model2.id)
+        setattr(connection_model, self.service1.model.model_name.lower(), model1.id)
+        setattr(connection_model, self.service2.model.model_name.lower(), model2.id)
         connection_model.save()
 
         # make sure the connection model can be found
@@ -193,7 +193,7 @@ class TestUtil(unittest.TestCase):
 
         # the action data for a related delete
         action_type = conventions.get_crud_action(
-            'delete', 
+            'delete',
             self.service1.model,
             status='success'
         )
@@ -211,8 +211,8 @@ class TestUtil(unittest.TestCase):
     def _verify_action_handler_create(self):
         action_type = conventions.get_crud_action('create', self.service.model)
         payload = {
-            self.service1.model.model_name: 'foo',
-            self.service2.model.model_name: 'bar'
+            self.service1.model.model_name.lower(): 'foo',
+            self.service2.model.model_name.lower(): 'bar'
         }
         # fire a create action
         self.service.action_handler(action_type, payload, dispatcher=MagicMock())
@@ -223,7 +223,7 @@ class TestUtil(unittest.TestCase):
 
 
     def _verify_action_handler_update(self):
-        payload = {'id':self.model_id, self.service1.model.model_name: 'bars'}
+        payload = {'id':self.model_id, self.service1.model.model_name.lower(): 'bars'}
         # fire an update action
         self.service.action_handler(
             conventions.get_crud_action('update', self.model),

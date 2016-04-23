@@ -198,6 +198,11 @@ class Service(metaclass=ServiceMetaClass):
         ]
 
 
+    @property
+    def _api_request_handler_class(self):
+        return GraphQLRequestHandler
+
+
     def add_http_endpoint(self, url, request_handler, config=None, host=".*$"):
         """
             This method provides a programatic way of added invidual routes
