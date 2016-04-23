@@ -9,6 +9,6 @@ def create_connection_model(models):
     bases = (BaseModel,)
     # the fields of the derived
     attributes = {model.model_name.lower(): fields.CharField() for model in models}
-    print(attributes)
+
     # create an instance of base model with the right attributes
     return type(BaseModel)(connection_service_name(*models), bases, attributes)

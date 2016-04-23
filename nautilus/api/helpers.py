@@ -38,6 +38,7 @@ def create_model_schema(target_model):
         @graphene.resolve_only_args
         def resolve_all_models(self, **args):
             # filter the model query according to the arguments
+            # print(filter_model(target_model, args)[0].__dict__)
             return filter_model(target_model, args)
 
 
