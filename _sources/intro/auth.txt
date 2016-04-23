@@ -53,7 +53,7 @@ look something like:
         class Meta:
             service = RecipeService
 
-        # assuming this was defined above/elsewhere
+        # assuming User was defined above/elsewhere
         author = Connection(User)
 
         def auth(self, user):

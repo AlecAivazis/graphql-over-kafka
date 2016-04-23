@@ -209,15 +209,22 @@ is wrapped in &lt;graphql.core.pyutils.Deferred&gt; when necessary.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.api.executor.executorMiddleware.execute_resolver">
-<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">execute_resolver</code><span class="sig-paren">(</span><em>resolver</em>, <em>deferred</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#execute_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.execute_resolver" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.api.executor.executorMiddleware.async_field">
+<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">async_field</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#async_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.async_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks a resolver to run inside the ioloop.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.api.executor.executorMiddleware.execute_async_resolver">
+<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">execute_async_resolver</code><span class="sig-paren">(</span><em>resolver</em>, <em>deferred</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#execute_async_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.execute_async_resolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function executes the given resolver, passing it</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.api.executor.executorMiddleware.nautilus_service">
-<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">nautilus_service</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#nautilus_service"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.nautilus_service" title="Permalink to this definition">¶</a></dt>
-<dd><p>Marks a resolver to run inside the ioloop.</p>
+<dt id="nautilus.api.executor.executorMiddleware.is_async_field">
+<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">is_async_field</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#is_async_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.is_async_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>This funtion checks if a resolver has the correct tag to designate
+an async field.</p>
 </dd></dl>
 
 </div>

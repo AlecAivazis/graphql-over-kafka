@@ -133,8 +133,7 @@
             
   <h1>Source code for nautilus.api.objectTypes.serviceObjectType</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
-<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">String</span>
-<span class="kn">from</span> <span class="nn">graphene.relay</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">String</span><span class="p">,</span> <span class="n">ObjectType</span>
 <span class="kn">from</span> <span class="nn">graphene.core.classtypes.objecttype</span> <span class="kn">import</span> <span class="n">ObjectTypeOptions</span>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">fields_for_model</span>
@@ -157,13 +156,13 @@
         <span class="n">cls</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span></div></div>
 
 
-<div class="viewcode-block" id="ServiceObjectTypeMeta"><a class="viewcode-back" href="../../../../internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta">[docs]</a><span class="k">class</span> <span class="nc">ServiceObjectTypeMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">Node</span><span class="p">)):</span>
+<div class="viewcode-block" id="ServiceObjectTypeMeta"><a class="viewcode-back" href="../../../../internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta">[docs]</a><span class="k">class</span> <span class="nc">ServiceObjectTypeMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ObjectType</span><span class="p">)):</span>
 
     <span class="n">options_class</span> <span class="o">=</span> <span class="n">ServiceObjectTypeOptions</span>
 
 <div class="viewcode-block" id="ServiceObjectTypeMeta.construct"><a class="viewcode-back" href="../../../../internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta.construct">[docs]</a>    <span class="k">def</span> <span class="nf">construct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># pass the service to the class record</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">service</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">service</span> <span class="k">else</span> <span class="bp">None</span>
         <span class="c1"># return the full class record</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
 
@@ -192,7 +191,7 @@
         <span class="n">serivce_objects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span></div>
 
 
-<div class="viewcode-block" id="ServiceObjectType"><a class="viewcode-back" href="../../../../schema/index.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType">[docs]</a><span class="k">class</span> <span class="nc">ServiceObjectType</span><span class="p">(</span><span class="n">Node</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ServiceObjectTypeMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="ServiceObjectType"><a class="viewcode-back" href="../../../../schema/index.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType">[docs]</a><span class="k">class</span> <span class="nc">ServiceObjectType</span><span class="p">(</span><span class="n">ObjectType</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ServiceObjectTypeMeta</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This object type represents data maintained by a remote service.</span>
 <span class="sd">        `Connection`s to and from other `ServiceObjectType`s are resolved</span>
@@ -200,7 +199,7 @@
 <span class="sd">        conventions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">primary_key</span> <span class="o">=</span> <span class="n">String</span><span class="p">()</span>
+    <span class="n">pk</span> <span class="o">=</span> <span class="n">String</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ServiceObjectType.__getattr__"><a class="viewcode-back" href="../../../../schema/index.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.__getattr__">[docs]</a>    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -221,32 +220,6 @@
 
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="ServiceObjectType.get_node"><a class="viewcode-back" href="../../../../schema/index.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.get_node">[docs]</a>    <span class="k">def</span> <span class="nf">get_node</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Returns the node with the corresponding id by querying the</span>
-<span class="sd">            appropriate service.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">nautilus.conventions</span> <span class="kn">import</span> <span class="n">model_service_name</span>
-
-        <span class="c1"># the name of the service to query</span>
-        <span class="n">service_name</span> <span class="o">=</span> <span class="n">model_service_name</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">service</span><span class="p">)</span>
-        <span class="c1"># the filter to apply to the query to retrieve the object by id</span>
-        <span class="n">object_filter</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;primary_key&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">,</span>
-        <span class="p">}</span>
-
-        <span class="c1"># the fields of the service to request</span>
-        <span class="n">service_fields</span> <span class="o">=</span> <span class="n">fields_for_model</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-
-        <span class="c1"># query the connection service for related data</span>
-        <span class="k">return</span> <span class="n">query_service</span><span class="p">(</span>
-            <span class="n">service_name</span><span class="p">,</span>
-            <span class="p">[</span><span class="n">service_fields</span><span class="p">],</span>
-            <span class="n">object_filter</span>
-        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
-
-
-    <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="ServiceObjectType.true_fields"><a class="viewcode-back" href="../../../../schema/index.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.true_fields">[docs]</a>    <span class="k">def</span> <span class="nf">true_fields</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Returns the list of fields that are not connections.</span>
@@ -259,7 +232,7 @@
         <span class="c1"># todo: avoid internal _meta pointer since its potentially weak</span>
         <span class="n">fields</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">fields</span>
         <span class="c1"># grab the fields that are not connections</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">Connection</span><span class="p">)]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">Connection</span><span class="p">)]</span></div>
 
 
     <span class="nd">@classmethod</span>

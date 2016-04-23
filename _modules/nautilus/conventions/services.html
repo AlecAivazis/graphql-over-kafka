@@ -157,17 +157,8 @@
     <span class="sd">&#39;&#39;&#39; the name of a service that manages the connection between services &#39;&#39;&#39;</span>
 
     <span class="c1"># the list of services to connect</span>
-    <span class="n">services</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># for each service to connect</span>
-    <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="c1"># if the service was passed as a string</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="c1"># add it to the list</span>
-            <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
-        <span class="c1"># otherwise the serivice was not a string</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">services</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_model_string</span><span class="p">(</span><span class="n">service</span><span class="p">))</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> \
+                        <span class="k">else</span> <span class="n">get_model_string</span><span class="p">(</span><span class="n">service</span><span class="p">)</span> <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
 
     <span class="c1"># combine the two names into the connection name</span>
     <span class="k">return</span> <span class="s2">&quot;{}_connection&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">services</span><span class="p">)))</span></div>

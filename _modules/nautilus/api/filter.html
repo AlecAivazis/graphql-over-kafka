@@ -200,8 +200,16 @@
                 <span class="n">models</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
             <span class="c1"># if the model doesn&#39;t have the attribute</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="c1"># yell loudly</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not handle filter </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="n">arg</span><span class="p">)</span>
+                <span class="c1"># maybe the capitalization is off</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># invert the first letter</span>
+                    <span class="n">first_letter</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="k">else</span> <span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="c1"># try filtering with the first letter invetered</span>
+                    <span class="n">models</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">first_letter</span> <span class="o">+</span> <span class="n">arg</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+                <span class="c1"># if that still fails</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="c1"># yell loudly</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not handle filter </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
 
 
     <span class="c1"># if the user specified an ordering</span>

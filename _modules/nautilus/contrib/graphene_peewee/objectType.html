@@ -168,20 +168,23 @@
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
 
         <span class="n">full_attr</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1"># if there is a Meta class defined</span>
-        <span class="k">if</span> <span class="s1">&#39;Meta&#39;</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># if the meta class designates a model</span>
-                <span class="n">model</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;Meta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">model</span>
-            <span class="c1"># if there is no model defined</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="c1"># yell loudly</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;PeeweeObjectsTypes must have a model.&quot;</span><span class="p">)</span>
 
+        <span class="k">try</span><span class="p">:</span>
             <span class="c1"># for each field in the table</span>
-            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">fields</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">[</span><span class="s1">&#39;Meta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fields</span><span class="p">():</span>
+                <span class="c1"># the name of the field in the schema</span>
+                <span class="n">field_name</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                 <span class="c1"># add an entry for the field we were passed</span>
-                <span class="n">full_attr</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+                <span class="n">full_attr</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="c1"># if there is no meta type defined</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># keep going</span>
+            <span class="k">pass</span>
+        <span class="c1"># if there is no model defined</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># yell loudly</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;PeeweeObjectsTypes must have a model.&quot;</span><span class="p">)</span>
+
 
         <span class="c1"># merge the given attributes ontop of the dynamic ones</span>
         <span class="n">full_attr</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>

@@ -136,24 +136,40 @@
 <span class="kn">import</span> <span class="nn">tornado</span>
 <span class="kn">from</span> <span class="nn">tornado.concurrent</span> <span class="kn">import</span> <span class="n">Future</span>
 <span class="kn">from</span> <span class="nn">graphql.core.pyutils.defer</span> <span class="kn">import</span> <span class="n">Deferred</span>
-<span class="kn">from</span> <span class="nn">graphql.core.execution.middlewares.utils</span> <span class="kn">import</span> <span class="n">resolver_has_tag</span><span class="p">,</span> <span class="n">tag_resolver</span>
+<span class="kn">from</span> <span class="nn">graphql.core.execution.middlewares.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">resolver_has_tag</span><span class="p">,</span> 
+    <span class="n">tag_resolver</span>
+<span class="p">)</span>
 
 
-<span class="n">_nautilus_tag</span> <span class="o">=</span> <span class="s1">&#39;nautilus_service&#39;</span>
+<span class="n">_async_tag</span> <span class="o">=</span> <span class="s1">&#39;async_field&#39;</span>
 
-<div class="viewcode-block" id="nautilus_service"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.nautilus_service">[docs]</a><span class="k">def</span> <span class="nf">nautilus_service</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+
+<div class="viewcode-block" id="async_field"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.async_field">[docs]</a><span class="k">def</span> <span class="nf">async_field</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Marks a resolver to run inside the ioloop.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tag_resolver</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_nautilus_tag</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">return</span> <span class="n">tag_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">_async_tag</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_async_field"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.is_async_field">[docs]</a><span class="k">def</span> <span class="nf">is_async_field</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This funtion checks if a resolver has the correct tag to designate</span>
+<span class="sd">        an async field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">resolver_has_tag</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">_async_tag</span><span class="p">)</span></div>
+
 
 <span class="nd">@tornado.gen.coroutine</span>
-<div class="viewcode-block" id="execute_resolver"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.execute_resolver">[docs]</a><span class="k">def</span> <span class="nf">execute_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">deferred</span><span class="p">):</span>
+<div class="viewcode-block" id="execute_async_resolver"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.execute_async_resolver">[docs]</a><span class="k">def</span> <span class="nf">execute_async_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">deferred</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function executes the given resolver, passing it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">resolver</span><span class="p">(</span><span class="n">deferred</span><span class="p">)</span></div>
+    <span class="n">resolver</span><span class="p">()(</span><span class="n">deferred</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span> <span class="n">deferred</span><span class="o">.</span><span class="n">errback</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TornadoExecutionMiddleware"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware">[docs]</a><span class="k">class</span> <span class="nc">TornadoExecutionMiddleware</span><span class="p">:</span>
@@ -170,12 +186,12 @@
 <span class="sd">            is wrapped in &lt;graphql.core.pyutils.Deferred&gt; when necessary.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># if the field is an asynchronous one</span>
-        <span class="k">if</span> <span class="n">resolver_has_tag</span><span class="p">(</span><span class="n">original_resolver</span><span class="p">,</span> <span class="n">_nautilus_tag</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">resolver_has_tag</span><span class="p">(</span><span class="n">original_resolver</span><span class="p">,</span> <span class="n">_async_tag</span><span class="p">):</span>
             <span class="c1"># create a deffered object</span>
             <span class="n">deferred</span> <span class="o">=</span> <span class="n">Deferred</span><span class="p">()</span>
             <span class="c1"># execute the resolver and hand it the deferred so it can use the</span>
             <span class="c1"># callback</span>
-            <span class="n">execute_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">deferred</span><span class="p">)</span>
+            <span class="n">execute_async_resolver</span><span class="p">(</span><span class="n">resolver</span><span class="p">,</span> <span class="n">deferred</span><span class="p">)</span>
             <span class="c1"># return the deferred object</span>
             <span class="k">return</span> <span class="n">deferred</span>
 

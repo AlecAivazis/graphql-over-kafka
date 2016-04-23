@@ -144,7 +144,7 @@
 <span class="kn">from</span> <span class="nn">nautilus.api.filter</span> <span class="kn">import</span> <span class="n">args_for_model</span>
 
 
-<div class="viewcode-block" id="Connection"><a class="viewcode-back" href="../../../../internals/nautilus.api.fields.html#nautilus.api.fields.connection.Connection">[docs]</a><span class="k">class</span> <span class="nc">Connection</span><span class="p">(</span><span class="n">ConnectionField</span><span class="p">):</span>
+<div class="viewcode-block" id="Connection"><a class="viewcode-back" href="../../../../internals/nautilus.api.fields.html#nautilus.api.fields.connection.Connection">[docs]</a><span class="k">class</span> <span class="nc">Connection</span><span class="p">(</span><span class="n">List</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A field that encapsultes a connection with another GraphQL object.</span>
 
@@ -205,7 +205,7 @@
         <span class="c1"># set the resolver if a service was specified</span>
         <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;resolver&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_service</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">of_type</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 
 
 
@@ -240,9 +240,9 @@
         <span class="n">target_service_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">name</span> \
                                     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span> \
                                     <span class="k">else</span> <span class="n">target</span><span class="o">.</span><span class="n">service</span>
-
         <span class="c1"># if we are connecting two service objects, we need to go through a connection table</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">ServiceObjectType</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+
             <span class="c1"># the target service</span>
             <span class="n">instance_service_name</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">name</span> \
                                             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span> \
@@ -251,10 +251,11 @@
             <span class="c1"># the name of the service that manages the connection</span>
             <span class="n">connection_service</span> <span class="o">=</span> <span class="n">connection_service_name</span><span class="p">(</span><span class="n">target_service_name</span><span class="p">,</span>
                                                          <span class="n">instance_service_name</span><span class="p">)</span>
-
+            <span class="c1"># the primary key of the instance we are refering from</span>
+            <span class="n">instance_pk</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">instance</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="c1"># look for connections originating from this object</span>
             <span class="n">join_filter</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">join_filter</span><span class="p">[</span><span class="n">instance_service_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">primary_key</span>
+            <span class="n">join_filter</span><span class="p">[</span><span class="n">instance_service_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance_pk</span>
 
             <span class="c1"># query the connection service for related data</span>
             <span class="n">related</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span>
@@ -277,7 +278,6 @@
 
         <span class="c1"># only query the backend service for the fields that are not connections</span>
         <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">attname</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">target</span><span class="o">.</span><span class="n">true_fields</span><span class="p">()]</span>
-
         <span class="c1"># grab the final list of entries</span>
         <span class="n">results</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span><span class="n">target_service_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
 

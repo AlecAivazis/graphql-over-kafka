@@ -158,6 +158,9 @@
             <span class="c1"># grab the query from the request parameters</span>
             <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_query_argument</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">)</span>
 
+            <span class="c1"># log the request</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;handling graphql query: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+
             <span class="c1"># if the schema is synchronously executed</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_async</span><span class="p">:</span>
                 <span class="c1"># execute the</span>
@@ -174,11 +177,15 @@
             <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">format_graphql_error</span><span class="p">(</span><span class="n">error</span><span class="p">))</span> \
                                             <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">]</span>
 
+            <span class="c1"># create a dictionary version of the result</span>
+            <span class="n">result_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="c1"># if there are errors</span>
+            <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+                <span class="c1"># add them to the result</span>
+                <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+
             <span class="c1"># send the response to the client and close its connection</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
-                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
-            <span class="p">}))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_dict</span><span class="p">))</span>
 
         <span class="c1"># if the user forgot to specify a query</span>
         <span class="k">except</span> <span class="n">MissingArgumentError</span><span class="p">:</span>
