@@ -1,7 +1,7 @@
 # local imports
 from nautilus.conventions.services import api_gateway_name
 from .service import Service
-from nautilus.api.endpoints import GraphQLRequestHandler
+from nautilus.api.endpoints import APIQueryHandler
 
 
 class APIGateway(Service):
@@ -33,5 +33,7 @@ class APIGateway(Service):
     """
     name = api_gateway_name()
 
+
+    @property
     def _api_request_handler_class(self):
-        return GraphQLRequestHandler
+        return APIQueryHandler

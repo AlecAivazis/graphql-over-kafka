@@ -18,3 +18,15 @@ class TestUtil(unittest.TestCase):
         assert self.service.name == nautilus.conventions.services.api_gateway_name(), (
             "APIGateway did not have a name matching the convention."
         )
+
+    def test_has_custom_request_handler(self):
+        # import the module to test
+        from nautilus.api.endpoints import APIQueryHandler
+        # check the value of the internal attribute
+        assert self.service()._api_request_handler_class == APIQueryHandler, (
+            "APIGateway did not have the right request handler class"
+        )
+
+    def test_views_have_proper_cors_headers(self): pass
+
+

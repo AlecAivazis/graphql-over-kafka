@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 # local imports
 import nautilus
 from ..util import assert_called_once_with
+from nautilus.api.endpoints import GraphQLRequestHandler
 
 class TestUtil(unittest.TestCase):
 
@@ -62,4 +63,10 @@ class TestUtil(unittest.TestCase):
 
         assert MyConfiguredService(config=init_config).config == mix_config, (
             "Service could not mix the initialized config onto the base one."
+        )
+
+    def test_has_request_handler(self):
+        # check the value of the internal attribute
+        assert issubclass(self.service()._api_request_handler_class, GraphQLRequestHandler), (
+            "APIGateway did not have the right request handler class"
         )
