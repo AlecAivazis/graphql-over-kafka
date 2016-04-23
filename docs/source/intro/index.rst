@@ -1,11 +1,13 @@
 Getting Started
 ================
 
-.. toctree::
-    :hidden:
+.. .. toctree::
+..     :hidden:
 
-    installation
-    first_service
-    connecting_services
-    api
-    auth
+..     installation
+..     first_service
+..     connecting_services
+..     api
+..     auth
+
+coming soon!
