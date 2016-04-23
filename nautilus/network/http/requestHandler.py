@@ -19,3 +19,8 @@ class RequestHandler(TornadoRequestHandler):
 
     def post(self):
         self.check_xsrf_cookie()
+
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
