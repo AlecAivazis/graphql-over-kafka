@@ -79,7 +79,7 @@ class Service(metaclass=ServiceMetaClass):
             auth=True,
     ):
 
-        self.name = self.name or name or type(self).name
+        self.name = name or self.name or type(self).name
         self.app = None
         self.__name__ = name
         self.keep_alive = None

@@ -66,8 +66,16 @@ def filter_model(model, args):
                 models = models.where(getattr(model, arg) == value)
             # if the model doesn't have the attribute
             except AttributeError:
-                # yell loudly
-                raise ValueError("Could not handle filter %s." % arg)
+                # maybe the capitalization is off
+                try:
+                    # invert the first letter
+                    first_letter = arg[0].title() if arg[0].islower() else arg[0].lower()
+                    # try filtering with the first letter invetered
+                    models = models.where(getattr(model, first_letter + arg[1:]) == value)
+                # if that still fails
+                except AttributeError as err:
+                    # yell loudly
+                    raise ValueError("Could not handle filter %s: %s" % (arg, err))
 
 
     # if the user specified an ordering

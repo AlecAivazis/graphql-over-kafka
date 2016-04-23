@@ -24,6 +24,9 @@ class GraphQLRequestHandler(AuthRequestHandler):
             # grab the query from the request parameters
             query = self.get_query_argument('query')
 
+            # log the request
+            print("handling graphql query: {}".format(query))
+
             # if the schema is synchronously executed
             if not self._async:
                 # execute the
@@ -40,11 +43,15 @@ class GraphQLRequestHandler(AuthRequestHandler):
             errors = [str(format_graphql_error(error)) \
                                             for error in result.errors]
 
+            # create a dictionary version of the result
+            result_dict = dict(data=result.data)
+            # if there are errors
+            if errors:
+                # add them to the result
+                result_dict['errors'] = ','.join(errors) or []
+
             # send the response to the client and close its connection
-            self.finish(json.dumps({
-                'data': result.data,
-                'errors': ','.join(errors) or []
-            }))
+            self.finish(json.dumps(result_dict))
 
         # if the user forgot to specify a query
         except MissingArgumentError:

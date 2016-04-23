@@ -7,6 +7,7 @@ from nautilus.conventions.actions import get_crud_action
 from .modelService import ModelService
 from nautilus.models.util import create_connection_model
 
+
 class ConnectionService(ModelService):
     """
         This service manages a connection between any number of other services.
@@ -45,6 +46,7 @@ class ConnectionService(ModelService):
 
     services = []
 
+
     def __init__(self, **kwargs):
 
         # make sure we were passed more than one service
@@ -62,7 +64,7 @@ class ConnectionService(ModelService):
         # create the service
         super().__init__(
             model=create_connection_model(self._service_models),
-            name=connection_service_name(*self.services),
+            name=connection_service_name(*self._service_models),
             **kwargs
         )
 

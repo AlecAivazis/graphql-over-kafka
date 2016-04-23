@@ -10,7 +10,7 @@ from nautilus.conventions.services import connection_service_name
 from nautilus.api.filter import args_for_model
 
 
-class Connection(ConnectionField):
+class Connection(List):
     """
         A field that encapsultes a connection with another GraphQL object.
 
@@ -71,7 +71,7 @@ class Connection(ConnectionField):
         # set the resolver if a service was specified
         kwds['resolver'] = self.resolve_service
 
-        super().__init__(type=target, **kwds)
+        super().__init__(of_type=target, **kwds)
 
 
 
@@ -106,9 +106,9 @@ class Connection(ConnectionField):
         target_service_name = target.service.name \
                                     if hasattr(target.service, 'name') \
                                     else target.service
-
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
+
             # the target service
             instance_service_name = instance.service.name \
                                             if hasattr(instance.service, 'name') \
@@ -117,10 +117,11 @@ class Connection(ConnectionField):
             # the name of the service that manages the connection
             connection_service = connection_service_name(target_service_name,
                                                          instance_service_name)
-
+            # the primary key of the instance we are refering from
+            instance_pk = getattr(instance, instance.service.model.primary_key().name)
             # look for connections originating from this object
             join_filter = {}
-            join_filter[instance_service_name] = instance.primary_key
+            join_filter[instance_service_name] = instance_pk
 
             # query the connection service for related data
             related = query_service(
@@ -143,7 +144,6 @@ class Connection(ConnectionField):
 
         # only query the backend service for the fields that are not connections
         fields = [field.attname for field in target.true_fields()]
-
         # grab the final list of entries
         results = query_service(target_service_name, fields, filters=args)
 

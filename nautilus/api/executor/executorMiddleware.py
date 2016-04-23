@@ -2,24 +2,40 @@
 import tornado
 from tornado.concurrent import Future
 from graphql.core.pyutils.defer import Deferred
-from graphql.core.execution.middlewares.utils import resolver_has_tag, tag_resolver
+from graphql.core.execution.middlewares.utils import (
+    resolver_has_tag, 
+    tag_resolver
+)
 
 
-_nautilus_tag = 'nautilus_service'
+_async_tag = 'async_field'
 
-def nautilus_service(func):
+
+def async_field(func):
     """
         Marks a resolver to run inside the ioloop.
     """
-    return tag_resolver(func, _nautilus_tag)
+    def resolver(self, args, info):
+
+        return func
+
+    return tag_resolver(resolver, _async_tag)
+
+
+def is_async_field(func):
+    """
+        This funtion checks if a resolver has the correct tag to designate
+        an async field.
+    """
+    return resolver_has_tag(func, _async_tag)
+
 
 @tornado.gen.coroutine
-def execute_resolver(resolver, deferred):
+def execute_async_resolver(resolver, deferred):
     """
         This function executes the given resolver, passing it
     """
-
-    resolver(deferred)
+    resolver()(deferred.callback, deferred.errback)
 
 
 class TornadoExecutionMiddleware:
@@ -36,12 +52,12 @@ class TornadoExecutionMiddleware:
             is wrapped in <graphql.core.pyutils.Deferred> when necessary.
         """
         # if the field is an asynchronous one
-        if resolver_has_tag(original_resolver, _nautilus_tag):
+        if resolver_has_tag(original_resolver, _async_tag):
             # create a deffered object
             deferred = Deferred()
             # execute the resolver and hand it the deferred so it can use the
             # callback
-            execute_resolver(resolver, deferred)
+            execute_async_resolver(resolver, deferred)
             # return the deferred object
             return deferred
 

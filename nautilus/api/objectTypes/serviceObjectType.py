@@ -1,6 +1,5 @@
 # external imports
-from graphene import String
-from graphene.relay import Node
+from graphene import String, ObjectType
 from graphene.core.classtypes.objecttype import ObjectTypeOptions
 # local imports
 from nautilus.api import fields_for_model
@@ -23,13 +22,13 @@ class ServiceObjectTypeOptions(ObjectTypeOptions):
         cls.service = self.service
 
 
-class ServiceObjectTypeMeta(type(Node)):
+class ServiceObjectTypeMeta(type(ObjectType)):
 
     options_class = ServiceObjectTypeOptions
 
     def construct(self, *args, **kwds):
         # pass the service to the class record
-        self.service = self._meta.service
+        self.service = self._meta.service() if self._meta.service else None
         # return the full class record
         return super().construct(*args, **kwds)
 
@@ -58,7 +57,7 @@ class ServiceObjectTypeMeta(type(Node)):
         serivce_objects[name] = self
 
 
-class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
+class ServiceObjectType(ObjectType, metaclass=ServiceObjectTypeMeta):
     """
         This object type represents data maintained by a remote service.
         `Connection`s to and from other `ServiceObjectType`s are resolved
@@ -66,7 +65,7 @@ class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
         conventions.
     """
 
-    primary_key = String()
+    pk = String()
 
     def __getattr__(self, attr):
         """
@@ -87,32 +86,6 @@ class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
 
 
     @classmethod
-    def get_node(cls, id, info):
-        """
-            Returns the node with the corresponding id by querying the
-            appropriate service.
-        """
-        from nautilus.conventions import model_service_name
-
-        # the name of the service to query
-        service_name = model_service_name(cls.service)
-        # the filter to apply to the query to retrieve the object by id
-        object_filter = {
-            'primary_key': id,
-        }
-
-        # the fields of the service to request
-        service_fields = fields_for_model(cls.service.model).keys()
-
-        # query the connection service for related data
-        return query_service(
-            service_name,
-            [service_fields],
-            object_filter
-        )[0]
-
-
-    @classmethod
     def true_fields(cls):
         """
             Returns the list of fields that are not connections.
@@ -125,7 +98,7 @@ class ServiceObjectType(Node, metaclass=ServiceObjectTypeMeta):
         # todo: avoid internal _meta pointer since its potentially weak
         fields = cls._meta.fields
         # grab the fields that are not connections
-        return [field for field in fields if not isinstance(field, Connection)]
+        return [field for field in fields if not isinstance(field.type, Connection)]
 
 
     @classmethod

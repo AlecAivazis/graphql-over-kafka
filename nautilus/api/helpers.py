@@ -23,11 +23,11 @@ def create_model_schema(target_model):
         class Meta:
             model = target_model
 
-        primary_key = Field(primary_key_type, description="The primary key for this object.")
+        pk = Field(primary_key_type, description="The primary key for this object.")
 
         @graphene.resolve_only_args
-        def resolve_primary_key(self):
-            return self.primary_key
+        def resolve_pk(self):
+            return getattr(self, self.primary_key().name)
 
 
     class Query(graphene.ObjectType):
@@ -63,13 +63,5 @@ def fields_for_model(model):
     # the attribute arguments (no filters)
     args = {field.name.lower() : convert_peewee_field(field) \
                                         for field in model.fields()}
-
-    # add the primary key field
-
-    # the primary keys for the Model
-    primary_key = model.primary_key()
-    # add the primary key filter to the arg dictionary
-    args['pk'] = convert_peewee_field(primary_key)
-
     # use the field arguments, without the segments
     return args
