@@ -133,10 +133,9 @@ class Connection(List):
             # if there were no related fields
             if len(related) == 0:
                 return []
-            print(related)
+
             # grab the list of primary keys from the remote service
             join_ids = [entry[target_service_name] for entry in related]
-            print(join_ids)
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
 
