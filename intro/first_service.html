@@ -232,25 +232,19 @@ to query this database.</p>
 nautilus, services use a piece of technology from the facebook engineers called
 GraphQL which allows the service to expose the data through a single endpoint.
 For more information on GraphQL, visit [this]() page.</p>
-<p>Normally, building the schema for our endpoint would result in a
-significant amount of duplicated code (a new field for every model
-attribute we want to include). However, recently the Graphene team added
-automated support for SQLAlchemy models allowing us to add a graphql endpoint
-to our service with only a few additional lines:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span><span class="p">,</span> <span class="n">db</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">PeeweeObjectType</span>
 <span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Schema</span>
-<span class="kn">from</span> <span class="nn">graphene.contrib.sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemyObjectType</span>
 
 <span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">HasId</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the recipe&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
-<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">session</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">()</span>
 
 <span class="nd">@schema.register</span>
-<span class="k">class</span> <span class="nc">RecipeObjectType</span><span class="p">(</span><span class="n">SQLAlchemyObjectType</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RecipeObjectType</span><span class="p">(</span><span class="n">PeeweeObjectType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The GraphQL Object type for our recipes. &quot;&quot;&quot;</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Recipe</span>
@@ -266,9 +260,10 @@ to our service with only a few additional lines:</p>
 <span class="c1"># add the root query to the schema</span>
 <span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my service&#39;</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
 
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -309,20 +304,19 @@ the event and  <code class="docutils literal"><span class="pre">Payload</span></
 if an action means to indicate that a new recipe needs to be created,
 the service can treat the payload as the recipe&#8217;s attributes and create
 the new record (or another mutation) when appropriate:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span><span class="p">,</span> <span class="n">db</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">PeeweeObjectType</span>
 <span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Schema</span>
-<span class="kn">from</span> <span class="nn">graphene.contrib.sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemyObjectType</span>
 
 <span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">HasId</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the recipe&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
-<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">session</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">()</span>
 
 <span class="nd">@schema.register</span>
-<span class="k">class</span> <span class="nc">RecipeObjectType</span><span class="p">(</span><span class="n">SQLAlchemyObjectType</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RecipeObjectType</span><span class="p">(</span><span class="n">PeeweeObjectType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The GraphQL Object type for our recipes. &quot;&quot;&quot;</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Recipe</span>
@@ -348,13 +342,11 @@ the new record (or another mutation) when appropriate:</p>
         <span class="n">recipe</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my service&#39;</span><span class="p">,</span>
-    <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span><span class="p">,</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
     <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
-<span class="p">)</span>
 
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
