@@ -167,7 +167,7 @@ much more succintly created using one of nautilus&#8217;s pre-packaged services.
 Open server.py in your favorite text editor and copy and paste the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
 
-<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
+<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="c1"># create an instance of the service</span>
@@ -201,7 +201,7 @@ server.py from the previous step and add the Recipe model.</p>
 <span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;The name of the recipe&quot;</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
+<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
 
 <span class="c1"># create a manager for the service</span>
 <span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
@@ -260,7 +260,7 @@ For more information on GraphQL, visit [this]() page.</p>
 <span class="c1"># add the root query to the schema</span>
 <span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
 
-<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
 
 <span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
@@ -342,7 +342,7 @@ the new record (or another mutation) when appropriate:</p>
         <span class="n">recipe</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
     <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
 
