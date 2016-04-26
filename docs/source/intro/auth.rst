@@ -56,9 +56,9 @@ look something like:
         # assuming User was defined above/elsewhere
         author = Connection(User)
 
-        def auth(self, user):
+        def auth(self, user_id):
             """
                 This function returns True if the given user is able to view
                 this recipe.
             """
-            return self.author.id == user.id
+            return self.author.id == user_id
