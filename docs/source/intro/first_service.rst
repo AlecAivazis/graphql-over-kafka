@@ -104,28 +104,21 @@ nautilus, services use a piece of technology from the facebook engineers called
 GraphQL which allows the service to expose the data through a single endpoint.
 For more information on GraphQL, visit [this]() page.
 
-Normally, building the schema for our endpoint would result in a
-significant amount of duplicated code (a new field for every model
-attribute we want to include). However, recently the Graphene team added
-automated support for SQLAlchemy models allowing us to add a graphql endpoint
-to our service with only a few additional lines:
-
 .. code-block:: python
 
-    from nautilus import Service, ServiceManager, db
-    from nautilus.models import BaseModel, HasID
+    from nautilus import Service, ServiceManager
+    from nautilus.models import BaseModel, fields
     from nautilus.api.fields import Connection
-    from sqlalchemy import Column, Text
+    from nautilus.contrib.graphene_peewee import PeeweeObjectType
     from graphene import Schema
-    from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 
     class Recipe(HasId, BaseModel):
-        name = Column(Text, description="The name of the recipe")
+        name = fields.CharField()
 
-    schema = Schema(session = db.session)
+    schema = Schema()
 
     @schema.register
-    class RecipeObjectType(SQLAlchemyObjectType):
+    class RecipeObjectType(PeeweeObjectType):
         """ The GraphQL Object type for our recipes. """
         class Meta:
             model = Recipe
@@ -141,9 +134,10 @@ to our service with only a few additional lines:
     # add the root query to the schema
     schema.query = Query
 
-    service = Service(name='my service', schema = schema)
+    class MyService(Service):
+        schema = schema
 
-    manager = ServiceManager(service)
+    manager = ServiceManager(MyService)
 
     if __name__ == '__main__':
         manager.run()
@@ -195,20 +189,19 @@ the new record (or another mutation) when appropriate:
 
 .. code-block:: python
 
-    from nautilus import Service, ServiceManager, db
-    from nautilus.models import BaseModel, HasID
+    from nautilus import Service, ServiceManager
+    from nautilus.models import BaseModel, fields
     from nautilus.api.fields import Connection
-    from sqlalchemy import Column, Text
+    from nautilus.contrib.graphene_peewee import PeeweeObjectType
     from graphene import Schema
-    from graphene.contrib.sqlalchemy import SQLAlchemyObjectType
 
     class Recipe(HasId, BaseModel):
-        name = Column(Text, description="The name of the recipe")
+        name = fields.CharField()
 
-    schema = Schema(session = db.session)
+    schema = Schema()
 
     @schema.register
-    class RecipeObjectType(SQLAlchemyObjectType):
+    class RecipeObjectType(PeeweeObjectType):
         """ The GraphQL Object type for our recipes. """
         class Meta:
             model = Recipe
@@ -234,13 +227,11 @@ the new record (or another mutation) when appropriate:
             recipe.save()
 
 
-    service = Service(
-        name='my service',
-        schema = schema,
+    class MyService(Service):
+        schema = schema
         action_handler = action_handler
-    )
 
-    manager = ServiceManager(service)
+    manager = ServiceManager(MyService)
 
     if __name__ == '__main__':
         manager.run()
