@@ -21,7 +21,7 @@ Open server.py in your favorite text editor and copy and paste the following:
 
     from nautilus import Service
 
-    class MyService(Service): pass
+    class RecipeService(Service): pass
 
     if __name__ == '__main__':
         # create an instance of the service
@@ -67,7 +67,7 @@ server.py from the previous step and add the Recipe model.
     class Recipe(BaseModel):
         name = fields.CharField(help_text="The name of the recipe")
 
-    class MyService(Service): pass
+    class RecipeService(Service): pass
 
     # create a manager for the service
     manager = ServiceManager(MyService)
@@ -134,7 +134,7 @@ For more information on GraphQL, visit [this]() page.
     # add the root query to the schema
     schema.query = Query
 
-    class MyService(Service):
+    class RecipeService(Service):
         schema = schema
 
     manager = ServiceManager(MyService)
@@ -227,7 +227,7 @@ the new record (or another mutation) when appropriate:
             recipe.save()
 
 
-    class MyService(Service):
+    class RecipeService(Service):
         schema = schema
         action_handler = action_handler
 
