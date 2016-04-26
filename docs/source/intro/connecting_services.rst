@@ -23,22 +23,19 @@ in our directory. Inside of this file, paste the following code:
     # third party imports
     from nautilus import ModelService, ServiceManager
     # third party imports
-    from sqlalchemy import Column, Text
-    from nautilus.models import HasID, BaseModel, CRUDNotificationCreator
+    from nautilus.models import BaseModel, fields
 
     # the notification mixin adds the sqlalchemy event handlers from part 1
-    class Ingredient(CRUDNotificationCreator, HasID, BaseModel):
-        name = Column(Text)
-
+    class Ingredient(BaseModel):
+        name = fields.CharField()
 
     class ServiceConfig:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/ingredients.db'
+        database_url = 'sqlite:///ingredients.db'
 
-
-    service = ModelService(
+    class IngredientService(ModelService):
         model = Ingredient,
-        configObject = ServiceConfig,
-    )
+        config = ServiceConfig
+
 
     manager = ServiceManager(service)
 
@@ -92,12 +89,12 @@ recipes and ingredients:
     from ingredients import service ingredientService
 
     class ServiceConfig:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/ingredients.db'
+        database_url = 'sqlite:///connections.db'
 
-    service = ConnectionService(
-        services = [recipeService, ingredientService],
-        configObject = ServiceConfig
-    )
+
+    class RecipeIngredientConnectionService(ConnectionService):
+        services = [recipeService, ingredientService]
+        config = ServiceConfig
 
 
 Again, you can run the service and check out the various endpoints.

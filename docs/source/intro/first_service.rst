@@ -21,9 +21,12 @@ Open server.py in your favorite text editor and copy and paste the following:
 
     from nautilus import Service
 
-    service = Service(name='my service')
+    class MyService(Service): pass
 
     if __name__ == '__main__':
+        # create an instance of the service
+        service = MyService()
+        # run the http server
         service.run()
 
 
@@ -49,11 +52,7 @@ Defining a Model
 ------------------
 
 Now that we have the service defined, let's create a database table
-that our service will manage. Nautilus uses SQLAlchemy for its internal
-services and provides many helpers for common patterns. Therefore, while
-not necessary, it is suggested that you also use SQLAlchemy to manage
-your database. And honestly, it's one of the nicest python packages written,
-so why not take the opportunity when you can?
+that our service will manage. 
 
 Throughout this guide, we're going to be making a recipe list, so open up
 server.py from the previous step and add the Recipe model.
@@ -61,22 +60,17 @@ server.py from the previous step and add the Recipe model.
 .. code-block:: python
 
     from nautilus import Service, ServiceManager
-    from nautilus.models import BaseModel, HasID
-    from nautilus.admin import add_model as add_model_to_admin
-    from sqlalchemy import Column, Text
+    from nautilus.models import BaseModel, fields
 
     # we're using the HasID mixin here to automatically provide a primary key
     # for the table
-    class Recipe(HasId, BaseModel):
-        name = Column(Text, description="The name of the recipe")
+    class Recipe(BaseModel):
+        name = fields.CharField(help_text="The name of the recipe")
 
-    service = Service(name='my service')
+    class MyService(Service): pass
 
-
-    # register the model with the admin
-    add_model_to_admin(Recipe)
-
-    manager = ServiceManager(service)
+    # create a manager for the service
+    manager = ServiceManager(MyService)
 
     if __name__ == '__main__':
         manager.run()
