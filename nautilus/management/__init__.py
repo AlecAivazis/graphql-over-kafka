@@ -6,11 +6,11 @@ import click
 from .scripts.create import create
 
 @click.group()
-def cloud_manager():
+def cli():
     """
         A collection of functions for managing nautilus clouds.
     """
     pass
 
 # add the various sub commands to the manager
-cloud_manager.add_command(create)
+cli.add_command(create)

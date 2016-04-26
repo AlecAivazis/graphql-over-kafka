@@ -87,16 +87,16 @@ class ConnectionService(ModelService):
         related_action_type = get_crud_action('delete', model, status='success')
         # the action handler
         def action_handler(action_type, payload, dispatcher):
-            """ 
-                an action handler to remove related entries in the 
-                connection db. 
+            """
+                an action handler to remove related entries in the
+                connection db.
             """
             # if the action designates a successful delete of the model
             if action_type == related_action_type:
                 # the id of the deleted model
                 related_id = payload['id']
                 # the query for matching fields
-                matching_records = getattr(self.model, model.model_name) == related_id
+                matching_records = getattr(self.model, model.model_name.lower()) == related_id
                 # find the matching records
                 self.model.delete().where(matching_records).execute()
 

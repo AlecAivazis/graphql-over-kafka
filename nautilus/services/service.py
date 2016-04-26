@@ -191,11 +191,16 @@ class Service(metaclass=ServiceMetaClass):
     @property
     def _request_handlers(self):
         return [
-            (r"/", GraphQLRequestHandler, dict(schema=self.schema)),
+            (r"/", self._api_request_handler_class, dict(schema=self.schema)),
             (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
                                                 dict(path=api_endpoint_static)),
             (r"/graphiql/?", GraphiQLRequestHandler),
         ]
+
+
+    @property
+    def _api_request_handler_class(self):
+        return GraphQLRequestHandler
 
 
     def add_http_endpoint(self, url, request_handler, config=None, host=".*$"):

@@ -2,6 +2,8 @@
 from graphene import List
 from graphql.core.type.scalars import GraphQLString
 from graphene.core.types.scalars import Int
+# local imports
+from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 def args_for_model(model):
     # import the model field helper
@@ -9,6 +11,8 @@ def args_for_model(model):
 
     # figure use each field as a filter
     args = fields_for_model(model)
+    # add the pk argument
+    args['pk'] = convert_peewee_field(model.primary_key())
     # create a copy of the argument dict we can mutate
     full_args = args.copy()
 
@@ -72,6 +76,8 @@ def filter_model(model, args):
                     first_letter = arg[0].title() if arg[0].islower() else arg[0].lower()
                     # try filtering with the first letter invetered
                     models = models.where(getattr(model, first_letter + arg[1:]) == value)
+                    # print(first_letter + arg[1:])
+
                 # if that still fails
                 except AttributeError as err:
                     # yell loudly

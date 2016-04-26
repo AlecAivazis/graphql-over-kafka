@@ -136,7 +136,6 @@ class Connection(List):
 
             # grab the list of primary keys from the remote service
             join_ids = [entry[target_service_name] for entry in related]
-
             # add the private key filter to the filter dicts
             args['pk_in'] = join_ids
 
