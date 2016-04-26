@@ -136,6 +136,8 @@
 <span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">graphql.core.type.scalars</span> <span class="kn">import</span> <span class="n">GraphQLString</span>
 <span class="kn">from</span> <span class="nn">graphene.core.types.scalars</span> <span class="kn">import</span> <span class="n">Int</span>
+<span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">convert_peewee_field</span>
 
 <div class="viewcode-block" id="args_for_model"><a class="viewcode-back" href="../../../internals/nautilus.api.html#nautilus.api.filter.args_for_model">[docs]</a><span class="k">def</span> <span class="nf">args_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
     <span class="c1"># import the model field helper</span>
@@ -143,6 +145,8 @@
 
     <span class="c1"># figure use each field as a filter</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">fields_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="c1"># add the pk argument</span>
+    <span class="n">args</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">())</span>
     <span class="c1"># create a copy of the argument dict we can mutate</span>
     <span class="n">full_args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -206,6 +210,8 @@
                     <span class="n">first_letter</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span> <span class="k">if</span> <span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="k">else</span> <span class="n">arg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
                     <span class="c1"># try filtering with the first letter invetered</span>
                     <span class="n">models</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">first_letter</span> <span class="o">+</span> <span class="n">arg</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="c1"># print(first_letter + arg[1:])</span>
+
                 <span class="c1"># if that still fails</span>
                 <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                     <span class="c1"># yell loudly</span>

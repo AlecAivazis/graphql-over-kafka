@@ -325,11 +325,16 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_request_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">r&quot;/&quot;</span><span class="p">,</span> <span class="n">GraphQLRequestHandler</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">r&quot;/&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_request_handler_class</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)),</span>
             <span class="p">(</span><span class="s2">r&quot;/graphiql/static/(.*)&quot;</span><span class="p">,</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">StaticFileHandler</span><span class="p">,</span>
                                                 <span class="nb">dict</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">api_endpoint_static</span><span class="p">)),</span>
             <span class="p">(</span><span class="s2">r&quot;/graphiql/?&quot;</span><span class="p">,</span> <span class="n">GraphiQLRequestHandler</span><span class="p">),</span>
         <span class="p">]</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_api_request_handler_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">GraphQLRequestHandler</span>
 
 
 <div class="viewcode-block" id="Service.add_http_endpoint"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.add_http_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">add_http_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">request_handler</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;.*$&quot;</span><span class="p">):</span>

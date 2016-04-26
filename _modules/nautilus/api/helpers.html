@@ -172,6 +172,7 @@
         <span class="nd">@graphene.resolve_only_args</span>
         <span class="k">def</span> <span class="nf">resolve_all_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
             <span class="c1"># filter the model query according to the arguments</span>
+            <span class="c1"># print(filter_model(target_model, args)[0].__dict__)</span>
             <span class="k">return</span> <span class="n">filter_model</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 

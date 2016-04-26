@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/> 
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/>
+        <link rel="up" title="Getting Started" href="index.html"/>
+        <link rel="next" title="Connecting Services Together" href="connecting_services.html"/>
+        <link rel="prev" title="Installation / Setup" href="installation.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -79,8 +82,23 @@
           
             
             
-                <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Getting Started</a></li>
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Your First Service</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#defining-a-model">Defining a Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-a-schema">Building a Schema</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#querying-the-service-s-state">Querying the Service&#8217;s State</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#responding-to-actions">Responding to Actions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">Service API</a></li>
@@ -116,6 +134,8 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
+          <li><a href="index.html">Getting Started</a> &raquo;</li>
+      
     <li>Your First Service</li>
       <li class="wy-breadcrumbs-aside">
         
@@ -147,9 +167,12 @@ much more succintly created using one of nautilus&#8217;s pre-packaged services.
 Open server.py in your favorite text editor and copy and paste the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my service&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># create an instance of the service</span>
+    <span class="n">service</span> <span class="o">=</span> <span class="n">MyService</span><span class="p">()</span>
+    <span class="c1"># run the http server</span>
     <span class="n">service</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -167,30 +190,21 @@ anything for another service to use - let&#8217;s change that.</p>
 <div class="section" id="defining-a-model">
 <h2>Defining a Model<a class="headerlink" href="#defining-a-model" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have the service defined, let&#8217;s create a database table
-that our service will manage. Nautilus uses SQLAlchemy for its internal
-services and provides many helpers for common patterns. Therefore, while
-not necessary, it is suggested that you also use SQLAlchemy to manage
-your database. And honestly, it&#8217;s one of the nicest python packages written,
-so why not take the opportunity when you can?</p>
+that our service will manage.</p>
 <p>Throughout this guide, we&#8217;re going to be making a recipe list, so open up
 server.py from the previous step and add the Recipe model.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">HasID</span>
-<span class="kn">from</span> <span class="nn">nautilus.admin</span> <span class="kn">import</span> <span class="n">add_model</span> <span class="k">as</span> <span class="n">add_model_to_admin</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
 
 <span class="c1"># we&#39;re using the HasID mixin here to automatically provide a primary key</span>
 <span class="c1"># for the table</span>
-<span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">HasId</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The name of the recipe&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;The name of the recipe&quot;</span><span class="p">)</span>
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my service&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
 
-
-<span class="c1"># register the model with the admin</span>
-<span class="n">add_model_to_admin</span><span class="p">(</span><span class="n">Recipe</span><span class="p">)</span>
-
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+<span class="c1"># create a manager for the service</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -360,6 +374,15 @@ different services in your cloud.</p>
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="connecting_services.html" class="btn btn-neutral float-right" title="Connecting Services Together" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation / Setup" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

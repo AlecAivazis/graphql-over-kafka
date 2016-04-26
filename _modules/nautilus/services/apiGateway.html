@@ -135,6 +135,7 @@
 <span></span><span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">api_gateway_name</span>
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">APIQueryHandler</span>
 
 
 <div class="viewcode-block" id="APIGateway"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.apiGateway.APIGateway">[docs]</a><span class="k">class</span> <span class="nc">APIGateway</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
@@ -164,7 +165,12 @@
 <span class="sd">                class MyAPIGateway(nautilus.APIGateway):</span>
 <span class="sd">                    schema = schema</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">api_gateway_name</span><span class="p">()</span></div>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">api_gateway_name</span><span class="p">()</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_api_request_handler_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">APIQueryHandler</span></div>
 </pre></div>
 
            </div>

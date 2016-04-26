@@ -10,11 +10,11 @@ called ``auth.py`` with the following contents:
     from nautilus import AuthService
 
     class ServiceConfig:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/passwords.db'
+        database_url = 'sqlite:////tmp/passwords.db'
 
-    service = AuthService(
-        configObject = ServiceConfig
-    )
+    class RecipeBookAuth(AuthService):
+        config = ServiceConfig
+
 
 This service provides basic user authentication and registration. When a user
 interacts with a service like the API gateway or a client, they a bit of

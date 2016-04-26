@@ -25,7 +25,8 @@ following contents:
     # external imports
     from nautilus import APIGateway, ServiceManager
 
-    service = APIGateway()
+    class RecipeBookAPI(APIGateway): pass
+
 
     manager = ServiceManager(service)
 

@@ -221,16 +221,16 @@
         <span class="n">related_action_type</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;success&#39;</span><span class="p">)</span>
         <span class="c1"># the action handler</span>
         <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">                an action handler to remove related entries in the </span>
-<span class="sd">                connection db. </span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                an action handler to remove related entries in the</span>
+<span class="sd">                connection db.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="c1"># if the action designates a successful delete of the model</span>
             <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="n">related_action_type</span><span class="p">:</span>
                 <span class="c1"># the id of the deleted model</span>
                 <span class="n">related_id</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
                 <span class="c1"># the query for matching fields</span>
-                <span class="n">matching_records</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span> <span class="o">==</span> <span class="n">related_id</span>
+                <span class="n">matching_records</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">model_name</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="o">==</span> <span class="n">related_id</span>
                 <span class="c1"># find the matching records</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">matching_records</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 

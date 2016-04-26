@@ -30,7 +30,10 @@
   
 
   
-    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/> 
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/>
+        <link rel="up" title="Getting Started" href="index.html"/>
+        <link rel="next" title="Querying The Distributed Structure" href="api.html"/>
+        <link rel="prev" title="Your First Service" href="first_service.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -79,8 +82,19 @@
           
             
             
-                <ul>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Getting Started</a></li>
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_service.html">Your First Service</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Connecting Services Together</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-pre-defined-services">Using Pre-defined Services</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connection-models">Connection Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">Service API</a></li>
@@ -116,6 +130,8 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
+          <li><a href="index.html">Getting Started</a> &raquo;</li>
+      
     <li>Connecting Services Together</li>
       <li class="wy-breadcrumbs-aside">
         
@@ -148,22 +164,19 @@ in our directory. Inside of this file, paste the following code:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># third party imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">ModelService</span><span class="p">,</span> <span class="n">ServiceManager</span>
 <span class="c1"># third party imports</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">Text</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">CRUDNotificationCreator</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
 
 <span class="c1"># the notification mixin adds the sqlalchemy event handlers from part 1</span>
-<span class="k">class</span> <span class="nc">Ingredient</span><span class="p">(</span><span class="n">CRUDNotificationCreator</span><span class="p">,</span> <span class="n">HasID</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-
+<span class="k">class</span> <span class="nc">Ingredient</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/ingredients.db&#39;</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:///ingredients.db&#39;</span>
 
-
-<span class="n">service</span> <span class="o">=</span> <span class="n">ModelService</span><span class="p">(</span>
+<span class="k">class</span> <span class="nc">IngredientService</span><span class="p">(</span><span class="n">ModelService</span><span class="p">):</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">Ingredient</span><span class="p">,</span>
-    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span><span class="p">,</span>
-<span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+
 
 <span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
 
@@ -209,12 +222,12 @@ recipes and ingredients:</p>
 <span class="kn">from</span> <span class="nn">ingredients</span> <span class="kn">import</span> <span class="n">service</span> <span class="n">ingredientService</span>
 
 <span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/ingredients.db&#39;</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:///connections.db&#39;</span>
 
-<span class="n">service</span> <span class="o">=</span> <span class="n">ConnectionService</span><span class="p">(</span>
-    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">recipeService</span><span class="p">,</span> <span class="n">ingredientService</span><span class="p">],</span>
-    <span class="n">configObject</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
-<span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">RecipeIngredientConnectionService</span><span class="p">(</span><span class="n">ConnectionService</span><span class="p">):</span>
+    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">recipeService</span><span class="p">,</span> <span class="n">ingredientService</span><span class="p">]</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
 </pre></div>
 </div>
 <p>Again, you can run the service and check out the various endpoints.</p>
@@ -225,6 +238,15 @@ recipes and ingredients:</p>
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="Querying The Distributed Structure" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="first_service.html" class="btn btn-neutral" title="Your First Service" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
