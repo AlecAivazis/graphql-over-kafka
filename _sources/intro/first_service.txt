@@ -25,7 +25,7 @@ Open server.py in your favorite text editor and copy and paste the following:
 
     if __name__ == '__main__':
         # create an instance of the service
-        service = MyService()
+        service = RecipeService()
         # run the http server
         service.run()
 
@@ -70,7 +70,7 @@ server.py from the previous step and add the Recipe model.
     class RecipeService(Service): pass
 
     # create a manager for the service
-    manager = ServiceManager(MyService)
+    manager = ServiceManager(RecipeService)
 
     if __name__ == '__main__':
         manager.run()
@@ -137,7 +137,7 @@ For more information on GraphQL, visit [this]() page.
     class RecipeService(Service):
         schema = schema
 
-    manager = ServiceManager(MyService)
+    manager = ServiceManager(RecipeService)
 
     if __name__ == '__main__':
         manager.run()
@@ -231,7 +231,7 @@ the new record (or another mutation) when appropriate:
         schema = schema
         action_handler = action_handler
 
-    manager = ServiceManager(MyService)
+    manager = ServiceManager(RecipeService)
 
     if __name__ == '__main__':
         manager.run()

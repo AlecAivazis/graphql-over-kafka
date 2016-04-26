@@ -171,7 +171,7 @@ Open server.py in your favorite text editor and copy and paste the following:</p
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="c1"># create an instance of the service</span>
-    <span class="n">service</span> <span class="o">=</span> <span class="n">MyService</span><span class="p">()</span>
+    <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span><span class="p">()</span>
     <span class="c1"># run the http server</span>
     <span class="n">service</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
@@ -204,7 +204,7 @@ server.py from the previous step and add the Recipe model.</p>
 <span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
 
 <span class="c1"># create a manager for the service</span>
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -263,7 +263,7 @@ For more information on GraphQL, visit [this]() page.</p>
 <span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
 
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
@@ -346,7 +346,7 @@ the new record (or another mutation) when appropriate:</p>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
     <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
 
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">MyService</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
