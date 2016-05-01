@@ -5,12 +5,14 @@ On versions of Ubuntu greater than 16.0, you need to install a few system
 packages first:
 
 .. code-block:: bash
+
     $ sudo apt-get install libffi-dev libssl-dev
 
 
 Nautilus is availible using pip:
 
 .. code-block:: bash
+
     $ pip install nautilus
 
 Necessary Background Processes
