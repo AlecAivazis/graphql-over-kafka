@@ -162,6 +162,13 @@ data associated with the event. For example,</p>
 </pre></div>
 </div>
 <p>Action Handlers are passed to services when defining the service:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
+</pre></div>
+</div>
 <div class="section" id="combining-action-handlers">
 <h2>Combining Action Handlers<a class="headerlink" href="#combining-action-handlers" title="Permalink to this headline">¶</a></h2>
 <p>As your services get more complex, you&#8217;ll want to split your action handler into

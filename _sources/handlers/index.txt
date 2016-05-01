@@ -27,7 +27,7 @@ data associated with the event. For example,
 
 Action Handlers are passed to services when defining the service:
 
-.. clode-block:: python
+.. code-block:: python
 
     def action_handler(action_type, payload):
         # ... 
