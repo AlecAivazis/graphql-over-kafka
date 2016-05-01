@@ -25,13 +25,12 @@ Linux
 ^^^^^^^^
 If you are developing on a linux machine, this is easily accomplished using
 docker. For docker installation instructions please visit here. Once you have
-successfully installed docker, the two process can be started with two separate
-commands in your console:
+successfully installed docker, the two process should be started in separate terminals:
 
 .. code-block:: bash
 
-    $ docker run -d -p "5672:5672" rabbitmq
-    $ docker run -d -p "8500:8500" progrium/consul -server -bootstrap
+    $ docker run -p "5672:5672" rabbitmq
+    $ docker run -p "8500:8500" progrium/consul -server -bootstrap
 
 For more information using docker, please read the documentation here.
 
@@ -44,13 +43,13 @@ another location (we'll have to do this for every service), or run the two
 processes by hand. Since we do not  yet support the first option, OSX users
 need to install these two packages by hand using MacPorts or homebrew.
 
-Once consul and rabbitmq are installed, they can be run in background processes
-with the following command in the terminal
+Once consul and rabbitmq are installed, they can be run in their own terminals
+with the following commands:
 
 .. code-block:: bash
 
-    $ consul agent -server -bootstrap -data-dir /tmp/data -ui &
-    $ rabbitmq-server &
+    $ consul agent -server -bootstrap -data-dir /tmp/data -ui 
+    $ rabbitmq-server 
 
 
 Notes

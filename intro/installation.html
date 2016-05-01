@@ -169,10 +169,9 @@ installed and running on localhost.</p>
 <h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
 <p>If you are developing on a linux machine, this is easily accomplished using
 docker. For docker installation instructions please visit here. Once you have
-successfully installed docker, the two process can be started with two separate
-commands in your console:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ docker run -d -p <span class="s2">&quot;5672:5672&quot;</span> rabbitmq
-$ docker run -d -p <span class="s2">&quot;8500:8500&quot;</span> progrium/consul -server -bootstrap
+successfully installed docker, the two process should be started in separate terminals:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ docker run -p <span class="s2">&quot;5672:5672&quot;</span> rabbitmq
+$ docker run -p <span class="s2">&quot;8500:8500&quot;</span> progrium/consul -server -bootstrap
 </pre></div>
 </div>
 <p>For more information using docker, please read the documentation here.</p>
@@ -184,10 +183,10 @@ to ports on localhost. This leaves us with two options: point nautilus to
 another location (we&#8217;ll have to do this for every service), or run the two
 processes by hand. Since we do not  yet support the first option, OSX users
 need to install these two packages by hand using MacPorts or homebrew.</p>
-<p>Once consul and rabbitmq are installed, they can be run in background processes
-with the following command in the terminal</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ consul agent -server -bootstrap -data-dir /tmp/data -ui <span class="p">&amp;</span>
-$ rabbitmq-server <span class="p">&amp;</span>
+<p>Once consul and rabbitmq are installed, they can be run in their own terminals
+with the following commands:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ consul agent -server -bootstrap -data-dir /tmp/data -ui
+$ rabbitmq-server
 </pre></div>
 </div>
 </div>
