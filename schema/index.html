@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Service API &mdash; nautilus v0.4.1 documentation</title>
+  <title>API Gateway &mdash; nautilus v0.4.1 documentation</title>
   
 
   
@@ -85,7 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Service API</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Gateway</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#summarizing-an-external-service-in-a-schema">Summarizing an External Service in A Schema</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#designating-a-graphql-equivalent-of-a-nautilus-field">Designating a GraphQL Equivalent of a Nautilus Field</a></li>
 </ul>
@@ -122,7 +122,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Service API</li>
+    <li>API Gateway</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -136,11 +136,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="service-api">
-<h1>Service API<a class="headerlink" href="#service-api" title="Permalink to this headline">¶</a></h1>
-<p>For the most part, the generation of a Graphql schema takes care of itself
-thanks to the excellent Graphene community. To reduce the overall boilerplate,
-Nautilus provides a schema factory that generates a schema to match a model:</p>
+  <div class="section" id="api-gateway">
+<h1>API Gateway<a class="headerlink" href="#api-gateway" title="Permalink to this headline">¶</a></h1>
+<p>For the most part, the generation of the API Gateway and Graphql schema takes care
+of itself thanks to the excellent Graphene community. To reduce the overall boilerplate,
+Nautilus provides a factory that generates a schema to match a model:</p>
 <dl class="function">
 <dt id="nautilus.api.create_model_schema">
 <code class="descclassname">nautilus.api.</code><code class="descname">create_model_schema</code><span class="sig-paren">(</span><em>target_model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/helpers.html#create_model_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.create_model_schema" title="Permalink to this definition">¶</a></dt>

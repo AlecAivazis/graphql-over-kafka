@@ -49,10 +49,10 @@ separate functions which each get called. Nautilus provides a function called
 
     from nautilus.network import combine_action_handlers
 
-    def action_handler1(action_type, payload):
+    def action_handler1(action_type, payload, dispatcher):
         print("first handler fired!")
 
-    def action_handler2(action_type, payload):
+    def action_handler2(action_type, payload, dispatcher):
         print("second handler fired!")
 
     combined_handler = combine_action_handlers(
