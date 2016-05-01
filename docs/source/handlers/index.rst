@@ -65,13 +65,13 @@ In order to do this within your service, you'll need to wrap it in a property:
 .. code-block:: python
 
     from nautilus import Service
+    from nautilus.network import combine_action_handlers
 
     class MyService(Service):
 
         @property
         def action_handler(self):
-        
-            # assuming action_handlers 1 and 2 were defined somewhere
+            # assuming action_handlers 1 and 2 were defined as above
             return combine_action_handlers(
                 action_handler1,
                 action_handler2
