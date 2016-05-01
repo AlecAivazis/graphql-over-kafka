@@ -1,9 +1,9 @@
-Service API
+API Gateway
 ================
 
-For the most part, the generation of a Graphql schema takes care of itself
-thanks to the excellent Graphene community. To reduce the overall boilerplate,
-Nautilus provides a schema factory that generates a schema to match a model:
+For the most part, the generation of the API Gateway and Graphql schema takes care 
+of itself thanks to the excellent Graphene community. To reduce the overall boilerplate,
+Nautilus provides a factory that generates a schema to match a model:
 
 
 .. autofunction:: nautilus.api.create_model_schema
