@@ -10,7 +10,7 @@ data associated with the event. For example,
 
 .. code-block:: python
 
-    def action_handler(action_type, payload):
+    def action_handler(action_type, payload, dispatcher):
         # if the payload represents a new recipe to add to the list
         if action_type == 'create_recipe':
             # create a new instance of the recipe model
@@ -25,19 +25,19 @@ data associated with the event. For example,
             recipe.remove()
 
 
-Action Handlers are passed to services when defining the service:
+Action Handlers are defined within the service:
 
 .. code-block:: python
 
-    def action_handler(action_type, payload):
-        # ... 
 
     class MyService(Service):
-        action_handler = action_handler
+
+        def action_handler(self, action_type, payload, dispatcher):
+            # ...
 
 
-Combining Action Handlers
--------------------------
+Reusing and Combining Action Handlers
+---------------------------------------
 
 As your services get more complex, you'll want to split your action handler into
 separate functions which each get called. Nautilus provides a function called
@@ -59,6 +59,23 @@ separate functions which each get called. Nautilus provides a function called
         action_handler1,
         action_handler2
     )
+
+In order to do this within your service, you'll need to wrap it in a property:
+
+.. code-block:: python
+
+    from nautilus import Service
+
+    class MyService(Service):
+
+        @property
+        def action_handler(self):
+        
+            # assuming action_handlers 1 and 2 were defined somewhere
+            return combine_action_handlers(
+                action_handler1,
+                action_handler2
+            )
 
 
 

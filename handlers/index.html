@@ -85,7 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Action Handlers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#combining-action-handlers">Combining Action Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reusing-and-combining-action-handlers">Reusing and Combining Action Handlers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#provided-action-handlers">Provided Action Handlers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#factories">Factories</a></li>
 </ul>
@@ -146,7 +146,7 @@ response to the arrival of an action from the queue. They are defined as
 a function of two arguments: <code class="docutils literal"><span class="pre">action_type</span></code> and <code class="docutils literal"><span class="pre">payload</span></code>. <code class="docutils literal"><span class="pre">Action_type</span></code> is a string that
 classifies the event and <code class="docutils literal"><span class="pre">payload</span></code> is a dictionary representing the
 data associated with the event. For example,</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">):</span>
     <span class="c1"># if the payload represents a new recipe to add to the list</span>
     <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;create_recipe&#39;</span><span class="p">:</span>
         <span class="c1"># create a new instance of the recipe model</span>
@@ -161,16 +161,15 @@ data associated with the event. For example,</p>
         <span class="n">recipe</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Action Handlers are passed to services when defining the service:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
-    <span class="c1"># ...</span>
+<p>Action Handlers are defined within the service:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
 
-<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
-    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">action_handler</span>
+    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">):</span>
+        <span class="c1"># ...</span>
 </pre></div>
 </div>
-<div class="section" id="combining-action-handlers">
-<h2>Combining Action Handlers<a class="headerlink" href="#combining-action-handlers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reusing-and-combining-action-handlers">
+<h2>Reusing and Combining Action Handlers<a class="headerlink" href="#reusing-and-combining-action-handlers" title="Permalink to this headline">¶</a></h2>
 <p>As your services get more complex, you&#8217;ll want to split your action handler into
 separate functions which each get called. Nautilus provides a function called
 <code class="docutils literal"><span class="pre">combine_action_handlers</span></code> which serves just this case:</p>
@@ -193,6 +192,21 @@ which will call all of them.</p>
     <span class="n">action_handler1</span><span class="p">,</span>
     <span class="n">action_handler2</span>
 <span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to do this within your service, you&#8217;ll need to wrap it in a property:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
+
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># assuming action_handlers 1 and 2 were defined somewhere</span>
+        <span class="k">return</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
+            <span class="n">action_handler1</span><span class="p">,</span>
+            <span class="n">action_handler2</span>
+        <span class="p">)</span>
 </pre></div>
 </div>
 </div>
