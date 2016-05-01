@@ -196,13 +196,13 @@ which will call all of them.</p>
 </div>
 <p>In order to do this within your service, you&#8217;ll need to wrap it in a property:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span>
 
 <span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="c1"># assuming action_handlers 1 and 2 were defined somewhere</span>
+        <span class="c1"># assuming action_handlers 1 and 2 were defined as above</span>
         <span class="k">return</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
             <span class="n">action_handler1</span><span class="p">,</span>
             <span class="n">action_handler2</span>
