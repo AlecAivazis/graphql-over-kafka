@@ -25,6 +25,17 @@ data associated with the event. For example,
             recipe.remove()
 
 
+Action Handlers are passed to services when defining the service:
+
+.. clode-block:: python
+
+    def action_handler(action_type, payload):
+        # ... 
+
+    class MyService(Service):
+        action_handler = action_handler
+
+
 Combining Action Handlers
 -------------------------
 
