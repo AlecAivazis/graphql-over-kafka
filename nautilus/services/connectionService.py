@@ -86,7 +86,7 @@ class ConnectionService(ModelService):
         # the related action type
         related_action_type = get_crud_action('delete', model, status='success')
         # the action handler
-        def action_handler(action_type, payload, dispatcher):
+        def action_handler(dispatcher, action_type, payload):
             """
                 an action handler to remove related entries in the
                 connection db.

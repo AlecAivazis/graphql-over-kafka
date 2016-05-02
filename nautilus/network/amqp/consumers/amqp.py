@@ -247,16 +247,16 @@ class AMQPConsumer(object):
         LOGGER.info('Received message # %s from %s: %s',
                     basic_deliver.delivery_tag, properties.app_id, body)
         try:
-            self.handle_event(dispatcher=self,
-                              action_type=basic_deliver.routing_key,
-                              payload=body.decode('utf-8')
+            self.handle_event(action_type=basic_deliver.routing_key,
+                              payload=body.decode('utf-8'),
+                              properties=properties
                              )
         except NotImplementedError:
             pass
 
         self.acknowledge_message(basic_deliver.delivery_tag)
 
-    def handle_event(self, dispatcher, action_type, payload):
+    def handle_event(self, action_type, payload, properties):
         raise NotImplementedError
 
     def on_cancelok(self, unused_frame):

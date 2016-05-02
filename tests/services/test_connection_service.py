@@ -131,14 +131,14 @@ class TestUtil(unittest.TestCase):
         mock = MagicMock()
 
         # call the service action handler
-        self.service.action_handler(action_type, payload, dispatcher=mock)
+        self.service.action_handler(mock, action_type, payload)
 
         # make sure the spy was called correctly
         assert_called_once_with(
             self.spy,
+            mock,
             action_type,
             payload,
-            dispatcher=mock,
             spy_name="Test service spy"
         )
 
@@ -200,7 +200,7 @@ class TestUtil(unittest.TestCase):
         payload = dict(id=model1.id)
 
         # fire the action
-        self.service.action_handler(action_type, payload, dispatcher=MagicMock())
+        self.service.action_handler(MagicMock(), action_type, payload)
 
         # make sure the model can't be found
         self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
@@ -215,7 +215,7 @@ class TestUtil(unittest.TestCase):
             self.service2.model.model_name.lower(): 'bar'
         }
         # fire a create action
-        self.service.action_handler(action_type, payload, dispatcher=MagicMock())
+        self.service.action_handler(MagicMock(), action_type, payload)
         # the query to find a matching model
         matching_model = self.service1_value == 'foo'
         # make sure the created record was found and save the id
@@ -226,9 +226,9 @@ class TestUtil(unittest.TestCase):
         payload = {'id':self.model_id, self.service1.model.model_name.lower(): 'bars'}
         # fire an update action
         self.service.action_handler(
+            MagicMock(),
             conventions.get_crud_action('update', self.model),
-            payload,
-            dispatcher=MagicMock()
+            payload
         )
         # check that a model matches
         self.model.get(self.service1_value == 'bars')
@@ -237,9 +237,9 @@ class TestUtil(unittest.TestCase):
     def _verify_action_handler_delete(self):
         # fire a delete action
         self.service.action_handler(
+            MagicMock(),
             conventions.get_crud_action('delete', self.model),
-            self.model_id,
-            dispatcher=MagicMock()
+            self.model_id
         )
         # expect an error
         self.assertRaises(Exception, self.model.get, self.model_id)

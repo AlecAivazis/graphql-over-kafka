@@ -15,7 +15,7 @@ def update_handler(Model):
         Returns:
             function(type, payload): The action handler for this model
     """
-    def action_handler(action_type, payload, dispatcher):
+    def action_handler(service, action_type, payload, **kwds):
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('update', Model):
             try:
@@ -40,7 +40,7 @@ def update_handler(Model):
                 model.save()
 
                 # publish the scucess event
-                dispatcher.publish(
+                service.event_broker.publish(
                     ModelSerializer().serialize(model),
                     route=change_action_status(action_type, 'success')
                 )
@@ -48,7 +48,7 @@ def update_handler(Model):
             # if something goes wrong
             except Exception as err:
                 # publish the error as an event
-                dispatcher.publish(
+                service.event_broker.publish(
                     str(err),
                     route=change_action_status(action_type, 'error')
                 )

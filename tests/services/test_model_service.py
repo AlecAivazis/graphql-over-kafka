@@ -95,18 +95,18 @@ class TestUtil(unittest.TestCase):
 
         # call the service action handler
         self.service.action_handler(
+            mock,
             action_type,
-            payload,
-            dispatcher=mock
+            payload
         )
 
         # make sure the spy was called correctly
         assert_called_once_with(
             self.spy,
+            mock,
             action_type,
             payload,
             spy_name="Test service spy",
-            dispatcher=mock
         )
 
 
@@ -119,9 +119,9 @@ class TestUtil(unittest.TestCase):
     def verify_create_action_handler(self):
         # fire a create action
         self.service.action_handler(
+            MagicMock(),
             conventions.get_crud_action('create', self.model),
             dict(name='foo'),
-            dispatcher=MagicMock()
         )
         # make sure the created record was found and save the id
         self.model_id = self.model.get(self.model.name == 'foo').id
@@ -130,9 +130,9 @@ class TestUtil(unittest.TestCase):
     def verify_update_action_handler(self):
         # fire an update action
         self.service.action_handler(
+            MagicMock(),
             conventions.get_crud_action('update', self.model),
             dict(id=self.model_id, name='barz'),
-            dispatcher=MagicMock()
         )
         # check that a model matches
         self.model.get(self.model.name == 'barz')
@@ -141,9 +141,9 @@ class TestUtil(unittest.TestCase):
     def verify_delete_action_handler(self):
         # fire a delete action
         self.service.action_handler(
+            MagicMock(),
             conventions.get_crud_action('delete', self.model),
-            payload=self.model_id,
-            dispatcher=MagicMock()
+            payload=self.model_id
         )
         # expect an error
         self.assertRaises(Exception, self.model.get, self.model_id)

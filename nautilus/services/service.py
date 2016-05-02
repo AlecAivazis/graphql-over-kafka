@@ -83,7 +83,7 @@ class Service(metaclass=ServiceMetaClass):
         self.app = None
         self.__name__ = name
         self.keep_alive = None
-        self._action_handler_loop = None
+        self.event_broker = None
         self.schema = schema or self.schema
 
         # wrap the given configuration in the nautilus wrapper
@@ -114,9 +114,9 @@ class Service(metaclass=ServiceMetaClass):
         # if the service was provided an action handler
         if action_handler:
             # create a wrapper for it
-            self._action_handler_loop = ActionHandler(callback=action_handler)
+            self.event_broker = ActionHandler(callback=action_handler)
             # add it to the ioloop
-            self.ioloop.add_callback(self._action_handler_loop.run)
+            self.ioloop.add_callback(self.event_broker.run)
 
 
     def init_keep_alive(self):
@@ -183,9 +183,9 @@ class Service(metaclass=ServiceMetaClass):
         self.ioloop.stop()
 
         # if there is an action consumer registered with this service
-        if self._action_handler_loop:
+        if self.event_broker:
             # stop the action consumer
-            self._action_handler_loop.stop()
+            self.event_broker.stop()
 
 
     @property

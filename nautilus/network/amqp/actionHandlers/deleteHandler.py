@@ -18,7 +18,7 @@ def delete_handler(Model):
     # necessary imports
     from nautilus.database import db
 
-    def action_handler(action_type, payload, dispatcher):
+    def action_handler(service, action_type, payload, **kwds):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('delete', Model):
             try:
@@ -28,7 +28,7 @@ def delete_handler(Model):
                 model_query.get().delete_instance()
 
                 # publish the scucess event
-                dispatcher.publish(
+                service.event_broker.publish(
                     ModelSerializer().serialize(model),
                     route=change_action_status(action_type, 'success')
                 )
@@ -36,7 +36,7 @@ def delete_handler(Model):
             # if something goes wrong
             except Exception as err:
                 # publish the error as an event
-                dispatcher.publish(
+                service.event_broker.publish(
                     str(err),
                     route=change_action_status(action_type, 'error')
                 )
