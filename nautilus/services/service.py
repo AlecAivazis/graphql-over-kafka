@@ -67,6 +67,7 @@ class Service(metaclass=ServiceMetaClass):
     config = None
     name = None
     schema = None
+    action_handler_class = ActionHandler
 
     _routes = []
 
@@ -115,7 +116,7 @@ class Service(metaclass=ServiceMetaClass):
         # if the service was provided an action handler
         if action_handler:
             # create a wrapper for it
-            self.event_broker = self.action_handler_class()(callback=action_handler)
+            self.event_broker = self.action_handler_class(callback=action_handler)
             # add it to the ioloop
             self.ioloop.add_callback(self.event_broker.run)
 
@@ -129,10 +130,6 @@ class Service(metaclass=ServiceMetaClass):
     def action_handler(self):
         # by default, a service does not have a response to actions
         return noop_handler
-
-
-    def action_handler_class(self):
-        return ActionHandler
 
 
     def run(self, host="localhost", port=8000, **kwargs):

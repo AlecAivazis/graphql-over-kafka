@@ -15,8 +15,7 @@ def async_field(func):
     """
         Marks a resolver to run inside the ioloop.
     """
-    def resolver(self, args, info):
-
+    def resolver(query, args, info):
         return func
 
     return tag_resolver(resolver, _async_tag)
@@ -31,11 +30,11 @@ def is_async_field(func):
 
 
 @tornado.gen.coroutine
-def execute_async_resolver(resolver, deferred):
+def execute_async_resolver(resolver, original_resolver, deferred):
     """
         This function executes the given resolver, passing it
     """
-    resolver()(deferred.callback, deferred.errback)
+    resolver()(*resolver.args, deferred.callback, deferred.errback)
 
 
 class TornadoExecutionMiddleware:
@@ -57,7 +56,7 @@ class TornadoExecutionMiddleware:
             deferred = Deferred()
             # execute the resolver and hand it the deferred so it can use the
             # callback
-            execute_async_resolver(resolver, deferred)
+            execute_async_resolver(resolver, original_resolver, deferred)
             # return the deferred object
             return deferred
 
