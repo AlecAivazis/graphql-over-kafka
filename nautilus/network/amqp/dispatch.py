@@ -3,7 +3,7 @@
 # external imports
 import pika, json
 
-def dispatch(body, exchange, routing_key=''):
+def dispatch(body, exchange, routing_key='', **kwds):
     """ dispatch the action through the message queue """
     # connect to the rabbit mq server
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -16,7 +16,7 @@ def dispatch(body, exchange, routing_key=''):
         durable=exchange['durable']
     )
     # send the message over the exchange
-    channel.basic_publish(exchange=exchange['name'], routing_key=routing_key, body=body)
+    channel.basic_publish(exchange=exchange['name'], routing_key=routing_key, body=body, **kwds)
     # close the connection
     connection.close()
 

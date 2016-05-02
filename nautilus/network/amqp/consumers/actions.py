@@ -5,7 +5,7 @@ class ActionHandler(AMQPConsumer):
     EXCHANGE = 'my_events'
     EXCHANGE_TYPE = 'topic'
     ROUTING_KEY = '*.*.pending'
-    DURABLE = False
+    DURABLE = True
 
     def __init__(self, callback, routing_key=None, **kwds):
         # save a reference to the callback we were provided
