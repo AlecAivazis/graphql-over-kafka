@@ -3,15 +3,14 @@ import tornado.gen
 from tornado.web import MissingArgumentError
 from graphql.core.error import format_error as format_graphql_error
 # local imports
+from nautilus.api import AsyncSchema
 from nautilus.auth import AuthRequestHandler
 
 
 class GraphQLRequestHandler(AuthRequestHandler):
 
-    def initialize(self, schema=None, async=False):
+    def initialize(self, schema=None):
         self._schema = schema
-        # TODO: check for async executor in schema
-        self._async = async
 
     @property
     def request_context(self):
@@ -27,17 +26,17 @@ class GraphQLRequestHandler(AuthRequestHandler):
             # log the request
             print("handling graphql query: {}".format(query))
 
+            # if the schema is an asynchronous one
+            if isinstance(self._schema, AsyncSchema):
+                # resolve the schema in a coroutine
+                result = yield tornado.gen.Task(self._schema.execute, query)
             # if the schema is synchronously executed
-            if not self._async:
+            else:
                 # execute the
                 result = self._schema.execute(
                     query,
                     request_context=self.request_context
                 )
-            # otherwise the schema is asynchronously executed
-            else:
-                # resolve the schema in a coroutine
-                result = yield tornado.gen.Task(self._schema.execute, query)
 
             # format the errors specially
             errors = [str(format_graphql_error(error)) \
@@ -71,17 +70,17 @@ class GraphQLRequestHandler(AuthRequestHandler):
             # log the request
             print("handling graphql query: {}".format(query))
 
+            # if the schema is an asynchronous one
+            if isinstance(self._schema, AsyncSchema):
+                # resolve the schema in a coroutine
+                result = yield tornado.gen.Task(self._schema.execute, query)
             # if the schema is synchronously executed
-            if not self._async:
+            else:
                 # execute the
                 result = self._schema.execute(
                     query,
                     request_context=self.request_context
                 )
-            # otherwise the schema is asynchronously executed
-            else:
-                # resolve the schema in a coroutine
-                result = yield tornado.gen.Task(self._schema.execute, query)
 
             # format the errors specially
             errors = [str(format_graphql_error(error)) \
