@@ -103,6 +103,7 @@ class Service(metaclass=ServiceMetaClass):
         )
         # attach the ioloop to the application
         self.ioloop = tornado.ioloop.IOLoop.instance()
+        self.ioloop.service = self
 
         # for each route that was registered
         for route in self._routes:
