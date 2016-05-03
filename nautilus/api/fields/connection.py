@@ -69,27 +69,22 @@ class Connection(List):
         self.relationship = relationship
 
         # set the resolver if a service was specified
-        kwds['resolver'] = self.resolve_service
+        kwds['resolver'] = self._resolve
 
         super().__init__(of_type=target, **kwds)
 
 
+    def _resolve(self, instance, query_args, info):
+        # make a normal dictionary out of the immutable one we were given
+        args = query_args if isinstance(query_args, dict) \
+                                else query_args.to_data_dict()
 
-    def resolve_service(self, instance, query_args, info):
-        '''
-            This function grab the remote data that acts as the source for this
-            connection.
-        '''
-        # note: it is safe to assume the target is a service object
-
-        # the target class for the connection
-        target = self.target
         # if we were given a string to target
-        if isinstance(target, str):
+        if isinstance(self.target, str):
             # if the string points to a service object we recognize
-            if target in serivce_objects:
+            if self.target in serivce_objects:
                 # grab the service object with the matching name
-                target = serivce_objects[target]
+                self.target = serivce_objects[self.target]
             # otherwise the string target does not designate a service object
             else:
                 # yell loudly
@@ -97,22 +92,27 @@ class Connection(List):
                                     "ServiceObjectType as the target for " + \
                                     "a connection.")
 
-        # make a normal dictionary out of the immutable one we were given
-        args = query_args \
-                    if isinstance(query_args, dict) \
-                    else query_args.to_data_dict()
+        # call the public facing function 
+        self.resolve_service(instance, args, info)
 
+
+    def resolve_service(self, instance, args, info):
+        '''
+            This function grab the remote data that acts as the source for this
+            connection.
+
+            Note: it is safe to assume the target is a service object -
+                strings have been coerced.
+        '''
+        # note: it is safe to assume the target is a service object
         ## resolve the connection if necessary
-        target_service_name = target.service.name \
-                                    if hasattr(target.service, 'name') \
-                                    else target.service
+        target_service_name = self._service_name(self.target)
+
         # if we are connecting two service objects, we need to go through a connection table
         if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
 
             # the target service
-            instance_service_name = instance.service.name \
-                                            if hasattr(instance.service, 'name') \
-                                            else instance.service
+            instance_service_name = self._service_name(instance)
 
             # the name of the service that manages the connection
             connection_service = connection_service_name(target_service_name,
@@ -120,8 +120,7 @@ class Connection(List):
             # the primary key of the instance we are refering from
             instance_pk = getattr(instance, instance.service.model.primary_key().name)
             # look for connections originating from this object
-            join_filter = {}
-            join_filter[instance_service_name] = instance_pk
+            join_filter = {instance_service_name: instance_pk}
 
             # query the connection service for related data
             related = query_service(
@@ -142,7 +141,7 @@ class Connection(List):
         ## query the target service
 
         # only query the backend service for the fields that are not connections
-        fields = [field.attname for field in target.true_fields()]
+        fields = [field.attname for field in self.target.true_fields()]
         # grab the final list of entries
         results = query_service(target_service_name, fields, filters=args)
 
@@ -157,7 +156,7 @@ class Connection(List):
 
         ## remove instances of the target that the user is not allowed to see
         # if we need to apply some sort of authorization
-        if hasattr(target, 'auth'):
+        if hasattr(self.target, 'auth'):
 
             try:
                 # grab the current user from the request_context
@@ -174,8 +173,8 @@ class Connection(List):
             # apply the authorization criteria to the result
             results = [
                 result for result in results \
-                if target.auth(
-                    target(**result),
+                if self.target.auth(
+                    self.target(**result),
                     current_user.decode('utf-8'))
             ]
 
@@ -192,7 +191,20 @@ class Connection(List):
         # if we are on the `one` side of the relationship
         elif self.relationship == 'one':
             # pull the first item out of the list
-            return target(**results[0])
+            return self.target(**results[0])
 
         # create instances of the target class for every result
-        return [target(**result) for result in results]
+        return [self.target(**result) for result in results]
+
+
+    def _service_name(self, target):
+        try:
+            # return the name of the target
+            return target.service.name
+        # if it does not have the name attribute
+        except AttributeError as err:
+            # if the target is a string
+            if isinstance(target, str):
+                return target
+            # otherwise the service is unknown
+            raise err

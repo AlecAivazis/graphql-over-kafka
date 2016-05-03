@@ -37,16 +37,16 @@ class TestUtil(tornado.testing.AsyncTestCase):
                 return 'hello'
 
             @async_field
-            def resolve_async(query, args, info, success, error):
+            def resolve_async(instance, args, info, success, error):
                 success('hello')
 
             @async_field
-            def resolve_fail(query, args, info, success, error):
+            def resolve_fail(instance, args, info, success, error):
                 error(Exception('hello'))
 
             @async_field
             @tornado.gen.coroutine
-            def resolve_chained(query, args, info, success, error):
+            def resolve_chained(instance, args, info, success, error):
                 result = yield _coroutine()
 
                 success(result)
