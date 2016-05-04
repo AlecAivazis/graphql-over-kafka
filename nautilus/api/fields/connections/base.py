@@ -101,7 +101,7 @@ class BaseConnection(List):
                                     "a connection.")
 
         # call the public facing function 
-        self.resolve_service(instance, args, info)
+        return self.resolve_service(instance, args, info)
 
 
     def _service_name(self, target):
