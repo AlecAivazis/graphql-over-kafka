@@ -1,2 +1,4 @@
 include README.md
 recursive-include nautilus *
+global-exclude /__pycache__
+global-exclude *.pyc
