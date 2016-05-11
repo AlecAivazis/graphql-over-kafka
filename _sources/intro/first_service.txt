@@ -89,11 +89,6 @@ command:
 
     $ python3 ./server.py syncdb
 
-Now that you have a place to store your data, run the service and navigate your
-browser to ``localhost:8000/admin``.You should see a button at the top which
-will bring you to a page for directly managing the recipe instances. While this
-is rather convinient for humans, we will need to add a way for other services
-to query this database.
 
 
 Building a Schema
