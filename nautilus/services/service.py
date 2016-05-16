@@ -1,6 +1,8 @@
 # external imports
+import asyncio
 import tornado.ioloop
 import tornado.web
+from tornado.platform.asyncio import AsyncIOMainLoop
 # local imports
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
@@ -11,6 +13,10 @@ from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
+
+# integrate the tornado loop into asyncio
+AsyncIOMainLoop().install()
+
 
 class ServiceMetaClass(type):
     def __init__(cls, name, bases, attributes):
@@ -103,7 +109,7 @@ class Service(metaclass=ServiceMetaClass):
             cookie_secret=self.config.get('secret_key', 'default_secret')
         )
         # attach the ioloop to the application
-        self.ioloop = tornado.ioloop.IOLoop.instance()
+        self.ioloop = AsyncIOMainLoop()
         self.ioloop.service = self
 
         # for each route that was registered

@@ -3,8 +3,8 @@ import unittest
 import tornado.testing
 import tornado.gen
 from graphene import Schema, ObjectType, String, resolve_only_args
-from graphql.core.execution.middlewares.utils import resolver_has_tag
-from graphql.core.error import format_error
+from graphql.execution.middlewares.utils import resolver_has_tag
+from graphql.error import format_error
 # local imports
 import nautilus
 from nautilus.api.executor import async_field, is_async_field
@@ -59,7 +59,7 @@ class TestUtil(tornado.testing.AsyncTestCase):
 
     def test_can_tag_functions_as_async(self):
         @async_field
-        def test_func(): 
+        def test_func():
             "a function to test"
 
         assert is_async_field(test_func), (
@@ -127,7 +127,7 @@ class TestUtil(tornado.testing.AsyncTestCase):
         test_query = "query{ chained }"
         # resolve the query in the schema
         resolved_query = yield self.schema.execute(test_query)
-        
+
         # assert that there are no errors
         assert len(resolved_query.errors) == 0, (
             "Schema contained errors: " + ','.join(resolved_query.errors)

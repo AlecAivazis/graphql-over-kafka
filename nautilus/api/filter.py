@@ -1,6 +1,6 @@
 # external imports
 from graphene import List
-from graphql.core.type.scalars import GraphQLString
+from graphql.type.scalars import GraphQLString
 from graphene.core.types.scalars import Int
 # local imports
 from nautilus.contrib.graphene_peewee import convert_peewee_field
