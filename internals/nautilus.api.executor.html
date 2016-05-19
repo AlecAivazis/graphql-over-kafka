@@ -171,62 +171,24 @@
 <span id="nautilus-api-executor-executor-module"></span><h2>nautilus.api.executor.executor module<a class="headerlink" href="#module-nautilus.api.executor.executor" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.api.executor.executor.TornadoExecutor">
-<em class="property">class </em><code class="descclassname">nautilus.api.executor.executor.</code><code class="descname">TornadoExecutor</code><a class="reference internal" href="../_modules/nautilus/api/executor/executor.html#TornadoExecutor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executor.TornadoExecutor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">graphql.core.execution.executor.Executor</span></code></p>
+<em class="property">class </em><code class="descclassname">nautilus.api.executor.executor.</code><code class="descname">TornadoExecutor</code><span class="sig-paren">(</span><em>futures={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executor.html#TornadoExecutor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executor.TornadoExecutor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>This class executes a schema asynchronously using the tornado ioloop.</p>
 <dl class="method">
 <dt id="nautilus.api.executor.executor.TornadoExecutor.execute">
-<code class="descname">execute</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executor.html#TornadoExecutor.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executor.TornadoExecutor.execute" title="Permalink to this definition">¶</a></dt>
+<code class="descname">execute</code><span class="sig-paren">(</span><em>resolve_fn</em>, <em>source</em>, <em>args</em>, <em>context</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executor.html#TornadoExecutor.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executor.TornadoExecutor.execute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.api.executor.executor.TornadoExecutor.wait_until_finished">
+<code class="descname">wait_until_finished</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executor.html#TornadoExecutor.wait_until_finished"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executor.TornadoExecutor.wait_until_finished" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="module-nautilus.api.executor.executorMiddleware">
-<span id="nautilus-api-executor-executormiddleware-module"></span><h2>nautilus.api.executor.executorMiddleware module<a class="headerlink" href="#module-nautilus.api.executor.executorMiddleware" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware">
-<em class="property">class </em><code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">TornadoExecutionMiddleware</code><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#TornadoExecutionMiddleware"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>This middleware executes the fields using the tornado ioloop for
-deffered executions.</p>
-<dl class="staticmethod">
-<dt id="nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware.execution_result">
-<em class="property">static </em><code class="descname">execution_result</code><span class="sig-paren">(</span><em>executor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#TornadoExecutionMiddleware.execution_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware.execution_result" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method waits for the deffered execution. Unfortunately,
-this method is not forced asynchronous so we have wrap the
-execution in a future.</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware.run_resolve_fn">
-<em class="property">static </em><code class="descname">run_resolve_fn</code><span class="sig-paren">(</span><em>resolver</em>, <em>original_resolver</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#TornadoExecutionMiddleware.run_resolve_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.TornadoExecutionMiddleware.run_resolve_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method acts as a wrapper over the fields resolve function.
-In order to integrate seemlessly with graphql.core, the result
-is wrapped in &lt;graphql.core.pyutils.Deferred&gt; when necessary.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="nautilus.api.executor.executorMiddleware.async_field">
-<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">async_field</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#async_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.async_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Marks a resolver to run inside the ioloop.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="nautilus.api.executor.executorMiddleware.execute_async_resolver">
-<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">execute_async_resolver</code><span class="sig-paren">(</span><em>resolver</em>, <em>deferred</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#execute_async_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.execute_async_resolver" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function executes the given resolver, passing it</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="nautilus.api.executor.executorMiddleware.is_async_field">
-<code class="descclassname">nautilus.api.executor.executorMiddleware.</code><code class="descname">is_async_field</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/executor/executorMiddleware.html#is_async_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.executor.executorMiddleware.is_async_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>This funtion checks if a resolver has the correct tag to designate
-an async field.</p>
-</dd></dl>
-
+<div class="section" id="nautilus-api-executor-executormiddleware-module">
+<h2>nautilus.api.executor.executorMiddleware module<a class="headerlink" href="#nautilus-api-executor-executormiddleware-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-nautilus.api.executor">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.api.executor" title="Permalink to this headline">¶</a></h2>

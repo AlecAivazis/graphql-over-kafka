@@ -163,9 +163,7 @@ padding a value to the `query` url parameter by navigating to a url like
 
 While this does work, it's clear this endpoint is not intended for human
 consumption. Instead, if you point your browser to ``/graphiql`` you will
-get visual environment for forming queries. I suggest opening a second tab
-pointed at the admin interface previously discussed and proving to yourself
-that the api is working as expected.
+get visual environment for forming queries.
 
 
 Responding to Actions
@@ -213,25 +211,23 @@ the new record (or another mutation) when appropriate:
     schema.query = Query
 
 
-    def action_handler(action_type, payload):
-        # if the payload represents a new recipe to create
-        if action_type == 'create_recipe':
-            # create a new instance of the recipe
-            recipe = Recipe(**payload)
-            # save the recipe instance
-            recipe.save()
-
-
     class RecipeService(Service):
         schema = schema
-        action_handler = action_handler
+
+        def action_handler(self, action_type, payload):
+            # if the payload represents a new recipe to create
+            if action_type == 'create_recipe':
+                # create a new instance of the recipe
+                recipe = Recipe(**payload)
+                # save the recipe instance
+                recipe.save()
+
 
     manager = ServiceManager(RecipeService)
 
     if __name__ == '__main__':
         manager.run()
 
-Feel free to test this by....
 
 Congratulations! You have finally pieced together a complete nautilus service.
 Now other entities in your cloud (like another service or even a javascript

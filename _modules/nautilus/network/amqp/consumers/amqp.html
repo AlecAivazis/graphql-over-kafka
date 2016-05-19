@@ -381,16 +381,16 @@
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Received message # </span><span class="si">%s</span><span class="s1"> from </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
                     <span class="n">basic_deliver</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">,</span> <span class="n">properties</span><span class="o">.</span><span class="n">app_id</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">handle_event</span><span class="p">(</span><span class="n">dispatcher</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
-                              <span class="n">action_type</span><span class="o">=</span><span class="n">basic_deliver</span><span class="o">.</span><span class="n">routing_key</span><span class="p">,</span>
-                              <span class="n">payload</span><span class="o">=</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_event</span><span class="p">(</span><span class="n">action_type</span><span class="o">=</span><span class="n">basic_deliver</span><span class="o">.</span><span class="n">routing_key</span><span class="p">,</span>
+                              <span class="n">payload</span><span class="o">=</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span>
+                              <span class="n">properties</span><span class="o">=</span><span class="n">properties</span>
                              <span class="p">)</span>
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
             <span class="k">pass</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">acknowledge_message</span><span class="p">(</span><span class="n">basic_deliver</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AMQPConsumer.handle_event"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.handle_event">[docs]</a>    <span class="k">def</span> <span class="nf">handle_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dispatcher</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<div class="viewcode-block" id="AMQPConsumer.handle_event"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.handle_event">[docs]</a>    <span class="k">def</span> <span class="nf">handle_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">properties</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="AMQPConsumer.on_cancelok"><a class="viewcode-back" href="../../../../../internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_cancelok">[docs]</a>    <span class="k">def</span> <span class="nf">on_cancelok</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_frame</span><span class="p">):</span>

@@ -133,8 +133,10 @@
             
   <h1>Source code for nautilus.services.service</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">tornado.ioloop</span>
 <span class="kn">import</span> <span class="nn">tornado.web</span>
+<span class="kn">from</span> <span class="nn">tornado.platform.asyncio</span> <span class="kn">import</span> <span class="n">AsyncIOMainLoop</span>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.network.amqp.consumers.actions</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">static_dir</span> <span class="k">as</span> <span class="n">api_endpoint_static</span>
@@ -145,6 +147,10 @@
     <span class="n">GraphiQLRequestHandler</span><span class="p">,</span>
     <span class="n">GraphQLRequestHandler</span>
 <span class="p">)</span>
+
+<span class="c1"># integrate the tornado loop into asyncio</span>
+<span class="n">AsyncIOMainLoop</span><span class="p">()</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+
 
 <div class="viewcode-block" id="ServiceMetaClass"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.ServiceMetaClass">[docs]</a><span class="k">class</span> <span class="nc">ServiceMetaClass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
@@ -201,6 +207,7 @@
     <span class="n">config</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">action_handler_class</span> <span class="o">=</span> <span class="n">ActionHandler</span>
 
     <span class="n">_routes</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -217,7 +224,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_action_handler_loop</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
 
         <span class="c1"># wrap the given configuration in the nautilus wrapper</span>
@@ -236,7 +243,8 @@
             <span class="n">cookie_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;secret_key&#39;</span><span class="p">,</span> <span class="s1">&#39;default_secret&#39;</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="c1"># attach the ioloop to the application</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span> <span class="o">=</span> <span class="n">AsyncIOMainLoop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span>
 
         <span class="c1"># for each route that was registered</span>
         <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routes</span><span class="p">:</span>
@@ -248,9 +256,9 @@
         <span class="c1"># if the service was provided an action handler</span>
         <span class="k">if</span> <span class="n">action_handler</span><span class="p">:</span>
             <span class="c1"># create a wrapper for it</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_action_handler_loop</span> <span class="o">=</span> <span class="n">ActionHandler</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="n">action_handler</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_handler_class</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="n">action_handler</span><span class="p">)</span>
             <span class="c1"># add it to the ioloop</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_handler_loop</span><span class="o">.</span><span class="n">run</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">run</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Service.init_keep_alive"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.init_keep_alive">[docs]</a>    <span class="k">def</span> <span class="nf">init_keep_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -317,9 +325,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
         <span class="c1"># if there is an action consumer registered with this service</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_handler_loop</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="p">:</span>
             <span class="c1"># stop the action consumer</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_action_handler_loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
 
 
     <span class="nd">@property</span>

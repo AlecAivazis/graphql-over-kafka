@@ -180,7 +180,7 @@ of the system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>schema</strong> (<em>graphql.core.type.GraphQLSchema</em>) &#8211; The schema to use that
+<li><strong>schema</strong> (<em>graphql.type.GraphQLSchema</em>) &#8211; The schema to use that
 encapsultes the overall topology of the cloud.</li>
 <li><strong>action_handler</strong> (<em>optional, function</em>) &#8211; The callback function fired
 when an action is recieved. If None, the service does not
@@ -474,6 +474,12 @@ added to the service.</li>
 <dt id="nautilus.services.service.Service.action_handler">
 <code class="descname">action_handler</code><a class="headerlink" href="#nautilus.services.service.Service.action_handler" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.service.Service.action_handler_class">
+<code class="descname">action_handler_class</code><a class="headerlink" href="#nautilus.services.service.Service.action_handler_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">ActionHandler</span></code></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="nautilus.services.service.Service.add_http_endpoint">

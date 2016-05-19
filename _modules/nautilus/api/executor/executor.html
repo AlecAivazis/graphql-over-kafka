@@ -134,27 +134,48 @@
   <h1>Source code for nautilus.api.executor.executor</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">tornado</span>
-<span class="kn">from</span> <span class="nn">graphql.core.execution</span> <span class="kn">import</span> <span class="n">Executor</span>
-<span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">.executorMiddleware</span> <span class="kn">import</span> <span class="n">TornadoExecutionMiddleware</span>
+<span class="kn">import</span> <span class="nn">tornado.gen</span>
+<span class="kn">from</span> <span class="nn">promise</span> <span class="kn">import</span> <span class="n">Promise</span>
 
-<div class="viewcode-block" id="TornadoExecutor"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor">[docs]</a><span class="k">class</span> <span class="nc">TornadoExecutor</span><span class="p">(</span><span class="n">Executor</span><span class="p">):</span>
+<div class="viewcode-block" id="TornadoExecutor"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor">[docs]</a><span class="k">class</span> <span class="nc">TornadoExecutor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This class executes a schema asynchronously using the tornado ioloop.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">([</span><span class="n">TornadoExecutionMiddleware</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">futures</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">future</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">current</span><span class="p">()</span>
+
+    <span class="nd">@tornado.gen.engine</span>
+    <span class="k">def</span> <span class="nf">_fn_future</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tornado</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
 
     <span class="nd">@tornado.gen.coroutine</span>
-<div class="viewcode-block" id="TornadoExecutor.execute"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="c1"># perform the normal execution</span>
-        <span class="n">future</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-        <span class="c1"># since the normal execution returns a tornado future</span>
-        <span class="c1"># we have to pull the value out before we can use it</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">future</span>
-        <span class="c1"># return the extracted value</span>
-        <span class="k">return</span> <span class="n">result</span></div></div>
+<div class="viewcode-block" id="TornadoExecutor.wait_until_finished"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor.wait_until_finished">[docs]</a>    <span class="k">def</span> <span class="nf">wait_until_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># print(&quot;waiting....&quot;)</span>
+        <span class="c1"># while True:</span>
+        <span class="c1">#     # wait for the future to finish</span>
+        <span class="c1">#     result = yield self.future</span>
+
+        <span class="c1">#     if result:</span>
+        <span class="c1">#         print(&quot;result: {}&quot;.format(result))</span>
+        <span class="c1">#         break</span>
+
+        <span class="c1"># return result</span>
+        <span class="c1"># # self.ioloop.add_future(self.future, self.promise.fulfill)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TornadoExecutor.execute"><a class="viewcode-back" href="../../../../internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resolve_fn</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">promise</span> <span class="o">=</span> <span class="n">Promise</span><span class="p">()</span>
+
+
+        <span class="c1"># create the future for the fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">future</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn_future</span><span class="p">(</span><span class="n">resolve_fn</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+        <span class="c1"># when the future finishes it should resolve its value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">future</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">future</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">promise</span><span class="o">.</span><span class="n">fulfill</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">promise</span></div></div>
 </pre></div>
 
            </div>

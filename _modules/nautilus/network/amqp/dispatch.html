@@ -137,10 +137,10 @@
 <span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">pika</span><span class="o">,</span> <span class="nn">json</span>
 
-<div class="viewcode-block" id="dispatch"><a class="viewcode-back" href="../../../../internals/nautilus.network.amqp.html#nautilus.network.amqp.dispatch.dispatch">[docs]</a><span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">exchange</span><span class="p">,</span> <span class="n">routing_key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="dispatch"><a class="viewcode-back" href="../../../../internals/nautilus.network.amqp.html#nautilus.network.amqp.dispatch.dispatch">[docs]</a><span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">exchange</span><span class="p">,</span> <span class="n">routing_key</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">correlation_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; dispatch the action through the message queue &quot;&quot;&quot;</span>
     <span class="c1"># connect to the rabbit mq server</span>
-    <span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">))</span>
+    <span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">(</span><span class="n">pika</span><span class="o">.</span><span class="n">ConnectionParameters</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">))</span>
     <span class="c1"># open a channel</span>
     <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
     <span class="c1"># make sure the exchange matches our expectations</span>
@@ -150,7 +150,12 @@
         <span class="n">durable</span><span class="o">=</span><span class="n">exchange</span><span class="p">[</span><span class="s1">&#39;durable&#39;</span><span class="p">]</span>
     <span class="p">)</span>
     <span class="c1"># send the message over the exchange</span>
-    <span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="n">exchange</span><span class="o">=</span><span class="n">exchange</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">routing_key</span><span class="o">=</span><span class="n">routing_key</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+    <span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span>
+        <span class="n">exchange</span><span class="o">=</span><span class="n">exchange</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> 
+        <span class="n">routing_key</span><span class="o">=</span><span class="n">routing_key</span><span class="p">,</span> 
+        <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> 
+        <span class="n">properties</span><span class="o">=</span><span class="n">pika</span><span class="o">.</span><span class="n">BasicProperties</span><span class="p">(</span><span class="n">correlation_id</span><span class="o">=</span><span class="n">correlation_id</span><span class="p">),</span>
+    <span class="p">)</span>
     <span class="c1"># close the connection</span>
     <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
