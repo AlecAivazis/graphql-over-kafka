@@ -9,7 +9,7 @@ class TestUtil(tornado.testing.AsyncTestCase):
 
     def setUp(self):
         # create a nautilus schema to test
-        self.schema = nautilus.api.AsyncSchema()
+        self.schema = nautilus.api.Schema()
         # create an ioloop to use
         self.io_loop = self.get_new_ioloop()
 
