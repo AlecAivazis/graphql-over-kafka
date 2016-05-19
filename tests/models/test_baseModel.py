@@ -17,8 +17,6 @@ class TestUtil(unittest.TestCase):
             name = models.fields.CharField(null=True)
             date = models.fields.CharField(null=False)
 
-
-
         # create the test table
         TestUser.create_table(True)
 

@@ -1,6 +1,8 @@
 # external imports
+import asyncio
 import tornado.ioloop
 import tornado.web
+from tornado.platform.asyncio import AsyncIOMainLoop
 # local imports
 from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
@@ -11,6 +13,10 @@ from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
+
+# integrate the tornado loop into asyncio
+AsyncIOMainLoop().install()
+
 
 class ServiceMetaClass(type):
     def __init__(cls, name, bases, attributes):
@@ -67,6 +73,7 @@ class Service(metaclass=ServiceMetaClass):
     config = None
     name = None
     schema = None
+    action_handler_class = ActionHandler
 
     _routes = []
 
@@ -83,7 +90,7 @@ class Service(metaclass=ServiceMetaClass):
         self.app = None
         self.__name__ = name
         self.keep_alive = None
-        self._action_handler_loop = None
+        self.event_broker = None
         self.schema = schema or self.schema
 
         # wrap the given configuration in the nautilus wrapper
@@ -102,7 +109,8 @@ class Service(metaclass=ServiceMetaClass):
             cookie_secret=self.config.get('secret_key', 'default_secret')
         )
         # attach the ioloop to the application
-        self.ioloop = tornado.ioloop.IOLoop.instance()
+        self.ioloop = AsyncIOMainLoop()
+        self.ioloop.service = self
 
         # for each route that was registered
         for route in self._routes:
@@ -114,9 +122,9 @@ class Service(metaclass=ServiceMetaClass):
         # if the service was provided an action handler
         if action_handler:
             # create a wrapper for it
-            self._action_handler_loop = ActionHandler(callback=action_handler)
+            self.event_broker = self.action_handler_class(callback=action_handler)
             # add it to the ioloop
-            self.ioloop.add_callback(self._action_handler_loop.run)
+            self.ioloop.add_callback(self.event_broker.run)
 
 
     def init_keep_alive(self):
@@ -183,9 +191,9 @@ class Service(metaclass=ServiceMetaClass):
         self.ioloop.stop()
 
         # if there is an action consumer registered with this service
-        if self._action_handler_loop:
+        if self.event_broker:
             # stop the action consumer
-            self._action_handler_loop.stop()
+            self.event_broker.stop()
 
 
     @property

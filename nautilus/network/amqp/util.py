@@ -16,11 +16,11 @@ def combine_action_handlers(*args):
             raise ValueError("Provided handler is not a function: " + handler)
 
     # the combined action handler
-    def combined_handler(action_type, payload, dispatcher=None):
+    def combined_handler(dispatcher, action_type, payload):
         # goes over every given handler
         for handler in args:
             # call the handler
-            handler(action_type, payload, dispatcher=dispatcher)
+            handler(dispatcher, action_type, payload)
 
     # return the combined action handler
     return combined_handler
