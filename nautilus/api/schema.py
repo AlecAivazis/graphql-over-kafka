@@ -1,8 +1,6 @@
 # external imports
 from graphene import Schema
 from graphql.execution.executors.asyncio import AsyncioExecutor
-# local imports
-from nautilus.api.executor import TornadoExecutor
 
 class Schema(Schema):
     """
@@ -13,6 +11,5 @@ class Schema(Schema):
         # make sure the schema is built with a tornado executor
         super().__init__(
             auto_camelcase=False,
-            executor=AsyncioExecutor(),
             **kwds
         )
