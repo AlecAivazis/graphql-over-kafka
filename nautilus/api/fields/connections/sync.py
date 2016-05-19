@@ -11,7 +11,7 @@ class Connection(BaseConnection):
         to the appropriate services.
     """
 
-    def resolve_service(self, instance, args, info):
+    def resolve_service(self, args, context, info):
         '''
             This function grab the remote data that acts as the source for this
             connection.
@@ -24,16 +24,16 @@ class Connection(BaseConnection):
         target_service_name = self._service_name(self.target)
 
         # if we are connecting two service objects, we need to go through a connection table
-        if isinstance(instance, ServiceObjectType) or isinstance(instance, str):
+        if isinstance(self, ServiceObjectType):
 
             # the target service
-            instance_service_name = self._service_name(instance)
+            instance_service_name = self._service_name(self)
 
             # the name of the service that manages the connection
             connection_service = connection_service_name(target_service_name,
                                                          instance_service_name)
             # the primary key of the instance we are refering from
-            instance_pk = getattr(instance, instance.service.model.primary_key().name)
+            instance_pk = getattr(self, self.service.model.primary_key().name)
             # look for connections originating from this object
             join_filter = {instance_service_name: instance_pk}
 
@@ -62,6 +62,7 @@ class Connection(BaseConnection):
 
         # there are no results
         if len(results) == 0:
+            # return an empty result
             return []
         # if there is more than one result for a "one" relation
         elif len(results) > 1 and self.relationship == 'one':
@@ -75,7 +76,7 @@ class Connection(BaseConnection):
 
             try:
                 # grab the current user from the request_context
-                current_user = info.request_context.current_user
+                current_user = context.current_user
             # if there is no user
             except AttributeError:
                 raise Exception("User is not accessible.")

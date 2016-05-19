@@ -1,5 +1,5 @@
 # external imports
-from graphene import List
+from graphene import List, with_context
 from graphene.relay import ConnectionField
 # local imports
 from nautilus.api.objectTypes import ServiceObjectType
@@ -71,7 +71,7 @@ class BaseConnection(List):
         super().__init__(of_type=target, **kwds)
 
 
-    def resolve_service(self, instance, args, info):
+    def resolve_service(self, args, context, info):
         """
             This function performs the actual resolution of the service.
             Not implemented in this class - left up to subclasses.
@@ -81,8 +81,8 @@ class BaseConnection(List):
 
     # Internal / Utility functions
 
-
-    def _resolve(self, instance, query_args, info):
+    @with_context
+    def _resolve(self, args, context, info):
         # make a normal dictionary out of the immutable one we were given
         args = query_args if isinstance(query_args, dict) \
                                 else query_args.to_data_dict()
@@ -100,8 +100,8 @@ class BaseConnection(List):
                                     "ServiceObjectType as the target for " + \
                                     "a connection.")
 
-        # call the public facing function 
-        return self.resolve_service(instance, args, info)
+        # call the public facing function
+        return self.resolve_service(instance, args, context, info)
 
 
     def _service_name(self, target):
