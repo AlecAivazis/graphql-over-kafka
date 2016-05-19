@@ -1,6 +1,5 @@
 # external imports
 from graphene import Schema
-from graphql.execution.executors.asyncio import AsyncioExecutor
 
 class Schema(Schema):
     """
