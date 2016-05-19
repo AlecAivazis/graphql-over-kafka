@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/AlecAivazis/nautilus.svg?branch=master)](https://travis-ci.org/AlecAivazis/nautilus)
 [![Coverage Status](https://coveralls.io/repos/github/AlecAivazis/nautilus/badge.svg?branch=master)](https://coveralls.io/github/AlecAivazis/nautilus?branch=master)
 
-A framework for building microservice applications based on the flux architecture.
+A framework for building event-driven microservice applications.
 
 Full documentation is hosted [here](http://alecaivazis.github.io/nautilus/).
 
