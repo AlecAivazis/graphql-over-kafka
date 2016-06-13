@@ -1,7 +1,6 @@
 # local imports
 from nautilus.network.http import RequestHandler
 from nautilus.conventions.services import auth_service_name
-from nautilus.network.registry import service_location_by_name
 
 class AuthRequestHandler(RequestHandler):
 

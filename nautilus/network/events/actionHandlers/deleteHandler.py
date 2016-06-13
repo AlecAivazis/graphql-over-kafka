@@ -18,7 +18,7 @@ def delete_handler(Model):
     # necessary imports
     from nautilus.database import db
 
-    def action_handler(service, action_type, payload, **kwds):
+    async def action_handler(service, action_type, payload, **kwds):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('delete', Model):
             try:

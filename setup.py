@@ -28,6 +28,8 @@ setup(
         'nose2',
         'pika',
         'python-consul',
+        'pytest',
+        'uvloop',
         'wtforms',
     ]
 )

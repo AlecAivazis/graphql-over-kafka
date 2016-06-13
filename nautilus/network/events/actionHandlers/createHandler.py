@@ -15,7 +15,7 @@ def create_handler(Model):
         Returns:
             function(action_type, payload): The action handler for this model
     """
-    def action_handler(service, action_type, payload, **kwds):
+    async def action_handler(service, action_type, payload, **kwds):
 
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('create', Model):
@@ -40,9 +40,9 @@ def create_handler(Model):
                 new_model.save()
 
                 # publish the scucess event
-                service.event_broker.publish(
+                service.event_broker.send(
                     ModelSerializer().serialize(model),
-                    route=change_action_status(action_type, 'success')
+                    action=change_action_status(action_type, 'success')
                 )
 
             # if something goes wrong
@@ -50,7 +50,7 @@ def create_handler(Model):
                 # publish the error as an event
                 service.event_broker.publish(
                     str(err),
-                    route=change_action_status(action_type, 'error')
+                    action=change_action_status(action_type, 'error')
                 )
 
 

@@ -6,7 +6,7 @@ import nautilus
 from nautilus import conventions
 from nautilus.conventions import services as service_conventions
 import nautilus.models as models
-import nautilus.network.amqp.actionHandlers as action_handlers
+import nautilus.network.events.actionHandlers as action_handlers
 from ..util import assert_called_once_with
 
 class TestUtil(unittest.TestCase):

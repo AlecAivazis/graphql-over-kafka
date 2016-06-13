@@ -1,21 +1,18 @@
 # external imports
 import asyncio
-import tornado.ioloop
-import tornado.web
-from tornado.platform.asyncio import AsyncIOMainLoop
+import uvloop
+import aiohttp.web
 # local imports
-from nautilus.network.amqp.consumers.actions import ActionHandler
 from nautilus.api.endpoints import static_dir as api_endpoint_static
-from nautilus.network.amqp.actionHandlers import noop_handler
-import nautilus.network.registry as registry
 from nautilus.config import Config
+from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
 
-# integrate the tornado loop into asyncio
-AsyncIOMainLoop().install()
+# enable uvloop for increased performance
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 class ServiceMetaClass(type):
@@ -73,7 +70,7 @@ class Service(metaclass=ServiceMetaClass):
     config = None
     name = None
     schema = None
-    action_handler_class = ActionHandler
+    action_handler = None
 
     _routes = []
 
@@ -89,7 +86,6 @@ class Service(metaclass=ServiceMetaClass):
         self.name = name or self.name or type(self).name
         self.app = None
         self.__name__ = name
-        self.keep_alive = None
         self.event_broker = None
         self.schema = schema or self.schema
 
@@ -98,19 +94,27 @@ class Service(metaclass=ServiceMetaClass):
 
         # initialize the service
         self.init_app()
-        self.init_action_handler(self.action_handler)
+        self.init_action_handler()
 
+        # placeholders
+        self._http_server = None
+        self._server_handler = None
 
     def init_app(self):
         # create a tornado web application
-        self.app = tornado.web.Application(
-            self._request_handlers,
-            debug=self.config.get('debug', False),
-            cookie_secret=self.config.get('secret_key', 'default_secret')
-        )
+        self.app = aiohttp.web.Application()
+
+
+        # self.app = tornado.web.Application(
+        #     self._request_handlers,
+        #     debug=self.config.get('debug', False),
+        #     cookie_secret=self.config.get('secret_key', 'default_secret')
+        # )
+
         # attach the ioloop to the application
-        self.ioloop = AsyncIOMainLoop()
-        self.ioloop.service = self
+        self.loop = asyncio.get_event_loop()
+        # attach the service to the loop
+        self.loop.service = self
 
         # for each route that was registered
         for route in self._routes:
@@ -118,27 +122,16 @@ class Service(metaclass=ServiceMetaClass):
             self.add_http_endpoint(**route)
 
 
-    def init_action_handler(self, action_handler):
+    def init_action_handler(self):
         # if the service was provided an action handler
-        if action_handler:
+        if self.action_handler:
             # create a wrapper for it
-            self.event_broker = self.action_handler_class(callback=action_handler)
-            # add it to the ioloop
-            self.ioloop.add_callback(self.event_broker.run)
+            self.event_broker = self.action_handler()
+            # pass the service to the event broker
+            self.event_broker.service = self
 
 
-    def init_keep_alive(self):
-        # create the period callback
-        self.keep_alive = registry.keep_alive(self)
-
-
-    @property
-    def action_handler(self):
-        # by default, a service does not have a response to actions
-        return noop_handler
-
-
-    def run(self, host="localhost", port=8000, **kwargs):
+    def run(self, host="localhost", port=8000, shutdown_timeout=60.0, **kwargs):
         """
             This function starts the service's network intefaces.
 
@@ -152,48 +145,51 @@ class Service(metaclass=ServiceMetaClass):
         self.config.port = port
         self.config.host = host
 
-        # create the keep alive timer
-        self.init_keep_alive()
-
-        # start the keep alive timer
-        self.keep_alive.start()
-        # assign the port to the app instance
-        self.app.listen(port, address=host)
-
-        # start the ioloop
+        # start the loop
         try:
-            self.ioloop.start()
-        # if the user interrupts the server
-        except KeyboardInterrupt as err:
-            # stop the service and clean up
-            self.stop()
-            # bubble the exception up to someone who cares
-            raise err
-        except Exception as err:
-            # stop the service and clean up
-            self.stop()
-            # bubble the exception up to someone who cares
-            raise err
+            # if an event broker has been created for this service
+            if self.event_broker:
+                # start the broker
+                self.event_broker.start()
 
+            # the handler for the http server
+            http_handler = self.app.make_handler()
+            # create an asyncio server
+            self._http_server = loop.create_server(http_handler, host, port)
 
-    def stop(self):
-        """
-            This function stops the service's various network interfaces.
-        """
-        # if there is a keep alive timer
-        if self.keep_alive:
-            # stop the keep_alive timer
-            self.keep_alive.stop()
-            # remove the service entry from the registry
-            registry.deregister_service(self)
+            # grab the handler for the server callback
+            self._server_handler = loop.run_until_complete(server)
+            # start the event loop
+            self.loop.run_forever()
 
-        # stop the ioloop
-        self.ioloop.stop()
+        # if the user interrupted the server
+        except KeyboardInterrupt:
+            # keep going
+            pass
 
-        # if there is an action consumer registered with this service
-        if self.event_broker:
-            # stop the action consumer
-            self.event_broker.stop()
+        # when we're done
+        finally:
+            try:
+                # if an event broker has been created for this service
+                if self.event_broker:
+                    # stop the event broker
+                    self.event_broker.stop()
+
+                # close the http server
+                self._server_handler.close()
+                # clean up the server
+                self.loop.run_until_complete(self._server_handler.wait_closed())
+                self.loop.run_until_complete(self.app.shutdown())
+                self.loop.run_until_complete(self._http_handler.finish_connections(shutdown_timeout))
+                self.loop.run_until_complete(self.app.cleanup())
+
+            # if we end up closing before any variables get assigned
+            except UnboundLocalError:
+                # just ignore it (nothing to close)
+                pass
+
+            # close the event loop
+            self.loop.close()
 
 
     @property
@@ -211,7 +207,7 @@ class Service(metaclass=ServiceMetaClass):
         return GraphQLRequestHandler
 
 
-    def add_http_endpoint(self, url, request_handler, config=None, host=".*$"):
+    def add_http_endpoint(self, url, request_handler):
         """
             This method provides a programatic way of added invidual routes
             to the http server.
@@ -221,7 +217,7 @@ class Service(metaclass=ServiceMetaClass):
                 request_handler (tornado.web.RequestHandler): The request handler
                 config (dict): A configuration dictionary to pass to the handler
         """
-        self.app.add_handlers(host, [(url, request_handler, config)])
+        self.app.router.add_route('*', url, request_handler)
 
 
     @classmethod
@@ -252,7 +248,7 @@ class Service(metaclass=ServiceMetaClass):
         def decorator(wrapped_class, **kwds):
             # add the endpoint at the given route
             cls._routes.append(
-                dict(url=route, request_handler=wrapped_class, config=kwds)
+                dict(url=route, request_handler=wrapped_class)
             )
             # return the class undecorated
             return wrapped_class

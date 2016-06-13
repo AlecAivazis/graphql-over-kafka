@@ -1,9 +1,10 @@
 # local imports
 import nautilus
-from nautilus.network.amqp import crud_handler, combine_action_handlers
+from nautilus.network.events import crud_handler, combine_action_handlers
 from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
-from nautilus.network.amqp.actionHandlers import noop_handler
+from nautilus.network.events.actionHandlers import noop_handler
+from nautilus.network.events.consumers import ActionHandler
 from .service import Service
 
 
@@ -77,15 +78,23 @@ class ModelService(Service):
 
     @property
     def action_handler(self):
-        # combine the additional super handler with the crud one
-        return combine_action_handlers(
-            # combine the old action_handler
-            super().action_handler,
-            # allow for additional action handlers
-            self.additional_action_handler,
-            # and a crud handler
-            crud_handler(self.model)
-        )
+
+        class ModelActionHandler(ActionHandler):
+
+            async def handle_action(self, action_type, payload):
+                """
+                    The default action handler for a model service call
+                """
+                await combine_action_handlers(
+                    # allow for additional action handlers
+                    self.additional_action_handler,
+                    # and a crud handler
+                    crud_handler(self.model)
+                # pass along the type and payload
+                )(action_type, payload)
+
+        return ModelActionHandler
+
 
 
     def init_db(self):

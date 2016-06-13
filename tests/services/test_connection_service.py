@@ -131,7 +131,7 @@ class TestUtil(unittest.TestCase):
         mock = MagicMock()
 
         # call the service action handler
-        self.service.action_handler(mock, action_type, payload)
+        await self.service.action_handler.handle_action(mock, action_type, payload)
 
         # make sure the spy was called correctly
         assert_called_once_with(
@@ -143,10 +143,10 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_action_handler_supports_crud(self):
-        self._verify_action_handler_create()
-        self._verify_action_handler_update()
-        self._verify_action_handler_delete()
+    async def test_action_handler_supports_crud(self):
+        await self._verify_action_handler_create()
+        await self._verify_action_handler_update()
+        await self._verify_action_handler_delete()
 
 
     def test_connecting_models_with_same_name(self):
@@ -208,7 +208,7 @@ class TestUtil(unittest.TestCase):
 
     ### Utilities / Test tasks
 
-    def _verify_action_handler_create(self):
+    async def _verify_action_handler_create(self):
         action_type = conventions.get_crud_action('create', self.service.model)
         payload = {
             self.service1.model.model_name.lower(): 'foo',
@@ -222,7 +222,7 @@ class TestUtil(unittest.TestCase):
         self.model_id = self.model_id = self.model.get(matching_model).id
 
 
-    def _verify_action_handler_update(self):
+    async def _verify_action_handler_update(self):
         payload = {'id':self.model_id, self.service1.model.model_name.lower(): 'bars'}
         # fire an update action
         self.service.action_handler(
@@ -234,7 +234,7 @@ class TestUtil(unittest.TestCase):
         self.model.get(self.service1_value == 'bars')
 
 
-    def _verify_action_handler_delete(self):
+    async def _verify_action_handler_delete(self):
         # fire a delete action
         self.service.action_handler(
             MagicMock(),

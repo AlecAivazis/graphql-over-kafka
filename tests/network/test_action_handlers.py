@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 # local imports
 import nautilus
 import nautilus.models as models
-import nautilus.network.amqp.actionHandlers as action_handlers
+import nautilus.network.events.actionHandlers as action_handlers
 
 class TestUtil(unittest.TestCase):
 

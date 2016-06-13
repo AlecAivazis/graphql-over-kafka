@@ -1,7 +1,7 @@
 # external imports
 import tornado
 # local imports
-from nautilus.network import query_service
+# from nautilus. import query_service
 from .base import AuthRequestHandler
 from ..models import UserPassword
 from .forms import LoginForm

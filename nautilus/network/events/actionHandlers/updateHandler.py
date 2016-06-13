@@ -15,7 +15,7 @@ def update_handler(Model):
         Returns:
             function(type, payload): The action handler for this model
     """
-    def action_handler(service, action_type, payload, **kwds):
+    async def action_handler(service, action_type, payload, **kwds):
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('update', Model):
             try:

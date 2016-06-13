@@ -1,2 +1,2 @@
 from .actions import ActionHandler
-from .amqp import AMQPConsumer
+from .kafka import KafkaBroker

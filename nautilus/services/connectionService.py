@@ -1,7 +1,7 @@
 # local imports
 from nautilus.api import create_model_schema
-from nautilus.network.amqp import combine_action_handlers
-from nautilus.network.amqp.actionHandlers import noop_handler
+from nautilus.network.events import combine_action_handlers
+from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
 from nautilus.conventions.actions import get_crud_action
 from .modelService import ModelService
@@ -71,15 +71,23 @@ class ConnectionService(ModelService):
 
     @property
     def action_handler(self):
-        # a connection service should listen for deletes on linked services
-        connected_action_handlers = [self._create_linked_handler(model)
-                                     for model in self._service_models]
 
-        # mix the related action handlers into supers
-        return combine_action_handlers(
-            super().action_handler,
-            *connected_action_handlers
-        )
+        class ConnectionActionHandler(super().action_handler):
+            async def handle_action(self, action_type, payload):
+                # a connection service should listen for deletes on linked services
+                connected_action_handlers = [self._create_linked_handler(model)
+                                             for model in self._service_models]
+
+                # mix the related action handlers into supers
+                combined = combine_action_handlers(
+                    super().handle_action,
+                    *connected_action_handlers
+                )
+
+                # go over every handler for this service
+                for handler in combined:
+                    # and call it
+                    await handler
 
 
     def _create_linked_handler(self, model):
