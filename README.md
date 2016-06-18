@@ -9,4 +9,4 @@ A framework for building event-driven microservice applications.
 Full documentation is hosted [here](http://alecaivazis.github.io/nautilus/).
 
 ## Requirements
-* Python 3.4
+* > Python 3.5
