@@ -1,11 +1,10 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
 # local imports
 from nautilus import conventions
 from nautilus.conventions import services as service_conventions
 import nautilus
-from ..util import assert_called_once_with
+from ..util import Mock, async_test
 
 class TestUtil(unittest.TestCase):
 
@@ -14,7 +13,7 @@ class TestUtil(unittest.TestCase):
         nautilus.database.init_db('sqlite:///test.db')
 
         # create a spy we can check for later
-        self.spy = MagicMock()
+        self.spy = Mock()
 
         class ModelTest1(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
@@ -118,8 +117,8 @@ class TestUtil(unittest.TestCase):
             "Model could not be retrieved with schema."
         )
 
-    #
-    def test_can_provide_addtnl_action_handler(self):
+    @async_test
+    async def test_can_provide_addtnl_action_handler(self):
         # make sure there is a handler to call
         assert hasattr(self.service, 'action_handler'), (
             "Test Service does not have an action handler"
@@ -128,21 +127,19 @@ class TestUtil(unittest.TestCase):
         action_type = 'asdf'
         payload = 'asdf'
 
-        mock = MagicMock()
+        mock = Mock()
 
         # call the service action handler
         await self.service.action_handler.handle_action(mock, action_type, payload)
 
         # make sure the spy was called correctly
-        assert_called_once_with(
-            self.spy,
+        self.spy.assert_called(
             mock,
             action_type,
             payload,
-            spy_name="Test service spy"
         )
 
-
+    @async_test
     async def test_action_handler_supports_crud(self):
         await self._verify_action_handler_create()
         await self._verify_action_handler_update()
@@ -200,7 +197,7 @@ class TestUtil(unittest.TestCase):
         payload = dict(id=model1.id)
 
         # fire the action
-        self.service.action_handler(MagicMock(), action_type, payload)
+        self.service.action_handler.handle_action(Mock(), action_type, payload)
 
         # make sure the model can't be found
         self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
@@ -215,7 +212,7 @@ class TestUtil(unittest.TestCase):
             self.service2.model.model_name.lower(): 'bar'
         }
         # fire a create action
-        self.service.action_handler(MagicMock(), action_type, payload)
+        await self.service.action_handler.handle_action.handle_action(Mock(), action_type, payload)
         # the query to find a matching model
         matching_model = self.service1_value == 'foo'
         # make sure the created record was found and save the id
@@ -225,8 +222,8 @@ class TestUtil(unittest.TestCase):
     async def _verify_action_handler_update(self):
         payload = {'id':self.model_id, self.service1.model.model_name.lower(): 'bars'}
         # fire an update action
-        self.service.action_handler(
-            MagicMock(),
+        await self.service.action_handler.handle_action(
+            Mock(),
             conventions.get_crud_action('update', self.model),
             payload
         )
@@ -236,8 +233,8 @@ class TestUtil(unittest.TestCase):
 
     async def _verify_action_handler_delete(self):
         # fire a delete action
-        self.service.action_handler(
-            MagicMock(),
+        await self.service.action_handler.handle_action(
+            Mock(),
             conventions.get_crud_action('delete', self.model),
             self.model_id
         )

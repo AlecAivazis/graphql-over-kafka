@@ -1,9 +1,7 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
 # local imports
 import nautilus
-from ..util import assert_called_once_with
 
 class TestUtil(unittest.TestCase):
 

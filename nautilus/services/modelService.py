@@ -81,7 +81,7 @@ class ModelService(Service):
 
         class ModelActionHandler(ActionHandler):
 
-            async def handle_action(self, action_type, payload):
+            async def handle_action(inner_self, action_type, payload):
                 """
                     The default action handler for a model service call
                 """
@@ -91,10 +91,9 @@ class ModelService(Service):
                     # and a crud handler
                     crud_handler(self.model)
                 # pass along the type and payload
-                )(action_type, payload)
+                )(self, action_type, payload)
 
         return ModelActionHandler
-
 
 
     def init_db(self):

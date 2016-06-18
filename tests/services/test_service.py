@@ -1,10 +1,9 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
 # local imports
 import nautilus
-from ..util import assert_called_once_with
 from nautilus.api.endpoints import GraphQLRequestHandler
+from ..util import Mock
 
 class TestUtil(unittest.TestCase):
 
@@ -32,7 +31,7 @@ class TestUtil(unittest.TestCase):
 
     def test_can_initialize_with_schema(self):
         # create a mock schema
-        schema = MagicMock()
+        schema = Mock()
         # make sure the internal schema is what we gave it
         assert self.service(schema=schema).schema == schema, (
             "Service could not be initialized with a specific schema"

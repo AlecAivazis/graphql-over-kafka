@@ -1,7 +1,7 @@
 """
     This module defines various utilities for dealing with the network.
 """
-from asyncio import iscoroutinefunction
+from asyncio import iscoroutinefunction, iscoroutine
 
 def combine_action_handlers(*args):
     """
@@ -11,7 +11,7 @@ def combine_action_handlers(*args):
     # make sure each of the given handlers is callable
     for handler in args:
         # if the handler is not a function
-        if not iscoroutinefunction(handler):
+        if not (iscoroutinefunction(handler) or iscoroutine(handler)):
             # yell loudly
             raise ValueError("Provided handler is not a coroutine: %s" % handler)
 

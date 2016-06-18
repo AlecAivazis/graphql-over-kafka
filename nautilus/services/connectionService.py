@@ -89,12 +89,14 @@ class ConnectionService(ModelService):
                     # and call it
                     await handler
 
+        return ConnectionActionHandler
+
 
     def _create_linked_handler(self, model):
         # the related action type
         related_action_type = get_crud_action('delete', model, status='success')
         # the action handler
-        def action_handler(dispatcher, action_type, payload):
+        async def action_handler(dispatcher, action_type, payload):
             """
                 an action handler to remove related entries in the
                 connection db.

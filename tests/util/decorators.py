@@ -12,8 +12,6 @@ def async_test(test_function):
         event loop.
     """
 
-    # test_function()
-
     def function(*args, **kwds):
 
         # execute the test on the event loop

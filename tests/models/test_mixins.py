@@ -1,9 +1,8 @@
 # external imports
 import unittest
-from unittest.mock import call
 # local imports
 import nautilus.models as models
-from ..util import assert_called_once_with
+from ..util import Mock
 
 
 class TestUtil(unittest.TestCase):
@@ -32,7 +31,7 @@ class TestUtil(unittest.TestCase):
     def test_can_add_on_creation_handler_with_mixin(self):
 
         # a spy to check if the handler was called
-        spy = unittest.mock.MagicMock()
+        spy = Mock()
 
         class Mixin:
             @classmethod
@@ -44,25 +43,15 @@ class TestUtil(unittest.TestCase):
             first_name = models.fields.CharField()
             last_name = models.fields.CharField()
 
-        # then number of times the spy was called
-        num_called = len(spy.call_args_list)
-
-        assert num_called > 0, (
-            "Mixin's method wasn't called."
-        )
-        assert len(spy.call_args_list) == 1, (
-            "Mixin's method was called too many times."
-        )
-        assert spy.call_args_list == [call(TestOnCreationModel)], (
-            "Mixin method was not passed the correct class record."
-        )
+        # verify that the mock was called with the correct arguments
+        spy.assert_called(TestOnCreationModel)
 
 
     def test_multiple_mixins(self):
 
         # spies to check if the handler was called
-        spy1 = unittest.mock.MagicMock()
-        spy2 = unittest.mock.MagicMock()
+        spy1 = Mock()
+        spy2 = Mock()
 
         class MyAwesomeMixin:
             @classmethod
@@ -82,5 +71,5 @@ class TestUtil(unittest.TestCase):
 
 
         # check that both spies were called
-        assert_called_once_with(spy1, TestOnCreationModel, spy_name='Base spy')
-        assert_called_once_with(spy2, TestOnCreationModel, spy_name='Mixin spy')
+        spy1.assert_called(TestOnCreationModel)
+        spy2.assert_called(TestOnCreationModel)

@@ -1,13 +1,12 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
 # local imports
 import nautilus
 from nautilus import conventions
 from nautilus.conventions import services as service_conventions
 import nautilus.models as models
 import nautilus.network.events.actionHandlers as action_handlers
-from ..util import assert_called_once_with
+from ..util import async_test, Mock
 
 class TestUtil(unittest.TestCase):
 
@@ -16,7 +15,7 @@ class TestUtil(unittest.TestCase):
         nautilus.database.init_db('sqlite:///test.db')
 
         # create a spy we can check for later
-        self.spy = MagicMock()
+        self.spy = Mock()
 
         class TestModelService(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
@@ -28,6 +27,7 @@ class TestUtil(unittest.TestCase):
         # save the class records to the suite
         self.model = TestModelService
         self.service = TestService()
+        self.action_handler = self.service.action_handler()
         self.service_record = TestService
 
         # create the test table
@@ -80,8 +80,8 @@ class TestUtil(unittest.TestCase):
             "Model could not be retrieved with schema."
         )
 
-
-    def test_can_provide_addtnl_action_handler(self):
+    @async_test
+    async def test_can_provide_addtnl_action_handler(self):
         # make sure there is a handler to call
         assert hasattr(self.service, 'action_handler'), (
             "Test Service does not have an action handler"
@@ -90,36 +90,28 @@ class TestUtil(unittest.TestCase):
         action_type = 'asdf'
         payload = 'asdf'
 
-        # mock the dispatcher
-        mock = MagicMock()
-
         # call the service action handler
-        self.service.action_handler(
-            mock,
+        await self.action_handler.handle_action(
             action_type,
             payload
         )
 
         # make sure the spy was called correctly
-        assert_called_once_with(
-            self.spy,
-            mock,
+        self.spy.assert_called(
             action_type,
-            payload,
-            spy_name="Test service spy",
+            payload
         )
 
+    @async_test
+    async def test_action_handler_supports_crud(self):
+        await self._verify_create_action_handler()
+        await self._verify_update_action_handler()
+        await self._verify_delete_action_handler()
 
-    def test_action_handler_supports_crud(self):
-        self.verify_create_action_handler()
-        self.verify_update_action_handler()
-        self.verify_delete_action_handler()
 
-
-    def verify_create_action_handler(self):
+    async def _verify_create_action_handler(self):
         # fire a create action
-        self.service.action_handler(
-            MagicMock(),
+        await self.action_handler.handle_action(
             conventions.get_crud_action('create', self.model),
             dict(name='foo'),
         )
@@ -127,10 +119,9 @@ class TestUtil(unittest.TestCase):
         self.model_id = self.model.get(self.model.name == 'foo').id
 
 
-    def verify_update_action_handler(self):
+    async def _verify_update_action_handler(self):
         # fire an update action
-        self.service.action_handler(
-            MagicMock(),
+        await self.action_handler.handle_action(
             conventions.get_crud_action('update', self.model),
             dict(id=self.model_id, name='barz'),
         )
@@ -138,10 +129,9 @@ class TestUtil(unittest.TestCase):
         self.model.get(self.model.name == 'barz')
 
 
-    def verify_delete_action_handler(self):
+    async def _verify_delete_action_handler(self):
         # fire a delete action
-        self.service.action_handler(
-            MagicMock(),
+        await self.action_handler.handle_action(
             conventions.get_crud_action('delete', self.model),
             payload=self.model_id
         )

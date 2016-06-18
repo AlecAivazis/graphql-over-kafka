@@ -1,6 +1,5 @@
 import unittest
-from unittest.mock import MagicMock
-from ..util import assert_called_once_with
+from ..util import Mock
 
 class TestUtil(unittest.TestCase):
 
@@ -9,9 +8,9 @@ class TestUtil(unittest.TestCase):
         from nautilus.network.events.util import combine_action_handlers
 
         # create some handler mocks to make sure they were tested
-        handleMock1 = MagicMock()
-        handleMock2 = MagicMock()
-        handleMock3 = MagicMock()
+        handleMock1 = Mock()
+        handleMock2 = Mock()
+        handleMock3 = Mock()
 
         async def asyncHandler1():
             handleMock1()
@@ -32,8 +31,8 @@ class TestUtil(unittest.TestCase):
         payload = {'foo': 'bar'}
 
         # call the combined handler
-        mergedActionHandler(MagicMock(), action_type, payload)
+        mergedActionHandler(Mock(), action_type, payload)
         # make sure each mock was called
-        assert_called_once_with(handleMock1, action_type, payload)
-        assert_called_once_with(handleMock2, action_type, payload)
-        assert_called_once_with(handleMock3, action_type, payload)
+        handleMock1.assert_called(action_type, payload)
+        handleMock2.assert_called(action_type, payload)
+        handleMock3.assert_called(action_type, payload)
