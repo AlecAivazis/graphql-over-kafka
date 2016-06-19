@@ -21,8 +21,6 @@ class ConnectionService(ModelService):
 
         Args:
             services (list of nautilus.Service): The list of services to connect.
-            additonal_action_handler (optional, function): An action handler
-                to be called alongside the internal ones.
 
         Example:
 
@@ -70,24 +68,24 @@ class ConnectionService(ModelService):
 
 
     @property
-    def action_handler(self):
+    def action_handler(service):
 
         class ConnectionActionHandler(super().action_handler):
             async def handle_action(self, action_type, payload):
                 # a connection service should listen for deletes on linked services
-                connected_action_handlers = [self._create_linked_handler(model)
-                                             for model in self._service_models]
+                # connected_action_handlers = [self._create_linked_handler(model)
+                #                              for model in self._service_models]
 
-                # mix the related action handlers into supers
-                combined = combine_action_handlers(
-                    super().handle_action,
-                    *connected_action_handlers
-                )
+                # bubble up
+                await super().handle_action(action_type, payload)
 
-                # go over every handler for this service
-                for handler in combined:
-                    # and call it
-                    await handler
+                # for each model we care about
+                for model in service._service_models:
+                    # TODO: make this only happen once (not on every action)
+                    # create the appropriate action handler
+                    handler = service._create_linked_handler(model)
+                    # call the handler
+                    await handler(action_type, payload)
 
         return ConnectionActionHandler
 
@@ -96,7 +94,7 @@ class ConnectionService(ModelService):
         # the related action type
         related_action_type = get_crud_action('delete', model, status='success')
         # the action handler
-        async def action_handler(dispatcher, action_type, payload):
+        async def action_handler(action_type, payload):
             """
                 an action handler to remove related entries in the
                 connection db.

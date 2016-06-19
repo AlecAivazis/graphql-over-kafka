@@ -18,8 +18,6 @@ class ModelService(Service):
 
         Args:
             model (nautilus.BaseModel): The nautilus model to manage.
-            additonal_action_handler (optional, function): An action handler
-                to be called alongside the internal ones.
 
         Example:
 
@@ -43,7 +41,6 @@ class ModelService(Service):
 
 
     model = None
-    additional_action_handler = noop_handler
 
     def __new__(cls, *args, **kwds):
         # make sure the service has the right name
@@ -85,13 +82,8 @@ class ModelService(Service):
                 """
                     The default action handler for a model service call
                 """
-                await combine_action_handlers(
-                    # allow for additional action handlers
-                    self.additional_action_handler,
-                    # and a crud handler
-                    crud_handler(self.model)
-                # pass along the type and payload
-                )(self, action_type, payload)
+                handler = crud_handler(self.model)
+                await handler(self, action_type, payload)
 
         return ModelActionHandler
 

@@ -28,7 +28,6 @@ class TestUtil(unittest.TestCase):
             model = ModelTest2
 
         class TestConnectionService(nautilus.ConnectionService):
-            additional_action_handler = self.spy
             services = [
                 TestService1,
                 TestService2
@@ -118,28 +117,6 @@ class TestUtil(unittest.TestCase):
         )
 
     @async_test
-    async def test_can_provide_addtnl_action_handler(self):
-        # make sure there is a handler to call
-        assert hasattr(self.service, 'action_handler'), (
-            "Test Service does not have an action handler"
-        )
-        # values to test against
-        action_type = 'asdf'
-        payload = 'asdf'
-
-        mock = Mock()
-
-        # call the service action handler
-        await self.service.action_handler.handle_action(mock, action_type, payload)
-
-        # make sure the spy was called correctly
-        self.spy.assert_called(
-            mock,
-            action_type,
-            payload,
-        )
-
-    @async_test
     async def test_action_handler_supports_crud(self):
         await self._verify_action_handler_create()
         await self._verify_action_handler_update()
@@ -170,7 +147,8 @@ class TestUtil(unittest.TestCase):
         self.assertRaises(Exception, create_false_service)
 
 
-    def test_listens_for_related_deletes(self):
+    @async_test
+    async def test_listens_for_related_deletes(self):
         # make an instance of model1 to connect
         model1 = self.service1.model(name='foo')
         model1.save()
@@ -196,8 +174,10 @@ class TestUtil(unittest.TestCase):
         )
         payload = dict(id=model1.id)
 
+        # instantiate an action handler to test
+        handler = self.service.action_handler()
         # fire the action
-        self.service.action_handler.handle_action(Mock(), action_type, payload)
+        await handler.handle_action(action_type, payload)
 
         # make sure the model can't be found
         self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
@@ -211,8 +191,10 @@ class TestUtil(unittest.TestCase):
             self.service1.model.model_name.lower(): 'foo',
             self.service2.model.model_name.lower(): 'bar'
         }
+        # create an instance of the action handler
+        handler = self.service.action_handler()
         # fire a create action
-        await self.service.action_handler.handle_action.handle_action(Mock(), action_type, payload)
+        await handler.handle_action(action_type, payload)
         # the query to find a matching model
         matching_model = self.service1_value == 'foo'
         # make sure the created record was found and save the id
@@ -221,20 +203,21 @@ class TestUtil(unittest.TestCase):
 
     async def _verify_action_handler_update(self):
         payload = {'id':self.model_id, self.service1.model.model_name.lower(): 'bars'}
-        # fire an update action
-        await self.service.action_handler.handle_action(
-            Mock(),
+        # create an instance of the action handler
+        handler = self.service.action_handler()
+        # call the service action handler
+        await handler.handle_action(
             conventions.get_crud_action('update', self.model),
             payload
         )
         # check that a model matches
         self.model.get(self.service1_value == 'bars')
 
-
     async def _verify_action_handler_delete(self):
-        # fire a delete action
-        await self.service.action_handler.handle_action(
-            Mock(),
+        # create an instance of the action handler
+        handler = self.service.action_handler()
+        # call the service action handler
+        await handler.handle_action(
             conventions.get_crud_action('delete', self.model),
             self.model_id
         )

@@ -17,7 +17,6 @@ class TestUtil(unittest.TestCase):
 
         class CustomClass:
             """ The class to test serialization with """
-
             def _json(self):
                 return inner_dict
 

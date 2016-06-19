@@ -9,14 +9,11 @@ class Mock:
         # the information about each call of the mock
         self._call_list = []
 
+
     def assert_called(self, *args, **kwds):
         """
             This function returns true if the mock has been called the
             designated number of times with the given arguments.
-
-            Args:
-                once (bool): Wether or not the assertion should be limited to
-                    a single call
         """
         # compute the length of the call list
         ncalls = len(self._call_list)
@@ -35,7 +32,6 @@ class Mock:
 
         # if there are arguments to check
         if args:
-            print(args, kwds)
             # verify they match up
             assert call['args'] == args, (
                 "Passed arguments do not match the call."

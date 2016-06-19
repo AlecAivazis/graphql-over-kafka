@@ -17,12 +17,16 @@ class TestUtil(unittest.TestCase):
         # create a spy we can check for later
         self.spy = Mock()
 
+        async def mock_handler(*args):
+            print("CALLINNNGGGGG")
+            self.spy()
+
+
         class TestModelService(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 
         class TestService(nautilus.ModelService):
             model = TestModelService
-            additional_action_handler = self.spy
 
         # save the class records to the suite
         self.model = TestModelService
@@ -80,27 +84,6 @@ class TestUtil(unittest.TestCase):
             "Model could not be retrieved with schema."
         )
 
-    @async_test
-    async def test_can_provide_addtnl_action_handler(self):
-        # make sure there is a handler to call
-        assert hasattr(self.service, 'action_handler'), (
-            "Test Service does not have an action handler"
-        )
-        # values to test against
-        action_type = 'asdf'
-        payload = 'asdf'
-
-        # call the service action handler
-        await self.action_handler.handle_action(
-            action_type,
-            payload
-        )
-
-        # make sure the spy was called correctly
-        self.spy.assert_called(
-            action_type,
-            payload
-        )
 
     @async_test
     async def test_action_handler_supports_crud(self):

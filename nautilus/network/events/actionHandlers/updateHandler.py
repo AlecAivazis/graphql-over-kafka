@@ -40,18 +40,19 @@ def update_handler(Model):
                 model.save()
 
                 # publish the scucess event
-                service.event_broker.publish(
-                    ModelSerializer().serialize(model),
-                    route=change_action_status(action_type, 'success')
-                )
+                # await service.event_broker.send(
+                #     ModelSerializer().serialize(model),
+                #     # channel=change_action_status(action_type, 'success')
+                # )
 
             # if something goes wrong
             except Exception as err:
+                pass
                 # publish the error as an event
-                service.event_broker.publish(
-                    str(err),
-                    route=change_action_status(action_type, 'error')
-                )
+                # await service.event_broker.send(
+                #     str(err),
+                #     # channel=change_action_status(action_type, 'error')
+                # )
 
     # return the handler
     return action_handler

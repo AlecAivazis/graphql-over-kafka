@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import nautilus
 import nautilus.models as models
 import nautilus.network.events.actionHandlers as action_handlers
+from ..util import async_test
 
 class TestUtil(unittest.TestCase):
 
@@ -25,8 +26,8 @@ class TestUtil(unittest.TestCase):
     def tearDown(self):
         nautilus.db.drop_table(self.model)
 
-
-    def test_create_action_handler(self):
+    @async_test
+    async def test_create_action_handler(self):
         # create a `create` action handler
         action_handler = action_handlers.create_handler(self.model)
         # the action type to fire the
@@ -40,7 +41,7 @@ class TestUtil(unittest.TestCase):
         # the number of matching records before we trigger the handler
         assert record_query.count() == 0
         # call the action handler
-        action_handler(MagicMock(), action_type, payload, properties={})
+        await action_handler(MagicMock(), action_type, payload, properties={})
         # make sure there is now a matching record
         assert record_query.count() == 1, (
             "Record was not created by action handler"
@@ -50,7 +51,8 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_delete_action_handler(self):
+    @async_test
+    async def test_delete_action_handler(self):
         # create a record in the test database
         record = self.model(first_name='foo')
         # save the record
@@ -66,14 +68,15 @@ class TestUtil(unittest.TestCase):
         # the query for the number of matching records
         record_query = self.model.select().where(self.model.id==record.id)
         # fire the action handler
-        action_handler(MagicMock(), action_type, payload, properties={})
+        await action_handler(MagicMock(), action_type, payload, properties={})
         # make sure there aren't any queries
         assert record_query.count() == 0, (
             "There were records matching query after it shoudl have been removed."
         )
 
 
-    def test_update_action_handler(self):
+    @async_test
+    async def test_update_action_handler(self):
         # create a record in the test database
         record = self.model(first_name='foo')
         # save the record
@@ -92,7 +95,7 @@ class TestUtil(unittest.TestCase):
         payload = dict(id=record.id, first_name='bar')
 
         # fire the action handler
-        action_handler(MagicMock(), action_type, payload, properties={})
+        await action_handler(MagicMock(), action_type, payload, properties={})
 
         # make sure the record was changed
         assert record_query.get().first_name == 'bar', (
