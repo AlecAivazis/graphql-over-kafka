@@ -2,13 +2,15 @@
 import asyncio
 import uvloop
 import aiohttp.web
+import aiohttp_jinja2
+import jinja2
 # local imports
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.config import Config
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
-    GraphQLRequestHandler
+    GraphQLRequestHandlerFactory
 )
 
 # enable uvloop for increased performance
@@ -101,25 +103,40 @@ class Service(metaclass=ServiceMetaClass):
         self._server_handler = None
 
     def init_app(self):
-        # create a tornado web application
+        from nautilus.api.endpoints import template_dir
+        # create a web application instance
         self.app = aiohttp.web.Application()
-
-
-        # self.app = tornado.web.Application(
-        #     self._request_handlers,
-        #     debug=self.config.get('debug', False),
-        #     cookie_secret=self.config.get('secret_key', 'default_secret')
-        # )
+        # add the template loader
+        aiohttp_jinja2.setup(app,
+                loader=jinja2.FileSystemLoader(template_dir)
+        )
+        # TODO:
+            # debug mode
+            # cookie secret
 
         # attach the ioloop to the application
         self.loop = asyncio.get_event_loop()
         # attach the service to the loop
         self.loop.service = self
+        # add the route handlers
+        self.init_routes()
 
+    def init_routes(self):
         # for each route that was registered
         for route in self._routes:
             # add the corresponding http endpoint
             self.add_http_endpoint(**route)
+
+        # add the schema reference to graphql handler
+        self._api_request_handler_class.schema = self.schema
+
+        # add the static file urls
+        self.app.router.add_static('/graphiql/static/', api_endpoint_static)
+        # add the default api  handler
+        self.add_http_endpoint('/', self._api_request_handler_class)
+        # add the graphiql endpoint
+        self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
+
 
 
     def init_action_handler(self):
@@ -193,16 +210,6 @@ class Service(metaclass=ServiceMetaClass):
 
 
     @property
-    def _request_handlers(self):
-        return [
-            (r"/", self._api_request_handler_class, dict(schema=self.schema)),
-            (r"/graphiql/static/(.*)", tornado.web.StaticFileHandler,
-                                                dict(path=api_endpoint_static)),
-            (r"/graphiql/?", GraphiQLRequestHandler),
-        ]
-
-
-    @property
     def _api_request_handler_class(self):
         return GraphQLRequestHandler
 
@@ -214,7 +221,7 @@ class Service(metaclass=ServiceMetaClass):
 
             Args:
                 url (str): the url to be handled by the request_handler
-                request_handler (tornado.web.RequestHandler): The request handler
+                request_handler (nautilus.network.RequestHandler): The request handler
                 config (dict): A configuration dictionary to pass to the handler
         """
         self.app.router.add_route('*', url, request_handler)

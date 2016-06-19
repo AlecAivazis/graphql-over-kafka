@@ -1,1 +1,1 @@
-from tornado.web import authenticated as login_required
+# import as login_required

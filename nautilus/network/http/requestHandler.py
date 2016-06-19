@@ -1,26 +1,24 @@
-from tornado.web import RequestHandler as TornadoRequestHandler
+from aiohttp import web
 
-class RequestHandler(TornadoRequestHandler):
+class RequestHandler(web.View):
     """
         The base class for nautilus http request handlers.
 
         Example:
 
             import nautilus
-            from nautilus.network.http import RequestHandler
+            from nautilus.network.http import RequestHandler, Response
 
             service = nautilus.Service(...)
 
             @service.route('/')
             class MyRequestHandler(RequestHandler):
-                def get(self):
+                async def get(self):
                     self.finish('hello')
     """
 
-    def post(self):
+    async def post(self):
         self.check_xsrf_cookie()
 
-    def options(self):
-        # no body
-        self.set_status(204)
-        self.finish()
+    async def options(self):
+        return web.Response(status=204, body=b'')

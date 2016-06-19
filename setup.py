@@ -19,6 +19,9 @@ setup(
         'naut = nautilus.management:cli',
     ]},
     install_requires=[
+        'aiohttp',
+        'aiokafka',
+        'aiohttp_jinja2',
         'bcrypt',
         'click',
         'tornado',

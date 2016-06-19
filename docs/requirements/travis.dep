@@ -13,7 +13,6 @@ peewee-async==0.4.1
 pika==0.10.0
 python-consul==0.6.0
 requests==2.9.1
-tornado==4.3
 uvloop==0.4.29
 wtf-peewee==0.2.6
 WTForms==2.1

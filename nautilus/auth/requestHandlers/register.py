@@ -1,5 +1,3 @@
-# external imports
-import tornado
 # local imports
 # from nautilus.network.util import query_service
 from .base import AuthRequestHandler
@@ -70,7 +68,7 @@ class RegisterHandler(AuthRequestHandler):
 
 
         # the username and password do not match
-        raise tornado.httputil.HTTPInputError(
+        raise ValueError(
             "Sorry, could not register that username/password."
         )
 

@@ -1,7 +1,5 @@
-# external imports
-import tornado
 # local imports
-# from nautilus. import query_service
+# from nautilus.network.util import query_service
 from .base import AuthRequestHandler
 from ..models import UserPassword
 from .forms import LoginForm
@@ -56,7 +54,7 @@ class LoginHandler(AuthRequestHandler):
                 return self.redirect(redirect_url)
 
         # the username and password do not match
-        raise tornado.httputil.HTTPInputError(
+        raise ValueError(
             "Sorry, the username/password combination do not match."
         )
 
