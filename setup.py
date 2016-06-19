@@ -25,6 +25,7 @@ setup(
         'aiohttp_session',
         'bcrypt',
         'click',
+        'cryptography',
         'tornado',
         'peewee',
         'graphene',

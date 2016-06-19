@@ -4,6 +4,7 @@ aiohttp_jinja2
 aiohttp_session
 bcrypt==2.0.0
 click==6.3
+cryptography
 graphene==0.10.2
 graphql-core==0.5.1
 graphql-relay==0.4.2
