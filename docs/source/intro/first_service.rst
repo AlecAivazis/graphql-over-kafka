@@ -204,6 +204,7 @@ when appropriate:
                 # save the recipe instance
                 recipe.save()
 
+
 Passing the Action handler to the service takes a single line:
 
 .. code-block:: python
