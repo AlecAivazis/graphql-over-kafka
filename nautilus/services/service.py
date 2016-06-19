@@ -10,7 +10,7 @@ from nautilus.config import Config
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
-    GraphQLRequestHandlerFactory
+    GraphQLRequestHandler
 )
 
 # enable uvloop for increased performance
@@ -107,7 +107,7 @@ class Service(metaclass=ServiceMetaClass):
         # create a web application instance
         self.app = aiohttp.web.Application()
         # add the template loader
-        aiohttp_jinja2.setup(app,
+        aiohttp_jinja2.setup(self.app,
                 loader=jinja2.FileSystemLoader(template_dir)
         )
         # TODO:
