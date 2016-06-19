@@ -2,7 +2,7 @@ aiohttp==0.21.6
 aiokafka==0.1.2
 bcrypt==2.0.0
 click==6.3
-graphene==0.10.0
+graphene==0.10.2
 graphql-core==0.5.1
 graphql-relay==0.4.2
 Jinja2==2.8
