@@ -14,7 +14,6 @@ class TestUtil(unittest.TestCase):
         handleMock3 = Mock()
 
         async def asyncHandler1(*args):
-            print(args)
             handleMock1(*args)
         async def asyncHandler2(*args):
             handleMock2(*args)

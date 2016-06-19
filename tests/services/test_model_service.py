@@ -17,11 +17,6 @@ class TestUtil(unittest.TestCase):
         # create a spy we can check for later
         self.spy = Mock()
 
-        async def mock_handler(*args):
-            print("CALLINNNGGGGG")
-            self.spy()
-
-
         class TestModelService(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 

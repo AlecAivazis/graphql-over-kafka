@@ -17,7 +17,6 @@ def async_test(test_function):
 
         # execute the test on the event loop
         handler = loop.run_until_complete(test_function(*args, **kwds))
-        print(handler)
         # close the event loop
         loop.stop()
 
