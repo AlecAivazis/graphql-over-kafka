@@ -52,7 +52,7 @@ Defining a Model
 ------------------
 
 Now that we have the service defined, let's create a database table
-that our service will manage. 
+that our service will manage.
 
 Throughout this guide, we're going to be making a recipe list, so open up
 server.py from the previous step and add the Recipe model.
@@ -172,13 +172,39 @@ Responding to Actions
 Now that our service maintains an internal state and can provide a summary of
 that state to other services, all that's left is to provide a way for the
 service to mutate its state as it recieves actions. To do this, we
-just need to define a function known as the "action handler" that
-takes two parameters: ``type`` and ``payload``. ``Type`` identifies
-the event and  ``Payload`` provides the associated data. For example,
-if an action means to indicate that a new recipe needs to be created,
-the service can treat the payload as the recipe's attributes and create
-the new record (or another mutation) when appropriate:
+just need to define anothe part of our service known as the "action handler"
+that defines the response behavior:
 
+.. code-block:: python
+    from nautilus.network import ActionHandler
+
+    class RecipeActionHandler(ActionHandler):
+
+        async def handle_action(self, action_type, payload):
+            print('hello world!')
+
+
+The primary method of an ActionHandler takes two parameters: ``type``
+and ``payload``. ``Type`` identifies the event and  ``Payload``
+provides the associated data. For example, if an action means to indicate
+that a new recipe needs to be created, the service can treat the payload
+as the recipe's attributes and create the new record (or another mutation)
+when appropriate:
+
+.. code-block:: python
+    from nautilus.network import ActionHandler
+
+    class RecipeActionHandler(ActionHandler):
+
+        async def handle_action(self, action_type, payload):
+            # if the payload represents a new recipe to create
+            if action_type == 'create_recipe':
+                # create a new instance of the recipe
+                recipe = Recipe(**payload)
+                # save the recipe instance
+                recipe.save()
+
+Passing the Action handler to the service takes a single line:
 
 .. code-block:: python
 
@@ -187,6 +213,7 @@ the new record (or another mutation) when appropriate:
     from nautilus.api.fields import Connection
     from nautilus.contrib.graphene_peewee import PeeweeObjectType
     from graphene import Schema
+    from nautilus.network import ActionHandler
 
     class Recipe(HasId, BaseModel):
         name = fields.CharField()
@@ -211,16 +238,20 @@ the new record (or another mutation) when appropriate:
     schema.query = Query
 
 
-    class RecipeService(Service):
-        schema = schema
+    class RecipeActionHandler(ActionHandler):
 
-        def action_handler(self, action_type, payload):
+        async def handle_action(self, action_type, payload):
             # if the payload represents a new recipe to create
             if action_type == 'create_recipe':
                 # create a new instance of the recipe
                 recipe = Recipe(**payload)
                 # save the recipe instance
                 recipe.save()
+
+
+    class RecipeService(Service):
+        schema = schema
+        action_handler = RecipeActionHandler
 
 
     manager = ServiceManager(RecipeService)

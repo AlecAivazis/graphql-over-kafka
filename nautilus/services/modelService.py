@@ -75,6 +75,8 @@ class ModelService(Service):
 
     @property
     def action_handler(self):
+        # create a crud handler for the model
+        handler = crud_handler(self.model)
 
         class ModelActionHandler(ActionHandler):
 
@@ -82,7 +84,7 @@ class ModelService(Service):
                 """
                     The default action handler for a model service call
                 """
-                handler = crud_handler(self.model)
+                # call the handler
                 await handler(self, action_type, payload)
 
         return ModelActionHandler
