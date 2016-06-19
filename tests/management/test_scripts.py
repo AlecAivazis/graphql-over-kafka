@@ -27,33 +27,20 @@ class TestUtil(unittest.TestCase):
 
 
     def test_can_create_model_service(self):
-        # execute the model service creation script
-        self._run_cmd("naut create model foo")
+        # import the model service creation script
+        from nautilus.management.scripts.create import model
+        # create a model
+        model.callback('foo')
 
     def test_can_create_connection_service(self):
-        # execute the model service creation script
-        self._run_cmd("naut create connection foo:bar")
+        # import the model service creation script
+        from nautilus.management.scripts.create import connection
+        # create a model
+        connection.callback(['foo:bar'])
 
 
     def test_can_create_api(self):
-        # execute the model service creation script
-        self._run_cmd("naut create api")
-
-
-    def _run_cmd(self, cmd, check_for_output=False):
-        """
-            This method executes the given command and only returns
-            if it was successfully run.
-        """
-        # execute the command
-        process = subprocess.run(cmd, shell=True, check=True, stdout=subprocess.PIPE)
-        # make sure it was successfull
-        assert process.returncode == 0 , (
-            "Command was not sucessfully run"
-        )
-        # if we need to check for output
-        if check_for_output:
-            # make sure its not an empty bytestring
-            assert process.stdout != b'', (
-                "Command did not return any output"
-            )
+        # import the model service creation script
+        from nautilus.management.scripts.create import api
+        # create a model
+        api.callback()
