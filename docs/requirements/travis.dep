@@ -1,5 +1,6 @@
 aiohttp==0.21.6
 aiokafka==0.1.2
+aiohttp_jinja2
 bcrypt==2.0.0
 click==6.3
 graphene==0.10.2
