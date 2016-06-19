@@ -1,44 +1,40 @@
+# external imports
+from aiohttp_session import get_session
 # local imports
 from nautilus.network.http import RequestHandler
 from nautilus.conventions.services import auth_service_name
+from nautilus.conventions.auth import cookie_name as auth_cookie_name
 
 class AuthRequestHandler(RequestHandler):
 
-    def get_current_user(self):
-        """
-            This function retrieves the user identifier from the request
-        """
-        # get the id of the user form the token
-        return self.get_secure_cookie(self._token_name)
-
-
-    def get_login_url(self):
-        """
-            This method returns the url that handles logging-in.
-        """
-        # return the location of the service with the conventional auth name
-        return "http://{}/login".format(
-            service_location_by_name(auth_service_name())
-        )
-
-
-    def login_user(self, user):
+    async def get_current_user(self, response):
         """
             This function logs the given user in on the request request.
         """
-        # TODO: pass domain from service config
-        self.set_secure_cookie(
-            self._token_name,
-            self._token_contents(user),
-            domain="",
-        )
+        # grab the current session
+        session = await get_session(request)
+        # add the user to the session
+        return session[self._token_name]
 
 
-    def logout_user(self):
+    async def login_user(self, user, response):
+        """
+            This function logs the given user in on the request request.
+        """
+        # grab the current session
+        session = await get_session(request)
+        # add the user to the session
+        session[self._token_name] = self._token_contents(user)
+
+
+
+    async def logout_user(self, response):
         """
             This method logs the current user out by clearing the cookie.
         """
-        self.clear_cookie(self._token_name)
+        response.del_cookie(self._token_name)
+        # remove entry in the session
+        del session[self._token_name]
 
 
     @property
@@ -46,7 +42,7 @@ class AuthRequestHandler(RequestHandler):
         """
             The name of the authentication cookie
         """
-        return "nautilus_jwt"
+        return auth_cookie_name()
 
 
     def _token_contents(self, user):

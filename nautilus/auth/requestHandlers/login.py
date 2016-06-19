@@ -1,3 +1,5 @@
+# external imports
+import aiohttp_jinja2
 # local imports
 # from nautilus.network.util import query_service
 from .base import AuthRequestHandler
@@ -9,14 +11,17 @@ class LoginHandler(AuthRequestHandler):
         This class handles the basic login form.
     """
 
-    def get(self):
+    @aiohttp_jinja2.template('login.html')
+    async def get(self):
         # render an empty login form to the view
-        return self.render('templates/login.html', form=LoginForm())
+        return dict(form=LoginForm())
 
 
-    def post(self):
+    async def post(self):
+        # the used responses
+        from nautilus.network.http.responses import HTTPUnauthorized, HTTPFound
         # make sure we do anything important
-        super().post()
+        await super().post()
         # createa a form from the request parameters
         form = LoginForm(**self.request.arguments)
         # if we recieved valid information
@@ -46,19 +51,16 @@ class LoginHandler(AuthRequestHandler):
 
             # if the given password matches the stored hash
             if passwordEntry and passwordEntry.password == supplied_password:
-                # log in the user
-                self.login_user(user_data)
                 # grab the redirect url from the url arguments
                 redirect_url = self.request.arguments.get('next', ['/'])[0]
                 # redirect the user to the url parameter
-                return self.redirect(redirect_url)
+                response = HTTPFound(location=redirect_url)
+                # log in the user
+                await self.login_user(user_data, response)
+                # return the response
+                return response
 
         # the username and password do not match
-        raise ValueError(
-            "Sorry, the username/password combination do not match."
+        return HTTPUnauthorized(
+            body="Sorry, the username/password combination do not match."
         )
-
-            # otherwise the given password does not match the stored hash
-            # else:
-                # add an error to the form
-                # flash('Sorry, that user/password combination was invalid.')

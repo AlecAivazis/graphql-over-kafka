@@ -1,9 +1,11 @@
 # external imports
 import asyncio
 import uvloop
+import jinja2
 import aiohttp.web
 import aiohttp_jinja2
-import jinja2
+from aiohttp_session import session_middleware
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
 # local imports
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.config import Config
@@ -103,22 +105,34 @@ class Service(metaclass=ServiceMetaClass):
         self._server_handler = None
 
     def init_app(self):
-        from nautilus.api.endpoints import template_dir
+        from nautilus.api.endpoints import template_dir as api_template_dir
+        from nautilus.auth import template_dir as auth_template_dir
+        # the secret key
+        secret_key = 'NERbTdtQl7IrBM9kx1PDjJXiyZhWWBZ9E7q2B3U7KVE='
         # create a web application instance
-        self.app = aiohttp.web.Application()
+        self.app = aiohttp.web.Application(
+            middlewares=[
+                session_middleware(
+                    EncryptedCookieStorage(secret_key)
+                )
+            ]
+        )
         # add the template loader
         aiohttp_jinja2.setup(self.app,
-                loader=jinja2.FileSystemLoader(template_dir)
+                loader=jinja2.ChoiceLoader([
+                    api_template_dir,
+                    auth_template_dir
+                ])
         )
         # TODO:
             # debug mode
-            # cookie secret
 
         # attach the ioloop to the application
         self.loop = asyncio.get_event_loop()
         # attach the service to the loop
         self.loop.service = self
         # add the route handlers
+
         self.init_routes()
 
     def init_routes(self):

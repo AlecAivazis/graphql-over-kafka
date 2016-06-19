@@ -22,6 +22,7 @@ setup(
         'aiohttp',
         'aiokafka',
         'aiohttp_jinja2',
+        'aiohttp_session',
         'bcrypt',
         'click',
         'tornado',
