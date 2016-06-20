@@ -43,6 +43,3 @@ class TestUtil(unittest.TestCase):
                 # otherwise we're looking at a dir we dont know about
                 else:
                     raise ValueError("Encountered unknown directory")
-
-                # print(dirName, subdirList, fileList)
-                # open the
