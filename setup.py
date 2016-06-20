@@ -21,6 +21,7 @@ setup(
     install_requires=[
         'aiohttp',
         'aiokafka',
+        'aiohttp_cors',
         'aiohttp_jinja2',
         'aiohttp_session',
         'bcrypt',

@@ -152,7 +152,6 @@ class Service(metaclass=ServiceMetaClass):
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
 
 
-
     def init_action_handler(self):
         # if the service was provided an action handler
         if self.action_handler:
