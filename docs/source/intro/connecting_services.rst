@@ -33,7 +33,7 @@ in our directory. Inside of this file, paste the following code:
         database_url = 'sqlite:///ingredients.db'
 
     class IngredientService(ModelService):
-        model = Ingredient,
+        model = Ingredient
         config = ServiceConfig
 
 
@@ -93,7 +93,9 @@ recipes and ingredients:
 
 
     class RecipeIngredientConnectionService(ConnectionService):
-        services = [recipeService, ingredientService]
+        from_service = recipeService
+        to_service = ingredientService
+
         config = ServiceConfig
 
 

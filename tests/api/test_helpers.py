@@ -72,13 +72,19 @@ class TestUtil(unittest.TestCase):
             model = MockModel2
         # a connection service
         class MockConnectionService(nautilus.ConnectionService):
-            services = [MockModelService1, MockModelService2]
+            from_service = MockModelService1
+            to_service = MockModelService2
 
         # the target summary
         target = {
             'name': 'MockConnectionService',
-            'fields': {
-                'name': 'String',
+            'connection': {
+                'from': {
+                    'service': 'MockModelService1'
+                },
+                'to': {
+                    'service': 'MockModelService2'
+                }
             }
         }
         # make sure it matches the result
@@ -87,7 +93,15 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_can_summarize_auth_service(self): pass
+    def test_can_summarize_auth_service(self):
+        # an auth service to test
+        class MockAuth(nautilus.AuthService): pass
 
-
-    def test_can_summarize_api_service(self): pass
+        # the target summary
+        target = {
+            'name': conventions.services.auth_service_name,
+        }
+        # make sure it matches the result
+        assert summarize_service(MockAuth) == target, (
+            "Auths service could not be summarized"
+        )

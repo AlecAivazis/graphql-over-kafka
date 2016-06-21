@@ -1,7 +1,6 @@
 # local imports
 import nautilus
 from nautilus.network.events import crud_handler, combine_action_handlers
-from nautilus.api import create_model_schema
 from nautilus.conventions.services import model_service_name
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.network.events.consumers import ActionHandler
@@ -50,6 +49,9 @@ class ModelService(Service):
 
 
     def __init__(self, model=None, **kwargs):
+        # avoid circular depdencies
+        from ..api.helpers import create_model_schema
+
         # if we were given a model for the service
         if model:
             # use the given model
