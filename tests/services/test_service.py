@@ -16,9 +16,18 @@ class TestUtil(unittest.TestCase):
 
     def test_has_default_name(self):
         # make sure the name matches
-        assert self.service.name == 'MyService', (
+        assert self.service.name == 'myService', (
             "Service did not have the correct name."
         )
+
+    def test_default_name_can_have_numbers(self):
+        # create a service without an explict name
+        class TestService1(nautilus.Service): pass
+        # make sure the name is what we expect
+        assert TestService1.name == 'testService1', (
+            "Service did not have the correct name with number."
+        )
+
 
     def test_can_accept_name(self):
         class MyService(nautilus.Service):

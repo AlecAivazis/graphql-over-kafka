@@ -52,15 +52,14 @@ class ConnectionService(ModelService):
         # if there is no to service
         if not self.to_service:
             raise ValueError("Please provide a 'to_service'.")
-
         # if there is no to service
         if not self.from_service:
             raise ValueError("Please provide a 'from_service'.")
 
+        # save a list of the models
+        self._services = [self.to_service, self.from_service]
         # the models of each service
-        self._service_models = [
-            self.from_service.model, self.to_service.model
-        ]
+        self._service_models = [service.model for service in self._services]
 
         # make sure there is a unique name for every service
         if len({model.model_name for model in self._service_models}) \

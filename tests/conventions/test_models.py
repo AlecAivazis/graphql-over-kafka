@@ -2,7 +2,7 @@
 import unittest
 # local imports
 from nautilus.models import BaseModel, fields
-from nautilus.conventions.models import get_model_string
+from nautilus.conventions.models import get_model_string, normalize_string
 
 
 class TestUtil(unittest.TestCase):
@@ -19,4 +19,11 @@ class TestUtil(unittest.TestCase):
         # save the model to the test suite
         assert isinstance(get_model_string(TestModel), str), (
             "Could not generate string for model"
+        )
+
+    def test_normalize_string_handles_ClassCase(self):
+        string = 'FooBar'
+
+        assert normalize_string(string) == 'fooBar', (
+            "ClassCase string could not be normalized"
         )

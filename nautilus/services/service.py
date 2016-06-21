@@ -21,13 +21,22 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 class ServiceMetaClass(type):
     def __init__(cls, name, bases, attributes):
+        from nautilus.conventions.models import normalize_string
+
         # create the super class
         super().__init__(name, bases, attributes)
 
+        # the base service strings
+        base_strings = [normalize_string(name) for name in [
+            'service',
+            'modelService',
+            'ConnectionService'
+        ]]
+
         # if the object does not yet have a name
-        if not cls.name or cls.name == 'Service':
+        if not cls.name or cls.name in base_strings:
             # use the name of the class record
-            cls.name = name
+            cls.name = normalize_string(name)
 
 
 class Service(metaclass=ServiceMetaClass):

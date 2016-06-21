@@ -4,7 +4,8 @@ import unittest
 from nautilus.models import BaseModel, fields
 from nautilus.conventions.actions import (
     get_crud_action,
-    change_action_status
+    change_action_status,
+    intialize_service_action
 )
 
 
@@ -30,7 +31,7 @@ class TestUtil(unittest.TestCase):
             model=self.model
         )
 
-        assert action_type == 'create.testmodel.pending', (
+        assert action_type == 'create.testModel.pending', (
             "New action type did not have the correct form."
         )
 
@@ -42,6 +43,22 @@ class TestUtil(unittest.TestCase):
         # try to change the action
         success_action = change_action_status(action_type, 'success')
         # make sure the new action type is in the result
-        assert success_action == 'create.testmodel.success', (
+        assert success_action == 'create.testModel.success', (
             "New action type did not have the correct form."
         )
+
+
+    def test_can_generate_init_action_for_service(self):
+        # local imports
+        from nautilus import Service
+        # create a service to test
+        class TestService(Service): pass
+        # verify we got a string back
+        assert isinstance(intialize_service_action(TestService), str)
+
+
+    def tet_can_generate_init_action_catchall(self):
+        # create the action
+        action = intialize_service_action()
+        # verify we got a string back
+        assert isinstance(action, str) and '*' in action

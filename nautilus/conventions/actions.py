@@ -16,3 +16,10 @@ def change_action_status(action_type, new_status):
     """
     # replace the last bit of a dot separate string with the new_status
     return "%s.%s" % ('.'.join(action_type.split('.')[:-1]) , new_status)
+
+
+def intialize_service_action(service=None, **kwds):
+    # get the name of the service
+    name = service.name if service else '*'
+    # treat initialization like a crud action for services
+    return get_crud_action('init', name, **kwds)

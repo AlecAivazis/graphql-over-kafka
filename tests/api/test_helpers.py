@@ -24,7 +24,7 @@ class TestUtil(unittest.TestCase):
         # the single field in the schema
         field = schema_fields[0]
         # make sure that field matches the convention
-        assert field['name'] == nautilus.conventions.schema.root_query(), (
+        assert field['name'] == nautilus.conventions.api.root_query(), (
             'The generated schema does not have a field named `all_models`'
         )
 
@@ -61,47 +61,47 @@ class TestUtil(unittest.TestCase):
 
     def test_can_summarize_connection_service(self):
         # a model to test
-        class MockModel1(nautilus.models.BaseModel):
+        class Model1(nautilus.models.BaseModel):
             name = nautilus.models.CharField()
-        class MockModelService1(nautilus.ModelService):
-            model = MockModel1
+        class ModelService1(nautilus.ModelService):
+            model = Model1
         # a model to test
-        class MockModel2(nautilus.models.BaseModel):
+        class Model2(nautilus.models.BaseModel):
             name = nautilus.models.CharField()
-        class MockModelService2(nautilus.ModelService):
-            model = MockModel2
+        class ModelService2(nautilus.ModelService):
+            model = Model2
         # a connection service
-        class MockConnectionService(nautilus.ConnectionService):
-            from_service = MockModelService1
-            to_service = MockModelService2
+        class ConnectionService(nautilus.ConnectionService):
+            from_service = ModelService1
+            to_service = ModelService2
 
         # the target summary
         target = {
-            'name': 'MockConnectionService',
+            'name': 'ConnectionService',
             'connection': {
                 'from': {
-                    'service': 'MockModelService1'
+                    'service': 'ModelService1'
                 },
                 'to': {
-                    'service': 'MockModelService2'
+                    'service': 'ModelService2'
                 }
             }
         }
         # make sure it matches the result
-        assert summarize_service(MockConnectionService) == target, (
+        assert summarize_service(ConnectionService) == target, (
             "Model service could not be correctly summarized."
         )
 
 
     def test_can_summarize_auth_service(self):
         # an auth service to test
-        class MockAuth(nautilus.AuthService): pass
+        class Auth(nautilus.AuthService): pass
 
         # the target summary
         target = {
             'name': conventions.services.auth_service_name,
         }
         # make sure it matches the result
-        assert summarize_service(MockAuth) == target, (
+        assert summarize_service(Auth) == target, (
             "Auths service could not be summarized"
         )
