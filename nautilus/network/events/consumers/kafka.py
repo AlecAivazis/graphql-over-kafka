@@ -59,13 +59,6 @@ class KafkaBroker:
         return await self._producer.send(channel, message, *args, **kwds)
 
 
-    async def getone(self, *args, **kwds):
-        """
-            This method waits for a single method over the
-        """
-        return await self._consumer.getone(*args, **kwds)
-
-
     async def ask(self, message, **kwds):
         # create a correlation id for the question
         correlation_id = uuid.uuid4()
@@ -109,7 +102,7 @@ class KafkaBroker:
             try:
 
                 # grab the next message
-                msg = await self.getone()
+                msg = await self._consumer.getone()
 
                 # parse the message as json
                 message = json.loads(msg.value.decode())
