@@ -3,6 +3,8 @@ import unittest
 # local imports
 import nautilus
 import nautilus.models as models
+from nautilus.api.helpers import create_model_schema
+from nautilus.api.helpers import summarize_service
 
 class TestUtil(unittest.TestCase):
 
@@ -13,7 +15,7 @@ class TestUtil(unittest.TestCase):
             test_field = models.fields.CharField()
 
         # create a graphql schema from the model
-        schema = nautilus.api.helpers.create_model_schema(TestModel)
+        schema = create_model_schema(TestModel)
         # the fields in the schema
         schema_fields = schema.introspect()['__schema']['types'][0]['fields']
         # make sure there is only one field
@@ -34,3 +36,58 @@ class TestUtil(unittest.TestCase):
             "The generated schema cannot be filterd for model fields."
         )
 
+
+    def test_can_summarize_model_service(self):
+        # a model to test
+        class MockModel(nautilus.models.BaseModel):
+            name = nautilus.models.CharField()
+
+        # a model service to test
+        class MockModelService(nautilus.ModelService):
+            model = MockModel
+
+        # the target summary
+        target = {
+            'name': 'MockModel',
+            'fields': {
+                'name': 'String',
+            }
+        }
+        # make sure it matches the result
+        assert summarize_service(MockModelService) == target, (
+            "Model service could not be correctly summarized."
+        )
+
+
+    def test_can_summarize_connection_service(self):
+        # a model to test
+        class MockModel1(nautilus.models.BaseModel):
+            name = nautilus.models.CharField()
+        class MockModelService1(nautilus.ModelService):
+            model = MockModel1
+        # a model to test
+        class MockModel2(nautilus.models.BaseModel):
+            name = nautilus.models.CharField()
+        class MockModelService2(nautilus.ModelService):
+            model = MockModel2
+        # a connection service
+        class MockConnectionService(nautilus.ConnectionService):
+            services = [MockModelService1, MockModelService2]
+
+        # the target summary
+        target = {
+            'name': 'MockConnectionService',
+            'fields': {
+                'name': 'String',
+            }
+        }
+        # make sure it matches the result
+        assert summarize_service(MockConnectionService) == target, (
+            "Model service could not be correctly summarized."
+        )
+
+
+    def test_can_summarize_auth_service(self): pass
+
+
+    def test_can_summarize_api_service(self): pass

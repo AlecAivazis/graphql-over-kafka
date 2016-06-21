@@ -104,6 +104,11 @@ class Service(metaclass=ServiceMetaClass):
         self._http_server = None
         self._server_handler = None
 
+        # cleanup
+        # announce the service
+        self.loop.run_until_complete(self.announce())
+
+
     def init_app(self):
         from nautilus.api.endpoints import template_dir as api_template_dir
         from nautilus.auth import template_dir as auth_template_dir
@@ -132,8 +137,15 @@ class Service(metaclass=ServiceMetaClass):
         # attach the service to the loop
         self.loop.service = self
         # add the route handlers
-
         self.init_routes()
+
+
+    async def announce(self):
+        """
+            This method is used to announce the existence of the service
+        """
+
+
 
     def init_routes(self):
         # for each route that was registered

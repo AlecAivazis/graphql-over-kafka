@@ -10,7 +10,7 @@ from nautilus.models.util import create_connection_model
 
 class ConnectionService(ModelService):
     """
-        This service manages a connection between any number of other services.
+        This service manages a "one-way" connection between two services.
         The underlying schema and database are automatically generated to
         match the primary keys of the linked services.
 
@@ -37,22 +37,31 @@ class ConnectionService(ModelService):
                     database_url = 'sqlite:////tmp/connections.db'
 
                 class MyConnection(nautilus.ConnectionService):
-                    services = [service_one, service_two]
                     config = ServiceConfig
+
+                    from_service = service_one
+                    to_service = service_two
 
     """
 
-    services = []
+    from_service = None
+    to_service = None
 
 
     def __init__(self, **kwargs):
 
-        # make sure we were passed more than one service
-        if len(self.services) < 2:
-            raise ValueError("Please provide more than one service to connect.")
+        # if there is no to service
+        if not self.to_service:
+            raise ValueError("Please provide a 'to_service'.")
+
+        # if there is no to service
+        if not self.from_service:
+            raise ValueError("Please provide a 'from_service'.")
 
         # the models of each service
-        self._service_models = [service.model for service in self.services]
+        self._service_models = [
+            self.from_service.model, self.to_service.model
+        ]
 
         # make sure there is a unique name for every service
         if len({model.model_name for model in self._service_models}) \

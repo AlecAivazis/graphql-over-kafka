@@ -28,10 +28,8 @@ class TestUtil(unittest.TestCase):
             model = ModelTest2
 
         class TestConnectionService(nautilus.ConnectionService):
-            services = [
-                TestService1,
-                TestService2
-            ]
+            from_service = TestService1
+            to_service = TestService2
 
         # save the class records to the suite
         self.service1 = TestService1
@@ -138,7 +136,8 @@ class TestUtil(unittest.TestCase):
             # create a conenction based on those two services
             class Connection(nautilus.ConnectionService):
                 additional_action_handler = self.spy
-                services = [TestService1, TestService2]
+                from_service = TestService1
+                to_service = TestService2
 
             # instantiate the connection
             Connection()
