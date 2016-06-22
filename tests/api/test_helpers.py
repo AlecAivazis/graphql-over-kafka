@@ -48,15 +48,36 @@ class TestUtil(unittest.TestCase):
 
         # the target summary
         target = {
-            'name': 'MockModel',
-            'fields': {
-                'name': 'String',
-            }
+            'name': 'mockModelService',
+            'fields': [
+                {
+                    'name': 'name',
+                    'type': 'String'
+                }, {
+                    'name': 'id',
+                    'type': 'ID',
+                }
+            ]
         }
-        # make sure it matches the result
-        assert summarize_service(MockModelService) == target, (
-            "Model service could not be correctly summarized."
+        # summarize the service
+        summarized = summarize_service(MockModelService)
+        # make sure the names match up
+        assert target['name'] == summarized['name'], (
+            "Summarzied service did not have the right name."
         )
+        # make sure the field entries have the same length
+        assert len(target['fields']) == len(summarized['fields']), (
+            "Summarized service did not have the right number of fields."
+        )
+        # make sure the fields match
+        for field in target['fields']:
+            # grab the matching fields
+            equiv = [sumField for sumField in summarized['fields'] \
+                                    if sumField['name'] == field['name']][0]
+            # make sure the two fields match
+            assert equiv == field, (
+                "Associated fields did not match"
+            )
 
 
     def test_can_summarize_connection_service(self):
@@ -77,19 +98,19 @@ class TestUtil(unittest.TestCase):
 
         # the target summary
         target = {
-            'name': 'ConnectionService',
+            'name': 'connectionService',
             'connection': {
                 'from': {
-                    'service': 'ModelService1'
+                    'service': 'modelService1'
                 },
                 'to': {
-                    'service': 'ModelService2'
+                    'service': 'modelService2'
                 }
             }
         }
         # make sure it matches the result
         assert summarize_service(ConnectionService) == target, (
-            "Model service could not be correctly summarized."
+            "Connection service could not be correctly summarized."
         )
 
 
@@ -99,9 +120,9 @@ class TestUtil(unittest.TestCase):
 
         # the target summary
         target = {
-            'name': conventions.services.auth_service_name,
+            'name': nautilus.conventions.services.auth_service_name(),
         }
         # make sure it matches the result
         assert summarize_service(Auth) == target, (
-            "Auths service could not be summarized"
+            "Auth service could not be summarized"
         )
