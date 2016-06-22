@@ -52,7 +52,8 @@ end of the api gateway file:
 .. code-block:: python
 
     from graphene import String, ObjectType, Schema
-    from nautilus.api import ServiceObjectType, Connection
+    from nautilus_registry.objectTypes import ServiceObjectType
+    from nautilus_registry.fields import Connection
     from .recipes import service as RecipeService
     from .ingredients import service as IngredientService
 
