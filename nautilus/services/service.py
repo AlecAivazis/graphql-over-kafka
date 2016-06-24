@@ -221,18 +221,7 @@ class Service(metaclass=ServiceMetaClass):
         # when we're done
         finally:
             try:
-                # if an event broker has been created for this service
-                if self.event_broker:
-                    # stop the event broker
-                    self.event_broker.stop()
-
-                # close the http server
-                self._server_handler.close()
-                # clean up the server
-                self.loop.run_until_complete(self._server_handler.wait_closed())
-                self.loop.run_until_complete(self.app.shutdown())
-                self.loop.run_until_complete(self._http_handler.finish_connections(shutdown_timeout))
-                self.loop.run_until_complete(self.app.cleanup())
+                self._cleanup()
 
             # if we end up closing before any variables get assigned
             except UnboundLocalError:
@@ -241,6 +230,28 @@ class Service(metaclass=ServiceMetaClass):
 
             # close the event loop
             self.loop.close()
+
+
+    def cleanup(self):
+        """
+            This function is called when the service has finished running
+            regardless of intentionally or not.
+        """
+        # bubble up
+        super().cleanup()
+
+        # if an event broker has been created for this service
+        if self.event_broker:
+            # stop the event broker
+            self.event_broker.stop()
+
+        # close the http server
+        self._server_handler.close()
+        # clean up the server
+        self.loop.run_until_complete(self._server_handler.wait_closed())
+        self.loop.run_until_complete(self.app.shutdown())
+        self.loop.run_until_complete(self._http_handler.finish_connections(shutdown_timeout))
+        self.loop.run_until_complete(self.app.cleanup())
 
 
     @property
