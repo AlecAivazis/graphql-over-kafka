@@ -19,16 +19,27 @@ class KafkaBroker:
     server = None
     consumer_channel = None
     producer_channel = None
+    initial_offset = 'latest'
 
 
     def __init__(self):
         # a dictionary to keep the question/answer correlation ids
         self._request_handlers = {}
+        # if there is no loop assigned
+        if not self.loop:
+            # use the current one
+            self.loop = asyncio.get_event_loop()
 
         # a placeholder for the event consumer task
         self._consumer_task = None
+        print(self.initial_offset)
         # create a consumer instance
-        self._consumer = AIOKafkaConsumer(self.consumer_channel, loop=self.loop, bootstrap_servers=self.server)
+        self._consumer = AIOKafkaConsumer(
+            self.consumer_channel,
+            loop=self.loop,
+            bootstrap_servers=self.server,
+            auto_offset_reset=self.initial_offset
+        )
         self._producer = AIOKafkaProducer(loop=self.loop, bootstrap_servers=self.server)
 
 
@@ -69,7 +80,7 @@ class KafkaBroker:
         message = serialize_action(action_type=action_type, payload=payload, **kwds)
 
         # send the message
-        return await self._producer.send(channel, message)
+        return await self._producer.send(channel, message.encode())
 
 
     async def ask(self, message, **kwds):
@@ -112,6 +123,7 @@ class KafkaBroker:
                 # grab the next message
                 msg = await self._consumer.getone()
 
+
                 # parse the message as json
                 message = hydrate_action(msg.value.decode())
                 # the correlation_id associated with this message
@@ -121,6 +133,7 @@ class KafkaBroker:
                 if correlation_id and correlation_id in self._request_handlers:
                     # pass the message to the handler
                     self._request_handlers[correlation_id](message)
+
                     # register the action
                     print('handled %s' % correlation_id)
 
@@ -130,9 +143,10 @@ class KafkaBroker:
                     message_props = {
                         'correlation_id': correlation_id
                     }
+
                     # pass it to the handler
                     await self.handle_message(
-                        props=message_props
+                        props=message_props,
                         **message
                     )
 

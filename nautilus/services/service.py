@@ -11,6 +11,7 @@ from aiohttp_session.cookie_storage import EncryptedCookieStorage
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.config import Config
 from nautilus.network.events.actionHandlers import noop_handler
+from nautilus.network.events.consumers import ActionHandler
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
@@ -39,6 +40,14 @@ class ServiceMetaClass(type):
         if not cls.name or cls.name in base_strings:
             # use the name of the class record
             cls.name = normalize_string(name)
+
+class ServiceActionHandler(ActionHandler):
+
+    async def handle_action(self, **kwds):
+        """
+            The default action Handler has no action.
+        """
+        await noop_handler(**kwds)
 
 
 class Service(metaclass=ServiceMetaClass):
@@ -85,7 +94,7 @@ class Service(metaclass=ServiceMetaClass):
     config = None
     name = None
     schema = None
-    action_handler = None
+    action_handler = ServiceActionHandler
 
     _routes = []
 
@@ -109,6 +118,7 @@ class Service(metaclass=ServiceMetaClass):
 
         # initialize the service
         self.init_app()
+        self.init_event_broker()
         self.init_routes()
         self.init_action_handler()
 
@@ -148,19 +158,23 @@ class Service(metaclass=ServiceMetaClass):
         self.loop.service = self
 
 
+    def init_event_broker(self):
+        print(self.action_handler)
+
+
     async def announce(self):
         """
             This method is used to announce the existence of the service
         """
         from nautilus.api.helpers import summarize_service
-
+        print('announcing')
         # serialize the summary of the model
         serialized = json.dumps(summarize_service(self.__class__))
 
         # send a serialized event
-        self.event_broker.send(
-            payload=serialized,
-            action_type=intialize_service_action()
+        await self.event_broker.send(
+            action_type=intialize_service_action(),
+            payload=serialized
         )
 
 
@@ -212,6 +226,9 @@ class Service(metaclass=ServiceMetaClass):
                 self.event_broker.start()
                 # announce the service
                 self.loop.run_until_complete(self.announce())
+                print("should have announced")
+            else:
+                print('no event broker')
 
             # the handler for the http server
             http_handler = self.app.make_handler()
