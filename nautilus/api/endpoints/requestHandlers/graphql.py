@@ -7,6 +7,7 @@ from nautilus.network.http import Response
 class GraphQLRequestHandler(AuthRequestHandler):
 
     async def get(self):
+
         try:
             # grab the query from the request parameters
             query = self.request.GET['query']
@@ -41,12 +42,12 @@ class GraphQLRequestHandler(AuthRequestHandler):
 
     @property
     def schema(self):
-        self.service.schema
+        return self.service.schema
 
 
     @property
     def service(self):
-        self.__class__.service
+        return self.__class__.service
 
 
     async def _handle_query(self, query):
@@ -57,8 +58,7 @@ class GraphQLRequestHandler(AuthRequestHandler):
         # execute the query
         result = self.schema.execute(
             query,
-            context_value=self.request_context,
-            return_promise=True
+            context_value=self.request_context
         )
 
         # create a dictionary version of the result

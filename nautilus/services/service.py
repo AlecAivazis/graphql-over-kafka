@@ -95,6 +95,8 @@ class Service(metaclass=ServiceMetaClass):
     name = None
     schema = None
     action_handler = ServiceActionHandler
+    api_request_handler_class = GraphQLRequestHandler
+
 
     _routes = []
 
@@ -181,12 +183,12 @@ class Service(metaclass=ServiceMetaClass):
             self.add_http_endpoint(**route)
 
         # add the schema reference to graphql handler
-        self._api_request_handler_class.service = self
+        self.api_request_handler_class.service = self
 
         # add the static file urls
         self.app.router.add_static('/graphiql/static/', api_endpoint_static)
         # add the default api  handler
-        self.add_http_endpoint('/', self._api_request_handler_class)
+        self.add_http_endpoint('/', self.api_request_handler_class)
         # add the graphiql endpoint
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
 
@@ -222,9 +224,6 @@ class Service(metaclass=ServiceMetaClass):
                 self.event_broker.start()
                 # announce the service
                 self.loop.run_until_complete(self.announce())
-                print("should have announced")
-            else:
-                print('no event broker')
 
             # the handler for the http server
             http_handler = self.app.make_handler()
@@ -280,12 +279,6 @@ class Service(metaclass=ServiceMetaClass):
         # more cleanup
         self.loop.run_until_complete(self.app.shutdown())
         self.loop.run_until_complete(self.app.cleanup())
-
-
-    @property
-    def _api_request_handler_class(self):
-        return GraphQLRequestHandler
-
 
     def add_http_endpoint(self, url, request_handler):
         """
