@@ -118,7 +118,6 @@ class Service(metaclass=ServiceMetaClass):
 
         # initialize the service
         self.init_app()
-        self.init_event_broker()
         self.init_routes()
         self.init_action_handler()
 
@@ -158,10 +157,6 @@ class Service(metaclass=ServiceMetaClass):
         self.loop.service = self
 
 
-    def init_event_broker(self):
-        print(self.action_handler)
-
-
     async def announce(self):
         """
             This method is used to announce the existence of the service
@@ -176,6 +171,13 @@ class Service(metaclass=ServiceMetaClass):
             action_type=intialize_service_action(),
             payload=serialized
         )
+
+
+    @classmethod
+    def summarize(self, **extra_fields):
+        # return the summary
+        return dict(name=self.name, **extra_fields)
+
 
 
     def init_routes(self):

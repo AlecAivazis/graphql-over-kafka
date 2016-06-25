@@ -4,6 +4,7 @@ from nautilus.network.events import crud_handler, combine_action_handlers
 from nautilus.conventions.services import model_service_name
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.network.events.consumers import ActionHandler
+from nautilus.contrib.graphene_peewee import convert_peewee_field
 from .service import Service
 
 
@@ -103,6 +104,26 @@ class ModelService(Service):
         db_url = self.config.get('database_url', 'sqlite:///nautilus.db')
         # configure the nautilus database to the url
         nautilus.database.init_db(db_url)
+
+
+    @classmethod
+    def summarize(self, **extra_fields):
+        # the fields for the service's model
+        model_fields = {field.name: field for field in list(self.model.fields())} \
+                            if self.model \
+                            else {}
+
+        # add the model fields to the dictionary
+        return dict(
+            **super().summarize(),
+            fields=[{
+                    'name': key,
+                    'type': type(convert_peewee_field(value)).__name__
+                    } for key, value in model_fields.items()
+                   ],
+            **extra_fields
+        )
+
 
 
     def get_models(self):

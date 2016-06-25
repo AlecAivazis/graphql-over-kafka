@@ -186,6 +186,28 @@ class TestUtil(unittest.TestCase):
         self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
 
 
+    def test_can_summarize(self):
+
+        # the target summary
+        target = {
+            'name': 'testConnectionService',
+            'connection': {
+                'from': {
+                    'service': 'testService1'
+                },
+                'to': {
+                    'service': 'testService2'
+                }
+            },
+            'fields': [],
+        }
+        # make sure it matches the result
+        assert type(self.service).summarize() == target, (
+            "Connection service could not be correctly summarized."
+        )
+
+
+
     ### Utilities / Test tasks
 
     async def _verify_action_handler_create(self):

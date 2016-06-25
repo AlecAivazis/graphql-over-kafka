@@ -81,6 +81,43 @@ class TestUtil(unittest.TestCase):
         )
 
 
+    def test_can_summarize(self):
+
+        # the target summary
+        target = {
+            'name': 'testModelService',
+            'fields': [
+                {
+                    'name': 'name',
+                    'type': 'String'
+                }, {
+                    'name': 'id',
+                    'type': 'ID',
+                }
+            ]
+        }
+        # summarize the service
+        summarized = self.service.summarize()
+
+        # make sure the names match up
+        assert target['name'] == summarized['name'], (
+            "Summarzied service did not have the right name."
+        )
+        # make sure the field entries have the same length
+        assert len(target['fields']) == len(summarized['fields']), (
+            "Summarized service did not have the right number of fields."
+        )
+        # make sure the fields match
+        for field in target['fields']:
+            # grab the matching fields
+            equiv = [sumField for sumField in summarized['fields'] \
+                                    if sumField['name'] == field['name']][0]
+            # make sure the two fields match
+            assert equiv == field, (
+                "Associated fields did not match"
+            )
+
+
     @async_test
     async def test_action_handler_supports_crud(self):
         model_id = await self._verify_create_action_handler()

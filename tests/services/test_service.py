@@ -78,3 +78,17 @@ class TestUtil(unittest.TestCase):
         assert issubclass(self.service()._api_request_handler_class, GraphQLRequestHandler), (
             "APIGateway did not have the right request handler class"
         )
+
+
+    def test_can_summarize(self):
+        # the target summary
+        target = {
+            'name': 'myService',
+        }
+
+        # summarize the service
+        summarized = self.service.summarize()
+        # make sure the names match up
+        assert target['name'] == summarized['name'], (
+            "Summarzied service did not have the right name."
+        )

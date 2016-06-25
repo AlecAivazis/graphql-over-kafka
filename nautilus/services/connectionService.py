@@ -5,6 +5,7 @@ from nautilus.conventions.services import connection_service_name
 from nautilus.conventions.actions import get_crud_action, success_status
 from .modelService import ModelService
 from nautilus.models.util import create_connection_model
+from nautilus.conventions.api import service_node_name, connection_service_node_name
 
 
 class ConnectionService(ModelService):
@@ -95,6 +96,24 @@ class ConnectionService(ModelService):
                     await handler(action_type, payload, **kwds)
 
         return ConnectionActionHandler
+
+
+    @classmethod
+    def summarize(self, **extra_fields):
+        # start with the default summary
+        return {
+            **super().summarize(),
+            'name': connection_service_node_name(self),
+            'connection': {
+                'from': {
+                    'service': service_node_name(self.from_service),
+                },
+                'to': {
+                    'service': service_node_name(self.to_service),
+                }
+            },
+            **extra_fields
+        }
 
 
     def _create_linked_handler(self, model):
