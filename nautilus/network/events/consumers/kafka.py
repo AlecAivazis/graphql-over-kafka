@@ -144,8 +144,6 @@ class KafkaBroker:
         # publish the question
         await self.send(correlation_id=correlation_id, **kwds)
 
-        print('asking %s' % correlation_id)
-
         # return the response
         return await question_future
 
@@ -182,9 +180,6 @@ class KafkaBroker:
                 if correlation_id and correlation_id in self._request_handlers:
                     # pass the message to the handler
                     self._request_handlers[correlation_id](message['payload'])
-
-                    # register the action
-                    print('handled %s' % correlation_id)
 
                 # otherwise there was no correlation id, pass it along to the general handlers
                 else:
