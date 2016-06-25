@@ -107,6 +107,7 @@ class Service(metaclass=ServiceMetaClass):
 
         # initialize the service
         self.init_app()
+        self.init_routes()
         self.init_action_handler()
 
         # placeholders
@@ -145,8 +146,6 @@ class Service(metaclass=ServiceMetaClass):
         self.loop = asyncio.get_event_loop()
         # attach the service to the loop
         self.loop.service = self
-        # add the route handlers
-        self.init_routes()
 
 
     async def announce(self):

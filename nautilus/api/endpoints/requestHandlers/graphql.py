@@ -55,8 +55,6 @@ class GraphQLRequestHandler(AuthRequestHandler):
             context_value=self.request_context
         )
 
-        print(self.schema)
-
         # create a dictionary version of the result
         result_dict = dict(
             data=result.data,
