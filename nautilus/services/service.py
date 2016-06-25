@@ -162,7 +162,7 @@ class Service(metaclass=ServiceMetaClass):
             self.add_http_endpoint(**route)
 
         # add the schema reference to graphql handler
-        self._api_request_handler_class.schema = self.schema
+        self._api_request_handler_class.service = self
 
         # add the static file urls
         self.app.router.add_static('/graphiql/static/', api_endpoint_static)

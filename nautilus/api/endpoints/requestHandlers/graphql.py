@@ -41,7 +41,12 @@ class GraphQLRequestHandler(AuthRequestHandler):
 
     @property
     def schema(self):
-        self.__class__.schema
+        self.service.schema
+
+
+    @property
+    def service(self):
+        self.__class__.service
 
 
     async def _handle_query(self, query):
@@ -52,7 +57,8 @@ class GraphQLRequestHandler(AuthRequestHandler):
         # execute the query
         result = self.schema.execute(
             query,
-            context_value=self.request_context
+            context_value=self.request_context,
+            return_promise=True
         )
 
         # create a dictionary version of the result
