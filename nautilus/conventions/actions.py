@@ -7,7 +7,7 @@ import json
 from .models import get_model_string
 
 
-def get_crud_action(method, model, status='pending'):
+def get_crud_action(method, model, status='pending', **kwds):
     return "%s.%s.%s" % (method, get_model_string(model), status)
 
 

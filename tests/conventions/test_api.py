@@ -23,6 +23,7 @@ class TestUtil(unittest.TestCase):
             "Could not a root query string for schema"
         )
 
+
     def test_throws_when_service_node_name_unknown(self):
         # import the utility
         from nautilus.conventions.api import service_node_name
@@ -67,13 +68,3 @@ class TestUtil(unittest.TestCase):
         assert model_service_node_name(TestConnectionService) == 'testConnectionService', (
             "Could not create api node name from connection service."
         )
-
-
-    def test_service_type_name(self):
-        # import the utility
-        from nautilus.conventions.api import service_type_name
-
-        # the service string to base the type on
-        service_string = 'test1'
-
-        #

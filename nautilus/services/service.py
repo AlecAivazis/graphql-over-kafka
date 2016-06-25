@@ -15,6 +15,7 @@ from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
+from nautilus.conventions.actions import intialize_service_action
 
 # enable uvloop for increased performance
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
@@ -159,7 +160,7 @@ class Service(metaclass=ServiceMetaClass):
         # send a serialized event
         self.event_broker.send(
             payload=serialized,
-            action_type='register.service.pending'
+            action_type=intialize_service_action()
         )
 
 
