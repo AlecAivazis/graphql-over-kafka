@@ -14,12 +14,53 @@ class KafkaBroker:
         This class handles two way communication with the kafka
         server. Also allows for a question/answer interface served
         over the kafka stream.
+
+        Args:
+            consumer_pattern = None
+
+            server (str): The location of the kafka stream.
+
+            consumer_channel (optional, str): The channel to listen for events
+                on.
+
+            consumer_pattern (optional, regex): A regex pattern to match against
+                the action types. The action handler is called for every matching
+                event. If none is provided, the action handler is called for every
+                action.
+
+            producer_channel (optional, str): The default channel to user when
+                producing events.
+
+            initial_offset (optional, one of 'latest' or 'earliest'): Where to
+                start on the event stream when run.
+
+            loop (optional, ayncio.EventLoop): The event loop that the broker should
+                run on.
+
+
+        Example:
+
+            .. code-block:: python
+
+                from .kafka import KafkaBroker
+
+
+                class ActionHandler(KafkaBroker):
+
+                    consumer_channel = 'myEvents'
+                    server = 'localhost:9092'
+
+                    async def handle_message(self, action_type, payload, **kwds):
+                        print("recieved action with type: {}".format(action_type))
+                        print("and payload: {}".format(payload))
+
     """
     loop = None
     server = None
     consumer_channel = None
     producer_channel = None
     initial_offset = 'latest'
+    consumer_pattern = None
 
 
     def __init__(self):
