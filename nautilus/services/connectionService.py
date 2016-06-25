@@ -2,7 +2,7 @@
 from nautilus.network.events import combine_action_handlers
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.conventions.services import connection_service_name
-from nautilus.conventions.actions import get_crud_action
+from nautilus.conventions.actions import get_crud_action, success_status
 from .modelService import ModelService
 from nautilus.models.util import create_connection_model
 
@@ -92,16 +92,16 @@ class ConnectionService(ModelService):
                     # create the appropriate action handler
                     handler = service._create_linked_handler(model)
                     # call the handler
-                    await handler(action_type, payload)
+                    await handler(action_type, payload, **kwds)
 
         return ConnectionActionHandler
 
 
     def _create_linked_handler(self, model):
         # the related action type
-        related_action_type = get_crud_action('delete', model, status='success')
+        related_action_type = get_crud_action('delete', model, status=success_status())
         # the action handler
-        async def action_handler(action_type, payload):
+        async def action_handler(action_type, payload, notify=True, **kwds):
             """
                 an action handler to remove related entries in the
                 connection db.
@@ -112,8 +112,17 @@ class ConnectionService(ModelService):
                 related_id = payload['id']
                 # the query for matching fields
                 matching_records = getattr(self.model, model.model_name.lower()) == related_id
+                ids = [model.id for model in self.model.filter(matching_records)]
                 # find the matching records
                 self.model.delete().where(matching_records).execute()
+
+                # if we are supposed to notify
+                if notify:
+                    # notify of the related delete
+                    await self.event_broker.send(
+                        action_type=get_crud_action('delete', self.model, status=success_status()),
+                        payload=ids
+                    )
 
 
         # pass the action handler

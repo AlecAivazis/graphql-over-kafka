@@ -1,5 +1,10 @@
 # local imports
-from nautilus.conventions.actions import get_crud_action, change_action_status
+from nautilus.conventions.actions import (
+    get_crud_action,
+    change_action_status,
+    success_status,
+    error_status
+)
 from nautilus.models.serializers import ModelSerializer
 
 def delete_handler(Model):
@@ -32,7 +37,7 @@ def delete_handler(Model):
                     # publish the success event
                     await service.event_broker.send(
                         body=payload,
-                        action_type=change_action_status(action_type, 'success')
+                        action_type=change_action_status(action_type, success_status())
                     )
 
             # if something goes wrong
@@ -42,7 +47,7 @@ def delete_handler(Model):
                     # publish the error as an event
                     await service.event_broker.send(
                         body=str(err),
-                        action_type=change_action_status(action_type, 'error')
+                        action_type=change_action_status(action_type, error_status())
                     )
                 # otherwise we aren't supposed to notify
                 else:
