@@ -82,6 +82,8 @@ class ModelService(Service):
 
         class ModelActionHandler(ActionHandler):
 
+            loop = self.loop
+
             async def handle_action(inner_self, action_type, payload):
                 """
                     The default action handler for a model service call

@@ -15,7 +15,7 @@ class GraphQLRequestHandler(AuthRequestHandler):
             # return a graphql response with the error
             return Response(body=json.dumps({
                 'errors': ['No query given.']
-            }).enocde())
+            }).encode())
 
         # handle the query
         return await self._handle_query(query)
@@ -28,7 +28,7 @@ class GraphQLRequestHandler(AuthRequestHandler):
             # return a graphql response with the error
             return Response(body=json.dumps({
                 'errors': ['No query given.']
-            }).enocde())
+            }).encode())
 
         # handle the query
         return await self._handle_query(query)
@@ -50,21 +50,18 @@ class GraphQLRequestHandler(AuthRequestHandler):
         print("handling graphql query: {}".format(query))
 
         # execute the query
-        result = schema.execute(
+        result = self.schema.execute(
             query,
             context_value=self.request_context
         )
 
-        # format the errors specially
-        errors = [str(error) for error in result.errors]
+        print(self.schema)
 
         # create a dictionary version of the result
-        result_dict = dict(data=result.data)
-        # if there are errors
-        if errors:
-            print(result.errors)
-            # add them to the result
-            result_dict['errors'] = ','.join(errors) or []
+        result_dict = dict(
+            data=result.data,
+            errors= [str(error) for error in result.errors]
+        )
 
         # send the response to the client and close its connection
         return Response(body=json.dumps(result_dict).encode())

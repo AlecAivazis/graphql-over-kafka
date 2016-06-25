@@ -45,7 +45,15 @@ class KafkaBroker:
         """
         self.loop.run_until_complete(self._consumer.stop())
         self.loop.run_until_complete(self._producer.stop())
-        self._consumer_task.cancel()
+
+        # attempt
+        try:
+            # to cancel the service
+            self._consumer_task.cancel()
+        # if there was no service
+        except AttributeError:
+            # keep going
+            pass
 
 
     async def send(self, message, channel=None, *args, **kwds):

@@ -206,10 +206,10 @@ class Service(metaclass=ServiceMetaClass):
             # the handler for the http server
             http_handler = self.app.make_handler()
             # create an asyncio server
-            self._http_server = loop.create_server(http_handler, host, port)
+            self._http_server = self.loop.create_server(http_handler, host, port)
 
             # grab the handler for the server callback
-            self._server_handler = loop.run_until_complete(server)
+            self._server_handler = self.loop.run_until_complete(self._http_server)
             # start the event loop
             self.loop.run_forever()
 
@@ -221,11 +221,11 @@ class Service(metaclass=ServiceMetaClass):
         # when we're done
         finally:
             try:
-                self._cleanup()
-
+                # clean up the service
+                self.cleanup()
             # if we end up closing before any variables get assigned
             except UnboundLocalError:
-                # just ignore it (nothing to close)
+                # just ignore it (there was nothing to close)
                 pass
 
             # close the event loop
@@ -237,20 +237,25 @@ class Service(metaclass=ServiceMetaClass):
             This function is called when the service has finished running
             regardless of intentionally or not.
         """
-        # bubble up
-        super().cleanup()
 
         # if an event broker has been created for this service
         if self.event_broker:
             # stop the event broker
             self.event_broker.stop()
+        # attempt
+        try:
+            # close the http server
+            self._server_handler.close()
+            self.loop.run_until_complete(self._server_handler.wait_closed())
+            self.loop.run_until_complete(self._http_handler.finish_connections(shutdown_timeout))
 
-        # close the http server
-        self._server_handler.close()
-        # clean up the server
-        self.loop.run_until_complete(self._server_handler.wait_closed())
+        # if there was no handler
+        except AttributeError:
+            # keep going
+            pass
+
+        # more cleanup
         self.loop.run_until_complete(self.app.shutdown())
-        self.loop.run_until_complete(self._http_handler.finish_connections(shutdown_timeout))
         self.loop.run_until_complete(self.app.cleanup())
 
 

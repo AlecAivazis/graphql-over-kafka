@@ -16,6 +16,7 @@ class TestUtil(unittest.TestCase):
 
         # create a graphql schema from the model
         schema = create_model_schema(TestModel)
+
         # the fields in the schema
         schema_fields = schema.introspect()['__schema']['types'][0]['fields']
         # make sure there is only one field
