@@ -43,9 +43,9 @@ def hydrate_action(serialized):
     return json.loads(serialized)
 
 
-def intialize_service_action(service=None, **kwds):
+def intialize_service_action(all_services=False, **kwds):
     # get the name of the service
-    name = service.name if service else '*'
+    name = 'service' if not all_services else '*'
     # treat initialization like a crud action for services
     return get_crud_action('init', name, **kwds)
 

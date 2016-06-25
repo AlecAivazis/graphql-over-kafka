@@ -4,7 +4,6 @@ import unittest
 import nautilus
 import nautilus.models as models
 from nautilus.api.helpers import create_model_schema
-from nautilus.api.helpers import summarize_service
 
 class TestUtil(unittest.TestCase):
 

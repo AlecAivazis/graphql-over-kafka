@@ -53,17 +53,13 @@ class TestUtil(unittest.TestCase):
 
 
     def test_can_generate_init_action_for_service(self):
-        # local imports
-        from nautilus import Service
-        # create a service to test
-        class TestService(Service): pass
-        # verify we got a string back
-        assert isinstance(intialize_service_action(TestService), str)
+        # verify we get a string back
+        assert isinstance(intialize_service_action(), str)
 
 
-    def tet_can_generate_init_action_catchall(self):
+    def test_can_generate_init_action_catchall(self):
         # create the action
-        action = intialize_service_action()
+        action = intialize_service_action(all_services=True)
         # verify we got a string back
         assert isinstance(action, str) and '*' in action
 

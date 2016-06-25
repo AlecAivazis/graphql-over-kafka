@@ -174,7 +174,6 @@ class Service(metaclass=ServiceMetaClass):
         return dict(name=self.name, **extra_fields)
 
 
-
     def init_routes(self):
         # for each route that was registered
         for route in self._routes:
