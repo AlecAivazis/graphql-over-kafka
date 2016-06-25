@@ -2,6 +2,7 @@
 import asyncio
 import uuid
 import json
+import re
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from kafka.common import KafkaError
 # local imports
@@ -73,7 +74,7 @@ class KafkaBroker:
 
         # a placeholder for the event consumer task
         self._consumer_task = None
-        print(self.initial_offset)
+
         # create a consumer instance
         self._consumer = AIOKafkaConsumer(
             self.consumer_channel,
@@ -169,6 +170,13 @@ class KafkaBroker:
                 message = hydrate_action(msg.value.decode())
                 # the correlation_id associated with this message
                 correlation_id = message.get('correlation_id')
+
+                # if there is a consumer pattern
+                if self.consumer_pattern:
+                    # if the action_type does not satisfy the pattern
+                    if not re.match(self.consumer_pattern, message['action_type']):
+                        # don't do anything
+                        continue
 
                 # if we know how to respond to this message
                 if correlation_id and correlation_id in self._request_handlers:
