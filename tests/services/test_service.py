@@ -75,7 +75,7 @@ class TestUtil(unittest.TestCase):
 
     def test_has_request_handler(self):
         # check the value of the internal attribute
-        assert issubclass(self.service()._api_request_handler_class, GraphQLRequestHandler), (
+        assert issubclass(self.service().api_request_handler_class, GraphQLRequestHandler), (
             "APIGateway did not have the right request handler class"
         )
 

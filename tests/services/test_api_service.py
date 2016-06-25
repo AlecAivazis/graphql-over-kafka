@@ -21,7 +21,7 @@ class TestUtil(unittest.TestCase):
         # import the module to test
         from nautilus.api.endpoints import APIQueryHandler
         # check the value of the internal attribute
-        assert self.service()._api_request_handler_class == APIQueryHandler, (
+        assert self.service().api_request_handler_class == APIQueryHandler, (
             "APIGateway did not have the right request handler class"
         )
 
