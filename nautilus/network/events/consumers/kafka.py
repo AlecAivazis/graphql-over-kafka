@@ -5,6 +5,8 @@ import json
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from kafka.common import KafkaError
 # local imports
+from nautilus.conventions.actions import serialize_action, hydrate_action
+
 
 
 class KafkaBroker:
@@ -56,15 +58,18 @@ class KafkaBroker:
             pass
 
 
-    async def send(self, message, channel=None, *args, **kwds):
+    async def send(self, payload='', action_type='', channel=None, **kwds):
         """
             This method sends a message over the kafka stream.
         """
         # use a custom channel if one was provided
         channel = channel or self.producer_channel
 
+        # serialize the action type for the
+        message = serialize_action(action_type=action_type, payload=payload, **kwds)
+
         # send the message
-        return await self._producer.send(channel, message, *args, **kwds)
+        return await self._producer.send(channel, message)
 
 
     async def ask(self, message, **kwds):
@@ -82,14 +87,9 @@ class KafkaBroker:
         # register the future's callback with the request handler
         self._request_handlers[correlation_id] = question_future.set_result
 
-        # the question dictionary
-        question = {
-            'correlation_id': correlation_id,
-            'body': message
-        }
 
         # publish the question
-        await self.send(json.dumps(question).encode(), **kwds)
+        await self.send(action_type='question', payload='hello', correlation_id=correlation_id)
 
         print('asking %s' % correlation_id)
 
@@ -100,7 +100,7 @@ class KafkaBroker:
     ## internal implementations
 
 
-    async def handle_message(self, msg, props):
+    async def handle_message(self, props, action_type=None, payload=None, **kwds):
         raise NotImplementedError()
 
 
@@ -113,16 +113,15 @@ class KafkaBroker:
                 msg = await self._consumer.getone()
 
                 # parse the message as json
-                message = json.loads(msg.value.decode())
+                message = hydrate_action(msg.value.decode())
                 # the correlation_id associated with this message
                 correlation_id = message.get('correlation_id')
-                # the body of the message
-                body = message['body']
 
                 # if we know how to respond to this message
                 if correlation_id and correlation_id in self._request_handlers:
-                    # pass the body to the handler
-                    self._request_handlers[correlation_id](body)
+                    # pass the message to the handler
+                    self._request_handlers[correlation_id](message)
+                    # register the action
                     print('handled %s' % correlation_id)
 
                 # otherwise there was no correlation id, pass it along to the general handlers
@@ -132,10 +131,12 @@ class KafkaBroker:
                         'correlation_id': correlation_id
                     }
                     # pass it to the handler
-                    await self.handle_message(body, message_props)
+                    await self.handle_message(
+                        props=message_props
+                        **message
+                    )
 
             # if something goes wrong
             except KafkaError as err:
+                # log the error
                 print("error while consuming message: ", err)
-
-

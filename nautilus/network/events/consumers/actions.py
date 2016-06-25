@@ -11,15 +11,10 @@ class ActionHandler(KafkaBroker):
     server = 'localhost:9092'
 
 
-    async def handle_action(self, action_type, payload):
+    async def handle_action(self, action_type, payload, props, **kwds):
         raise NotImplementedError()
 
 
-    async def handle_message(self, msg, props):
-        # parse the msg as json
-        message = json.loads(msg)
+    async def handle_message(self, **kwds):
         # call the user implemented function
-        return await self.handle_action(
-            action_type=message['type'],
-            payload=message['payload']
-        )
+        return await self.handle_action(**kwds)

@@ -1,3 +1,5 @@
+# external imports
+import json
 # local imports
 from nautilus.conventions.actions import get_crud_action, change_action_status
 from nautilus.models.serializers import ModelSerializer
@@ -15,14 +17,17 @@ def create_handler(Model):
         Returns:
             function(action_type, payload): The action handler for this model
     """
-    async def action_handler(service, action_type, payload, **kwds):
+    async def action_handler(service, action_type, payload, notify=True, **kwds):
 
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('create', Model):
 
             try:
+                # payload = json.loads(payload)
+
                 # for each required field
                 for requirement in Model.required_fields():
+
                     # save the name of the field
                     field_name = requirement.name
                     # ensure the value is in the payload
@@ -39,20 +44,27 @@ def create_handler(Model):
                 # save the new model instance
                 new_model.save()
 
-                # publish the scucess event
-                # await service.event_broker.send(
-                #     ModelSerializer().serialize(model),
-                    # channel=change_action_status(action_type, 'success')
-                # )
+                # if we need to tell someone about what happened
+                if notify:
+                    # publish the scucess event
+                    await service.event_broker.send(
+                        body=ModelSerializer().serialize(new_model),
+                        action_type=change_action_status(action_type, 'success')
+                    )
 
             # if something goes wrong
             except Exception as err:
-                pass
-                # publish the error as an event
-                # await service.event_broker.send(
-                #     str(err),
-                #     # channel=change_action_status(action_type, 'error')
-                # )
+                # if we need to tell someone about what happened
+                if notify:
+                    # publish the error as an event
+                    await service.event_broker.send(
+                        body=str(err),
+                        action_type=change_action_status(action_type, 'error')
+                    )
+                # otherwise we aren't supposed to notify
+                else:
+                    # raise the exception normally
+                    raise err
 
 
 

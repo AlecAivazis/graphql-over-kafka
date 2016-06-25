@@ -1,11 +1,11 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 # local imports
 import nautilus
 import nautilus.models as models
 import nautilus.network.events.actionHandlers as action_handlers
-from ..util import async_test
+from ..util import async_test, Mock
 
 class TestUtil(unittest.TestCase):
 
@@ -26,6 +26,7 @@ class TestUtil(unittest.TestCase):
     def tearDown(self):
         nautilus.db.drop_table(self.model)
 
+
     @async_test
     async def test_create_action_handler(self):
         # create a `create` action handler
@@ -41,7 +42,8 @@ class TestUtil(unittest.TestCase):
         # the number of matching records before we trigger the handler
         assert record_query.count() == 0
         # call the action handler
-        await action_handler(MagicMock(), action_type, payload, properties={})
+        await action_handler(Mock(), action_type=action_type, payload=payload, notify=False)
+
         # make sure there is now a matching record
         assert record_query.count() == 1, (
             "Record was not created by action handler"
@@ -68,7 +70,7 @@ class TestUtil(unittest.TestCase):
         # the query for the number of matching records
         record_query = self.model.select().where(self.model.id==record.id)
         # fire the action handler
-        await action_handler(MagicMock(), action_type, payload, properties={})
+        await action_handler(Mock(), action_type=action_type, payload=payload, notify=False)
         # make sure there aren't any queries
         assert record_query.count() == 0, (
             "There were records matching query after it shoudl have been removed."
@@ -95,7 +97,7 @@ class TestUtil(unittest.TestCase):
         payload = dict(id=record.id, first_name='bar')
 
         # fire the action handler
-        await action_handler(MagicMock(), action_type, payload, properties={})
+        await action_handler(Mock(), action_type=action_type, payload=payload, notify=False)
 
         # make sure the record was changed
         assert record_query.get().first_name == 'bar', (

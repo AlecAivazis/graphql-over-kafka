@@ -38,6 +38,23 @@ class TestUtil(unittest.TestCase):
         )
 
 
+    def test_can_summarize_service(self):
+        # the service to summarize
+        class MockService(nautilus.Service):
+            pass
+        # the target summary
+        target = {
+            'name': 'mockService',
+        }
+
+        # summarize the service
+        summarized = summarize_service(MockService)
+        # make sure the names match up
+        assert target['name'] == summarized['name'], (
+            "Summarzied service did not have the right name."
+        )
+
+
     def test_can_summarize_model_service(self):
         # a model to test
         class MockModel(nautilus.models.BaseModel):

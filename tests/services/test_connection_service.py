@@ -176,7 +176,11 @@ class TestUtil(unittest.TestCase):
         # instantiate an action handler to test
         handler = self.service.action_handler()
         # fire the action
-        await handler.handle_action(action_type, payload)
+        await handler.handle_action(
+            action_type=action_type,
+            payload=payload,
+            notify=False
+        )
 
         # make sure the model can't be found
         self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
@@ -193,7 +197,11 @@ class TestUtil(unittest.TestCase):
         # create an instance of the action handler
         handler = self.service.action_handler()
         # fire a create action
-        await handler.handle_action(action_type, payload)
+        await handler.handle_action(
+            action_type=action_type,
+            payload=payload,
+            notify=False
+        )
         # the query to find a matching model
         matching_model = self.service1_value == 'foo'
         # make sure the created record was found and save the id
@@ -206,8 +214,9 @@ class TestUtil(unittest.TestCase):
         handler = self.service.action_handler()
         # call the service action handler
         await handler.handle_action(
-            conventions.get_crud_action('update', self.model),
-            payload
+            action_type=conventions.get_crud_action('update', self.model),
+            payload=payload,
+            notify=False
         )
         # check that a model matches
         self.model.get(self.service1_value == 'bars')
@@ -217,8 +226,9 @@ class TestUtil(unittest.TestCase):
         handler = self.service.action_handler()
         # call the service action handler
         await handler.handle_action(
-            conventions.get_crud_action('delete', self.model),
-            self.model_id
+            action_type=conventions.get_crud_action('delete', self.model),
+            payload=self.model_id,
+            notify=False
         )
         # expect an error
         self.assertRaises(Exception, self.model.get, self.model_id)

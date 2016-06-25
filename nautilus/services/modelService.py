@@ -84,12 +84,12 @@ class ModelService(Service):
 
             loop = self.loop
 
-            async def handle_action(inner_self, action_type, payload):
+            async def handle_action(inner_self, action_type, payload, **kwds):
                 """
                     The default action handler for a model service call
                 """
                 # call the handler
-                await handler(self, action_type, payload)
+                await handler(self, action_type=action_type, payload=payload, **kwds)
 
         return ModelActionHandler
 

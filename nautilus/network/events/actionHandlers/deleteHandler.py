@@ -18,7 +18,7 @@ def delete_handler(Model):
     # necessary imports
     from nautilus.database import db
 
-    async def action_handler(service, action_type, payload, **kwds):
+    async def action_handler(service, action_type, payload, notify=True, **kwds):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('delete', Model):
             try:
@@ -27,20 +27,27 @@ def delete_handler(Model):
                 # remove the model instance
                 model_query.get().delete_instance()
 
-                # publish the scucess event
-                # await service.event_broker.send(
-                #     ModelSerializer().serialize(model),
-                #     # channel=change_action_status(action_type, 'success')
-                # )
+                # if we need to tell someone about what happened
+                if notify:
+                    # publish the success event
+                    await service.event_broker.send(
+                        body=payload,
+                        action_type=change_action_status(action_type, 'success')
+                    )
 
             # if something goes wrong
             except Exception as err:
-                pass
-                # publish the error as an event
-                # await service.event_broker.send(
-                #     str(err),
-                #     # channel=change_action_status(action_type, 'error')
-                # )
+                # if we need to tell someone about what happened
+                if notify:
+                    # publish the error as an event
+                    await service.event_broker.send(
+                        body=str(err),
+                        action_type=change_action_status(action_type, 'error')
+                    )
+                # otherwise we aren't supposed to notify
+                else:
+                    # raise the exception normally
+                    raise err
 
 
     # return the handler

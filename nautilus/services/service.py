@@ -2,6 +2,7 @@
 import asyncio
 import uvloop
 import jinja2
+import json
 import aiohttp.web
 import aiohttp_jinja2
 from aiohttp_session import session_middleware
@@ -115,8 +116,6 @@ class Service(metaclass=ServiceMetaClass):
         self._server_handler = None
 
         # cleanup
-        # announce the service
-        self.loop.run_until_complete(self.announce())
 
 
     def init_app(self):
@@ -152,7 +151,16 @@ class Service(metaclass=ServiceMetaClass):
         """
             This method is used to announce the existence of the service
         """
+        from nautilus.api.helpers import summarize_service
 
+        # serialize the summary of the model
+        serialized = json.dumps(summarize_service(self.__class__))
+
+        # send a serialized event
+        self.event_broker.send(
+            payload=serialized,
+            action_type='register.service.pending'
+        )
 
 
     def init_routes(self):
@@ -201,6 +209,8 @@ class Service(metaclass=ServiceMetaClass):
             if self.event_broker:
                 # start the broker
                 self.event_broker.start()
+                # announce the service
+                self.loop.run_until_complete(self.announce())
 
             # the handler for the http server
             http_handler = self.app.make_handler()
@@ -311,3 +321,10 @@ class Service(metaclass=ServiceMetaClass):
 
         # return the decorator
         return decorator
+
+    def _json(self):
+        # local imports
+        from nautilus.conventions.api import summarize_service
+        # return a summary of the service
+        return summarize_service(self)
+

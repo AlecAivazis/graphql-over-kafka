@@ -1,7 +1,8 @@
 """
     This file is responsible for centralizing the action conventions used in nautilus.
 """
-
+# external imports
+import json
 # local imports
 from .models import get_model_string
 
@@ -18,8 +19,44 @@ def change_action_status(action_type, new_status):
     return "%s.%s" % ('.'.join(action_type.split('.')[:-1]) , new_status)
 
 
+# TODO: check that it the args actually implement Serializable
+def serialize_action(action_type, payload, **extra_fields):
+    """
+        This function returns the conventional form of the actions.
+    """
+    action_dict =  dict(
+        action_type=action_type,
+        payload=payload
+    )
+
+    # add the extra fields
+    action_dict.update(extra_fields)
+    # return a serializable version
+    return json.dumps(action_dict)
+
+
+def hydrate_action(serialized):
+    """
+        This function takes a serialized action and provides the primitive
+        data structure.
+    """
+    return json.loads(serialized)
+
+
 def intialize_service_action(service=None, **kwds):
     # get the name of the service
     name = service.name if service else '*'
     # treat initialization like a crud action for services
     return get_crud_action('init', name, **kwds)
+
+
+def success_status():
+    return 'success'
+
+
+def error_status():
+    return 'error'
+
+
+def pending_status():
+    return 'pending'

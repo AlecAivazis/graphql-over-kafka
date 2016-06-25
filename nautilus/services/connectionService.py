@@ -78,13 +78,13 @@ class ConnectionService(ModelService):
     def action_handler(service):
 
         class ConnectionActionHandler(super().action_handler):
-            async def handle_action(self, action_type, payload):
+            async def handle_action(self, action_type, payload, **kwds):
                 # a connection service should listen for deletes on linked services
                 # connected_action_handlers = [self._create_linked_handler(model)
                 #                              for model in self._service_models]
 
                 # bubble up
-                await super().handle_action(action_type, payload)
+                await super().handle_action(action_type, payload, **kwds)
 
                 # for each model we care about
                 for model in service._service_models:

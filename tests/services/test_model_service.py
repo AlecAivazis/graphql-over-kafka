@@ -1,5 +1,6 @@
 # external imports
 import unittest
+import json
 # local imports
 import nautilus
 from nautilus import conventions
@@ -82,36 +83,40 @@ class TestUtil(unittest.TestCase):
 
     @async_test
     async def test_action_handler_supports_crud(self):
-        await self._verify_create_action_handler()
-        await self._verify_update_action_handler()
-        await self._verify_delete_action_handler()
+        model_id = await self._verify_create_action_handler()
+        await self._verify_update_action_handler(model_id)
+        await self._verify_delete_action_handler(model_id)
 
 
     async def _verify_create_action_handler(self):
         # fire a create action
         await self.action_handler.handle_action(
-            conventions.get_crud_action('create', self.model),
-            dict(name='foo'),
+            action_type=conventions.get_crud_action('create', self.model),
+            payload=dict(name='foo'),
+            notify=False
         )
+
         # make sure the created record was found and save the id
-        self.model_id = self.model.get(self.model.name == 'foo').id
+        return self.model.get(self.model.name == 'foo').id
 
 
-    async def _verify_update_action_handler(self):
+    async def _verify_update_action_handler(self, model_id):
         # fire an update action
         await self.action_handler.handle_action(
-            conventions.get_crud_action('update', self.model),
-            dict(id=self.model_id, name='barz'),
+            action_type=conventions.get_crud_action('update', self.model),
+            payload=dict(id=model_id, name='barz'),
+            notify=False
         )
         # check that a model matches
         self.model.get(self.model.name == 'barz')
 
 
-    async def _verify_delete_action_handler(self):
+    async def _verify_delete_action_handler(self, model_id):
         # fire a delete action
         await self.action_handler.handle_action(
-            conventions.get_crud_action('delete', self.model),
-            payload=self.model_id
+            action_type=conventions.get_crud_action('delete', self.model),
+            payload=model_id,
+            notify=False
         )
         # expect an error
-        self.assertRaises(Exception, self.model.get, self.model_id)
+        self.assertRaises(Exception, self.model.get, model_id)
