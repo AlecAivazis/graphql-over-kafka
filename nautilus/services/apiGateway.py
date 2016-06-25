@@ -52,7 +52,7 @@ class APIGateway(Service):
             self.add_http_endpoint(**route)
 
         # add the schema reference to graphql handler
-        self.api_request_handler_class.schema = self.schema
+        self.api_request_handler_class.service = self
 
         # add a cors resource
         api_resource = self.cors.add(self.app.router.add_resource("/"))
