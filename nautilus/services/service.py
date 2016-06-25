@@ -161,15 +161,10 @@ class Service(metaclass=ServiceMetaClass):
         """
             This method is used to announce the existence of the service
         """
-        from nautilus.api.helpers import summarize_service
-        print('announcing')
-        # serialize the summary of the model
-        serialized = json.dumps(summarize_service(self.__class__))
-
         # send a serialized event
         await self.event_broker.send(
             action_type=intialize_service_action(),
-            payload=serialized
+            payload=json.dumps(type(self).summarize())
         )
 
 
@@ -342,9 +337,8 @@ class Service(metaclass=ServiceMetaClass):
         # return the decorator
         return decorator
 
+
     def _json(self):
-        # local imports
-        from nautilus.conventions.api import summarize_service
         # return a summary of the service
-        return summarize_service(self)
+        return self.summarize()
 

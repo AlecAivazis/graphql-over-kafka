@@ -1,3 +1,2 @@
 from .create_model_schema import create_model_schema
 from .fields_for_model import fields_for_model
-from .summarize_service import summarize_service
