@@ -288,7 +288,6 @@ class Service(metaclass=ServiceMetaClass):
             Args:
                 url (str): the url to be handled by the request_handler
                 request_handler (nautilus.network.RequestHandler): The request handler
-                config (dict): A configuration dictionary to pass to the handler
         """
         self.app.router.add_route('*', url, request_handler)
 

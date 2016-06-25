@@ -39,11 +39,8 @@ class APIGateway(Service):
                     schema = schema
     """
     name = api_gateway_name()
+    api_request_handler_class = APIQueryHandler
 
-
-    @property
-    def _api_request_handler_class(self):
-        return APIQueryHandler
 
     def init_routes(self):
         # add the cors handler
@@ -55,13 +52,13 @@ class APIGateway(Service):
             self.add_http_endpoint(**route)
 
         # add the schema reference to graphql handler
-        self._api_request_handler_class.schema = self.schema
+        self.api_request_handler_class.schema = self.schema
 
         # add a cors resource
         api_resource = self.cors.add(self.app.router.add_resource("/"))
         # add the root api handler
         self.cors.add(
-            api_resource.add_route("GET", self._api_request_handler_class),
+            api_resource.add_route("GET", self.api_request_handler_class),
             {
                 "": aiohttp_cors.ResourceOptions(
                     allow_credentials=True,
