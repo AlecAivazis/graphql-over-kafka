@@ -140,7 +140,6 @@ class KafkaBroker:
         # register the future's callback with the request handler
         self._request_handlers[correlation_id] = question_future.set_result
 
-
         # publish the question
         await self.send(correlation_id=correlation_id, **kwds)
 

@@ -80,9 +80,8 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_has_conventional_name(self):
-        assert self.service.name == \
-                    service_conventions.connection_service_name(*self.base_models), (
+    def test_has_correct_name(self):
+        assert self.service.name == 'testConnectionService', (
             "Connection service did not have the correct name."
         )
 
@@ -193,17 +192,23 @@ class TestUtil(unittest.TestCase):
             'name': 'testConnectionService',
             'connection': {
                 'from': {
-                    'service': 'testService1'
+                    'service': 'modelTest1'
                 },
                 'to': {
-                    'service': 'testService2'
+                    'service': 'modelTest2'
                 }
             },
-            'fields': [],
         }
-        # make sure it matches the result
-        assert type(self.service).summarize() == target, (
-            "Connection service could not be correctly summarized."
+        # summarize the service
+        summarized = self.service.summarize()
+
+        # make sure the name matches
+        assert summarized['name'] == target['name'], (
+            "Summarized connection service doesn't have the right name."
+        )
+        # make sure the connection info lines up
+        assert summarized['connection'] == target['connection'], (
+            "Summarized connection info was incorrect."
         )
 
 

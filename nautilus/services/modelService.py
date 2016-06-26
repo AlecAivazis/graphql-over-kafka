@@ -6,6 +6,7 @@ from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.network.events.consumers import ActionHandler
 from nautilus.contrib.graphene_peewee import convert_peewee_field
 from .service import Service
+from nautilus.conventions.api import model_service_node_name
 
 
 class ModelService(Service):
@@ -106,7 +107,11 @@ class ModelService(Service):
         nautilus.database.init_db(db_url)
 
 
-    @classmethod
+    @property
+    def api_node_name(self):
+        return model_service_node_name(self)
+
+
     def summarize(self, **extra_fields):
         # the fields for the service's model
         model_fields = {field.name: field for field in list(self.model.fields())} \

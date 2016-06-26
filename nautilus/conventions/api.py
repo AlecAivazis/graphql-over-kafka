@@ -12,24 +12,14 @@ def root_query(*service):
 
 def service_node_name(service):
     """ This function returns the name of the api node that represents the service """
-    # import the service types
-    from nautilus import ModelService, ConnectionService
-    # if the service is a connection
-    if issubclass(service, ConnectionService):
-
-        return connection_service_node_name(service)
-    # otherwise the service could be a model service
-    elif issubclass(service, ModelService):
-        # return the model service node convention
-        return model_service_node_name(service)
-
-    raise ValueError("Cannot provide name for service: %s" % service)
+    # just use the service name
+    return normalize_string(service.name)
 
 def model_service_node_name(service):
     return normalize_string(service.name)
 
 def connection_service_node_name(service):
-    return normalize_string(service.__name__)
+    return normalize_string(service.name)
 
 def service_type_name(service_string):
     return normalize_string(service_string)

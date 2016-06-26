@@ -87,7 +87,7 @@ class TestUtil(unittest.TestCase):
         }
 
         # summarize the service
-        summarized = self.service.summarize()
+        summarized = self.service().summarize()
         # make sure the names match up
         assert target['name'] == summarized['name'], (
             "Summarzied service did not have the right name."

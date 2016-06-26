@@ -16,6 +16,7 @@ from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
+from nautilus.conventions.api import service_node_name
 from nautilus.conventions.actions import intialize_service_action
 
 # enable uvloop for increased performance
@@ -166,14 +167,18 @@ class Service(metaclass=ServiceMetaClass):
         # send a serialized event
         await self.event_broker.send(
             action_type=intialize_service_action(),
-            payload=json.dumps(type(self).summarize())
+            payload=json.dumps(self.summarize())
         )
 
 
-    @classmethod
     def summarize(self, **extra_fields):
         # return the summary
-        return dict(name=self.name, **extra_fields)
+        return dict(name=str(self.api_node_name), **extra_fields)
+
+
+    @property
+    def api_node_name(self):
+        return service_node_name(self)
 
 
     def init_routes(self):

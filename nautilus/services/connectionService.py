@@ -70,7 +70,7 @@ class ConnectionService(ModelService):
         # create the service
         super().__init__(
             model=create_connection_model(self._service_models),
-            name=connection_service_name(*self._service_models),
+            name=connection_service_name(service=self),
             **kwargs
         )
 
@@ -98,22 +98,28 @@ class ConnectionService(ModelService):
         return ConnectionActionHandler
 
 
-    @classmethod
+    @property
+    def api_node_name(self):
+        return connection_service_node_name(self)
+
+
     def summarize(self, **extra_fields):
         # start with the default summary
-        return {
-            **super().summarize(),
-            'name': connection_service_node_name(self),
-            'connection': {
-                'from': {
-                    'service': service_node_name(self.from_service),
+        try:
+            return {
+                **super().summarize(),
+                'connection': {
+                    'from': {
+                        'service': self.from_service().api_node_name,
+                    },
+                    'to': {
+                        'service': self.to_service().api_node_name,
+                    }
                 },
-                'to': {
-                    'service': service_node_name(self.to_service),
-                }
-            },
-            **extra_fields
-        }
+                **extra_fields
+            }
+        except Exception as e:
+            print(e)
 
 
     def _create_linked_handler(self, model):

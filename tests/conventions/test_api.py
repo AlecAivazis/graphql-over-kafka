@@ -36,6 +36,10 @@ class TestUtil(unittest.TestCase):
         except ValueError:
             # test passed
             pass
+        # or an attribute error
+        except AttributeError:
+            # test passed
+            pass
 
 
     def test_create_model_service_node_name(self):
