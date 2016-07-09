@@ -37,6 +37,7 @@ def read_handler(Model, name=None, **kwds):
                     'data': {key:value for key,value in resolved.data.items()},
                     'errors': resolved.errors
                 })
+                print(response)
 
                 # publish the success event
                 await service.event_broker.send(

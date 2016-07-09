@@ -2,7 +2,7 @@
 import unittest
 # local imports
 import nautilus.models as models
-
+from nautilus.conventions.services import model_service_name
 
 class TestUtil(unittest.TestCase):
     """
@@ -14,8 +14,8 @@ class TestUtil(unittest.TestCase):
         import nautilus
 
         # models to test
-        Model1 = 'Model1'
-        Model2 = 'Model2'
+        Model1 = model_service_name('Model1')
+        Model2 = model_service_name('Model2')
 
         class TestConnectionService(nautilus.ConnectionService):
             to_service = (Model1,)

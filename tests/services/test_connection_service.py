@@ -3,6 +3,7 @@ import unittest
 # local imports
 from nautilus import conventions
 from nautilus.conventions import services as service_conventions
+from nautilus.conventions.services import model_service_name
 import nautilus
 from ..util import Mock, async_test
 
@@ -32,7 +33,7 @@ class TestUtil(unittest.TestCase):
         self.model.create_table(True)
 
         # save the attribute we'll use to test against
-        self.service1_value = getattr(self.model, self.service1)
+        self.service1_value = getattr(self.model, model_service_name(self.service1))
 
 
     def tearDown(self):
@@ -57,8 +58,8 @@ class TestUtil(unittest.TestCase):
         # the target field names
         target_fields = {
             'id',
-            self.service1,
-            self.service2
+            model_service_name(self.service1),
+            model_service_name(self.service2)
         }
         # for each model managed by this service
         assert model_fields == target_fields, (
@@ -123,8 +124,8 @@ class TestUtil(unittest.TestCase):
     async def test_listens_for_related_deletes(self):
         # the model connecting the two
         connection_model = self.model()
-        setattr(connection_model, self.service1, 1)
-        setattr(connection_model, self.service2, 1)
+        setattr(connection_model, model_service_name(self.service1), 1)
+        setattr(connection_model, model_service_name(self.service2), 1)
         connection_model.save()
 
         # make sure the connection model can be found
@@ -187,8 +188,8 @@ class TestUtil(unittest.TestCase):
     async def _verify_action_handler_create(self):
         action_type = conventions.get_crud_action('create', self.service.model)
         payload = {
-            self.service1: 'foo',
-            self.service2: 'bar'
+            model_service_name(self.service1): 'foo',
+            model_service_name(self.service2): 'bar'
         }
         # create an instance of the action handler
         handler = self.service.action_handler()
@@ -206,7 +207,7 @@ class TestUtil(unittest.TestCase):
 
 
     async def _verify_action_handler_update(self):
-        payload = {'id':self.model_id, self.service1: 'bars'}
+        payload = {'id':self.model_id, model_service_name(self.service1): 'bars'}
         # create an instance of the action handler
         handler = self.service.action_handler()
         # call the service action handler

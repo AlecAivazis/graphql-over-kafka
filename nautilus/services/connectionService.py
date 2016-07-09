@@ -123,7 +123,7 @@ class ConnectionService(ModelService):
                 # the id of the deleted model
                 related_id = payload['id']
                 # the query for matching fields
-                matching_records = getattr(self.model, model) == related_id
+                matching_records = getattr(self.model, model_service_name(model)) == related_id
                 ids = [model.id for model in self.model.filter(matching_records)]
                 # find the matching records
                 self.model.delete().where(matching_records).execute()
