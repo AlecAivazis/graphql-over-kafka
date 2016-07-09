@@ -19,18 +19,10 @@ def api_gateway_name():
     return "api"
 
 
-
-
-def connection_service_name(service=None, *args):
+def connection_service_name(service, *args):
     ''' the name of a service that manages the connection between services '''
-    # if there is a single service
-    if service:
-        # return its name
-        return normalize_string(type(service).__name__)
+    # if the service is a string
+    if isinstance(service, str):
+        return service
 
-    # the list of services to connect
-    services = [service if isinstance(service, str) \
-                        else get_model_string(service) for service in args]
-
-    # combine the two names into the connection name
-    return "{}_connection".format('_'.join(sorted(services)))
+    return normalize_string(type(service).__name__)

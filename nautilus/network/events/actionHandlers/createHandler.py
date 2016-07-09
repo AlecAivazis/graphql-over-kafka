@@ -23,10 +23,9 @@ def create_handler(Model, name=None, **kwds):
             function(action_type, payload): The action handler for this model
     """
     async def action_handler(service, action_type, payload, props, notify=True, **kwds):
-        print(name)
         # if the payload represents a new instance of `Model`
         if action_type == get_crud_action('create', name or Model):
-
+            # print('handling create for ' + name or Model)
             try:
                 # the props of the message
                 message_props = {}
@@ -47,7 +46,7 @@ def create_handler(Model, name=None, **kwds):
                         raise ValueError(
                             "Required field not found in payload: %s" %field_name
                         )
-
+                # print("attemptingt to create %s" % Model)
                 # create a new model
                 new_model = Model(**payload)
 

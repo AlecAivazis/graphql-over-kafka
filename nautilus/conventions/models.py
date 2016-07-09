@@ -9,4 +9,5 @@ def get_model_string(model):
     """
         This function returns the conventional action designator for a given model.
     """
-    return model if isinstance(model, str) else normalize_string(model.__name__)
+    name = model if isinstance(model, str) else model.__name__
+    return normalize_string(name)

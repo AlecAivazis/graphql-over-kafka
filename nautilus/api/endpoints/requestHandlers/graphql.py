@@ -54,7 +54,7 @@ class GraphQLRequestHandler(AuthRequestHandler):
 
         # log the request
         print("handling graphql query: {}".format(query))
-
+        print(self.schema)
         # execute the query
         result = self.schema.execute(
             query,

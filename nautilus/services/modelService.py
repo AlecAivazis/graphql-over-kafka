@@ -80,6 +80,7 @@ class ModelService(Service):
     def action_handler(self):
         # create a crud handler for the model
         handler = crud_handler(self.model, name=self.name)
+
         class ModelActionHandler(ActionHandler):
 
             loop = self.loop
@@ -88,7 +89,6 @@ class ModelService(Service):
                 """
                     The default action handler for a model service call
                 """
-                print("handling - " + action_type)
                 # call the handler
                 await handler(self, action_type=action_type, payload=payload, props=props,**kwds)
 

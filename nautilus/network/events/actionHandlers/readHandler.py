@@ -16,13 +16,12 @@ def read_handler(Model, name=None, **kwds):
         Returns:
             function(type, payload): The action handler for this model
     """
-    print(get_crud_action('read', Model))
     async def action_handler(service, action_type, payload, props, **kwds):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('read', name or Model):
             try:
                 print("encountered read action")
-
+                print(payload)
                 # the props of the message
                 message_props = {}
                 # if there was a correlation id in the request

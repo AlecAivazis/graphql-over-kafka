@@ -59,23 +59,14 @@ class TestUtil(unittest.TestCase):
 
     def test_connection_service_name(self):
         # two models to test
-        class TestServiceModel1(nautilus.models.BaseModel):
-            name = nautilus.models.fields.CharField()
-        class TestServiceModel2(nautilus.models.BaseModel):
-            name = nautilus.models.fields.CharField()
-
-        # a service out of each
-        class TestService1(nautilus.ModelService):
-            model = TestServiceModel1
-        class TestService2(nautilus.ModelService):
-            model = TestServiceModel2
 
         # a connection service for both
         class Connection(nautilus.ConnectionService):
-            to_service = TestService1
-            from_service = TestService2
-
+            to_service = ('TestService1',)
+            from_service = ('TestService2',)
+        print('vvvvvvv')
+        print(conventions.connection_service_name(Connection()))
         # make sure we could make a name
-        assert isinstance(conventions.connection_service_name(Connection), str), (
+        assert isinstance(conventions.connection_service_name(Connection()), str), (
             "Could not generate name for connection service"
         )

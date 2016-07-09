@@ -15,43 +15,28 @@ class TestUtil(unittest.TestCase):
         # create a spy we can check for later
         self.spy = Mock()
 
-        class ModelTest1(nautilus.models.BaseModel):
-            name = nautilus.models.fields.CharField()
-
-        class ModelTest2(nautilus.models.BaseModel):
-            name = nautilus.models.fields.CharField()
-
-        class TestService1(nautilus.ModelService):
-            model = ModelTest1
-
-        class TestService2(nautilus.ModelService):
-            model = ModelTest2
+        # save the names of the connected services to the suite
+        self.service1 = 'TestService1'
+        self.service2 = 'TestService2'
 
         class TestConnectionService(nautilus.ConnectionService):
-            from_service = TestService1
-            to_service = TestService2
+            from_service = (self.service1,)
+            to_service = (self.service2,)
 
-        # save the class records to the suite
-        self.service1 = TestService1
-        self.service2 = TestService2
         self.services = [self.service1, self.service2]
-        self.base_models = [ModelTest1, ModelTest2]
+
         self.service = TestConnectionService()
         self.model = self.service.model
 
         # create the test table
         self.model.create_table(True)
-        self.service1.model.create_table(True)
-        self.service2.model.create_table(True)
 
         # save the attribute we'll use to test against
-        self.service1_value = getattr(self.model, self.service1.model.model_name.lower())
+        self.service1_value = getattr(self.model, self.service1)
 
 
     def tearDown(self):
         self.model.drop_table()
-        self.service1.model.drop_table()
-        self.service2.model.drop_table()
 
 
     def test_must_provide_services(self):
@@ -67,12 +52,13 @@ class TestUtil(unittest.TestCase):
 
     def test_connection_model(self):
         # the fields of the underlying service model
-        model_fields = {field.name for field in self.service.get_models()[0].fields()}
+        model_fields = {field.name for field in self.service.model.fields()}
+
         # the target field names
         target_fields = {
             'id',
-            self.service1.model.model_name.lower(),
-            self.service2.model.model_name.lower()
+            self.service1,
+            self.service2
         }
         # for each model managed by this service
         assert model_fields == target_fields, (
@@ -90,10 +76,8 @@ class TestUtil(unittest.TestCase):
         assert hasattr(self.service, 'schema') and self.service.schema, (
             "Model Service did not have a schema."
         )
-        # the name of the service model
-        model_name = self.service1.model.model_name.lower()
         # the field to query
-        field_name = model_name[0].lower() + model_name[1:]
+        field_name = service_conventions.model_service_name(self.service1)
         # the query to test the schema
         query = """
             query {
@@ -102,7 +86,6 @@ class TestUtil(unittest.TestCase):
                 }
             }
         """ % field_name
-
 
         parsed_query = self.service.schema.execute(query)
         # make sure there are no errors
@@ -122,21 +105,12 @@ class TestUtil(unittest.TestCase):
 
     def test_connecting_models_with_same_name(self):
         def create_false_service():
-            # create one model
-            class TestServiceModel(nautilus.models.BaseModel):
-                name = nautilus.models.fields.CharField()
-
-            # and two services based off of the same model (have same model_name)
-            class TestService1(nautilus.ModelService):
-                model = TestServiceModel
-            class TestService2(nautilus.ModelService):
-                model = TestServiceModel
 
             # create a conenction based on those two services
             class Connection(nautilus.ConnectionService):
                 additional_action_handler = self.spy
-                from_service = TestService1
-                to_service = TestService2
+                from_service = ('TestService1',)
+                to_service = ('TestService1',)
 
             # instantiate the connection
             Connection()
@@ -147,30 +121,24 @@ class TestUtil(unittest.TestCase):
 
     @async_test
     async def test_listens_for_related_deletes(self):
-        # make an instance of model1 to connect
-        model1 = self.service1.model(name='foo')
-        model1.save()
-        # make an instance of model2 to connect
-        model2 = self.service2.model(name='bar')
-        model2.save()
         # the model connecting the two
         connection_model = self.model()
-        setattr(connection_model, self.service1.model.model_name.lower(), model1.id)
-        setattr(connection_model, self.service2.model.model_name.lower(), model2.id)
+        setattr(connection_model, self.service1, 1)
+        setattr(connection_model, self.service2, 1)
         connection_model.save()
 
         # make sure the connection model can be found
-        assert self.model.get(self.service1_value == model1.id), (
+        assert self.model.get(self.service1_value == 1), (
             "Test record could not be created before deleting."
         )
 
         # the action data for a related delete
         action_type = conventions.get_crud_action(
             'delete',
-            self.service1.model,
+            self.service1,
             status='success'
         )
-        payload = dict(id=model1.id)
+        payload = dict(id=1)
 
         # instantiate an action handler to test
         handler = self.service.action_handler()
@@ -183,7 +151,7 @@ class TestUtil(unittest.TestCase):
         )
 
         # make sure the model can't be found
-        self.assertRaises(Exception, self.model.get, self.service1_value == model1.id)
+        self.assertRaises(Exception, self.model.get, self.service1_value == 1)
 
 
     def test_can_summarize(self):
@@ -193,10 +161,10 @@ class TestUtil(unittest.TestCase):
             'name': 'testConnectionService',
             'connection': {
                 'from': {
-                    'service': 'modelTest1'
+                    'service': 'testService1'
                 },
                 'to': {
-                    'service': 'modelTest2'
+                    'service': 'testService2'
                 }
             },
         }
@@ -219,8 +187,8 @@ class TestUtil(unittest.TestCase):
     async def _verify_action_handler_create(self):
         action_type = conventions.get_crud_action('create', self.service.model)
         payload = {
-            self.service1.model.model_name.lower(): 'foo',
-            self.service2.model.model_name.lower(): 'bar'
+            self.service1: 'foo',
+            self.service2: 'bar'
         }
         # create an instance of the action handler
         handler = self.service.action_handler()
@@ -238,7 +206,7 @@ class TestUtil(unittest.TestCase):
 
 
     async def _verify_action_handler_update(self):
-        payload = {'id':self.model_id, self.service1.model.model_name.lower(): 'bars'}
+        payload = {'id':self.model_id, self.service1: 'bars'}
         # create an instance of the action handler
         handler = self.service.action_handler()
         # call the service action handler
