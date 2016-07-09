@@ -130,6 +130,7 @@ class TestUtil(unittest.TestCase):
         await self.action_handler.handle_action(
             action_type=conventions.get_crud_action('create', self.model),
             payload=dict(name='foo'),
+            props={},
             notify=False
         )
 
@@ -142,6 +143,7 @@ class TestUtil(unittest.TestCase):
         await self.action_handler.handle_action(
             action_type=conventions.get_crud_action('update', self.model),
             payload=dict(id=model_id, name='barz'),
+            props={},
             notify=False
         )
         # check that a model matches
@@ -153,6 +155,7 @@ class TestUtil(unittest.TestCase):
         await self.action_handler.handle_action(
             action_type=conventions.get_crud_action('delete', self.model),
             payload=model_id,
+            props={},
             notify=False
         )
         # expect an error

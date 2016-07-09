@@ -178,6 +178,7 @@ class TestUtil(unittest.TestCase):
         await handler.handle_action(
             action_type=action_type,
             payload=payload,
+            props={},
             notify=False
         )
 
@@ -227,6 +228,7 @@ class TestUtil(unittest.TestCase):
         await handler.handle_action(
             action_type=action_type,
             payload=payload,
+            props={},
             notify=False
         )
         # the query to find a matching model
@@ -242,6 +244,7 @@ class TestUtil(unittest.TestCase):
         # call the service action handler
         await handler.handle_action(
             action_type=conventions.get_crud_action('update', self.model),
+            props={},
             payload=payload,
             notify=False
         )
@@ -255,6 +258,7 @@ class TestUtil(unittest.TestCase):
         await handler.handle_action(
             action_type=conventions.get_crud_action('delete', self.model),
             payload=self.model_id,
+            props={},
             notify=False
         )
         # expect an error

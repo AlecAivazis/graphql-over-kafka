@@ -5,8 +5,6 @@ from nautilus.conventions.services import connection_service_name
 from nautilus.conventions.actions import get_crud_action, success_status
 from .modelService import ModelService
 from nautilus.models.util import create_connection_model
-from nautilus.conventions.api import service_node_name, connection_service_node_name
-
 
 class ConnectionService(ModelService):
     """
@@ -77,30 +75,23 @@ class ConnectionService(ModelService):
 
     @property
     def action_handler(service):
+        # create a linked handler for every model
+        linked_handlers = [service._create_linked_handler(model) \
+                                        for model in service._service_models]
 
         class ConnectionActionHandler(super().action_handler):
-            async def handle_action(self, action_type, payload, **kwds):
+            async def handle_action(self, action_type, payload, props, **kwds):
                 # a connection service should listen for deletes on linked services
-                # connected_action_handlers = [self._create_linked_handler(model)
-                #                              for model in self._service_models]
 
                 # bubble up
-                await super().handle_action(action_type, payload, **kwds)
+                await super().handle_action(action_type, payload, props, **kwds)
 
                 # for each model we care about
-                for model in service._service_models:
-                    # TODO: make this only happen once (not on every action)
-                    # create the appropriate action handler
-                    handler = service._create_linked_handler(model)
+                for handler in linked_handlers:
                     # call the handler
                     await handler(action_type, payload, **kwds)
 
         return ConnectionActionHandler
-
-
-    @property
-    def api_node_name(self):
-        return connection_service_node_name(self)
 
 
     def summarize(self, **extra_fields):
@@ -110,10 +101,10 @@ class ConnectionService(ModelService):
                 **super().summarize(),
                 'connection': {
                     'from': {
-                        'service': self.from_service().api_node_name,
+                        'service': self.from_service().name,
                     },
                     'to': {
-                        'service': self.to_service().api_node_name,
+                        'service': self.to_service().name,
                     }
                 },
                 **extra_fields

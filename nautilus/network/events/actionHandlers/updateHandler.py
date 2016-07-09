@@ -7,7 +7,7 @@ from nautilus.conventions.actions import (
 )
 from nautilus.models.serializers import ModelSerializer
 
-def update_handler(Model):
+def update_handler(Model, name=None, **kwds):
     """
         This factory returns an action handler that updates a new instance of
         the specified model when a update action is recieved, assuming the
@@ -20,20 +20,31 @@ def update_handler(Model):
         Returns:
             function(type, payload): The action handler for this model
     """
-    async def action_handler(service, action_type, payload, notify=True, **kwds):
+    async def action_handler(service, action_type, payload, props, notify=True, **kwds):
         # if the payload represents a new instance of `Model`
-        if action_type == get_crud_action('update', Model):
+        if action_type == get_crud_action('update', name or Model):
             try:
+                # the props of the message
+                message_props = {}
+                # if there was a correlation id in the request
+                if 'correlation_id' in props:
+                    # make sure it ends up in the reply
+                    message_props['correlation_id'] = props['correlation_id']
+
+
                 # grab the nam eof the primary key for the model
                 pk_field = Model.primary_key()
 
-                # assume we have an id to identify the model we are editing
+                # make sure there is a primary key to id the model
+                if not pk_field.name in payload:
+                    # yell loudly
+                    raise ValueError("Must specify the pk of the model when updating")
 
                 # grab the matching model
                 model = Model.select().where(pk_field == payload[pk_field.name]).get()
 
                 # remove the key from the payload
-                payload.pop(pk_field, None)
+                payload.pop(pk_field.name, None)
 
                 # for every key,value pair
                 for key, value in payload.items():
@@ -48,8 +59,9 @@ def update_handler(Model):
                 if notify:
                     # publish the scucess event
                     await service.event_broker.send(
-                        body=ModelSerializer().serialize(model),
-                        action_type=change_action_status(action_type, success_status())
+                        payload=ModelSerializer().serialize(model),
+                        action_type=change_action_status(action_type, success_status()),
+                        **message_props
                     )
 
             # if something goes wrong
@@ -58,8 +70,9 @@ def update_handler(Model):
                 if notify:
                     # publish the error as an event
                     await service.event_broker.send(
-                        body=str(err),
-                        action_type=change_action_status(action_type, error_status())
+                        payload=str(err),
+                        action_type=change_action_status(action_type, error_status()),
+                        **message_props
                     )
                 # otherwise we aren't supposed to notify
                 else:

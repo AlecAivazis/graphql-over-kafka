@@ -6,7 +6,6 @@ from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.network.events.consumers import ActionHandler
 from nautilus.contrib.graphene_peewee import convert_peewee_field
 from .service import Service
-from nautilus.conventions.api import model_service_node_name
 
 
 class ModelService(Service):
@@ -80,18 +79,18 @@ class ModelService(Service):
     @property
     def action_handler(self):
         # create a crud handler for the model
-        handler = crud_handler(self.model)
-
+        handler = crud_handler(self.model, name=self.name)
         class ModelActionHandler(ActionHandler):
 
             loop = self.loop
 
-            async def handle_action(inner_self, action_type, payload, **kwds):
+            async def handle_action(inner_self, action_type, payload, props, **kwds):
                 """
                     The default action handler for a model service call
                 """
+                print("handling - " + action_type)
                 # call the handler
-                await handler(self, action_type=action_type, payload=payload, **kwds)
+                await handler(self, action_type=action_type, payload=payload, props=props,**kwds)
 
         return ModelActionHandler
 
@@ -105,11 +104,6 @@ class ModelService(Service):
         db_url = self.config.get('database_url', 'sqlite:///nautilus.db')
         # configure the nautilus database to the url
         nautilus.database.init_db(db_url)
-
-
-    @property
-    def api_node_name(self):
-        return model_service_node_name(self)
 
 
     def summarize(self, **extra_fields):

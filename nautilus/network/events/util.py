@@ -16,11 +16,11 @@ def combine_action_handlers(*handlers):
             raise ValueError("Provided handler is not a coroutine: %s" % handler)
 
     # the combined action handler
-    async def combined_handler(dispatcher, action_type, payload, **kwds):
+    async def combined_handler(*args, **kwds):
         # goes over every given handler
         for handler in handlers:
             # call the handler
-            await handler(dispatcher, action_type, payload, **kwds)
+            await handler(*args, **kwds)
 
     # return the combined action handler
     return combined_handler

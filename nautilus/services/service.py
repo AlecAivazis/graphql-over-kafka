@@ -16,7 +16,6 @@ from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
 )
-from nautilus.conventions.api import service_node_name
 from nautilus.conventions.actions import intialize_service_action
 
 # enable uvloop for increased performance
@@ -112,7 +111,7 @@ class Service(metaclass=ServiceMetaClass):
 
         self.name = name or self.name or type(self).name
         self.app = None
-        self.__name__ = name
+        self.__name__ = self.name
         self.event_broker = None
         self.schema = schema or self.schema
 
@@ -173,12 +172,7 @@ class Service(metaclass=ServiceMetaClass):
 
     def summarize(self, **extra_fields):
         # return the summary
-        return dict(name=str(self.api_node_name), **extra_fields)
-
-
-    @property
-    def api_node_name(self):
-        return service_node_name(self)
+        return dict(name=str(self.name), **extra_fields)
 
 
     def init_routes(self):
@@ -284,6 +278,7 @@ class Service(metaclass=ServiceMetaClass):
         # more cleanup
         self.loop.run_until_complete(self.app.shutdown())
         self.loop.run_until_complete(self.app.cleanup())
+
 
     def add_http_endpoint(self, url, request_handler):
         """

@@ -7,7 +7,7 @@ from nautilus.conventions.actions import (
 )
 from nautilus.models.serializers import ModelSerializer
 
-def delete_handler(Model):
+def delete_handler(Model, name=None, **kwds):
     """
         This factory returns an action handler that deletes a new instance of
         the specified model when a delete action is recieved, assuming the
@@ -23,10 +23,17 @@ def delete_handler(Model):
     # necessary imports
     from nautilus.database import db
 
-    async def action_handler(service, action_type, payload, notify=True, **kwds):
+    async def action_handler(service, action_type, payload, props, notify=True, **kwds):
         # if the payload represents a new instance of `model`
-        if action_type == get_crud_action('delete', Model):
+        if action_type == get_crud_action('delete', name or Model):
             try:
+                # the props of the message
+                message_props = {}
+                # if there was a correlation id in the request
+                if 'correlation_id' in props:
+                    # make sure it ends up in the reply
+                    message_props['correlation_id'] = props['correlation_id']
+
                 # get the model matching the payload
                 model_query = Model.select().where(Model.primary_key() == payload)
                 # remove the model instance
@@ -36,8 +43,9 @@ def delete_handler(Model):
                 if notify:
                     # publish the success event
                     await service.event_broker.send(
-                        body=payload,
-                        action_type=change_action_status(action_type, success_status())
+                        payload=response,
+                        action_type=change_action_status(action_type, success_status()),
+                        **message_props
                     )
 
             # if something goes wrong
@@ -46,8 +54,9 @@ def delete_handler(Model):
                 if notify:
                     # publish the error as an event
                     await service.event_broker.send(
-                        body=str(err),
-                        action_type=change_action_status(action_type, error_status())
+                        payload=str(err),
+                        action_type=change_action_status(action_type, error_status()),
+                        **message_props
                     )
                 # otherwise we aren't supposed to notify
                 else:

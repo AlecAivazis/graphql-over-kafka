@@ -34,8 +34,8 @@ class TestUtil(unittest.TestCase):
         spy = Mock()
 
         # call the combined handler
-        await mergedActionHandler(spy, action_type, payload)
+        await mergedActionHandler(spy, action_type, payload, {})
         # make sure each mock was called
-        handleMock1.assert_called(spy, action_type, payload)
-        handleMock2.assert_called(spy, action_type, payload)
-        handleMock3.assert_called(spy, action_type, payload)
+        handleMock1.assert_called(spy, action_type, payload, {})
+        handleMock2.assert_called(spy, action_type, payload, {})
+        handleMock3.assert_called(spy, action_type, payload, {})

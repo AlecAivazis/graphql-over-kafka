@@ -4,7 +4,6 @@ import uuid
 import json
 import re
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-from kafka.common import KafkaError
 # local imports
 from nautilus.conventions.actions import serialize_action, hydrate_action
 
@@ -134,7 +133,6 @@ class KafkaBroker:
             correlation_id = uuid.uuid4()
         # use the integer form of the uuid
         correlation_id = correlation_id.int
-
         # create a future to wait on before we ask the question
         question_future = asyncio.Future()
         # register the future's callback with the request handler
@@ -157,43 +155,39 @@ class KafkaBroker:
     async def _consume_event_callback(self):
         # continuously loop
         while True:
-            try:
 
-                # grab the next message
-                msg = await self._consumer.getone()
+            # grab the next message
+            msg = await self._consumer.getone()
 
+            # parse the message as json
+            message = hydrate_action(msg.value.decode())
+            # the correlation_id associated with this message
+            correlation_id = message.get('correlation_id')
 
-                # parse the message as json
-                message = hydrate_action(msg.value.decode())
-                # the correlation_id associated with this message
-                correlation_id = message.get('correlation_id')
+            # if there is a consumer pattern
+            if self.consumer_pattern:
+                # if the action_type does not satisfy the pattern
+                if not re.match(self.consumer_pattern, message['action_type']):
+                    # don't do anything
+                    continue
 
-                # if there is a consumer pattern
-                if self.consumer_pattern:
-                    # if the action_type does not satisfy the pattern
-                    if not re.match(self.consumer_pattern, message['action_type']):
-                        # don't do anything
-                        continue
+            # if we know how to respond to this message
+            if correlation_id and correlation_id in self._request_handlers:
+                # pass the message to the handler
+                self._request_handlers[correlation_id](message['payload'])
+                # remove the entry in the handler dict
+                del self._request_handlers[correlation_id]
 
-                # if we know how to respond to this message
-                if correlation_id and correlation_id in self._request_handlers:
-                    # pass the message to the handler
-                    self._request_handlers[correlation_id](message['payload'])
+            # otherwise there was no correlation id, pass it along to the general handlers
+            else:
+                # build the dictionary of message properties
+                message_props = {
+                    'correlation_id': correlation_id
+                }
 
-                # otherwise there was no correlation id, pass it along to the general handlers
-                else:
-                    # build the dictionary of message properties
-                    message_props = {
-                        'correlation_id': correlation_id
-                    }
+                # pass it to the handler
+                await self.handle_message(
+                    props=message_props,
+                    **message
+                )
 
-                    # pass it to the handler
-                    await self.handle_message(
-                        props=message_props,
-                        **message
-                    )
-
-            # if something goes wrong
-            except KafkaError as err:
-                # log the error
-                print("error while consuming message: ", err)
