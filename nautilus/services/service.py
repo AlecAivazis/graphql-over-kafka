@@ -145,10 +145,10 @@ class Service(metaclass=ServiceMetaClass):
         )
         # add the template loader
         aiohttp_jinja2.setup(self.app,
-                loader=jinja2.ChoiceLoader([
-                    api_template_dir,
-                    auth_template_dir
-                ])
+            loader=jinja2.ChoiceLoader([
+                jinja2.FileSystemLoader(api_template_dir),
+                jinja2.FileSystemLoader(auth_template_dir)
+            ])
         )
         # TODO:
             # debug mode
