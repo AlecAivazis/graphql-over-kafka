@@ -20,8 +20,6 @@ def read_handler(Model, name=None, **kwds):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('read', name or Model):
             try:
-                print("encountered read action")
-                print(payload)
                 # the props of the message
                 message_props = {}
                 # if there was a correlation id in the request
@@ -37,7 +35,6 @@ def read_handler(Model, name=None, **kwds):
                     'data': {key:value for key,value in resolved.data.items()},
                     'errors': resolved.errors
                 })
-                print(response)
 
                 # publish the success event
                 await service.event_broker.send(

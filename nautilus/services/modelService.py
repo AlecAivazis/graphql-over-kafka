@@ -51,7 +51,7 @@ class ModelService(Service):
 
     def __init__(self, model=None, **kwargs):
         # avoid circular depdencies
-        from ..api.helpers import create_model_schema
+        from ..api.util import create_model_schema
 
         # if we were given a model for the service
         if model:

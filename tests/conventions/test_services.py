@@ -64,8 +64,6 @@ class TestUtil(unittest.TestCase):
         class Connection(nautilus.ConnectionService):
             to_service = ('TestService1',)
             from_service = ('TestService2',)
-        print('vvvvvvv')
-        print(conventions.connection_service_name(Connection()))
         # make sure we could make a name
         assert isinstance(conventions.connection_service_name(Connection()), str), (
             "Could not generate name for connection service"

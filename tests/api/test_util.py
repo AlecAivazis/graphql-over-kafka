@@ -3,7 +3,7 @@ import unittest
 # local imports
 import nautilus
 import nautilus.models as models
-from nautilus.api.helpers import create_model_schema
+from nautilus.api.util import create_model_schema
 
 class TestUtil(unittest.TestCase):
 

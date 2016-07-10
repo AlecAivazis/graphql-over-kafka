@@ -78,7 +78,7 @@ class Service(metaclass=ServiceMetaClass):
             .. code-block:: python
 
                 import nautilus
-                from nautilus.api import create_model_schema
+                from nautilus.api.util import create_model_schema
                 from nautilus.network import crud_handler
                 import nautilus.models as models
 

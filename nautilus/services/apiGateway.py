@@ -1,10 +1,11 @@
 # external imports
 import aiohttp_cors
 # local imports
+import nautilus.api.endpoints.requestHandlers.apiQuery as api_query
+import nautilus.network.events.consumers.api as api_handler
 from nautilus.conventions.services import api_gateway_name
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from .service import Service
-from nautilus.api.endpoints import APIQueryHandler
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
@@ -39,8 +40,14 @@ class APIGateway(Service):
                     schema = schema
     """
     name = api_gateway_name()
-    api_request_handler_class = APIQueryHandler
+    api_request_handler_class = api_query.APIQueryHandler
+    action_handler = api_handler.APIActionHandler
 
+    def __init__(self, *args, **kwds):
+        # bubble up
+        super().__init__(*args, **kwds)
+        # attach this service to the action handler
+        self.action_handler.service = self
 
     def init_routes(self):
         # add the cors handler
