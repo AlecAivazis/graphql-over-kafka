@@ -2,7 +2,6 @@
 import unittest
 import json
 # local imports
-from nautilus.models import BaseModel, fields
 from nautilus.conventions.actions import (
     get_crud_action,
     change_action_status,
@@ -11,6 +10,7 @@ from nautilus.conventions.actions import (
     error_status,
     pending_status,
 )
+from ..util import MockModel
 
 
 class TestUtil(unittest.TestCase):
@@ -20,12 +20,8 @@ class TestUtil(unittest.TestCase):
     """
 
     def setUp(self):
-
-        class TestModel(BaseModel):
-            first_name = fields.CharField()
-
         # save the model to the test suite
-        self.model = TestModel
+        self.model = MockModel()
 
 
     def test_can_generate_crud_action_types(self):

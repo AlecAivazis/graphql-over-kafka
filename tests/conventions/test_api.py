@@ -2,7 +2,6 @@
 import unittest
 # local imports
 import nautilus
-from nautilus.models import BaseModel, fields
 
 
 class TestUtil(unittest.TestCase):
@@ -11,12 +10,9 @@ class TestUtil(unittest.TestCase):
         models.
     """
 
-    def test_model_string(self):
+    def test_root_query(self):
         # import the utility
         from nautilus.conventions.api import root_query
-
-        class TestModel(BaseModel):
-            first_name = fields.CharField()
 
         # save the model to the test suite
         assert isinstance(root_query(), str), (

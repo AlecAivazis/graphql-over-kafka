@@ -2,6 +2,7 @@
 import unittest
 # local imports
 import nautilus.models as models
+from ..util import MockModel
 
 
 class TestUtil(unittest.TestCase):
@@ -13,15 +14,13 @@ class TestUtil(unittest.TestCase):
     def setUp(self):
 
         self.spy = unittest.mock.MagicMock()
-        class TestUser(models.BaseModel):
-            name = models.fields.CharField(null=True)
-            date = models.fields.CharField(null=False)
 
+        # create a mock model
+        self.model_record = MockModel()
         # create the test table
-        TestUser.create_table(True)
+        self.model_record.create_table(True)
 
-        self.model_record = TestUser
-        self.model = TestUser()
+        self.model = self.model_record()
 
 
     def tearDown(self):
@@ -55,10 +54,13 @@ class TestUtil(unittest.TestCase):
 
 
     def test_can_retrieve_requried_fields(self):
+        class TestModel(self.model_record):
+            foo = models.fields.CharField(null=False)
+
         # grab the names of the required fields
-        required_field_names = {field.name for field in self.model_record.required_fields()}
+        required_field_names = {field.name for field in TestModel().required_fields()}
         # make sure it is what it should be
-        assert required_field_names == {'id', 'date'}, (
+        assert required_field_names == {'id', 'foo'}, (
             'Model could not retrieve required fields.'
         )
 

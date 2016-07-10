@@ -2,7 +2,7 @@
 import unittest
 # local imports
 import nautilus.models as models
-from ..util import Mock
+from ..util import Mock, MockModel
 
 
 class TestUtil(unittest.TestCase):
@@ -16,15 +16,13 @@ class TestUtil(unittest.TestCase):
         class Mixin(models.BaseModel):
             address = models.fields.CharField(null=True)
 
-        class TestModel(Mixin, models.BaseModel):
-            first_name = models.fields.CharField()
-            last_name = models.fields.CharField()
+        class TestModel(MockModel(), Mixin): pass
 
         # the name of the fields of test models
         field_names = {field.name for field in TestModel.fields()}
 
         # make sure the mixin was applied to the table
-        assert field_names == {'address', 'id', 'first_name', 'last_name'}, (
+        assert field_names == {'address', 'id', 'name', 'date'}, (
             'mixin was not properly applied to model'
         )
 
@@ -39,9 +37,7 @@ class TestUtil(unittest.TestCase):
                 # call the spy
                 spy(target)
 
-        class TestOnCreationModel(models.BaseModel, Mixin):
-            first_name = models.fields.CharField()
-            last_name = models.fields.CharField()
+        class TestOnCreationModel(MockModel(), Mixin): pass
 
         # verify that the mock was called with the correct arguments
         spy.assert_called(TestOnCreationModel)
@@ -65,9 +61,8 @@ class TestUtil(unittest.TestCase):
                 # call the spy
                 spy1(target)
 
-        class TestOnCreationModel(models.BaseModel, MyAwesomeMixin, MyOtherAwesomeMixin):
-            first_name = models.fields.CharField()
-            last_name = models.fields.CharField()
+        class TestOnCreationModel(MockModel(), MyAwesomeMixin, MyOtherAwesomeMixin):
+            pass
 
 
         # check that both spies were called

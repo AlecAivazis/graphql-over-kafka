@@ -5,7 +5,7 @@ import graphql
 import nautilus
 from nautilus.network.http import Response
 from nautilus.conventions.actions import get_crud_action
-from nautilus.api.util import resolve_string
+from nautilus.api.util import parse_string
 from .graphql import GraphQLRequestHandler
 
 
@@ -157,7 +157,7 @@ class APIQueryHandler(nautilus.api.endpoints.GraphQLRequestHandler):
         # otherwise its a normal query/mutation
 
         # walk the query
-        response = await resolve_string(query, object_resolver, connection_resolver)
+        response = await parse_string(query, object_resolver, connection_resolver)
 
         # pass the result to the request
         return Response(body=json.dumps(response).encode())

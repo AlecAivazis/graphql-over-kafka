@@ -3,6 +3,7 @@ import unittest
 # local imports
 import nautilus
 from nautilus.conventions import services as conventions
+from ..util import MockModel
 
 
 class TestUtil(unittest.TestCase):
@@ -15,6 +16,7 @@ class TestUtil(unittest.TestCase):
         # a model to test with
         class TestModel(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
+        TestModel = MockModel()
         # generate a service from the model
         class TestService(nautilus.ModelService):
             model = TestModel

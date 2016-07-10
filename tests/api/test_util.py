@@ -4,17 +4,14 @@ import unittest
 import nautilus
 import nautilus.models as models
 from nautilus.api.util import create_model_schema
+from ..util import MockModel
 
 class TestUtil(unittest.TestCase):
 
     def test_create_model_schema(self):
 
-        # the model to test
-        class TestModel(models.BaseModel):
-            test_field = models.fields.CharField()
-
         # create a graphql schema from the model
-        schema = create_model_schema(TestModel)
+        schema = create_model_schema(MockModel())
 
         # the fields in the schema
         schema_fields = schema.introspect()['__schema']['types'][0]['fields']
@@ -32,6 +29,21 @@ class TestUtil(unittest.TestCase):
         arg_names = {arg['name'] for arg in field['args']}
 
         # make sure the test field is present
-        assert 'test_field' in arg_names, (
+        assert 'name' in arg_names, (
             "The generated schema cannot be filterd for model fields."
         )
+
+
+    def test_generate_api_schema(self): pass
+
+
+    def test_graphql_type_from_summary(self): pass
+
+
+    def test_walk_query(self): pass
+
+
+    def test_parse_string(self): pass
+
+
+    def test_fields_for_model(self): pass
