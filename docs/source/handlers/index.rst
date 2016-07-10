@@ -4,7 +4,7 @@ Action Handlers
 Action handlers describe how your service mutates its internal state in
 response to the arrival of an action from the queue. They are defined as
 a function of two arguments: ``action_type`` and ``payload``. ``Action_type``
-is a string that classifies the event and ``payload`` is a dictionary 
+is a string that classifies the event and ``payload`` is a dictionary
 representing the data associated with the event. For example,
 
 
@@ -30,18 +30,21 @@ Action Handlers are defined within the service:
 .. code-block:: python
 
 
-    class MyService(Service):
+    class MyActionHandler(nautilus.network.ActionHandler):
+        async def handle_action(self, action_type, payload, props, **kwds):
+            print("recieved action!")
 
-        def action_handler(self, action_type, payload, properties):
-            # ...
+    class MyService(Service):
+        action_handler = MyActionHandler
 
 
 Reusing and Combining Action Handlers
 ---------------------------------------
 
 As your services get more complex, you'll want to split your action handler into
-separate functions which each get called. Nautilus provides a function called
-``combine_action_handlers`` which serves just this case:
+separate functions which each get called with the given arguments. It can get tedious
+to pass the arguments to every function so Nautilus provides a function called
+``combine_action_handlers`` which serves just this purpose:
 
 .. autofunction:: nautilus.network.amqp.combine_action_handlers
 
@@ -60,22 +63,23 @@ separate functions which each get called. Nautilus provides a function called
         action_handler2
     )
 
-In order to do this within your service, you'll need to wrap it in a property:
+Using it in an Action Handler looks something like:
 
 .. code-block:: python
 
-    from nautilus import Service
-    from nautilus.network import combine_action_handlers
+    from nautilus.network import combine_action_handlers, ActionHandler
 
-    class MyService(Service):
+    class MyActionHandler(ActionHandler):
 
-        @property
-        def action_handler(self):
+        async def handle_action(self, *args, **kwds):
             # assuming action_handlers 1 and 2 were defined as above
-            return combine_action_handlers(
+            combined = combine_action_handlers(
                 action_handler1,
                 action_handler2
             )
+            # call the combined handler
+            combined(*args, **kwds)
+
 
 
 
@@ -90,7 +94,9 @@ Factories
 
 The following are functions that take a paramter and return an an action creator.
 
-.. autofunction:: nautilus.network.amqp.crud_handler
-.. autofunction:: nautilus.network.amqp.create_handler
-.. autofunction:: nautilus.network.amqp.update_handler
-.. autofunction:: nautilus.network.amqp.delete_handler
+.. autofunction:: nautilus.network.events.actionHandlers.crud_handler
+.. autofunction:: nautilus.network.events.actionHandlers.create_handler
+.. autofunction:: nautilus.network.events.actionHandlers.read_handler
+.. autofunction:: nautilus.network.events.actionHandlers.update_handler
+.. autofunction:: nautilus.network.events.actionHandlers.delete_handler
+.. autofunction:: nautilus.network.events.actionHandlers.roll_call_handler
