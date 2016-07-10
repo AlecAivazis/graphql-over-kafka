@@ -19,6 +19,9 @@ def change_action_status(action_type, new_status):
     return "%s.%s" % ('.'.join(action_type.split('.')[:-1]) , new_status)
 
 
+def roll_call_type():
+    return "roll_call"
+
 # TODO: check that it the args actually implement Serializable
 def serialize_action(action_type, payload, **extra_fields):
     """

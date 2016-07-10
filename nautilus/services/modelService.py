@@ -79,9 +79,9 @@ class ModelService(Service):
     @property
     def action_handler(self):
         # create a crud handler for the model
-        handler = crud_handler(self.model, name=self.name)
+        model_handler = crud_handler(self.model, name=self.name)
 
-        class ModelActionHandler(ActionHandler):
+        class ModelActionHandler(super().action_handler):
 
             loop = self.loop
 
@@ -89,8 +89,10 @@ class ModelService(Service):
                 """
                     The default action handler for a model service call
                 """
-                # call the handler
-                await handler(self, action_type=action_type, payload=payload, props=props,**kwds)
+                # bubble up
+                response = await super(ModelActionHandler, inner_self).handle_action(action_type=action_type, payload=payload, props=props,**kwds)
+                # call the crud handler
+                await model_handler(self, action_type=action_type, payload=payload, props=props,**kwds)
 
         return ModelActionHandler
 

@@ -10,7 +10,7 @@ from aiohttp_session.cookie_storage import EncryptedCookieStorage
 # local imports
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.config import Config
-from nautilus.network.events.actionHandlers import noop_handler
+from nautilus.network.events.actionHandlers import roll_call_handler
 from nautilus.network.events.consumers import ActionHandler
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
@@ -43,11 +43,11 @@ class ServiceMetaClass(type):
 
 class ServiceActionHandler(ActionHandler):
 
-    async def handle_action(self, **kwds):
+    async def handle_action(self, action_type, payload, **kwds):
         """
             The default action Handler has no action.
         """
-        await noop_handler(**kwds)
+        await roll_call_handler(self.service, action_type, payload, **kwds)
 
 
 class Service(metaclass=ServiceMetaClass):

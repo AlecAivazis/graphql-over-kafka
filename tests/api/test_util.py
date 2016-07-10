@@ -70,6 +70,7 @@ class TestUtil(unittest.TestCase):
             "Generated graphql type does not have the correct fields"
         )
 
+
     def test_graphql_type_from_summary_with_connections(self):
         # mock summaries
         summary = MockModelService()().summarize()
