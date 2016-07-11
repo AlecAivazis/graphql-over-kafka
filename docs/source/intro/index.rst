@@ -5,6 +5,7 @@ Getting Started
 
     installation
     first_service
+    first_model
     connecting_services
     api
     auth
