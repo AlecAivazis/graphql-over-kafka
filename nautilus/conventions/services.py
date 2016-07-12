@@ -3,7 +3,7 @@
 """
 
 # local imports
-from .models import get_model_string
+from .models import get_model_string, normalize_string
 
 def model_service_name(model):
     ''' the name of a service that manages a model '''
@@ -19,12 +19,10 @@ def api_gateway_name():
     return "api"
 
 
-def connection_service_name(*args):
+def connection_service_name(service, *args):
     ''' the name of a service that manages the connection between services '''
+    # if the service is a string
+    if isinstance(service, str):
+        return service
 
-    # the list of services to connect
-    services = [service if isinstance(service, str) \
-                        else get_model_string(service) for service in args]
-
-    # combine the two names into the connection name
-    return "{}_connection".format('_'.join(sorted(services)))
+    return normalize_string(type(service).__name__)

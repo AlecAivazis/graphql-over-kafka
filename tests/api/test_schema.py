@@ -1,11 +1,11 @@
 # external imports
 import unittest
-import tornado.testing
 from graphene import Schema, ObjectType, String
 # local imports
 import nautilus
+from ..util import async_test
 
-class TestUtil(tornado.testing.AsyncTestCase):
+class TestUtil(unittest.TestSuite):
 
     def setUp(self):
         # create a nautilus schema to test
@@ -13,9 +13,6 @@ class TestUtil(tornado.testing.AsyncTestCase):
         # create an ioloop to use
         self.io_loop = self.get_new_ioloop()
 
-
-
-    @tornado.testing.gen_test
     def test_does_not_auto_camel_case(self):
 
         # a query to test with a snake case field

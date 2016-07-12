@@ -13,7 +13,6 @@ class ServiceManager:
     def __init__(self, service, config=None):
         self.service = service
         self.service_config = Config(config)
-        self._running_service = False
 
         @click.group()
         def group():
@@ -24,8 +23,6 @@ class ServiceManager:
         @click.option('--host', default='127.0.0.1', help="The host for the http server.")
         @click.option('--debug', default=False, is_flag=True, help="Run the service in debug mode.")
         def runserver(port, host, debug):
-            # make sure we clean up the service later on
-            self._running_service = True
             # the service configuration based on cli args
             self.service_config.update(dict(
                 debug=debug
@@ -98,9 +95,5 @@ class ServiceManager:
         # if there is a normal exception
         except Exception as err:
             print("Closing due to error: %s" % err)
-            # if the service is running
-            if self._running_service:
-                # stop the service and clean up
-                self.service_instance.stop()
             # bubble up the exception for someone else
             raise err

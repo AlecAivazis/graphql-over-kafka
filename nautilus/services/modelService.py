@@ -1,9 +1,10 @@
 # local imports
 import nautilus
-from nautilus.network.amqp import crud_handler, combine_action_handlers
-from nautilus.api import create_model_schema
+from nautilus.network.events import crud_handler, combine_action_handlers
 from nautilus.conventions.services import model_service_name
-from nautilus.network.amqp.actionHandlers import noop_handler
+from nautilus.network.events.actionHandlers import noop_handler
+from nautilus.network.events.consumers import ActionHandler
+from nautilus.contrib.graphene_peewee import convert_peewee_field
 from .service import Service
 
 
@@ -17,8 +18,6 @@ class ModelService(Service):
 
         Args:
             model (nautilus.BaseModel): The nautilus model to manage.
-            additonal_action_handler (optional, function): An action handler
-                to be called alongside the internal ones.
 
         Example:
 
@@ -42,7 +41,6 @@ class ModelService(Service):
 
 
     model = None
-    additional_action_handler = noop_handler
 
     def __new__(cls, *args, **kwds):
         # make sure the service has the right name
@@ -52,6 +50,9 @@ class ModelService(Service):
 
 
     def __init__(self, model=None, **kwargs):
+        # avoid circular depdencies
+        from ..api.util import create_model_schema
+
         # if we were given a model for the service
         if model:
             # use the given model
@@ -77,15 +78,23 @@ class ModelService(Service):
 
     @property
     def action_handler(self):
-        # combine the additional super handler with the crud one
-        return combine_action_handlers(
-            # combine the old action_handler
-            super().action_handler,
-            # allow for additional action handlers
-            self.additional_action_handler,
-            # and a crud handler
-            crud_handler(self.model)
-        )
+        # create a crud handler for the model
+        model_handler = crud_handler(self.model, name=self.name)
+
+        class ModelActionHandler(super().action_handler):
+
+            loop = self.loop
+
+            async def handle_action(inner_self, action_type, payload, props, **kwds):
+                """
+                    The default action handler for a model service call
+                """
+                # bubble up
+                response = await super(ModelActionHandler, inner_self).handle_action(action_type=action_type, payload=payload, props=props,**kwds)
+                # call the crud handler
+                await model_handler(self, action_type=action_type, payload=payload, props=props,**kwds)
+
+        return ModelActionHandler
 
 
     def init_db(self):
@@ -97,6 +106,25 @@ class ModelService(Service):
         db_url = self.config.get('database_url', 'sqlite:///nautilus.db')
         # configure the nautilus database to the url
         nautilus.database.init_db(db_url)
+
+
+    def summarize(self, **extra_fields):
+        # the fields for the service's model
+        model_fields = {field.name: field for field in list(self.model.fields())} \
+                            if self.model \
+                            else {}
+
+        # add the model fields to the dictionary
+        return dict(
+            **super().summarize(),
+            fields=[{
+                    'name': key,
+                    'type': type(convert_peewee_field(value)).__name__
+                    } for key, value in model_fields.items()
+                   ],
+            **extra_fields
+        )
+
 
 
     def get_models(self):

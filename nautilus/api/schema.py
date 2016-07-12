@@ -7,7 +7,6 @@ class Schema(Schema):
         the natuilus event queue for asynchronous data retrieval.
     """
     def __init__(self, executor=None, auto_camelcase=None, **kwds):
-        # make sure the schema is built with a tornado executor
         super().__init__(
             auto_camelcase=False,
             **kwds

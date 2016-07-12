@@ -18,40 +18,5 @@ Nautilus is availible using pip:
 Necessary Background Processes
 -------------------------------
 
-In order to run a nautilus cloud, you must have both consul and rabbitmq
-installed and running on localhost.
-
-Linux
-^^^^^^^^
-If you are developing on a linux machine, this is easily accomplished using
-docker. For docker installation instructions please visit here. Once you have
-successfully installed docker, the two process should be started in separate terminals:
-
-.. code-block:: bash
-
-    $ docker run -p "5672:5672" rabbitmq
-    $ docker run -p "8500:8500" progrium/consul -server -bootstrap
-
-For more information using docker, please read the documentation here.
-
-
-Apple / OSX
-^^^^^^^^^^^^^
-Because of some complications with docker on OSX, we cannot bind our containers
-to ports on localhost. This leaves us with two options: point nautilus to
-another location (we'll have to do this for every service), or run the two
-processes by hand. Since we do not  yet support the first option, OSX users
-need to install these two packages by hand using MacPorts or homebrew.
-
-Once consul and rabbitmq are installed, they can be run in their own terminals
-with the following commands:
-
-.. code-block:: bash
-
-    $ consul agent -server -bootstrap -data-dir /tmp/data -ui 
-    $ rabbitmq-server 
-
-
-Notes
------------
-    * I know this is tedious to ensure when developping, nautilus will eventually start these processes for you if they are not present when running a service.
+In order to run a nautilus cloud, you must have kafka running on your local machine. For more information on
+kafka including how to run it locally, go [here](http://www.bogotobogo.com/Hadoop/BigData_hadoop_Zookeeper_Kafka_single_node_single_broker_cluster.php).

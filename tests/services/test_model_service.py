@@ -1,13 +1,13 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
+import json
 # local imports
 import nautilus
 from nautilus import conventions
 from nautilus.conventions import services as service_conventions
 import nautilus.models as models
-import nautilus.network.amqp.actionHandlers as action_handlers
-from ..util import assert_called_once_with
+import nautilus.network.events.actionHandlers as action_handlers
+from ..util import async_test, Mock
 
 class TestUtil(unittest.TestCase):
 
@@ -16,18 +16,18 @@ class TestUtil(unittest.TestCase):
         nautilus.database.init_db('sqlite:///test.db')
 
         # create a spy we can check for later
-        self.spy = MagicMock()
+        self.spy = Mock()
 
         class TestModelService(nautilus.models.BaseModel):
             name = nautilus.models.fields.CharField()
 
         class TestService(nautilus.ModelService):
             model = TestModelService
-            additional_action_handler = self.spy
 
         # save the class records to the suite
         self.model = TestModelService
         self.service = TestService()
+        self.action_handler = self.service.action_handler()
         self.service_record = TestService
 
         # create the test table
@@ -81,69 +81,82 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_can_provide_addtnl_action_handler(self):
-        # make sure there is a handler to call
-        assert hasattr(self.service, 'action_handler'), (
-            "Test Service does not have an action handler"
+    def test_can_summarize(self):
+
+        # the target summary
+        target = {
+            'name': 'testModelService',
+            'fields': [
+                {
+                    'name': 'name',
+                    'type': 'String'
+                }, {
+                    'name': 'id',
+                    'type': 'ID',
+                }
+            ]
+        }
+        # summarize the service
+        summarized = self.service.summarize()
+
+        # make sure the names match up
+        assert target['name'] == summarized['name'], (
+            "Summarzied service did not have the right name."
         )
-        # values to test against
-        action_type = 'asdf'
-        payload = 'asdf'
-
-        # mock the dispatcher
-        mock = MagicMock()
-
-        # call the service action handler
-        self.service.action_handler(
-            mock,
-            action_type,
-            payload
+        # make sure the field entries have the same length
+        assert len(target['fields']) == len(summarized['fields']), (
+            "Summarized service did not have the right number of fields."
         )
-
-        # make sure the spy was called correctly
-        assert_called_once_with(
-            self.spy,
-            mock,
-            action_type,
-            payload,
-            spy_name="Test service spy",
-        )
-
-
-    def test_action_handler_supports_crud(self):
-        self.verify_create_action_handler()
-        self.verify_update_action_handler()
-        self.verify_delete_action_handler()
+        # make sure the fields match
+        for field in target['fields']:
+            # grab the matching fields
+            equiv = [sumField for sumField in summarized['fields'] \
+                                    if sumField['name'] == field['name']][0]
+            # make sure the two fields match
+            assert equiv == field, (
+                "Associated fields did not match"
+            )
 
 
-    def verify_create_action_handler(self):
+    @async_test
+    async def test_action_handler_supports_crud(self):
+        model_id = await self._verify_create_action_handler()
+        await self._verify_update_action_handler(model_id)
+        await self._verify_delete_action_handler(model_id)
+
+
+    async def _verify_create_action_handler(self):
         # fire a create action
-        self.service.action_handler(
-            MagicMock(),
-            conventions.get_crud_action('create', self.model),
-            dict(name='foo'),
+        await self.action_handler.handle_action(
+            action_type=conventions.get_crud_action('create', self.model),
+            payload=dict(name='foo'),
+            props={},
+            notify=False
         )
+
         # make sure the created record was found and save the id
-        self.model_id = self.model.get(self.model.name == 'foo').id
+        return self.model.get(self.model.name == 'foo').id
 
 
-    def verify_update_action_handler(self):
+    async def _verify_update_action_handler(self, model_id):
         # fire an update action
-        self.service.action_handler(
-            MagicMock(),
-            conventions.get_crud_action('update', self.model),
-            dict(id=self.model_id, name='barz'),
+        await self.action_handler.handle_action(
+            action_type=conventions.get_crud_action('update', self.model),
+            payload=dict(id=model_id, name='barz'),
+            props={},
+            notify=False
         )
         # check that a model matches
         self.model.get(self.model.name == 'barz')
 
 
-    def verify_delete_action_handler(self):
+    async def _verify_delete_action_handler(self, model_id):
         # fire a delete action
-        self.service.action_handler(
-            MagicMock(),
-            conventions.get_crud_action('delete', self.model),
-            payload=self.model_id
+        await self.action_handler.handle_action(
+            action_type=conventions.get_crud_action('delete', self.model),
+            payload=model_id,
+            props={},
+            notify=False
         )
         # expect an error
-        self.assertRaises(Exception, self.model.get, self.model_id)
+        self.assertRaises(Exception, self.model.get, model_id)

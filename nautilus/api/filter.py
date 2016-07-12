@@ -7,7 +7,7 @@ from nautilus.contrib.graphene_peewee import convert_peewee_field
 
 def args_for_model(model):
     # import the model field helper
-    from .helpers import fields_for_model
+    from .util import fields_for_model
 
     # figure use each field as a filter
     args = fields_for_model(model)

@@ -3,14 +3,14 @@ import unittest
 # local imports
 import nautilus.models as models
 from nautilus.contrib.graphene_peewee import PeeweeObjectType
+from ...util import MockModel
 
 class TestUtil(unittest.TestCase):
 
     def setUp(self):
 
         # the base model to test
-        class TestModel(models.BaseModel):
-            name = models.fields.CharField()
+        TestModel = MockModel()
 
         # the object type based on the models
         class TestObjectType(PeeweeObjectType):

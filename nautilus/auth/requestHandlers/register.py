@@ -1,7 +1,7 @@
 # external imports
-import tornado
+import aiohttp_jinja2
 # local imports
-from nautilus.network.util import query_service
+# from nautilus.network.util import query_service
 from .base import AuthRequestHandler
 from ..models import UserPassword
 from .forms import RegistrationForm
@@ -11,15 +11,22 @@ class RegisterHandler(AuthRequestHandler):
         This class handles the basic login form.
     """
 
-    def get(self):
+    @aiohttp_jinja2.template('register.html')
+    async def get(self):
         # render an empty login form to the view
-        return self.render('templates/register.html', form=RegistrationForm())
+        return dict(form=RegistrationForm())
 
 
-    def post(self):
+    async def post(self):
+        # the used responses
+        from nautilus.network.http.responses import HTTPForbidden, HTTPFound
+
+        # bubble up
+        await super().post()
+
         form_args = {
-            'email': self.request.arguments['email'][0].decode('utf-8'),
-            'password': self.request.arguments['password'][0].decode('utf-8'),
+            'email': self.request.GET['email'][0].decode('utf-8'),
+            'password': self.request.GET['password'][0].decode('utf-8'),
         }
 
         # create a form from the request parameters
@@ -44,8 +51,8 @@ class RegisterHandler(AuthRequestHandler):
                 )[0]
             # if there wasn't a matching user
             except IndexError:
-                return self.finish(
-                    'Could not find corresponding user in remote service'
+                return HTTPForbidden(
+                    body='Could not find corresponding user in remote service'
                 )
 
             # the query to find a matching query
@@ -60,21 +67,14 @@ class RegisterHandler(AuthRequestHandler):
             # save it to the database
             password.save()
 
+            # the response object
+            response = HTTPFound(location=self.request.GET.get('next', '/'))
             # log in the user we just authorized
-            self.login_user(user_data)
-
-            # the url to redirect to when we're done
-            redirect_url = self.request.arguments.get('next', '/')
+            await self.login_user(user_data, response)
             # move the user along
-            return self.redirect(redirect_url)
-
+            return response
 
         # the username and password do not match
-        raise tornado.httputil.HTTPInputError(
-            "Sorry, could not register that username/password."
+        return HTTPForbidden(
+            body="Sorry, could not register that username/password."
         )
-
-            # otherwise the given password does not match the stored hash
-            # else:
-                # add an error to the form
-                # flash('Sorry, that user/password combination was invalid.')

@@ -1,10 +1,9 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
 # local imports
 import nautilus
-from ..util import assert_called_once_with
 from nautilus.api.endpoints import GraphQLRequestHandler
+from ..util import Mock
 
 class TestUtil(unittest.TestCase):
 
@@ -17,9 +16,18 @@ class TestUtil(unittest.TestCase):
 
     def test_has_default_name(self):
         # make sure the name matches
-        assert self.service.name == 'MyService', (
+        assert self.service.name == 'myService', (
             "Service did not have the correct name."
         )
+
+    def test_default_name_can_have_numbers(self):
+        # create a service without an explict name
+        class TestService1(nautilus.Service): pass
+        # make sure the name is what we expect
+        assert TestService1.name == 'testService1', (
+            "Service did not have the correct name with number."
+        )
+
 
     def test_can_accept_name(self):
         class MyService(nautilus.Service):
@@ -32,7 +40,7 @@ class TestUtil(unittest.TestCase):
 
     def test_can_initialize_with_schema(self):
         # create a mock schema
-        schema = MagicMock()
+        schema = Mock()
         # make sure the internal schema is what we gave it
         assert self.service(schema=schema).schema == schema, (
             "Service could not be initialized with a specific schema"
@@ -67,6 +75,20 @@ class TestUtil(unittest.TestCase):
 
     def test_has_request_handler(self):
         # check the value of the internal attribute
-        assert issubclass(self.service()._api_request_handler_class, GraphQLRequestHandler), (
+        assert issubclass(self.service().api_request_handler_class, GraphQLRequestHandler), (
             "APIGateway did not have the right request handler class"
+        )
+
+
+    def test_can_summarize(self):
+        # the target summary
+        target = {
+            'name': 'myService',
+        }
+
+        # summarize the service
+        summarized = self.service().summarize()
+        # make sure the names match up
+        assert target['name'] == summarized['name'], (
+            "Summarzied service did not have the right name."
         )

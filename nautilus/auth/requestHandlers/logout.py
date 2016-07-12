@@ -6,10 +6,12 @@ class LogoutHandler(AuthRequestHandler):
         This class handles the basic login form.
     """
 
-    def get(self):
+    async def get(self):
+        # the used responses
+        from nautilus.network.http.responses import HTTPFound
+        # the response object
+        response = HTTPFound(location='/')
         # log the current user out
-        self.logout_user()
-        # the next url for the user
-        next_url = '/'
+        await self.logout_user(response)
         # redirect the user to root
-        return self.redirect(next_url)
+        return response

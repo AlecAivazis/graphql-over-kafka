@@ -1,9 +1,7 @@
 # external imports
 import unittest
-from unittest.mock import MagicMock
 # local imports
 import nautilus
-from ..util import assert_called_once_with
 
 class TestUtil(unittest.TestCase):
 
@@ -21,11 +19,19 @@ class TestUtil(unittest.TestCase):
 
     def test_has_custom_request_handler(self):
         # import the module to test
-        from nautilus.api.endpoints import APIQueryHandler
+        from nautilus.api.endpoints.requestHandlers.apiQuery import APIQueryHandler
         # check the value of the internal attribute
-        assert self.service()._api_request_handler_class == APIQueryHandler, (
-            "APIGateway did not have the right request handler class"
+        assert self.service().api_request_handler_class == APIQueryHandler, (
+            "APIGateway did not have the right query handler class"
         )
+
+    def test_has_custom_action_handler(self):
+        import nautilus.network.events.consumers.api as api_handler
+        # check the value of the internal attribute
+        assert self.service().action_handler == api_handler.APIActionHandler, (
+            "APIGateway did not have the right action handler class"
+        )
+
 
     def test_views_have_proper_cors_headers(self): pass
 

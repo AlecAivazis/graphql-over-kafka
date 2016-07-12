@@ -1,91 +1,71 @@
 import json
-import tornado.gen
-from tornado.web import MissingArgumentError
 from graphql.error import format_error as format_graphql_error
 # local imports
 from nautilus.auth import AuthRequestHandler
-
+from nautilus.network.http import Response
 
 class GraphQLRequestHandler(AuthRequestHandler):
 
-    def initialize(self, schema=None):
-        self._schema = schema
+    async def get(self):
+
+        try:
+            # grab the query from the request parameters
+            query = self.request.GET['query']
+        # if the user forgot to specify a query
+        except KeyError:
+            # return a graphql response with the error
+            return Response(body=json.dumps({
+                'errors': ['No query given.']
+            }).encode())
+
+        # handle the query
+        return await self._handle_query(query)
+
+    async def post(self):
+        try:                # grab the query from the request parameters
+            query = self.request.POST['query']
+        # if the user forgot to specify a query
+        except KeyError:
+            # return a graphql response with the error
+            return Response(body=json.dumps({
+                'errors': ['No query given.']
+            }).encode())
+
+        # handle the query
+        return await self._handle_query(query)
+
 
     @property
     def request_context(self):
         return self
 
-    @tornado.web.asynchronous
-    def get(self):
-        try:
-            # grab the query from the request parameters
-            query = self.get_query_argument('query')
 
-            # log the request
-            print("handling graphql query: {}".format(query))
-
-            # execute the query
-            result = self._schema.execute(
-                query,
-                context_value=self.request_context
-            )
-            print(result)
-
-            # format the errors specially
-            errors = [str(error) for error in result.errors]
-
-            # create a dictionary version of the result
-            result_dict = dict(data=result.data)
-            # if there are errors
-            if errors:
-                print(result.errors)
-                # add them to the result
-                result_dict['errors'] = ','.join(errors) or []
-
-            # send the response to the client and close its connection
-            self.finish(json.dumps(result_dict))
-
-        # if the user forgot to specify a query
-        except MissingArgumentError:
-            # return a graphql response with the error
-            return self.finish(json.dumps({
-                'errors': ['No query given.']
-            }))
+    @property
+    def schema(self):
+        return self.service.schema
 
 
-    # TODO: generalize this
-    @tornado.web.asynchronous
-    @tornado.gen.engine
-    def post(self):
-        try:
-            # grab the query from the request parameters
-            query = json.loads(self.request.body.decode('utf-8'))['query']
-            # log the request
-            print("handling graphql query: {}".format(query))
+    @property
+    def service(self):
+        return self.__class__.service
 
-            # execute the
-            result = self._schema.execute(
-                query,
-                request_context=self.request_context
-            )
 
-            # format the errors specially
-            errors = [str(format_graphql_error(error)) \
-                                            for error in result.errors]
+    async def _handle_query(self, query):
 
-            # create a dictionary version of the result
-            result_dict = dict(data=result.data)
-            # if there are errors
-            if errors:
-                # add them to the result
-                result_dict['errors'] = ','.join(errors) or []
+        # log the request
+        print("handling graphql query: {}".format(query))
 
-            # send the response to the client and close its connection
-            self.finish(json.dumps(result_dict))
+        # execute the query
+        result = self.schema.execute(
+            query,
+            context_value=self.request_context
+        )
 
-        # if the user forgot to specify a query
-        except MissingArgumentError:
-            # return a graphql response with the error
-            return self.finish(json.dumps({
-                'errors': ['No query given.']
-            }))
+        # create a dictionary version of the result
+        result_dict = dict(
+            data=result.data,
+            errors= [str(error) for error in result.errors]
+        )
+
+        # send the response to the client and close its connection
+        return Response(body=json.dumps(result_dict).encode())
