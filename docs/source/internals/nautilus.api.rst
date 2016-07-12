@@ -7,9 +7,7 @@ Subpackages
 .. toctree::
 
     nautilus.api.endpoints
-    nautilus.api.executor
-    nautilus.api.fields
-    nautilus.api.objectTypes
+    nautilus.api.util
 
 Submodules
 ----------
@@ -18,14 +16,6 @@ nautilus.api.filter module
 --------------------------
 
 .. automodule:: nautilus.api.filter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-nautilus.api.helpers module
----------------------------
-
-.. automodule:: nautilus.api.helpers
     :members:
     :undoc-members:
     :show-inheritance:

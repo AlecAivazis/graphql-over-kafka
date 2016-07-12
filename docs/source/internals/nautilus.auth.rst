@@ -6,7 +6,6 @@ Subpackages
 
 .. toctree::
 
-    nautilus.auth.exceptions
     nautilus.auth.models
     nautilus.auth.primitives
     nautilus.auth.requestHandlers

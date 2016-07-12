@@ -4,6 +4,14 @@ nautilus.api.endpoints.requestHandlers package
 Submodules
 ----------
 
+nautilus.api.endpoints.requestHandlers.apiQuery module
+------------------------------------------------------
+
+.. automodule:: nautilus.api.endpoints.requestHandlers.apiQuery
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 nautilus.api.endpoints.requestHandlers.graphiql module
 ------------------------------------------------------
 

@@ -6,10 +6,8 @@ Subpackages
 
 .. toctree::
 
-    nautilus.network.amqp
+    nautilus.network.events
     nautilus.network.http
-    nautilus.network.registry
-    nautilus.network.util
 
 Module contents
 ---------------
