@@ -171,6 +171,15 @@ following contents:</p>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>When this service runs it sends an event that intstructs all other services to announce
+their api contributitions. This information is pieced together to form a single api endpoint
+that is used to query the entire system. With your CatPhoto service running, start up the api
+passing a different port:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python3 api.py runserver --port 8001
+</pre></div>
+</div>
+<p>And visit the <cite>/graphiql</cite> endpoint like before. You should be able to see your other services
+as queryable nodes in the api.</p>
 </div>
 
 

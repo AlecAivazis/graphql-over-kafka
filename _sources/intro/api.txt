@@ -20,7 +20,7 @@ the entire cloud. This has a few major benefits that are worth pointing out:
 Let's begin by creating a new file called ``api.py`` in our directory with the
 following contents:
 
-.. code-block:: python
+.. code-block :: python
 
     # external imports
     from nautilus import APIGateway, ServiceManager
@@ -32,4 +32,14 @@ following contents:
     if __name__ == '__main__':
         manager.run()
 
+When this service runs it sends an event that intstructs all other services to announce
+their api contributitions. This information is pieced together to form a single api endpoint
+that is used to query the entire system. With your CatPhoto service running, start up the api
+passing a different port:
 
+.. code-block :: bash
+
+    python3 api.py runserver --port 8001
+
+And visit the `/graphiql` endpoint like before. You should be able to see your other services
+as queryable nodes in the api.
