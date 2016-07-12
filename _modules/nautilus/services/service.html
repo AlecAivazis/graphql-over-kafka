@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -134,33 +133,57 @@
   <h1>Source code for nautilus.services.service</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">tornado.ioloop</span>
-<span class="kn">import</span> <span class="nn">tornado.web</span>
-<span class="kn">from</span> <span class="nn">tornado.platform.asyncio</span> <span class="kn">import</span> <span class="n">AsyncIOMainLoop</span>
+<span class="kn">import</span> <span class="nn">uvloop</span>
+<span class="kn">import</span> <span class="nn">jinja2</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">aiohttp.web</span>
+<span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session</span> <span class="kn">import</span> <span class="n">session_middleware</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session.cookie_storage</span> <span class="kn">import</span> <span class="n">EncryptedCookieStorage</span>
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.amqp.consumers.actions</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">static_dir</span> <span class="k">as</span> <span class="n">api_endpoint_static</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.amqp.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
-<span class="kn">import</span> <span class="nn">nautilus.network.registry</span> <span class="kn">as</span> <span class="nn">registry</span>
 <span class="kn">from</span> <span class="nn">nautilus.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.events.actionHandlers</span> <span class="kn">import</span> <span class="n">roll_call_handler</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.events.consumers</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">GraphiQLRequestHandler</span><span class="p">,</span>
     <span class="n">GraphQLRequestHandler</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">intialize_service_action</span>
 
-<span class="c1"># integrate the tornado loop into asyncio</span>
-<span class="n">AsyncIOMainLoop</span><span class="p">()</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+<span class="c1"># enable uvloop for increased performance</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop_policy</span><span class="p">(</span><span class="n">uvloop</span><span class="o">.</span><span class="n">EventLoopPolicy</span><span class="p">())</span>
 
 
 <div class="viewcode-block" id="ServiceMetaClass"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.ServiceMetaClass">[docs]</a><span class="k">class</span> <span class="nc">ServiceMetaClass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">nautilus.conventions.models</span> <span class="kn">import</span> <span class="n">normalize_string</span>
+
         <span class="c1"># create the super class</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
 
+        <span class="c1"># the base service strings</span>
+        <span class="n">base_strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">normalize_string</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s1">&#39;service&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;modelService&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ConnectionService&#39;</span>
+        <span class="p">]]</span>
+
         <span class="c1"># if the object does not yet have a name</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;Service&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">base_strings</span><span class="p">:</span>
             <span class="c1"># use the name of the class record</span>
-            <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+            <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">normalize_string</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ServiceActionHandler"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.ServiceActionHandler">[docs]</a><span class="k">class</span> <span class="nc">ServiceActionHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ServiceActionHandler.handle_action"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.ServiceActionHandler.handle_action">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            The default action Handler has no action.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if there is a service attached to the action handler</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;service&#39;</span><span class="p">):</span>
+            <span class="c1"># handle roll calls</span>
+            <span class="n">await</span> <span class="n">roll_call_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Service"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service">[docs]</a><span class="k">class</span> <span class="nc">Service</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ServiceMetaClass</span><span class="p">):</span>
@@ -191,7 +214,7 @@
 <span class="sd">            .. code-block:: python</span>
 
 <span class="sd">                import nautilus</span>
-<span class="sd">                from nautilus.api import create_model_schema</span>
+<span class="sd">                from nautilus.api.util import create_model_schema</span>
 <span class="sd">                from nautilus.network import crud_handler</span>
 <span class="sd">                import nautilus.models as models</span>
 
@@ -207,7 +230,9 @@
     <span class="n">config</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">action_handler_class</span> <span class="o">=</span> <span class="n">ActionHandler</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">ServiceActionHandler</span>
+    <span class="n">api_request_handler_class</span> <span class="o">=</span> <span class="n">GraphQLRequestHandler</span>
+
 
     <span class="n">_routes</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -222,8 +247,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span>
 
@@ -232,47 +256,88 @@
 
         <span class="c1"># initialize the service</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_action_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_handler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_routes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_action_handler</span><span class="p">()</span>
+
+        <span class="c1"># placeholders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_http_server</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server_handler</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># cleanup</span>
 
 
 <div class="viewcode-block" id="Service.init_app"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.init_app">[docs]</a>    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># create a tornado web application</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">,</span>
-            <span class="n">debug</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span>
-            <span class="n">cookie_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;secret_key&#39;</span><span class="p">,</span> <span class="s1">&#39;default_secret&#39;</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">template_dir</span> <span class="k">as</span> <span class="n">api_template_dir</span>
+        <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">template_dir</span> <span class="k">as</span> <span class="n">auth_template_dir</span>
+        <span class="c1"># the secret key</span>
+        <span class="n">secret_key</span> <span class="o">=</span> <span class="s1">&#39;NERbTdtQl7IrBM9kx1PDjJXiyZhWWBZ9E7q2B3U7KVE=&#39;</span>
+        <span class="c1"># create a web application instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">(</span>
+            <span class="n">middlewares</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">session_middleware</span><span class="p">(</span>
+                    <span class="n">EncryptedCookieStorage</span><span class="p">(</span><span class="n">secret_key</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
         <span class="p">)</span>
-        <span class="c1"># attach the ioloop to the application</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span> <span class="o">=</span> <span class="n">AsyncIOMainLoop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># add the template loader</span>
+        <span class="n">aiohttp_jinja2</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
+            <span class="n">loader</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">ChoiceLoader</span><span class="p">([</span>
+                <span class="n">jinja2</span><span class="o">.</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="n">api_template_dir</span><span class="p">),</span>
+                <span class="n">jinja2</span><span class="o">.</span><span class="n">FileSystemLoader</span><span class="p">(</span><span class="n">auth_template_dir</span><span class="p">)</span>
+            <span class="p">])</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO:</span>
+            <span class="c1"># debug mode</span>
 
+        <span class="c1"># attach the ioloop to the application</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="c1"># attach the service to the loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Service.announce"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.announce">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">announce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method is used to announce the existence of the service</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># send a serialized event</span>
+        <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="n">intialize_service_action</span><span class="p">(),</span>
+            <span class="n">payload</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">summarize</span><span class="p">())</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Service.summarize"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.summarize">[docs]</a>    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">):</span>
+        <span class="c1"># return the summary</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Service.init_routes"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.init_routes">[docs]</a>    <span class="k">def</span> <span class="nf">init_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># for each route that was registered</span>
         <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routes</span><span class="p">:</span>
             <span class="c1"># add the corresponding http endpoint</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="o">**</span><span class="n">route</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="o">**</span><span class="n">route</span><span class="p">)</span>
+
+        <span class="c1"># add the schema reference to graphql handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_request_handler_class</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="c1"># add the static file urls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_static</span><span class="p">(</span><span class="s1">&#39;/graphiql/static/&#39;</span><span class="p">,</span> <span class="n">api_endpoint_static</span><span class="p">)</span>
+        <span class="c1"># add the default api  handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_request_handler_class</span><span class="p">)</span>
+        <span class="c1"># add the graphiql endpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="s1">&#39;/graphiql&#39;</span><span class="p">,</span> <span class="n">GraphiQLRequestHandler</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Service.init_action_handler"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.init_action_handler">[docs]</a>    <span class="k">def</span> <span class="nf">init_action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_handler</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.init_action_handler"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.init_action_handler">[docs]</a>    <span class="k">def</span> <span class="nf">init_action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># if the service was provided an action handler</span>
-        <span class="k">if</span> <span class="n">action_handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_handler</span><span class="p">:</span>
             <span class="c1"># create a wrapper for it</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_handler_class</span><span class="p">(</span><span class="n">callback</span><span class="o">=</span><span class="n">action_handler</span><span class="p">)</span>
-            <span class="c1"># add it to the ioloop</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">run</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_handler</span><span class="p">()</span>
+            <span class="c1"># pass the service to the event broker</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span></div>
 
 
-<div class="viewcode-block" id="Service.init_keep_alive"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.Service.init_keep_alive">[docs]</a>    <span class="k">def</span> <span class="nf">init_keep_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># create the period callback</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">keep_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
-
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># by default, a service does not have a response to actions</span>
-        <span class="k">return</span> <span class="n">noop_handler</span>
-
-
-<div class="viewcode-block" id="Service.run"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.run"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">shutdown_timeout</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This function starts the service&#39;s network intefaces.</span>
 
@@ -286,76 +351,81 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
 
-        <span class="c1"># create the keep alive timer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_keep_alive</span><span class="p">()</span>
-
-        <span class="c1"># start the keep alive timer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="c1"># assign the port to the app instance</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">address</span><span class="o">=</span><span class="n">host</span><span class="p">)</span>
-
-        <span class="c1"># start the ioloop</span>
+        <span class="c1"># start the loop</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="c1"># if the user interrupts the server</span>
-        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="c1"># stop the service and clean up</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-            <span class="c1"># bubble the exception up to someone who cares</span>
-            <span class="k">raise</span> <span class="n">err</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="c1"># stop the service and clean up</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-            <span class="c1"># bubble the exception up to someone who cares</span>
-            <span class="k">raise</span> <span class="n">err</span></div>
+            <span class="c1"># if an event broker has been created for this service</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="p">:</span>
+                <span class="c1"># start the broker</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                <span class="c1"># announce the service</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">announce</span><span class="p">())</span>
+
+            <span class="c1"># the handler for the http server</span>
+            <span class="n">http_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">make_handler</span><span class="p">()</span>
+            <span class="c1"># create an asyncio server</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_http_server</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">http_handler</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+
+            <span class="c1"># grab the handler for the server callback</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_server_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_http_server</span><span class="p">)</span>
+            <span class="c1"># start the event loop</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+
+        <span class="c1"># if the user interrupted the server</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="c1"># keep going</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># when we&#39;re done</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># clean up the service</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+            <span class="c1"># if we end up closing before any variables get assigned</span>
+            <span class="k">except</span> <span class="ne">UnboundLocalError</span><span class="p">:</span>
+                <span class="c1"># just ignore it (there was nothing to close)</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># close the event loop</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Service.stop"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.cleanup"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            This function stops the service&#39;s various network interfaces.</span>
+<span class="sd">            This function is called when the service has finished running</span>
+<span class="sd">            regardless of intentionally or not.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># if there is a keep alive timer</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span><span class="p">:</span>
-            <span class="c1"># stop the keep_alive timer</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">keep_alive</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-            <span class="c1"># remove the service entry from the registry</span>
-            <span class="n">registry</span><span class="o">.</span><span class="n">deregister_service</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="c1"># stop the ioloop</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-        <span class="c1"># if there is an action consumer registered with this service</span>
+        <span class="c1"># if an event broker has been created for this service</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="p">:</span>
-            <span class="c1"># stop the action consumer</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+            <span class="c1"># stop the event broker</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="c1"># attempt</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># close the http server</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_server_handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server_handler</span><span class="o">.</span><span class="n">wait_closed</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_http_handler</span><span class="o">.</span><span class="n">finish_connections</span><span class="p">(</span><span class="n">shutdown_timeout</span><span class="p">))</span>
+
+        <span class="c1"># if there was no handler</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># keep going</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># more cleanup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">shutdown</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">cleanup</span><span class="p">())</span></div>
 
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_request_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">r&quot;/&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_request_handler_class</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">r&quot;/graphiql/static/(.*)&quot;</span><span class="p">,</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">StaticFileHandler</span><span class="p">,</span>
-                                                <span class="nb">dict</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">api_endpoint_static</span><span class="p">)),</span>
-            <span class="p">(</span><span class="s2">r&quot;/graphiql/?&quot;</span><span class="p">,</span> <span class="n">GraphiQLRequestHandler</span><span class="p">),</span>
-        <span class="p">]</span>
-
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_api_request_handler_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">GraphQLRequestHandler</span>
-
-
-<div class="viewcode-block" id="Service.add_http_endpoint"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.add_http_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">add_http_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">request_handler</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;.*$&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Service.add_http_endpoint"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.service.Service.add_http_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">add_http_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">request_handler</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This method provides a programatic way of added invidual routes</span>
 <span class="sd">            to the http server.</span>
 
 <span class="sd">            Args:</span>
 <span class="sd">                url (str): the url to be handled by the request_handler</span>
-<span class="sd">                request_handler (tornado.web.RequestHandler): The request handler</span>
-<span class="sd">                config (dict): A configuration dictionary to pass to the handler</span>
+<span class="sd">                request_handler (nautilus.network.RequestHandler): The request handler</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">add_handlers</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="p">[(</span><span class="n">url</span><span class="p">,</span> <span class="n">request_handler</span><span class="p">,</span> <span class="n">config</span><span class="p">)])</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">request_handler</span><span class="p">)</span></div>
 
 
     <span class="nd">@classmethod</span>
@@ -386,13 +456,19 @@
         <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">wrapped_class</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
             <span class="c1"># add the endpoint at the given route</span>
             <span class="n">cls</span><span class="o">.</span><span class="n">_routes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="nb">dict</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">route</span><span class="p">,</span> <span class="n">request_handler</span><span class="o">=</span><span class="n">wrapped_class</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">kwds</span><span class="p">)</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">route</span><span class="p">,</span> <span class="n">request_handler</span><span class="o">=</span><span class="n">wrapped_class</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="c1"># return the class undecorated</span>
             <span class="k">return</span> <span class="n">wrapped_class</span>
 
         <span class="c1"># return the decorator</span>
-        <span class="k">return</span> <span class="n">decorator</span></div></div>
+        <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># return a summary of the service</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span></div>
+
 </pre></div>
 
            </div>

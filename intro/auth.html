@@ -86,19 +86,16 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="first_service.html">Your First Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_model.html">Keeping Track of Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Authentication</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#authorizing-users-for-particular-pieces-of-data">Authorizing Users for Particular Pieces of Data</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Authentication</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -147,58 +144,7 @@
             
   <div class="section" id="authentication">
 <h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>Like usual, the bulk of our cloud&#8217;s authentication logic lives within a
-separate service. Let&#8217;s begin by adding a new file to our directory
-called <code class="docutils literal"><span class="pre">auth.py</span></code> with the following contents:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">AuthService</span>
-
-<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/passwords.db&#39;</span>
-
-<span class="k">class</span> <span class="nc">RecipeBookAuth</span><span class="p">(</span><span class="n">AuthService</span><span class="p">):</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
-</pre></div>
-</div>
-<p>This service provides basic user authentication and registration. When a user
-interacts with a service like the API gateway or a client, they a bit of
-information with every request that identifies them and indicates they are
-logged in. If a service requires authentication and it cannot be found, the
-user is redirected to this service to obtain such credentials. As such, this
-service needs to only be responsible for maintaining user passwords. Other
-bits of user information can be stored in another, less protected service.</p>
-<p>Go ahead and run this service (remember to create the database). Navigate
-to the <code class="docutils literal"><span class="pre">/register</span></code> endpoint and register an account for us to use. Log into
-the account you just made by entering the same credentials into the <code class="docutils literal"><span class="pre">/login</span></code>
-endpoint.</p>
-<p>Now we are ready to protect our data!</p>
-<div class="section" id="authorizing-users-for-particular-pieces-of-data">
-<h2>Authorizing Users for Particular Pieces of Data<a class="headerlink" href="#authorizing-users-for-particular-pieces-of-data" title="Permalink to this headline">¶</a></h2>
-<p>Regardless of your application, not all bits of information are inteded for
-everyone to see. Eventually you&#8217;ll want to be able to specify which users are
-able to see which entries in our api. Thankfully, hiding pieces of data based
-on the current user is easy in nautilus. Simply, add a function to your
-<code class="docutils literal"><span class="pre">ServiceObjectType</span></code> s called <code class="docutils literal"><span class="pre">auth</span></code> that takes the user as an argument and
-returns true if the user can see the object and false if not. For example, say
-we had set up a relationship between recipes and users through another
-connection service. We could limit the results in the recipe query to only
-those written by the current user by changing our recipe service object to
-look something like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">ServiceObjectType</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span>
-
-    <span class="c1"># assuming User was defined above/elsewhere</span>
-    <span class="n">author</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            This function returns True if the given user is able to view</span>
-<span class="sd">            this recipe.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">user_id</span>
-</pre></div>
-</div>
-</div>
+<p>coming soon</p>
 </div>
 
 

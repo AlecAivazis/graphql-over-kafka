@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -133,96 +132,76 @@
             
   <h1>Source code for nautilus.api.endpoints.requestHandlers.graphql</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">tornado.gen</span>
-<span class="kn">from</span> <span class="nn">tornado.web</span> <span class="kn">import</span> <span class="n">MissingArgumentError</span>
 <span class="kn">from</span> <span class="nn">graphql.error</span> <span class="kn">import</span> <span class="n">format_error</span> <span class="k">as</span> <span class="n">format_graphql_error</span>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">AuthRequestHandler</span>
-
+<span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">Response</span>
 
 <div class="viewcode-block" id="GraphQLRequestHandler"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler">[docs]</a><span class="k">class</span> <span class="nc">GraphQLRequestHandler</span><span class="p">(</span><span class="n">AuthRequestHandler</span><span class="p">):</span>
 
-<div class="viewcode-block" id="GraphQLRequestHandler.initialize"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="o">=</span> <span class="n">schema</span></div>
+<div class="viewcode-block" id="GraphQLRequestHandler.get"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.get">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># grab the query from the request parameters</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
+        <span class="c1"># if the user forgot to specify a query</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># return a graphql response with the error</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;No query given.&#39;</span><span class="p">]</span>
+            <span class="p">})</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="c1"># handle the query</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GraphQLRequestHandler.post"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.post">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>                <span class="c1"># grab the query from the request parameters</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
+        <span class="c1"># if the user forgot to specify a query</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># return a graphql response with the error</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;No query given.&#39;</span><span class="p">]</span>
+            <span class="p">})</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="c1"># handle the query</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">request_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="nd">@tornado.web.asynchronous</span>
-<div class="viewcode-block" id="GraphQLRequestHandler.get"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># grab the query from the request parameters</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_query_argument</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">)</span>
 
-            <span class="c1"># log the request</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;handling graphql query: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
-
-            <span class="c1"># execute the query</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="n">query</span><span class="p">,</span>
-                <span class="n">context_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request_context</span>
-            <span class="p">)</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-
-            <span class="c1"># format the errors specially</span>
-            <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">]</span>
-
-            <span class="c1"># create a dictionary version of the result</span>
-            <span class="n">result_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="c1"># if there are errors</span>
-            <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
-                <span class="c1"># add them to the result</span>
-                <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
-
-            <span class="c1"># send the response to the client and close its connection</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_dict</span><span class="p">))</span>
-
-        <span class="c1"># if the user forgot to specify a query</span>
-        <span class="k">except</span> <span class="n">MissingArgumentError</span><span class="p">:</span>
-            <span class="c1"># return a graphql response with the error</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
-                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;No query given.&#39;</span><span class="p">]</span>
-            <span class="p">}))</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">schema</span>
 
 
-    <span class="c1"># TODO: generalize this</span>
-    <span class="nd">@tornado.web.asynchronous</span>
-    <span class="nd">@tornado.gen.engine</span>
-<div class="viewcode-block" id="GraphQLRequestHandler.post"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># grab the query from the request parameters</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))[</span><span class="s1">&#39;query&#39;</span><span class="p">]</span>
-            <span class="c1"># log the request</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;handling graphql query: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">service</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">service</span>
 
-            <span class="c1"># execute the</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="n">query</span><span class="p">,</span>
-                <span class="n">request_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request_context</span>
-            <span class="p">)</span>
 
-            <span class="c1"># format the errors specially</span>
-            <span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">format_graphql_error</span><span class="p">(</span><span class="n">error</span><span class="p">))</span> \
-                                            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">]</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_handle_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
 
-            <span class="c1"># create a dictionary version of the result</span>
-            <span class="n">result_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="c1"># if there are errors</span>
-            <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
-                <span class="c1"># add them to the result</span>
-                <span class="n">result_dict</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="c1"># log the request</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;handling graphql query: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
 
-            <span class="c1"># send the response to the client and close its connection</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_dict</span><span class="p">))</span>
+        <span class="c1"># execute the query</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span>
+            <span class="n">context_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request_context</span>
+        <span class="p">)</span>
 
-        <span class="c1"># if the user forgot to specify a query</span>
-        <span class="k">except</span> <span class="n">MissingArgumentError</span><span class="p">:</span>
-            <span class="c1"># return a graphql response with the error</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
-                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;No query given.&#39;</span><span class="p">]</span>
-            <span class="p">}))</span></div></div>
+        <span class="c1"># create a dictionary version of the result</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">errors</span><span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># send the response to the client and close its connection</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_dict</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
 </pre></div>
 
            </div>

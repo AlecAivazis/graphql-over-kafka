@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.api.endpoints.requestHandlers.apiQuery &mdash; nautilus v0.4.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../../index.html"/> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>nautilus.api.endpoints.requestHandlers.apiQuery</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.api.endpoints.requestHandlers.apiQuery</h1><div class="highlight"><pre>
+<span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">graphql</span>
+<span class="c1"># local imports</span>
+<span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">get_crud_action</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">parse_string</span>
+<span class="kn">from</span> <span class="nn">.graphql</span> <span class="kn">import</span> <span class="n">GraphQLRequestHandler</span>
+
+
+<div class="viewcode-block" id="APIQueryHandler"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.apiQuery.APIQueryHandler">[docs]</a><span class="k">class</span> <span class="nc">APIQueryHandler</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">endpoints</span><span class="o">.</span><span class="n">GraphQLRequestHandler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The api query handler parses and executes the query by hand,</span>
+<span class="sd">        requesting the appropriate data over the action system. Queries</span>
+<span class="sd">        are validated using the internally tracked schema maintained by</span>
+<span class="sd">        the service.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_handle_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+
+        <span class="n">async</span> <span class="k">def</span> <span class="nf">object_resolver</span><span class="p">(</span><span class="n">object_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                This function performs the actual query for the given</span>
+<span class="sd">                object and fields. Returns the</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># check if an object with that name has been registered</span>
+                <span class="n">registered</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_connection_data</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span> \
+                                    <span class="k">if</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">object_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># if there is no connection data yet</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No objects are registered with this schema yet.&quot;</span><span class="p">)</span>
+            <span class="c1"># if we dont recognize the model that was requested</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot query for object {} on this service.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">object_name</span><span class="p">))</span>
+
+            <span class="c1"># the valid fields for this object</span>
+            <span class="n">valid_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">registered</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]]</span>
+
+            <span class="c1"># figure out if any invalid fields were requested</span>
+            <span class="n">invalid_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_fields</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># make sure we never treat pk as invalid</span>
+                <span class="n">invalid_fields</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
+            <span class="c1"># if they weren&#39;t asking for pk as a field</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># if there were</span>
+            <span class="k">if</span> <span class="n">invalid_fields</span><span class="p">:</span>
+                <span class="c1"># yell loudly</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot query for fields {!r} on {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">invalid_fields</span><span class="p">,</span> <span class="n">registered</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                <span class="p">))</span>
+
+            <span class="c1"># make sure we include the id in the request</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
+
+            <span class="c1"># the query for model records</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_for_model</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+
+            <span class="c1"># the action type for the question</span>
+            <span class="n">action_type</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">object_name</span><span class="p">)</span>
+
+            <span class="c1"># query the appropriate stream for the information</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
+                <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">query</span>
+            <span class="p">)</span>
+            <span class="c1"># treat the reply like a json object</span>
+            <span class="n">response_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+            <span class="c1"># if something went wrong</span>
+            <span class="k">if</span> <span class="s1">&#39;errors&#39;</span> <span class="ow">in</span> <span class="n">response_data</span> <span class="ow">and</span> <span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]:</span>
+                <span class="c1"># return an empty response</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]))</span>
+
+            <span class="c1"># otherwise it was a successful query so return the result</span>
+            <span class="k">return</span> <span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_models&#39;</span><span class="p">]</span>
+
+
+        <span class="n">async</span> <span class="k">def</span> <span class="nf">connection_resolver</span><span class="p">(</span><span class="n">connection_name</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># grab the recorded data for this connection</span>
+                <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span> <span class="n">conn</span> <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_connection_data</span><span class="p">[</span><span class="s1">&#39;connections&#39;</span><span class="p">]</span>\
+                                  <span class="k">if</span> <span class="n">conn</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">connection_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                              <span class="c1"># if there is no connection data yet</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No objects are registered with this schema yet.&quot;</span><span class="p">)</span>
+            <span class="c1"># if we dont recognize the model that was requested</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot query for {} on {}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">connection_name</span><span class="p">,</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
+
+            <span class="c1"># the target of the connection</span>
+            <span class="n">to_service</span> <span class="o">=</span> <span class="n">expected</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">][</span><span class="s1">&#39;to&#39;</span><span class="p">][</span><span class="s1">&#39;service&#39;</span><span class="p">]</span>
+
+            <span class="c1"># ask for only the entries connected to the object</span>
+            <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span><span class="nb">object</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]}</span>
+            <span class="c1"># the field of the connection is the model name</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_service</span><span class="p">]</span>
+
+            <span class="c1"># the query for model records</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_for_model</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+
+            <span class="c1"># the action type for the question</span>
+            <span class="n">action_type</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">connection_name</span><span class="p">)</span>
+
+            <span class="c1"># get the service name for the connection</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
+                <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">query</span>
+            <span class="p">))</span>
+
+            <span class="k">if</span> <span class="s1">&#39;errors&#39;</span> <span class="ow">in</span> <span class="n">response</span> <span class="ow">and</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]:</span>
+                <span class="c1"># return an empty response</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]))</span>
+
+            <span class="c1"># grab the ids from the response</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="n">to_service</span><span class="p">])</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_models&#39;</span><span class="p">]]</span>
+
+            <span class="c1"># the question for connected nodes</span>
+            <span class="k">return</span> <span class="n">ids</span><span class="p">,</span> <span class="n">to_service</span>
+
+        <span class="c1"># if there hasn&#39;t been a schema generated yet</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">:</span>
+            <span class="c1"># yell loudly</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;No schema for this service.&#39;</span><span class="p">]</span>
+            <span class="p">})</span>
+            <span class="c1"># send the result of the introspection to the user</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># figure out if the query is an introspection</span>
+            <span class="n">is_introspection</span> <span class="o">=</span> <span class="n">graphql</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">definitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;IntrospectionQuery&#39;</span>
+        <span class="c1"># if something went wrong</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># its not</span>
+            <span class="n">is_introspection</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="c1"># if the query is an introspection</span>
+        <span class="k">if</span> <span class="n">is_introspection</span><span class="p">:</span>
+            <span class="c1"># handle it using the schema</span>
+            <span class="n">introspection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">introspection</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+                <span class="s1">&#39;errors&#39;</span><span class="p">:</span> <span class="n">introspection</span><span class="o">.</span><span class="n">errors</span>
+            <span class="p">})</span>
+            <span class="c1"># send the result of the introspection to the user</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+
+        <span class="c1"># otherwise its a normal query/mutation</span>
+
+        <span class="c1"># walk the query</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="n">parse_string</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">object_resolver</span><span class="p">,</span> <span class="n">connection_resolver</span><span class="p">)</span>
+
+        <span class="c1"># pass the result to the request</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+
+    <span class="k">def</span> <span class="nf">_query_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="c1"># if there are filters</span>
+        <span class="k">if</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="c1"># the string for the filters</span>
+            <span class="n">filter_string</span> <span class="o">=</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;{}: {!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filter_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># the query for the requested data</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            query {</span>
+<span class="s2">                all_models</span><span class="si">%s</span><span class="s2"> {</span>
+<span class="s2">                    </span><span class="si">%s</span><span class="s2"></span>
+<span class="s2">                }</span>
+<span class="s2">            }</span>
+<span class="s2">        &quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filter_string</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'v0.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

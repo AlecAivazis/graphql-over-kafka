@@ -7,15 +7,10 @@ to use some of the services that nautilus provides which are great starting
 points when adding new functionalities to your cloud.
 
 
-Using Pre-defined Services
----------------------------
-One of the most commonly used services is the ModelService which maintains
-records of a particular database. If this sounds really familiar, it should
-- you implemented 80% of the service in Part 1, it just handles the other
-CRUD actions for you.
+A second service to connect to
+-------------------------------
 
-Before we add another model service, let's rename the ``server.py`` file
-from part 1 to ``recipes.py`` and create a new file called ``ingredients.py``
+Let's start by creating a new file called ``comments.py``
 in our directory. Inside of this file, paste the following code:
 
 .. code-block:: python
@@ -25,34 +20,24 @@ in our directory. Inside of this file, paste the following code:
     # third party imports
     from nautilus.models import BaseModel, fields
 
-    # the notification mixin adds the sqlalchemy event handlers from part 1
-    class Ingredient(BaseModel):
-        name = fields.CharField()
+
+    class Comment(BaseModel):
+        contents = fields.CharField()
 
     class ServiceConfig:
-        database_url = 'sqlite:///ingredients.db'
+        database_url = 'sqlite:///comments.db'
 
-    class IngredientService(ModelService):
-        model = Ingredient,
+    class CommentService(ModelService):
+        model = Comment
         config = ServiceConfig
 
 
-    manager = ServiceManager(service)
+    manager = ServiceManager(CommentService)
 
     if __name__ == '__main__':
         manager.run()
 
 
-You can see that we were able to get the same/more functionality as before with
-significantly fewer lines of code. If you want, you can run the server
-and go to the admin panel / graphql endpoints to verify things are
-working as you expect.
-
-Sorry if feel that you went through all that trouble in part 1 for nothing.
-At least now you know what's going on underneath and hopefully you never have
-to write that much boilerplate again. If you do need to implement a
-completely custom service, send me a message and let's work together to figure
-out if nautilus can better serve your needs at a framework level.
 
 
 Connection Models
@@ -76,7 +61,7 @@ would be a 2 in the ingredient column. This relationship is called
 "many-to-many" because a recipe can have many ingredients and an ingredient can be a member of many recipes (neither column is unique). Relationships can also be
 classified as "one-to-one" and "one-to-many".
 
-Make a new file called ``recipeIngredients.py`` next to the previously created
+Make a new file called ``comments.py`` next to the previously created
 files. Now, create a ConnectionService to manage the relationship between
 recipes and ingredients:
 
@@ -84,18 +69,19 @@ recipes and ingredients:
 
     # external imports
     from nautilus import ConnectionService
-    # local imports
-    from recipes import service as recipeService
-    from ingredients import service ingredientService
 
     class ServiceConfig:
-        database_url = 'sqlite:///connections.db'
+        database_url = 'sqlite:///commentConnections.db'
 
+    class Comments(ConnectionService):
+        from_service = ('Recipe',)
+        to_service = ('Ingredient',)
 
-    class RecipeIngredientConnectionService(ConnectionService):
-        services = [recipeService, ingredientService]
         config = ServiceConfig
 
 
-Again, you can run the service and check out the various endpoints.
+Create the database for the two services and add some more dummy entries.
+Make sure the two id's entered into the connection database correspond to actual
+entries in the appropriate database. Again, you can run the service and check out
+the various endpoints.
 

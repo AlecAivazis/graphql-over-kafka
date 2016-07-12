@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.api.util.walk_query &mdash; nautilus v0.4.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>nautilus.api.util.walk_query</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.api.util.walk_query</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="walk_query"><a class="viewcode-back" href="../../../../internals/nautilus.api.util.html#nautilus.api.util.walk_query.walk_query">[docs]</a><span></span><span class="n">async</span> <span class="k">def</span> <span class="nf">walk_query</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">object_resolver</span><span class="p">,</span> <span class="n">connection_resolver</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">__naut_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function traverses a query and collects the corresponding</span>
+<span class="sd">        information in a dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if the object has no selection set</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;selection_set&#39;</span><span class="p">):</span>
+        <span class="c1"># yell loudly</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can only resolve objects, not primitive types&quot;</span><span class="p">)</span>
+
+    <span class="c1"># the name of the node</span>
+    <span class="n">node_name</span> <span class="o">=</span> <span class="n">__naut_name</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">obj</span><span class="o">.</span><span class="n">operation</span>
+
+    <span class="c1"># the selected fields</span>
+    <span class="n">selection_set</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">selection_set</span><span class="o">.</span><span class="n">selections</span>
+
+    <span class="c1"># the fields we have to ask for</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">selection_set</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">selection_set</span><span class="p">]</span>
+    <span class="c1"># the links between objects</span>
+    <span class="n">connections</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">selection_set</span> <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">selection_set</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># resolve the model with the given fields</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">await</span> <span class="n">object_resolver</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">],</span> <span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+    <span class="c1"># if something went wrong resolving the object</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># add the error as a string</span>
+        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+        <span class="c1"># stop here</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="c1"># print(models)</span>
+    <span class="c1"># add connections to each matching model</span>
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="c1"># if is an id for the model</span>
+        <span class="k">if</span> <span class="s1">&#39;pk&#39;</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
+            <span class="c1"># for each connection</span>
+            <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+                <span class="c1"># the name of the connection</span>
+                <span class="n">connection_name</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">value</span>
+                <span class="c1"># the target of the connection</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">node_name</span><span class="p">,</span>
+                    <span class="s1">&#39;pk&#39;</span><span class="p">:</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span>
+                <span class="p">}</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># go through the connection</span>
+                    <span class="n">connected_ids</span><span class="p">,</span> <span class="n">next_target</span> <span class="o">=</span> <span class="n">await</span> <span class="n">connection_resolver</span><span class="p">(</span>
+                        <span class="n">connection_name</span><span class="p">,</span>
+                        <span class="n">node</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># if there are connections</span>
+                    <span class="k">if</span> <span class="n">connected_ids</span><span class="p">:</span>
+                        <span class="c1"># add the id filter to the list</span>
+                        <span class="n">filters</span><span class="p">[</span><span class="s1">&#39;pk_in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">connected_ids</span>
+
+                        <span class="c1"># add the connection field</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">await</span> <span class="n">walk_query</span><span class="p">(</span>
+                            <span class="n">connection</span><span class="p">,</span>
+                            <span class="n">object_resolver</span><span class="p">,</span>
+                            <span class="n">connection_resolver</span><span class="p">,</span>
+                            <span class="n">errors</span><span class="p">,</span>
+                            <span class="n">__naut_name</span><span class="o">=</span><span class="n">next_target</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">filters</span>
+                        <span class="p">)</span>
+                    <span class="c1"># there were no connections</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># if something went wrong</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1"># add the error as a string</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+                    <span class="c1"># stop here</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
+
+                <span class="c1"># set the connection to the appropriate value</span>
+                <span class="n">model</span><span class="p">[</span><span class="n">connection_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="c1"># return the list of matching models</span>
+    <span class="k">return</span> <span class="n">models</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'v0.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

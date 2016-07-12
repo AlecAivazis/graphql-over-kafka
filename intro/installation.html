@@ -85,15 +85,11 @@
                 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="">Installation / Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#necessary-background-processes">Necessary Background Processes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#linux">Linux</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#apple-osx">Apple / OSX</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#necessary-background-processes">Necessary Background Processes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="first_service.html">Your First Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_model.html">Keeping Track of Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
@@ -103,7 +99,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -163,41 +158,8 @@ packages first:</p>
 </div>
 <div class="section" id="necessary-background-processes">
 <h2>Necessary Background Processes<a class="headerlink" href="#necessary-background-processes" title="Permalink to this headline">¶</a></h2>
-<p>In order to run a nautilus cloud, you must have both consul and rabbitmq
-installed and running on localhost.</p>
-<div class="section" id="linux">
-<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h3>
-<p>If you are developing on a linux machine, this is easily accomplished using
-docker. For docker installation instructions please visit here. Once you have
-successfully installed docker, the two process should be started in separate terminals:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ docker run -p <span class="s2">&quot;5672:5672&quot;</span> rabbitmq
-$ docker run -p <span class="s2">&quot;8500:8500&quot;</span> progrium/consul -server -bootstrap
-</pre></div>
-</div>
-<p>For more information using docker, please read the documentation here.</p>
-</div>
-<div class="section" id="apple-osx">
-<h3>Apple / OSX<a class="headerlink" href="#apple-osx" title="Permalink to this headline">¶</a></h3>
-<p>Because of some complications with docker on OSX, we cannot bind our containers
-to ports on localhost. This leaves us with two options: point nautilus to
-another location (we&#8217;ll have to do this for every service), or run the two
-processes by hand. Since we do not  yet support the first option, OSX users
-need to install these two packages by hand using MacPorts or homebrew.</p>
-<p>Once consul and rabbitmq are installed, they can be run in their own terminals
-with the following commands:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ consul agent -server -bootstrap -data-dir /tmp/data -ui
-$ rabbitmq-server
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li>I know this is tedious to ensure when developping, nautilus will eventually start these processes for you if they are not present when running a service.</li>
-</ul>
-</div></blockquote>
+<p>In order to run a nautilus cloud, you must have kafka running on your local machine. For more information on
+kafka including how to run it locally, go [here](<a class="reference external" href="http://www.bogotobogo.com/Hadoop/BigData_hadoop_Zookeeper_Kafka_single_node_single_broker_cluster.php">http://www.bogotobogo.com/Hadoop/BigData_hadoop_Zookeeper_Kafka_single_node_single_broker_cluster.php</a>).</p>
 </div>
 </div>
 

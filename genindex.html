@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -149,7 +148,6 @@
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
- | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -166,19 +164,9 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.__getattr__">__getattr__() (nautilus.api.objectTypes.serviceObjectType.ServiceObjectType method)</a>
+  <dt><a href="internals/nautilus.config.html#nautilus.config.config.Config.__getattr__">__getattr__() (nautilus.config.config.Config method)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="schema/index.html#nautilus.api.ServiceObjectType.__getattr__">(nautilus.api.ServiceObjectType method)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.config.html#nautilus.config.config.Config.__getattr__">(nautilus.config.config.Config method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -196,14 +184,18 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.acknowledge_message">acknowledge_message() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.action_handler">action_handler (nautilus.services.connectionService.ConnectionService attribute)</a>
+  <dt><a href="services/index.html#nautilus.APIGateway.action_handler">action_handler (nautilus.APIGateway attribute)</a>
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.action_handler">(nautilus.services.apiGateway.APIGateway attribute)</a>
+  </dt>
+
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.action_handler">(nautilus.services.connectionService.ConnectionService attribute)</a>
+  </dt>
+
         
   <dt><a href="internals/nautilus.services.html#nautilus.services.modelService.ModelService.action_handler">(nautilus.services.modelService.ModelService attribute)</a>
   </dt>
@@ -214,11 +206,7 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.action_handler_class">action_handler_class (nautilus.services.service.Service attribute)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.actions.ActionHandler">ActionHandler (class in nautilus.network.amqp.consumers.actions)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.actions.ActionHandler">ActionHandler (class in nautilus.network.events.consumers.actions)</a>
   </dt>
 
       
@@ -232,31 +220,43 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.add_on_cancel_callback">add_on_cancel_callback() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="services/index.html#nautilus.Service.announce">announce() (nautilus.Service method)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.add_on_channel_close_callback">add_on_channel_close_callback() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.announce">(nautilus.services.apiGateway.APIGateway method)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.add_on_connection_close_callback">add_on_connection_close_callback() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.announce">(nautilus.services.service.Service method)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.services.html#nautilus.services.modelService.ModelService.additional_action_handler">additional_action_handler() (nautilus.services.modelService.ModelService method)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer">AMQPConsumer (class in nautilus.network.amqp.consumers.amqp)</a>
-  </dt>
-
+      </dl></dd>
       
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.services.api_gateway_name">api_gateway_name() (in module nautilus.conventions.services)</a>
   </dt>
 
+      
+  <dt><a href="services/index.html#nautilus.APIGateway.api_request_handler_class">api_request_handler_class (nautilus.APIGateway attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.api_request_handler_class">(nautilus.services.apiGateway.APIGateway attribute)</a>
+  </dt>
+
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.api_request_handler_class">(nautilus.services.service.Service attribute)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.api.APIActionHandler">APIActionHandler (class in nautilus.network.events.consumers.api)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="services/index.html#nautilus.APIGateway">APIGateway (class in nautilus)</a>
   </dt>
@@ -268,15 +268,19 @@
 
       </dl></dd>
       
+  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.apiQuery.APIQueryHandler">APIQueryHandler (class in nautilus.api.endpoints.requestHandlers.apiQuery)</a>
+  </dt>
+
+      
   <dt><a href="internals/nautilus.api.html#nautilus.api.filter.args_for_model">args_for_model() (in module nautilus.api.filter)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.services.auth_service_name">auth_service_name() (in module nautilus.conventions.services)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.ask">ask() (nautilus.network.events.consumers.kafka.KafkaBroker method)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.auth.exceptions.html#nautilus.auth.exceptions.AuthorizationError">AuthorizationError</a>
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.services.auth_service_name">auth_service_name() (in module nautilus.conventions.services)</a>
   </dt>
 
       
@@ -318,31 +322,23 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.close_channel">close_channel() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="services/index.html#nautilus.Service.cleanup">cleanup() (nautilus.Service method)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.close_connection">close_connection() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.cleanup">(nautilus.services.service.Service method)</a>
   </dt>
 
+      </dl></dd>
       
   <dt><a href="internals/nautilus.auth.primitives.html#nautilus.auth.primitives.passwordHash.PasswordHash.coerce">coerce() (nautilus.auth.primitives.passwordHash.PasswordHash class method)</a>
   </dt>
 
       
-  <dt><a href="handlers/index.html#nautilus.network.amqp.combine_action_handlers">combine_action_handlers() (in module nautilus.network.amqp)</a>
+  <dt><a href="internals/nautilus.network.events.html#nautilus.network.events.util.combine_action_handlers">combine_action_handlers() (in module nautilus.network.events.util)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.network.amqp.html#nautilus.network.amqp.util.combine_action_handlers">(in module nautilus.network.amqp.util)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.network.util.html#nautilus.network.util.query.combine_action_handlers">(in module nautilus.network.util.query)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="internals/nautilus.config.html#nautilus.config.config.Config">Config (class in nautilus.config.config)</a>
   </dt>
@@ -352,23 +348,9 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.connect">connect() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.services.connection_service_name">connection_service_name() (in module nautilus.conventions.services)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.connections">connections() (nautilus.api.objectTypes.serviceObjectType.ServiceObjectType class method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="schema/index.html#nautilus.api.ServiceObjectType.connections">(nautilus.api.ServiceObjectType class method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="services/index.html#nautilus.ConnectionService">ConnectionService (class in nautilus)</a>
   </dt>
@@ -380,27 +362,35 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta.construct">construct() (nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta method)</a>
+  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta.construct">construct() (nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta method)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.actions.ActionHandler.consumer_channel">consumer_channel (nautilus.network.events.consumers.actions.ActionHandler attribute)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta.construct">(nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta method)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.consumer_channel">(nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern">consumer_pattern (nautilus.network.events.consumers.api.APIActionHandler attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern">(nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeOptions.contribute_to_class">contribute_to_class() (nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeOptions method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeOptions.contribute_to_class">contribute_to_class() (nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeOptions method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeOptions.contribute_to_class">(nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeOptions method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.converter.convert_field_to_bool">convert_field_to_bool() (in module nautilus.contrib.graphene_peewee.converter)</a>
   </dt>
@@ -430,36 +420,34 @@
   </dt>
 
       
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.auth.cookie_name">cookie_name() (in module nautilus.conventions.auth)</a>
+  </dt>
+
+      
   <dt><a href="internals/nautilus.models.html#nautilus.models.util.create_connection_model">create_connection_model() (in module nautilus.models.util)</a>
   </dt>
 
       
-  <dt><a href="handlers/index.html#nautilus.network.amqp.create_handler">create_handler() (in module nautilus.network.amqp)</a>
+  <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.create_handler">create_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#nautilus.network.amqp.actionHandlers.createHandler.create_handler">(in module nautilus.network.amqp.actionHandlers.createHandler)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.createHandler.create_handler">(in module nautilus.network.events.actionHandlers.createHandler)</a>
   </dt>
 
       </dl></dd>
       
-  <dt><a href="schema/index.html#nautilus.api.create_model_schema">create_model_schema() (in module nautilus.api)</a>
+  <dt><a href="internals/nautilus.api.util.html#nautilus.api.util.create_model_schema.create_model_schema">create_model_schema() (in module nautilus.api.util.create_model_schema)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.api.html#nautilus.api.helpers.create_model_schema">(in module nautilus.api.helpers)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="handlers/index.html#nautilus.network.amqp.crud_handler">crud_handler() (in module nautilus.network.amqp)</a>
+  <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.crud_handler">crud_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#nautilus.network.amqp.actionHandlers.crudHandler.crud_handler">(in module nautilus.network.amqp.actionHandlers.crudHandler)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.crudHandler.crud_handler">(in module nautilus.network.events.actionHandlers.crudHandler)</a>
   </dt>
 
       </dl></dd>
@@ -481,30 +469,18 @@
   <dt><a href="internals/nautilus.models.serializers.html#nautilus.models.serializers.modelSerializer.ModelSerializer.default">default() (nautilus.models.serializers.modelSerializer.ModelSerializer method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="handlers/index.html#nautilus.network.amqp.delete_handler">delete_handler() (in module nautilus.network.amqp)</a>
+  <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.delete_handler">delete_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#nautilus.network.amqp.actionHandlers.deleteHandler.delete_handler">(in module nautilus.network.amqp.actionHandlers.deleteHandler)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.deleteHandler.delete_handler">(in module nautilus.network.events.actionHandlers.deleteHandler)</a>
   </dt>
 
       </dl></dd>
-      
-  <dt><a href="internals/nautilus.network.registry.html#nautilus.network.registry.deregister_service">deregister_service() (in module nautilus.network.registry)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.network.amqp.html#nautilus.network.amqp.dispatch.dispatch">dispatch() (in module nautilus.network.amqp.dispatch)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.html#nautilus.network.amqp.dispatch.dispatch_action">dispatch_action() (in module nautilus.network.amqp.dispatch)</a>
-  </dt>
-
       
   <dt><a href="internals/nautilus.auth.models.mixins.html#nautilus.auth.models.mixins.hasPassword.HasPassword.DoesNotExist">DoesNotExist (nautilus.auth.models.mixins.hasPassword.HasPassword attribute)</a>
   </dt>
@@ -520,16 +496,6 @@
 
         
   <dt><a href="internals/nautilus.models.html#nautilus.models.base.BaseModel.DoesNotExist">(nautilus.models.base.BaseModel attribute)</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.actions.ActionHandler.DURABLE">DURABLE (nautilus.network.amqp.consumers.actions.ActionHandler attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.DURABLE">(nautilus.network.amqp.consumers.amqp.AMQPConsumer attribute)</a>
   </dt>
 
       </dl></dd>
@@ -557,30 +523,10 @@
   </dt>
 
       </dl></dd>
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.actions.ActionHandler.EXCHANGE">EXCHANGE (nautilus.network.amqp.consumers.actions.ActionHandler attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.EXCHANGE">(nautilus.network.amqp.consumers.amqp.AMQPConsumer attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.actions.ActionHandler.EXCHANGE_TYPE">EXCHANGE_TYPE (nautilus.network.amqp.consumers.actions.ActionHandler attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.EXCHANGE_TYPE">(nautilus.network.amqp.consumers.amqp.AMQPConsumer attribute)</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor.execute">execute() (nautilus.api.executor.executor.TornadoExecutor method)</a>
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.error_status">error_status() (in module nautilus.conventions.actions)</a>
   </dt>
 
   </dl></td>
@@ -594,7 +540,7 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.html#nautilus.api.helpers.fields_for_model">fields_for_model() (in module nautilus.api.helpers)</a>
+  <dt><a href="internals/nautilus.api.util.html#nautilus.api.util.fields_for_model.fields_for_model">fields_for_model() (in module nautilus.api.util.fields_for_model)</a>
   </dt>
 
       
@@ -611,12 +557,20 @@
   <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm">ForgotPasswordForm (class in nautilus.auth.requestHandlers.forms.forgot)</a>
   </dt>
 
+      
+  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.from_service">from_service (nautilus.services.connectionService.ConnectionService attribute)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="internals/nautilus.api.util.html#nautilus.api.util.generate_api_schema.generate_api_schema">generate_api_schema() (in module nautilus.api.util.generate_api_schema)</a>
+  </dt>
+
       
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphiql.GraphiQLRequestHandler.get">get() (nautilus.api.endpoints.requestHandlers.graphiql.GraphiQLRequestHandler method)</a>
   </dt>
@@ -640,21 +594,7 @@
 
       </dl></dd>
       
-  <dt><a href="services/index.html#nautilus.ConnectionService.get_base_models">get_base_models() (nautilus.ConnectionService method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.get_base_models">(nautilus.services.connectionService.ConnectionService method)</a>
-  </dt>
-
-      </dl></dd>
-      
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.get_crud_action">get_crud_action() (in module nautilus.conventions.actions)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.util.html#nautilus.network.util.get_current_event_broker">get_current_event_broker() (in module nautilus.network.util)</a>
   </dt>
 
       
@@ -662,15 +602,11 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_login_url">get_login_url() (nautilus.auth.requestHandlers.base.AuthRequestHandler method)</a>
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.models.get_model_string">get_model_string() (in module nautilus.conventions.models)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.models.get_model_string">get_model_string() (in module nautilus.conventions.models)</a>
-  </dt>
-
       
   <dt><a href="services/index.html#nautilus.ModelService.get_models">get_models() (nautilus.ModelService method)</a>
   </dt>
@@ -686,11 +622,11 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.network.registry.html#nautilus.network.registry.get_services">get_services() (in module nautilus.network.registry)</a>
+  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphiql.GraphiQLRequestHandler">GraphiQLRequestHandler (class in nautilus.api.endpoints.requestHandlers.graphiql)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphiql.GraphiQLRequestHandler">GraphiQLRequestHandler (class in nautilus.api.endpoints.requestHandlers.graphiql)</a>
+  <dt><a href="internals/nautilus.api.util.html#nautilus.api.util.graphql_type_from_summary.graphql_type_from_summary">graphql_type_from_summary() (in module nautilus.api.util.graphql_type_from_summary)</a>
   </dt>
 
       
@@ -704,13 +640,37 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.handle_event">handle_event() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.actions.ActionHandler.handle_action">handle_action() (nautilus.network.events.consumers.actions.ActionHandler method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.api.APIActionHandler.handle_action">(nautilus.network.events.consumers.api.APIActionHandler method)</a>
+  </dt>
+
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.ServiceActionHandler.handle_action">(nautilus.services.service.ServiceActionHandler method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.actions.ActionHandler.handle_message">handle_message() (nautilus.network.events.consumers.actions.ActionHandler method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.handle_message">(nautilus.network.events.consumers.kafka.KafkaBroker method)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.auth.models.mixins.html#nautilus.auth.models.mixins.hasPassword.HasPassword">HasPassword (class in nautilus.auth.models.mixins.hasPassword)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.hydrate_action">hydrate_action() (in module nautilus.conventions.actions)</a>
   </dt>
 
   </dl></td>
@@ -745,10 +705,8 @@
   <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.init_app">init_app() (nautilus.services.service.Service method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/index.html#nautilus.database.init_db">init_db() (in module nautilus.database)</a>
+  <dt><a href="internals/nautilus.html#nautilus.database.init_db">init_db() (in module nautilus.database)</a>
   </dt>
 
       <dd><dl>
@@ -769,20 +727,26 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.init_keep_alive">init_keep_alive() (nautilus.services.service.Service method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphiql.GraphiQLRequestHandler.initialize">initialize() (nautilus.api.endpoints.requestHandlers.graphiql.GraphiQLRequestHandler method)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.init_routes">init_routes() (nautilus.services.apiGateway.APIGateway method)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.initialize">(nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler method)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.init_routes">(nautilus.services.service.Service method)</a>
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.initial_offset">initial_offset (nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.intialize_service_action">intialize_service_action() (in module nautilus.conventions.actions)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -790,7 +754,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.registry.html#nautilus.network.registry.keep_alive">keep_alive() (in module nautilus.network.registry)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker">KafkaBroker (class in nautilus.network.events.consumers.kafka)</a>
   </dt>
 
   </dl></td>
@@ -804,17 +768,15 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.List">List (nautilus.api.objectTypes.serviceObjectType.ServiceObjectType attribute)</a>
+  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType.List">List (nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType.List">(nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType attribute)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="internals/nautilus.services.html#nautilus.services.authService.Login">Login (class in nautilus.services.authService)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.auth.html#nautilus.auth.decorators.login_required">login_required() (in module nautilus.auth.decorators)</a>
   </dt>
 
       
@@ -841,6 +803,10 @@
 
       
   <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.logout.LogoutHandler">LogoutHandler (class in nautilus.auth.requestHandlers.logout)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.loop">loop (nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
   </dt>
 
   </dl></td>
@@ -913,6 +879,10 @@
   </dt>
 
         
+  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.name">(nautilus.services.connectionService.ConnectionService attribute)</a>
+  </dt>
+
+        
   <dt><a href="internals/nautilus.services.html#nautilus.services.modelService.ModelService.name">(nautilus.services.modelService.ModelService attribute)</a>
   </dt>
 
@@ -922,7 +892,7 @@
 
       </dl></dd>
       
-  <dt><a href="internals/index.html#module-nautilus">nautilus (module)</a>
+  <dt><a href="internals/nautilus.html#module-nautilus">nautilus (module)</a>
   </dt>
 
       
@@ -938,6 +908,10 @@
   </dt>
 
       
+  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers.apiQuery">nautilus.api.endpoints.requestHandlers.apiQuery (module)</a>
+  </dt>
+
+      
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#module-nautilus.api.endpoints.requestHandlers.graphiql">nautilus.api.endpoints.requestHandlers.graphiql (module)</a>
   </dt>
 
@@ -946,35 +920,39 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.executor.html#module-nautilus.api.executor">nautilus.api.executor (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.executor.html#module-nautilus.api.executor.executor">nautilus.api.executor.executor (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.fields.html#module-nautilus.api.fields">nautilus.api.fields (module)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.api.html#module-nautilus.api.filter">nautilus.api.filter (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.html#module-nautilus.api.helpers">nautilus.api.helpers (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#module-nautilus.api.objectTypes">nautilus.api.objectTypes (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#module-nautilus.api.objectTypes.serviceObjectType">nautilus.api.objectTypes.serviceObjectType (module)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.api.html#module-nautilus.api.schema">nautilus.api.schema (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util">nautilus.api.util (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util.create_model_schema">nautilus.api.util.create_model_schema (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util.fields_for_model">nautilus.api.util.fields_for_model (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util.generate_api_schema">nautilus.api.util.generate_api_schema (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util.graphql_type_from_summary">nautilus.api.util.graphql_type_from_summary (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util.parse_string">nautilus.api.util.parse_string (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.api.util.html#module-nautilus.api.util.walk_query">nautilus.api.util.walk_query (module)</a>
   </dt>
 
       
@@ -983,10 +961,6 @@
 
       
   <dt><a href="internals/nautilus.auth.html#module-nautilus.auth.decorators">nautilus.auth.decorators (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.exceptions.html#module-nautilus.auth.exceptions">nautilus.auth.exceptions (module)</a>
   </dt>
 
       
@@ -1089,14 +1063,22 @@
   <dt><a href="internals/nautilus.contrib.graphene_peewee.html#module-nautilus.contrib.graphene_peewee.objectType">nautilus.contrib.graphene_peewee.objectType (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions">nautilus.conventions (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.actions">nautilus.conventions.actions (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.api">nautilus.conventions.api (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.auth">nautilus.conventions.auth (module)</a>
   </dt>
 
       
@@ -1104,15 +1086,11 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.schema">nautilus.conventions.schema (module)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.services">nautilus.conventions.services (module)</a>
   </dt>
 
       
-  <dt><a href="internals/index.html#module-nautilus.database">nautilus.database (module)</a>
+  <dt><a href="internals/nautilus.html#module-nautilus.database">nautilus.database (module)</a>
   </dt>
 
       
@@ -1160,47 +1138,55 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.html#module-nautilus.network.amqp">nautilus.network.amqp (module)</a>
+  <dt><a href="internals/nautilus.network.events.html#module-nautilus.network.events">nautilus.network.events (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers">nautilus.network.amqp.actionHandlers (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers">nautilus.network.events.actionHandlers (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.createHandler">nautilus.network.amqp.actionHandlers.createHandler (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers.createHandler">nautilus.network.events.actionHandlers.createHandler (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.crudHandler">nautilus.network.amqp.actionHandlers.crudHandler (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers.crudHandler">nautilus.network.events.actionHandlers.crudHandler (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.deleteHandler">nautilus.network.amqp.actionHandlers.deleteHandler (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers.deleteHandler">nautilus.network.events.actionHandlers.deleteHandler (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#module-nautilus.network.amqp.actionHandlers.updateHandler">nautilus.network.amqp.actionHandlers.updateHandler (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers.readHandler">nautilus.network.events.actionHandlers.readHandler (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#module-nautilus.network.amqp.consumers">nautilus.network.amqp.consumers (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers.rollCallHandler">nautilus.network.events.actionHandlers.rollCallHandler (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#module-nautilus.network.amqp.consumers.actions">nautilus.network.amqp.consumers.actions (module)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#module-nautilus.network.events.actionHandlers.updateHandler">nautilus.network.events.actionHandlers.updateHandler (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#module-nautilus.network.amqp.consumers.amqp">nautilus.network.amqp.consumers.amqp (module)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#module-nautilus.network.events.consumers">nautilus.network.events.consumers (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.html#module-nautilus.network.amqp.dispatch">nautilus.network.amqp.dispatch (module)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#module-nautilus.network.events.consumers.actions">nautilus.network.events.consumers.actions (module)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.html#module-nautilus.network.amqp.util">nautilus.network.amqp.util (module)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#module-nautilus.network.events.consumers.api">nautilus.network.events.consumers.api (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#module-nautilus.network.events.consumers.kafka">nautilus.network.events.consumers.kafka (module)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.network.events.html#module-nautilus.network.events.util">nautilus.network.events.util (module)</a>
   </dt>
 
       
@@ -1212,15 +1198,7 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.registry.html#module-nautilus.network.registry">nautilus.network.registry (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.util.html#module-nautilus.network.util">nautilus.network.util (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.util.html#module-nautilus.network.util.query">nautilus.network.util.query (module)</a>
+  <dt><a href="internals/nautilus.network.http.html#module-nautilus.network.http.respones">nautilus.network.http.respones (module)</a>
   </dt>
 
       
@@ -1256,17 +1234,15 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.NonNull">NonNull (nautilus.api.objectTypes.serviceObjectType.ServiceObjectType attribute)</a>
+  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType.NonNull">NonNull (nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType.NonNull">(nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType attribute)</a>
-  </dt>
-
-      </dl></dd>
       
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#nautilus.network.amqp.actionHandlers.noop_handler">noop_handler() (in module nautilus.network.amqp.actionHandlers)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.noop_handler">noop_handler() (in module nautilus.network.events.actionHandlers)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.models.normalize_string">normalize_string() (in module nautilus.conventions.models)</a>
   </dt>
 
   </dl></td>
@@ -1276,71 +1252,25 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_bindok">on_bindok() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_cancelok">on_cancelok() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_channel_closed">on_channel_closed() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_channel_open">on_channel_open() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_connection_closed">on_connection_closed() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_connection_open">on_connection_open() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_consumer_cancelled">on_consumer_cancelled() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler.options">options() (nautilus.network.http.requestHandler.RequestHandler method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_exchange_declareok">on_exchange_declareok() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta.options_class">options_class (nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta attribute)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_message">on_message() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.on_queue_declareok">on_queue_declareok() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.open_channel">open_channel() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler.options">options() (nautilus.network.http.requestHandler.RequestHandler method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta.options_class">options_class (nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta attribute)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta.options_class">(nautilus.contrib.graphene_peewee.objectType.PeeweeObjectTypeMeta attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="internals/nautilus.api.util.html#nautilus.api.util.parse_string.parse_string">parse_string() (in module nautilus.api.util.parse_string)</a>
+  </dt>
+
       
   <dt><a href="internals/nautilus.auth.models.mixins.html#nautilus.auth.models.mixins.hasPassword.HasPassword.password">password (nautilus.auth.models.mixins.hasPassword.HasPassword attribute)</a>
   </dt>
@@ -1390,6 +1320,10 @@
   </dt>
 
       
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.pending_status">pending_status() (in module nautilus.conventions.actions)</a>
+  </dt>
+
+      
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.post">post() (nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler method)</a>
   </dt>
 
@@ -1412,31 +1346,17 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.publish">publish() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.actions.ActionHandler.producer_channel">producer_channel (nautilus.network.events.consumers.actions.ActionHandler attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.producer_channel">(nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="internals/nautilus.auth.models.fields.html#nautilus.auth.models.fields.password.PasswordField.python_value">python_value() (nautilus.auth.models.fields.password.PasswordField method)</a>
-  </dt>
-
-  </dl></td>
-</tr></table>
-
-<h2 id="Q">Q</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.network.util.html#nautilus.network.util.query.query_api">query_api() (in module nautilus.network.util.query)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.util.html#nautilus.network.util.query.query_graphql_service">query_graphql_service() (in module nautilus.network.util.query)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.network.util.html#nautilus.network.util.query.query_service">query_service() (in module nautilus.network.util.query)</a>
   </dt>
 
   </dl></td>
@@ -1450,15 +1370,17 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.reconnect">reconnect() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
+  <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.read_handler">read_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.readHandler.read_handler">(in module nautilus.network.events.actionHandlers.readHandler)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="internals/nautilus.services.html#nautilus.services.authService.Register">Register (class in nautilus.services.authService)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.registry.html#nautilus.network.registry.register_service">register_service() (in module nautilus.network.registry)</a>
   </dt>
 
       
@@ -1477,12 +1399,12 @@
   <dt><a href="internals/nautilus.management.util.html#nautilus.management.util.render_template">render_template() (in module nautilus.management.util)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.request_context">request_context (nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler">RequestHandler (class in nautilus.network.http.requestHandler)</a>
   </dt>
@@ -1492,7 +1414,21 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.schema.root_query">root_query() (in module nautilus.conventions.schema)</a>
+  <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.roll_call_handler">roll_call_handler() (in module nautilus.network.events.actionHandlers)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.rollCallHandler.roll_call_handler">(in module nautilus.network.events.actionHandlers.rollCallHandler)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.roll_call_type">roll_call_type() (in module nautilus.conventions.actions)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.api.root_query">root_query() (in module nautilus.conventions.api)</a>
   </dt>
 
       
@@ -1506,24 +1442,10 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.actions.ActionHandler.ROUTING_KEY">ROUTING_KEY (nautilus.network.amqp.consumers.actions.ActionHandler attribute)</a>
+  <dt><a href="services/index.html#nautilus.Service.run">run() (nautilus.Service method)</a>
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.ROUTING_KEY">(nautilus.network.amqp.consumers.amqp.AMQPConsumer attribute)</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.run">run() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="services/index.html#nautilus.Service.run">(nautilus.Service method)</a>
-  </dt>
-
         
   <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.run">(nautilus.services.service.Service method)</a>
   </dt>
@@ -1544,13 +1466,37 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.schema">schema (nautilus.services.service.Service attribute)</a>
+  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.schema">schema (nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.schema">(nautilus.services.service.Service attribute)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.send">send() (nautilus.network.events.consumers.kafka.KafkaBroker method)</a>
   </dt>
 
       
   <dt><a href="internals/nautilus.models.serializers.html#nautilus.models.serializers.modelSerializer.ModelSerializer.serialize">serialize() (nautilus.models.serializers.modelSerializer.ModelSerializer method)</a>
   </dt>
 
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.serialize_action">serialize_action() (in module nautilus.conventions.actions)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.actions.ActionHandler.server">server (nautilus.network.events.consumers.actions.ActionHandler attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.server">(nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="services/index.html#nautilus.Service">Service (class in nautilus)</a>
   </dt>
@@ -1562,11 +1508,13 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.service">service (nautilus.api.objectTypes.serviceObjectType.ServiceObjectType attribute)</a>
+  <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.service">service (nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.registry.html#nautilus.network.registry.service_location_by_name">service_location_by_name() (in module nautilus.network.registry)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.ServiceActionHandler">ServiceActionHandler (class in nautilus.services.service)</a>
   </dt>
 
       
@@ -1577,56 +1525,32 @@
   <dt><a href="internals/nautilus.services.html#nautilus.services.service.ServiceMetaClass">ServiceMetaClass (class in nautilus.services.service)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="schema/index.html#nautilus.api.ServiceObjectType">ServiceObjectType (class in nautilus.api)</a>
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.start">start() (nautilus.network.events.consumers.kafka.KafkaBroker method)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.stop">stop() (nautilus.network.events.consumers.kafka.KafkaBroker method)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.success_status">success_status() (in module nautilus.conventions.actions)</a>
+  </dt>
+
+      
+  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.summarize">summarize() (nautilus.services.connectionService.ConnectionService method)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType">(class in nautilus.api.objectTypes.serviceObjectType)</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeMeta">ServiceObjectTypeMeta (class in nautilus.api.objectTypes.serviceObjectType)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectTypeOptions">ServiceObjectTypeOptions (class in nautilus.api.objectTypes.serviceObjectType)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.services">services (nautilus.services.connectionService.ConnectionService attribute)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.setup_exchange">setup_exchange() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.start_consuming">start_consuming() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.stop">stop() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="services/index.html#nautilus.Service.stop">(nautilus.Service method)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.modelService.ModelService.summarize">(nautilus.services.modelService.ModelService method)</a>
   </dt>
 
         
-  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.stop">(nautilus.services.service.Service method)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.service.Service.summarize">(nautilus.services.service.Service method)</a>
   </dt>
 
       </dl></dd>
-      
-  <dt><a href="internals/nautilus.network.amqp.consumers.html#nautilus.network.amqp.consumers.amqp.AMQPConsumer.stop_consuming">stop_consuming() (nautilus.network.amqp.consumers.amqp.AMQPConsumer method)</a>
-  </dt>
-
   </dl></td>
 </tr></table>
 
@@ -1634,21 +1558,9 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor">TornadoExecutor (class in nautilus.api.executor.executor)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.to_service">to_service (nautilus.services.connectionService.ConnectionService attribute)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.api.objectTypes.html#nautilus.api.objectTypes.serviceObjectType.ServiceObjectType.true_fields">true_fields() (nautilus.api.objectTypes.serviceObjectType.ServiceObjectType class method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="schema/index.html#nautilus.api.ServiceObjectType.true_fields">(nautilus.api.ServiceObjectType class method)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -1656,12 +1568,12 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="handlers/index.html#nautilus.network.amqp.update_handler">update_handler() (in module nautilus.network.amqp)</a>
+  <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.update_handler">update_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.network.amqp.actionHandlers.html#nautilus.network.amqp.actionHandlers.updateHandler.update_handler">(in module nautilus.network.amqp.actionHandlers.updateHandler)</a>
+  <dt><a href="internals/nautilus.network.events.actionHandlers.html#nautilus.network.events.actionHandlers.updateHandler.update_handler">(in module nautilus.network.events.actionHandlers.updateHandler)</a>
   </dt>
 
       </dl></dd>
@@ -1696,13 +1608,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.network.util.html#nautilus.network.util.query.wait_for_response">wait_for_response() (in module nautilus.network.util.query)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="internals/nautilus.api.executor.html#nautilus.api.executor.executor.TornadoExecutor.wait_until_finished">wait_until_finished() (nautilus.api.executor.executor.TornadoExecutor method)</a>
+  <dt><a href="internals/nautilus.api.util.html#nautilus.api.util.walk_query.walk_query">walk_query() (in module nautilus.api.util.walk_query)</a>
   </dt>
 
   </dl></td>

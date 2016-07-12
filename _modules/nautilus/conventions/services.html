@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -137,7 +136,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">get_model_string</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">get_model_string</span><span class="p">,</span> <span class="n">normalize_string</span>
 
 <div class="viewcode-block" id="model_service_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.services.model_service_name">[docs]</a><span class="k">def</span> <span class="nf">model_service_name</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; the name of a service that manages a model &#39;&#39;&#39;</span>
@@ -153,15 +152,13 @@
     <span class="k">return</span> <span class="s2">&quot;api&quot;</span></div>
 
 
-<div class="viewcode-block" id="connection_service_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.services.connection_service_name">[docs]</a><span class="k">def</span> <span class="nf">connection_service_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="connection_service_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.services.connection_service_name">[docs]</a><span class="k">def</span> <span class="nf">connection_service_name</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; the name of a service that manages the connection between services &#39;&#39;&#39;</span>
+    <span class="c1"># if the service is a string</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">service</span>
 
-    <span class="c1"># the list of services to connect</span>
-    <span class="n">services</span> <span class="o">=</span> <span class="p">[</span><span class="n">service</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> \
-                        <span class="k">else</span> <span class="n">get_model_string</span><span class="p">(</span><span class="n">service</span><span class="p">)</span> <span class="k">for</span> <span class="n">service</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
-
-    <span class="c1"># combine the two names into the connection name</span>
-    <span class="k">return</span> <span class="s2">&quot;{}_connection&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">services</span><span class="p">)))</span></div>
+    <span class="k">return</span> <span class="n">normalize_string</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">service</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

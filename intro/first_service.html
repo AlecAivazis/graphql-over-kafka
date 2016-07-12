@@ -32,7 +32,7 @@
   
     <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
-        <link rel="next" title="Connecting Services Together" href="connecting_services.html"/>
+        <link rel="next" title="Keeping Track of Data" href="first_model.html"/>
         <link rel="prev" title="Installation / Setup" href="installation.html"/> 
 
   
@@ -86,14 +86,10 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Your First Service</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#defining-a-model">Defining a Model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#building-a-schema">Building a Schema</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#querying-the-service-s-state">Querying the Service&#8217;s State</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#responding-to-actions">Responding to Actions</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="first_model.html">Keeping Track of Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
@@ -103,7 +99,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -172,170 +167,49 @@ Open server.py in your favorite text editor and copy and paste the following:</p
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="c1"># create an instance of the service</span>
     <span class="n">service</span> <span class="o">=</span> <span class="n">RecipeService</span><span class="p">()</span>
-    <span class="c1"># run the http server</span>
-    <span class="n">service</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="c1"># create a manager for the service</span>
+    <span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Test that this works by executing this script in your console:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3 ./server.py
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3 ./server.py runserver
 </pre></div>
 </div>
-<p>If it complains about permissions, try running <code class="docutils literal"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">u+x</span> <span class="pre">./server.py</span></code>.
-Assuming the regsitry is properly setup (ie consul is running), your terminal
-should now indicate that the server started.</p>
-<p>Right now, our service is nothing more than a flask application with some
-default implementations of basic necessities like security. It doesn&#8217;t react
+<p>If it complains about permissions, try running <code class="docutils literal"><span class="pre">sudo</span> <span class="pre">chmod</span> <span class="pre">u+x</span> <span class="pre">./server.py</span></code>.</p>
+<p>Right now, our service is nothing more than a python process. It doesn&#8217;t react
 to the outside world, it doesn&#8217;t store any data, nor does it provide
 anything for another service to use - let&#8217;s change that.</p>
-<div class="section" id="defining-a-model">
-<h2>Defining a Model<a class="headerlink" href="#defining-a-model" title="Permalink to this headline">¶</a></h2>
-<p>Now that we have the service defined, let&#8217;s create a database table
-that our service will manage.</p>
-<p>Throughout this guide, we&#8217;re going to be making a recipe list, so open up
-server.py from the previous step and add the Recipe model.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
-
-<span class="c1"># we&#39;re using the HasID mixin here to automatically provide a primary key</span>
-<span class="c1"># for the table</span>
-<span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;The name of the recipe&quot;</span><span class="p">)</span>
-
-<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span> <span class="k">pass</span>
-
-<span class="c1"># create a manager for the service</span>
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Notice we also wrapped the service in a manager, which provides a basic
-command line interface for our service.</p>
-<p>While our service still can&#8217;t talk to the outside world, at least it can keep
-track of our recipes for us.  Before we can look at the records, we have to
-create the database that will persist the data. Since our service is now
-wrapped in a manager, we can easily do this by executing the <code class="docutils literal"><span class="pre">syncdb</span></code>
-command:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3 ./server.py syncdb
-</pre></div>
-</div>
-</div>
-<div class="section" id="building-a-schema">
-<h2>Building a Schema<a class="headerlink" href="#building-a-schema" title="Permalink to this headline">¶</a></h2>
-<p>Traditionally, backend data is made availible via some sort of RESTful api. In
-nautilus, services use a piece of technology from the facebook engineers called
-GraphQL which allows the service to expose the data through a single endpoint.
-For more information on GraphQL, visit [this]() page.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
-<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">PeeweeObjectType</span>
-<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Schema</span>
-
-<span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">HasId</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
-
-<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">()</span>
-
-<span class="nd">@schema.register</span>
-<span class="k">class</span> <span class="nc">RecipeObjectType</span><span class="p">(</span><span class="n">PeeweeObjectType</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The GraphQL Object type for our recipes. &quot;&quot;&quot;</span>
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">Recipe</span>
-
-<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">graphene</span><span class="o">.</span><span class="n">ObjectType</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; the root level query for our recipe service &quot;&quot;&quot;</span>
-    <span class="n">recipes</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">RecipeObjectType</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">resolve_recipes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; return all recipes in the database &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Recipe</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-
-<span class="c1"># add the root query to the schema</span>
-<span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
-
-<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
-    <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
-
-<span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Note: <code class="docutils literal"><span class="pre">Connection</span></code> is a very special type provided by nautilus.
-For now, you can think of it as a wrapper around the List type that
-we are using to make our code more easily read.</p>
-<p>Sometimes, you might have to create the entire schema by hand, in which case
-I suggest reading the graphene documentation [here](graphene). However in most
-circumstances, Graphene can create the object for us.</p>
-<div class="section" id="querying-the-service-s-state">
-<h3>Querying the Service&#8217;s State<a class="headerlink" href="#querying-the-service-s-state" title="Permalink to this headline">¶</a></h3>
-<p>Now that our service has been given a schema, we can query the internal state
-of the service from two different endpoints. Nautilus uses GraphQL as the
-service query langauge. Take a second to familiarize yourself with GraphQL
-by reading [this]() short blog post.</p>
-<p>If you navigate to the root url of your service (<code class="docutils literal"><span class="pre">http://localhost:8000</span></code> by
-default) you will see that the service  is trying to parse an incoming
-query and can&#8217;t find one. You can give the service a query to fulfill by
-padding a value to the <cite>query</cite> url parameter by navigating to a url like
-<code class="docutils literal"><span class="pre">http://localhost:8000/?query={recipes{</span> <span class="pre">name</span> <span class="pre">}}</span></code>.</p>
-<p>While this does work, it&#8217;s clear this endpoint is not intended for human
-consumption. Instead, if you point your browser to <code class="docutils literal"><span class="pre">/graphiql</span></code> you will
-get visual environment for forming queries.</p>
-</div>
-</div>
 <div class="section" id="responding-to-actions">
 <h2>Responding to Actions<a class="headerlink" href="#responding-to-actions" title="Permalink to this headline">¶</a></h2>
-<p>Now that our service maintains an internal state and can provide a summary of
-that state to other services, all that&#8217;s left is to provide a way for the
-service to mutate its state as it recieves actions. To do this, we
-just need to define a function known as the &#8220;action handler&#8221; that
-takes two parameters: <code class="docutils literal"><span class="pre">type</span></code> and <code class="docutils literal"><span class="pre">payload</span></code>. <code class="docutils literal"><span class="pre">Type</span></code> identifies
-the event and  <code class="docutils literal"><span class="pre">Payload</span></code> provides the associated data. For example,
-if an action means to indicate that a new recipe needs to be created,
-the service can treat the payload as the recipe&#8217;s attributes and create
-the new record (or another mutation) when appropriate:</p>
+<p>Now that we have a service, we can start adding some functionality to it. In the
+nautilus architecture, services are triggered to perform certain actions by events.
+We describe how the service responds to those events through the &#8220;action handler&#8221;,
+a class record that holds the event configuration as well as its behavior:</p>
+<dl class="docutils">
+<dt>The primary method of an ActionHandler takes three parameters: <code class="docutils literal"><span class="pre">actiontype</span></code>,</dt>
+<dd><code class="docutils literal"><span class="pre">payload</span></code>, and <code class="docutils literal"><span class="pre">props</span></code>. Ignore <code class="docutils literal"><span class="pre">props</span></code> for now. <code class="docutils literal"><span class="pre">Type</span></code> identifies</dd>
+</dl>
+<p>the event and  <code class="docutils literal"><span class="pre">Payload</span></code> provides the associated data. For example, if you had
+some special behavior that you wanted your service to do (like send an email),
+you would triger that behavior by firing a &#8220;send_email&#8221; action type and responding
+appropriately:</p>
+<p>Passing the Action handler to the service takes a single line:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
-<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.fields</span> <span class="kn">import</span> <span class="n">Connection</span>
-<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">PeeweeObjectType</span>
-<span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Schema</span>
+<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
 
-<span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="n">HasId</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
 
-<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">RecipeActionHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
 
-<span class="nd">@schema.register</span>
-<span class="k">class</span> <span class="nc">RecipeObjectType</span><span class="p">(</span><span class="n">PeeweeObjectType</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The GraphQL Object type for our recipes. &quot;&quot;&quot;</span>
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">Recipe</span>
-
-<span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="n">graphene</span><span class="o">.</span><span class="n">ObjectType</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; the root level query for our recipe service &quot;&quot;&quot;</span>
-    <span class="n">recipes</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">RecipeObjectType</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">resolve_recipes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; return all recipes in the database &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Recipe</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-
-<span class="c1"># add the root query to the schema</span>
-<span class="n">schema</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">Query</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
-    <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
-
-    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
-        <span class="c1"># if the payload represents a new recipe to create</span>
-        <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;create_recipe&#39;</span><span class="p">:</span>
-            <span class="c1"># create a new instance of the recipe</span>
-            <span class="n">recipe</span> <span class="o">=</span> <span class="n">Recipe</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="p">)</span>
-            <span class="c1"># save the recipe instance</span>
-            <span class="n">recipe</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">RecipeActionHandler</span>
 
 
 <span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">RecipeService</span><span class="p">)</span>
@@ -347,9 +221,8 @@ the new record (or another mutation) when appropriate:</p>
 <p>Congratulations! You have finally pieced together a complete nautilus service.
 Now other entities in your cloud (like another service or even a javascript
 client) can create, persist, and retrieve recipes without maintaining the data
-themselves. In the next section you will learn how to create services based
-off of pre-packages ones as well as keep track of a relationships between
-different services in your cloud.</p>
+themselves. In the next section you will learn how to create services that manage
+a database as well as relationships between various services in our system.</p>
 </div>
 </div>
 
@@ -360,7 +233,7 @@ different services in your cloud.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="connecting_services.html" class="btn btn-neutral float-right" title="Connecting Services Together" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="first_model.html" class="btn btn-neutral float-right" title="Keeping Track of Data" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral" title="Installation / Setup" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

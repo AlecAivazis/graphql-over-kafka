@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Keeping Track of Data &mdash; nautilus v0.4.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/>
+        <link rel="up" title="Getting Started" href="index.html"/>
+        <link rel="next" title="Connecting Services Together" href="connecting_services.html"/>
+        <link rel="prev" title="Your First Service" href="first_service.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation / Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="first_service.html">Your First Service</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Keeping Track of Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#querying-for-data">Querying for data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Authentication</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Getting Started</a> &raquo;</li>
+      
+    <li>Keeping Track of Data</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/intro/first_model.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="keeping-track-of-data">
+<h1>Keeping Track of Data<a class="headerlink" href="#keeping-track-of-data" title="Permalink to this headline">¶</a></h1>
+<p>Handling persistent data is a common task of any web application, wether
+it&#8217;s user&#8217;s passwords or their horde of cat photos. In a nautilus application,
+each piece of data is maintained by a sepecialized service known as a &#8220;model
+service&#8221;. The definition of a model service begins with the specification of
+the underlying model. Like services, this is done by defining a python class.
+Create a file called catPhoto.py and paste the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">fields</span>
+
+<span class="k">class</span> <span class="nc">CatPhoto</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">photo_location</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This defines the underlying database table for our service. Once the model is
+defined, creating a service to manage the data is relatively easy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">fields</span>
+
+
+<span class="k">class</span> <span class="nc">CatPhoto</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">photo_location</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:///ingredients.db&#39;</span>
+
+<span class="k">class</span> <span class="nc">CatPhotoService</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">ModelService</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">CatPhoto</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+</pre></div>
+</div>
+<p>Before we can interact with the service we just made, let&#8217;s create a local database
+so we can store our records somewhere:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ python3 ./models.py syncdb
+</pre></div>
+</div>
+<div class="section" id="querying-for-data">
+<h2>Querying for data<a class="headerlink" href="#querying-for-data" title="Permalink to this headline">¶</a></h2>
+<p>You should now see a file called <cite>nautilus.db</cite> in your directory. Run the model service
+by executing <cite>python3 ./catPhoto.py runserver</cite> and navigate to
+<cite>http://localhost:8000/graphiql</cite> (notice the i).</p>
+<p>Model services automatically generate a graphql (no i) api for the model.
+Graphiql (with i) is a standard user interface for interacting with these sorts
+APIs. For more information on graphql visit
+[here](<a class="reference external" href="https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html">https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html</a>).
+Try creating a cat photo record with a <cite>photo_location</cite> of &#8220;foo&#8221; in the
+database either via the <cite>sqlite</cite> cli or an app like [Sqlitebrowser](<a class="reference external" href="https://github.com/sqlitebrowser/sqlitebrowser">https://github.com/sqlitebrowser/sqlitebrowser</a>).</p>
+<p>Once you&#8217;ve done that, try executing the following query by entering it in the left panel
+of <cite>graphiql</cite>:</p>
+<p>You should see a json reply that looks like:</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="connecting_services.html" class="btn btn-neutral float-right" title="Connecting Services Together" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="first_service.html" class="btn btn-neutral" title="Your First Service" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

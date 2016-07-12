@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.network.events.actionHandlers package &mdash; nautilus v0.4.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>nautilus.network.events.actionHandlers package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/internals/nautilus.network.events.actionHandlers.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nautilus-network-events-actionhandlers-package">
+<h1>nautilus.network.events.actionHandlers package<a class="headerlink" href="#nautilus-network-events-actionhandlers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers.createHandler">
+<span id="nautilus-network-events-actionhandlers-createhandler-module"></span><h2>nautilus.network.events.actionHandlers.createHandler module<a class="headerlink" href="#module-nautilus.network.events.actionHandlers.createHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.createHandler.create_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.createHandler.</code><code class="descname">create_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/createHandler.html#create_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.createHandler.create_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that creates a new instance of
+the specified model when a create action is recieved, assuming the
+action follows nautilus convetions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to create when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
+The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">action_type, payload</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers.crudHandler">
+<span id="nautilus-network-events-actionhandlers-crudhandler-module"></span><h2>nautilus.network.events.actionHandlers.crudHandler module<a class="headerlink" href="#module-nautilus.network.events.actionHandlers.crudHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.crudHandler.crud_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.crudHandler.</code><code class="descname">crud_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/crudHandler.html#crud_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.crudHandler.crud_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This action handler factory reaturns an action handler that
+responds to actions with CRUD types (following nautilus conventions)
+and performs the necessary mutation on the model&#8217;s database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
+The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers.deleteHandler">
+<span id="nautilus-network-events-actionhandlers-deletehandler-module"></span><h2>nautilus.network.events.actionHandlers.deleteHandler module<a class="headerlink" href="#module-nautilus.network.events.actionHandlers.deleteHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.deleteHandler.delete_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.deleteHandler.</code><code class="descname">delete_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/deleteHandler.html#delete_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.deleteHandler.delete_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that deletes a new instance of
+the specified model when a delete action is recieved, assuming the
+action follows nautilus convetions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
+The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers.readHandler">
+<span id="nautilus-network-events-actionhandlers-readhandler-module"></span><h2>nautilus.network.events.actionHandlers.readHandler module<a class="headerlink" href="#module-nautilus.network.events.actionHandlers.readHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.readHandler.read_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.readHandler.</code><code class="descname">read_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/readHandler.html#read_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.readHandler.read_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that responds to read requests
+by resolving the payload as a graphql query against the internal schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
+The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers.rollCallHandler">
+<span id="nautilus-network-events-actionhandlers-rollcallhandler-module"></span><h2>nautilus.network.events.actionHandlers.rollCallHandler module<a class="headerlink" href="#module-nautilus.network.events.actionHandlers.rollCallHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.rollCallHandler.roll_call_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.rollCallHandler.</code><code class="descname">roll_call_handler</code><span class="sig-paren">(</span><em>service</em>, <em>action_type</em>, <em>payload</em>, <em>props</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/rollCallHandler.html#roll_call_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.rollCallHandler.roll_call_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This action handler responds to the &#8220;roll call&#8221; emitted by the api
+gateway when it is brought up with the normal summary produced by
+the service.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers.updateHandler">
+<span id="nautilus-network-events-actionhandlers-updatehandler-module"></span><h2>nautilus.network.events.actionHandlers.updateHandler module<a class="headerlink" href="#module-nautilus.network.events.actionHandlers.updateHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.updateHandler.update_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.updateHandler.</code><code class="descname">update_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/updateHandler.html#update_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.updateHandler.update_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that updates a new instance of
+the specified model when a update action is recieved, assuming the
+action follows nautilus convetions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to update when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
+The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.actionHandlers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.network.events.actionHandlers" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.noop_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">noop_handler</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em>, <em>dispatcher=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers.html#noop_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.noop_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

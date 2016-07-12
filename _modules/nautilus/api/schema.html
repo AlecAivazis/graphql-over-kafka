@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -134,9 +133,6 @@
   <h1>Source code for nautilus.api.schema</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">graphene</span> <span class="kn">import</span> <span class="n">Schema</span>
-<span class="kn">from</span> <span class="nn">graphql.execution.executors.asyncio</span> <span class="kn">import</span> <span class="n">AsyncioExecutor</span>
-<span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.executor</span> <span class="kn">import</span> <span class="n">TornadoExecutor</span>
 
 <div class="viewcode-block" id="Schema"><a class="viewcode-back" href="../../../internals/nautilus.api.html#nautilus.api.schema.Schema">[docs]</a><span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span><span class="n">Schema</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -144,10 +140,8 @@
 <span class="sd">        the natuilus event queue for asynchronous data retrieval.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executor</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">auto_camelcase</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="c1"># make sure the schema is built with a tornado executor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
             <span class="n">auto_camelcase</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-            <span class="n">executor</span><span class="o">=</span><span class="n">AsyncioExecutor</span><span class="p">(),</span>
             <span class="o">**</span><span class="n">kwds</span>
         <span class="p">)</span></div>
 </pre></div>

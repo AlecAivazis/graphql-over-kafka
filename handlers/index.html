@@ -94,7 +94,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -162,24 +161,20 @@ representing the data associated with the event. For example,</p>
 </pre></div>
 </div>
 <p>Action Handlers are defined within the service:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyActionHandler</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">ActionHandler</span><span class="p">):</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;recieved action!&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">properties</span><span class="p">):</span>
-        <span class="c1"># ...</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">MyActionHandler</span>
 </pre></div>
 </div>
 <div class="section" id="reusing-and-combining-action-handlers">
 <h2>Reusing and Combining Action Handlers<a class="headerlink" href="#reusing-and-combining-action-handlers" title="Permalink to this headline">¶</a></h2>
 <p>As your services get more complex, you&#8217;ll want to split your action handler into
-separate functions which each get called. Nautilus provides a function called
-<code class="docutils literal"><span class="pre">combine_action_handlers</span></code> which serves just this case:</p>
-<dl class="function">
-<dt id="nautilus.network.amqp.combine_action_handlers">
-<code class="descclassname">nautilus.network.amqp.</code><code class="descname">combine_action_handlers</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/amqp/util.html#combine_action_handlers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.amqp.combine_action_handlers" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function combines the given action handlers into a single function
-which will call all of them.</p>
-</dd></dl>
-
+separate functions which each get called with the given arguments. It can get tedious
+to pass the arguments to every function so Nautilus provides a function called
+<code class="docutils literal"><span class="pre">combine_action_handlers</span></code> which serves just this purpose:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span>
 
 <span class="k">def</span> <span class="nf">action_handler1</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">properties</span><span class="p">):</span>
@@ -194,19 +189,19 @@ which will call all of them.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>In order to do this within your service, you&#8217;ll need to wrap it in a property:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span>
-<span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span>
+<p>Using it in an Action Handler looks something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">combine_action_handlers</span><span class="p">,</span> <span class="n">ActionHandler</span>
 
-<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MyActionHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># assuming action_handlers 1 and 2 were defined as above</span>
-        <span class="k">return</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
+        <span class="n">combined</span> <span class="o">=</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
             <span class="n">action_handler1</span><span class="p">,</span>
             <span class="n">action_handler2</span>
         <span class="p">)</span>
+        <span class="c1"># call the combined handler</span>
+        <span class="n">combined</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -218,8 +213,8 @@ custom solutions.</p>
 <h3>Factories<a class="headerlink" href="#factories" title="Permalink to this headline">¶</a></h3>
 <p>The following are functions that take a paramter and return an an action creator.</p>
 <dl class="function">
-<dt id="nautilus.network.amqp.crud_handler">
-<code class="descclassname">nautilus.network.amqp.</code><code class="descname">crud_handler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/amqp/actionHandlers/crudHandler.html#crud_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.amqp.crud_handler" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.network.events.actionHandlers.crud_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">crud_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/crudHandler.html#crud_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.crud_handler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This action handler factory reaturns an action handler that
 responds to actions with CRUD types (following nautilus conventions)
 and performs the necessary mutation on the model&#8217;s database.</p>
@@ -240,8 +235,8 @@ The action handler for this model</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.network.amqp.create_handler">
-<code class="descclassname">nautilus.network.amqp.</code><code class="descname">create_handler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/amqp/actionHandlers/createHandler.html#create_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.amqp.create_handler" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.network.events.actionHandlers.create_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">create_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/createHandler.html#create_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.create_handler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This factory returns an action handler that creates a new instance of
 the specified model when a create action is recieved, assuming the
 action follows nautilus convetions.</p>
@@ -262,8 +257,29 @@ The action handler for this model</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.network.amqp.update_handler">
-<code class="descclassname">nautilus.network.amqp.</code><code class="descname">update_handler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/amqp/actionHandlers/updateHandler.html#update_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.amqp.update_handler" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.network.events.actionHandlers.read_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">read_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/readHandler.html#read_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.read_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This factory returns an action handler that responds to read requests
+by resolving the payload as a graphql query against the internal schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>Model</strong> (<em>nautilus.BaseModel</em>) &#8211; The model to delete when the action
+received.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>function</strong> &#8211;
+The action handler for this model</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">type, payload</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.update_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">update_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/updateHandler.html#update_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.update_handler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This factory returns an action handler that updates a new instance of
 the specified model when a update action is recieved, assuming the
 action follows nautilus convetions.</p>
@@ -284,8 +300,8 @@ The action handler for this model</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="nautilus.network.amqp.delete_handler">
-<code class="descclassname">nautilus.network.amqp.</code><code class="descname">delete_handler</code><span class="sig-paren">(</span><em>Model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/amqp/actionHandlers/deleteHandler.html#delete_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.amqp.delete_handler" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.network.events.actionHandlers.delete_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">delete_handler</code><span class="sig-paren">(</span><em>Model</em>, <em>name=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/deleteHandler.html#delete_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.delete_handler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This factory returns an action handler that deletes a new instance of
 the specified model when a delete action is recieved, assuming the
 action follows nautilus convetions.</p>
@@ -303,6 +319,14 @@ The action handler for this model</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.network.events.actionHandlers.roll_call_handler">
+<code class="descclassname">nautilus.network.events.actionHandlers.</code><code class="descname">roll_call_handler</code><span class="sig-paren">(</span><em>service</em>, <em>action_type</em>, <em>payload</em>, <em>props</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/actionHandlers/rollCallHandler.html#roll_call_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.actionHandlers.roll_call_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This action handler responds to the &#8220;roll call&#8221; emitted by the api
+gateway when it is brought up with the normal summary produced by
+the service.</p>
 </dd></dl>
 
 </div>

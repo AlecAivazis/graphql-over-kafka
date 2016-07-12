@@ -12,18 +12,26 @@ nautilus.conventions.actions module
     :undoc-members:
     :show-inheritance:
 
-nautilus.conventions.models module
-----------------------------------
+nautilus.conventions.api module
+-------------------------------
 
-.. automodule:: nautilus.conventions.models
+.. automodule:: nautilus.conventions.api
     :members:
     :undoc-members:
     :show-inheritance:
 
-nautilus.conventions.schema module
+nautilus.conventions.auth module
+--------------------------------
+
+.. automodule:: nautilus.conventions.auth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+nautilus.conventions.models module
 ----------------------------------
 
-.. automodule:: nautilus.conventions.schema
+.. automodule:: nautilus.conventions.models
     :members:
     :undoc-members:
     :show-inheritance:

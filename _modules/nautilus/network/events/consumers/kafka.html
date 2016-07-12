@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.network.events.consumers.kafka &mdash; nautilus v0.4.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../../index.html"/> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>nautilus.network.events.consumers.kafka</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for nautilus.network.events.consumers.kafka</h1><div class="highlight"><pre>
+<span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">aiokafka</span> <span class="kn">import</span> <span class="n">AIOKafkaConsumer</span><span class="p">,</span> <span class="n">AIOKafkaProducer</span>
+<span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">serialize_action</span><span class="p">,</span> <span class="n">hydrate_action</span>
+
+
+
+<div class="viewcode-block" id="KafkaBroker"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker">[docs]</a><span class="k">class</span> <span class="nc">KafkaBroker</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class handles two way communication with the kafka</span>
+<span class="sd">        server. Also allows for a question/answer interface served</span>
+<span class="sd">        over the kafka stream.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            consumer_pattern = None</span>
+
+<span class="sd">            server (str): The location of the kafka stream.</span>
+
+<span class="sd">            consumer_channel (optional, str): The channel to listen for events</span>
+<span class="sd">                on.</span>
+
+<span class="sd">            consumer_pattern (optional, regex): A regex pattern to match against</span>
+<span class="sd">                the action types. The action handler is called for every matching</span>
+<span class="sd">                event. If none is provided, the action handler is called for every</span>
+<span class="sd">                action.</span>
+
+<span class="sd">            producer_channel (optional, str): The default channel to user when</span>
+<span class="sd">                producing events.</span>
+
+<span class="sd">            initial_offset (optional, one of &#39;latest&#39; or &#39;earliest&#39;): Where to</span>
+<span class="sd">                start on the event stream when run.</span>
+
+<span class="sd">            loop (optional, ayncio.EventLoop): The event loop that the broker should</span>
+<span class="sd">                run on.</span>
+
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                from .kafka import KafkaBroker</span>
+
+
+<span class="sd">                class ActionHandler(KafkaBroker):</span>
+
+<span class="sd">                    consumer_channel = &#39;myEvents&#39;</span>
+<span class="sd">                    server = &#39;localhost:9092&#39;</span>
+
+<span class="sd">                    async def handle_message(self, action_type, payload, **kwds):</span>
+<span class="sd">                        print(&quot;recieved action with type: {}&quot;.format(action_type))</span>
+<span class="sd">                        print(&quot;and payload: {}&quot;.format(payload))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">consumer_channel</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">producer_channel</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">initial_offset</span> <span class="o">=</span> <span class="s1">&#39;latest&#39;</span>
+    <span class="n">consumer_pattern</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># a dictionary to keep the question/answer correlation ids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># if there is no loop assigned</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">:</span>
+            <span class="c1"># use the current one</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+
+        <span class="c1"># a placeholder for the event consumer task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># create a consumer instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span> <span class="o">=</span> <span class="n">AIOKafkaConsumer</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">consumer_channel</span><span class="p">,</span>
+            <span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">,</span>
+            <span class="n">bootstrap_servers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+            <span class="n">auto_offset_reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_offset</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span> <span class="o">=</span> <span class="n">AIOKafkaProducer</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">,</span> <span class="n">bootstrap_servers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="KafkaBroker.start"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function starts the brokers interaction with the kafka stream</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="o">.</span><span class="n">start</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_consume_event_callback</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="KafkaBroker.stop"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method stops the brokers interaction with the kafka stream</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="o">.</span><span class="n">stop</span><span class="p">())</span>
+
+        <span class="c1"># attempt</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># to cancel the service</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_consumer_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+        <span class="c1"># if there was no service</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># keep going</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="KafkaBroker.send"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.send">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">action_type</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method sends a message over the kafka stream.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># use a custom channel if one was provided</span>
+        <span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">producer_channel</span>
+
+        <span class="c1"># serialize the action type for the</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">serialize_action</span><span class="p">(</span><span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="c1"># send the message</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="KafkaBroker.ask"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.ask">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="c1"># create a correlation id for the question</span>
+        <span class="n">correlation_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span>
+        <span class="c1"># make sure its unique</span>
+        <span class="k">while</span> <span class="n">correlation_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">:</span>
+            <span class="c1"># create a new correlation id</span>
+            <span class="n">correlation_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span>
+        <span class="c1"># use the integer form of the uuid</span>
+        <span class="n">correlation_id</span> <span class="o">=</span> <span class="n">correlation_id</span><span class="o">.</span><span class="n">int</span>
+        <span class="c1"># create a future to wait on before we ask the question</span>
+        <span class="n">question_future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
+        <span class="c1"># register the future&#39;s callback with the request handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">question_future</span><span class="o">.</span><span class="n">set_result</span>
+
+        <span class="c1"># publish the question</span>
+        <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">correlation_id</span><span class="o">=</span><span class="n">correlation_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="c1"># return the response</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="n">question_future</span></div>
+
+
+    <span class="c1">## internal implementations</span>
+
+
+<div class="viewcode-block" id="KafkaBroker.handle_message"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.handle_message">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">,</span> <span class="n">action_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_consume_event_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># continuously loop</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+
+            <span class="c1"># grab the next message</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
+
+            <span class="c1"># parse the message as json</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">hydrate_action</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+            <span class="c1"># the correlation_id associated with this message</span>
+            <span class="n">correlation_id</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">)</span>
+
+            <span class="c1"># if there is a consumer pattern</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_pattern</span><span class="p">:</span>
+                <span class="c1"># if the action_type does not satisfy the pattern</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">consumer_pattern</span><span class="p">,</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;action_type&#39;</span><span class="p">]):</span>
+                    <span class="c1"># don&#39;t do anything</span>
+                    <span class="k">continue</span>
+
+            <span class="c1"># if we know how to respond to this message</span>
+            <span class="k">if</span> <span class="n">correlation_id</span> <span class="ow">and</span> <span class="n">correlation_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">:</span>
+                <span class="c1"># pass the message to the handler</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">](</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">])</span>
+                <span class="c1"># remove the entry in the handler dict</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]</span>
+
+            <span class="c1"># otherwise there was no correlation id, pass it along to the general handlers</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># build the dictionary of message properties</span>
+                <span class="n">message_props</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;correlation_id&#39;</span><span class="p">:</span> <span class="n">correlation_id</span>
+                <span class="p">}</span>
+
+                <span class="c1"># pass it to the handler</span>
+                <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_message</span><span class="p">(</span>
+                    <span class="n">props</span><span class="o">=</span><span class="n">message_props</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">message</span>
+                <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'v0.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

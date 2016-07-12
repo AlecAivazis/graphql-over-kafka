@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -134,48 +133,43 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.auth.requestHandlers.base</h1><div class="highlight"><pre>
-<span></span><span class="c1"># local imports</span>
+<span></span><span class="c1"># external imports</span>
+<span class="kn">from</span> <span class="nn">aiohttp_session</span> <span class="kn">import</span> <span class="n">get_session</span>
+<span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">RequestHandler</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">auth_service_name</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.registry</span> <span class="kn">import</span> <span class="n">service_location_by_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.auth</span> <span class="kn">import</span> <span class="n">cookie_name</span> <span class="k">as</span> <span class="n">auth_cookie_name</span>
 
 <div class="viewcode-block" id="AuthRequestHandler"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler">[docs]</a><span class="k">class</span> <span class="nc">AuthRequestHandler</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
 
-<div class="viewcode-block" id="AuthRequestHandler.get_current_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            This function retrieves the user identifier from the request</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># get the id of the user form the token</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_secure_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="AuthRequestHandler.get_login_url"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_login_url">[docs]</a>    <span class="k">def</span> <span class="nf">get_login_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            This method returns the url that handles logging-in.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># return the location of the service with the conventional auth name</span>
-        <span class="k">return</span> <span class="s2">&quot;http://{}/login&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">service_location_by_name</span><span class="p">(</span><span class="n">auth_service_name</span><span class="p">())</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="AuthRequestHandler.login_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">[docs]</a>    <span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthRequestHandler.get_current_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This function logs the given user in on the request request.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: pass domain from service config</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_secure_cookie</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_token_contents</span><span class="p">(</span><span class="n">user</span><span class="p">),</span>
-            <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="c1"># grab the current session</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="c1"># add the user to the session</span>
+        <span class="k">return</span> <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="AuthRequestHandler.logout_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user">[docs]</a>    <span class="k">def</span> <span class="nf">logout_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthRequestHandler.login_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function logs the given user in on the request request.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># grab the current session</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="c1"># add the user to the session</span>
+        <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token_contents</span><span class="p">(</span><span class="n">user</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AuthRequestHandler.logout_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">logout_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This method logs the current user out by clearing the cookie.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clear_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">)</span></div>
+        <span class="n">response</span><span class="o">.</span><span class="n">del_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">)</span>
+        <span class="c1"># remove entry in the session</span>
+        <span class="k">del</span> <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span></div>
 
 
     <span class="nd">@property</span>
@@ -183,7 +177,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            The name of the authentication cookie</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;nautilus_jwt&quot;</span>
+        <span class="k">return</span> <span class="n">auth_cookie_name</span><span class="p">()</span>
 
 
     <span class="k">def</span> <span class="nf">_token_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>

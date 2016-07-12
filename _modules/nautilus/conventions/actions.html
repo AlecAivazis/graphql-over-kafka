@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -135,12 +134,13 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This file is responsible for centralizing the action conventions used in nautilus.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">get_model_string</span>
 
 
-<div class="viewcode-block" id="get_crud_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.get_crud_action">[docs]</a><span class="k">def</span> <span class="nf">get_crud_action</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;pending&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="get_crud_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.get_crud_action">[docs]</a><span class="k">def</span> <span class="nf">get_crud_action</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;pending&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">get_model_string</span><span class="p">(</span><span class="n">model</span><span class="p">),</span> <span class="n">status</span><span class="p">)</span></div>
 
 
@@ -150,6 +150,52 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># replace the last bit of a dot separate string with the new_status</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">action_type</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">,</span> <span class="n">new_status</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="roll_call_type"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.roll_call_type">[docs]</a><span class="k">def</span> <span class="nf">roll_call_type</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;roll_call&quot;</span></div>
+
+<span class="c1"># TODO: check that it the args actually implement Serializable</span>
+<div class="viewcode-block" id="serialize_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.serialize_action">[docs]</a><span class="k">def</span> <span class="nf">serialize_action</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns the conventional form of the actions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">action_dict</span> <span class="o">=</span>  <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">payload</span>
+    <span class="p">)</span>
+
+    <span class="c1"># add the extra fields</span>
+    <span class="n">action_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_fields</span><span class="p">)</span>
+    <span class="c1"># return a serializable version</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">action_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hydrate_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.hydrate_action">[docs]</a><span class="k">def</span> <span class="nf">hydrate_action</span><span class="p">(</span><span class="n">serialized</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function takes a serialized action and provides the primitive</span>
+<span class="sd">        data structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">serialized</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="intialize_service_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.intialize_service_action">[docs]</a><span class="k">def</span> <span class="nf">intialize_service_action</span><span class="p">(</span><span class="n">all_services</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="c1"># get the name of the service</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;service&#39;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">all_services</span> <span class="k">else</span> <span class="s1">&#39;*&#39;</span>
+    <span class="c1"># treat initialization like a crud action for services</span>
+    <span class="k">return</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="success_status"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.success_status">[docs]</a><span class="k">def</span> <span class="nf">success_status</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;success&#39;</span></div>
+
+
+<div class="viewcode-block" id="error_status"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.error_status">[docs]</a><span class="k">def</span> <span class="nf">error_status</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;error&#39;</span></div>
+
+
+<div class="viewcode-block" id="pending_status"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.pending_status">[docs]</a><span class="k">def</span> <span class="nf">pending_status</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;pending&#39;</span></div>
 </pre></div>
 
            </div>

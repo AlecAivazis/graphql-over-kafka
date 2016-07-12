@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -134,10 +133,11 @@
   <h1>Source code for nautilus.services.modelService</h1><div class="highlight"><pre>
 <span></span><span class="c1"># local imports</span>
 <span class="kn">import</span> <span class="nn">nautilus</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.amqp</span> <span class="kn">import</span> <span class="n">crud_handler</span><span class="p">,</span> <span class="n">combine_action_handlers</span>
-<span class="kn">from</span> <span class="nn">nautilus.api</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.events</span> <span class="kn">import</span> <span class="n">crud_handler</span><span class="p">,</span> <span class="n">combine_action_handlers</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">model_service_name</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.amqp.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.events.actionHandlers</span> <span class="kn">import</span> <span class="n">noop_handler</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.events.consumers</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">convert_peewee_field</span>
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
 
 
@@ -151,8 +151,6 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            model (nautilus.BaseModel): The nautilus model to manage.</span>
-<span class="sd">            additonal_action_handler (optional, function): An action handler</span>
-<span class="sd">                to be called alongside the internal ones.</span>
 
 <span class="sd">        Example:</span>
 
@@ -176,7 +174,6 @@
 
 
     <span class="n">model</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">additional_action_handler</span> <span class="o">=</span> <span class="n">noop_handler</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># make sure the service has the right name</span>
@@ -186,6 +183,9 @@
 
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># avoid circular depdencies</span>
+        <span class="kn">from</span> <span class="nn">..api.util</span> <span class="kn">import</span> <span class="n">create_model_schema</span>
+
         <span class="c1"># if we were given a model for the service</span>
         <span class="k">if</span> <span class="n">model</span><span class="p">:</span>
             <span class="c1"># use the given model</span>
@@ -211,15 +211,23 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># combine the additional super handler with the crud one</span>
-        <span class="k">return</span> <span class="n">combine_action_handlers</span><span class="p">(</span>
-            <span class="c1"># combine the old action_handler</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">action_handler</span><span class="p">,</span>
-            <span class="c1"># allow for additional action handlers</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">additional_action_handler</span><span class="p">,</span>
-            <span class="c1"># and a crud handler</span>
-            <span class="n">crud_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="c1"># create a crud handler for the model</span>
+        <span class="n">model_handler</span> <span class="o">=</span> <span class="n">crud_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">class</span> <span class="nc">ModelActionHandler</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">action_handler</span><span class="p">):</span>
+
+            <span class="n">loop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span>
+
+            <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="n">inner_self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                    The default action handler for a model service call</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="c1"># bubble up</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelActionHandler</span><span class="p">,</span> <span class="n">inner_self</span><span class="p">)</span><span class="o">.</span><span class="n">handle_action</span><span class="p">(</span><span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="n">props</span><span class="p">,</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+                <span class="c1"># call the crud handler</span>
+                <span class="n">await</span> <span class="n">model_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="n">props</span><span class="p">,</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ModelActionHandler</span>
 
 
 <div class="viewcode-block" id="ModelService.init_db"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.modelService.ModelService.init_db">[docs]</a>    <span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -231,6 +239,25 @@
         <span class="n">db_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;database_url&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlite:///nautilus.db&#39;</span><span class="p">)</span>
         <span class="c1"># configure the nautilus database to the url</span>
         <span class="n">nautilus</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">init_db</span><span class="p">(</span><span class="n">db_url</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelService.summarize"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.modelService.ModelService.summarize">[docs]</a>    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_fields</span><span class="p">):</span>
+        <span class="c1"># the fields for the service&#39;s model</span>
+        <span class="n">model_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">fields</span><span class="p">())}</span> \
+                            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> \
+                            <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="c1"># add the model fields to the dictionary</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">summarize</span><span class="p">(),</span>
+            <span class="n">fields</span><span class="o">=</span><span class="p">[{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">value</span><span class="p">))</span><span class="o">.</span><span class="n">__name__</span>
+                    <span class="p">}</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                   <span class="p">],</span>
+            <span class="o">**</span><span class="n">extra_fields</span>
+        <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="ModelService.get_models"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.modelService.ModelService.get_models">[docs]</a>    <span class="k">def</span> <span class="nf">get_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

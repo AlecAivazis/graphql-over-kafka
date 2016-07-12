@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>nautilus.network.events.consumers package &mdash; nautilus v0.4.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>nautilus.network.events.consumers package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/internals/nautilus.network.events.consumers.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nautilus-network-events-consumers-package">
+<h1>nautilus.network.events.consumers package<a class="headerlink" href="#nautilus-network-events-consumers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nautilus.network.events.consumers.actions">
+<span id="nautilus-network-events-consumers-actions-module"></span><h2>nautilus.network.events.consumers.actions module<a class="headerlink" href="#module-nautilus.network.events.consumers.actions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.network.events.consumers.actions.ActionHandler">
+<em class="property">class </em><code class="descclassname">nautilus.network.events.consumers.actions.</code><code class="descname">ActionHandler</code><a class="reference internal" href="../_modules/nautilus/network/events/consumers/actions.html#ActionHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.actions.ActionHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nautilus.network.events.consumers.kafka.KafkaBroker" title="nautilus.network.events.consumers.kafka.KafkaBroker"><code class="xref py py-class docutils literal"><span class="pre">nautilus.network.events.consumers.kafka.KafkaBroker</span></code></a></p>
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.actions.ActionHandler.consumer_channel">
+<code class="descname">consumer_channel</code><em class="property"> = 'actions'</em><a class="headerlink" href="#nautilus.network.events.consumers.actions.ActionHandler.consumer_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.actions.ActionHandler.handle_action">
+<code class="descname">handle_action</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em>, <em>props</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/actions.html#ActionHandler.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.actions.ActionHandler.handle_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.actions.ActionHandler.handle_message">
+<code class="descname">handle_message</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/actions.html#ActionHandler.handle_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.actions.ActionHandler.handle_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.actions.ActionHandler.producer_channel">
+<code class="descname">producer_channel</code><em class="property"> = 'actions'</em><a class="headerlink" href="#nautilus.network.events.consumers.actions.ActionHandler.producer_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.actions.ActionHandler.server">
+<code class="descname">server</code><em class="property"> = 'localhost:9092'</em><a class="headerlink" href="#nautilus.network.events.consumers.actions.ActionHandler.server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.consumers.api">
+<span id="nautilus-network-events-consumers-api-module"></span><h2>nautilus.network.events.consumers.api module<a class="headerlink" href="#module-nautilus.network.events.consumers.api" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.network.events.consumers.api.APIActionHandler">
+<em class="property">class </em><code class="descclassname">nautilus.network.events.consumers.api.</code><code class="descname">APIActionHandler</code><a class="reference internal" href="../_modules/nautilus/network/events/consumers/api.html#APIActionHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nautilus.network.events.consumers.actions.ActionHandler" title="nautilus.network.events.consumers.actions.ActionHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.network.events.consumers.actions.ActionHandler</span></code></a></p>
+<p>This action handler is used by the api service to build a schema
+of the underlying services as they announce their existence over
+the action system.</p>
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern">
+<code class="descname">consumer_pattern</code><em class="property"> = '(.*\\..*\\.(?!(pending)))|init'</em><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.api.APIActionHandler.handle_action">
+<code class="descname">handle_action</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em>, <em>props</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/api.html#APIActionHandler.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler.handle_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.consumers.kafka">
+<span id="nautilus-network-events-consumers-kafka-module"></span><h2>nautilus.network.events.consumers.kafka module<a class="headerlink" href="#module-nautilus.network.events.consumers.kafka" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker">
+<em class="property">class </em><code class="descclassname">nautilus.network.events.consumers.kafka.</code><code class="descname">KafkaBroker</code><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>This class handles two way communication with the kafka
+server. Also allows for a question/answer interface served
+over the kafka stream.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>= None</strong> (<a class="reference internal" href="#nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern" title="nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern"><em>consumer_pattern</em></a>) &#8211; </li>
+<li><strong>server</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The location of the kafka stream.</li>
+<li><strong>consumer_channel</strong> (<em>optional, str</em>) &#8211; The channel to listen for events
+on.</li>
+<li><strong>consumer_pattern</strong> (<em>optional, regex</em>) &#8211; A regex pattern to match against
+the action types. The action handler is called for every matching
+event. If none is provided, the action handler is called for every
+action.</li>
+<li><strong>producer_channel</strong> (<em>optional, str</em>) &#8211; The default channel to user when
+producing events.</li>
+<li><strong>initial_offset</strong> (<em>optional, one of 'latest' or 'earliest'</em>) &#8211; Where to
+start on the event stream when run.</li>
+<li><strong>loop</strong> (<em>optional, ayncio.EventLoop</em>) &#8211; The event loop that the broker should
+run on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.kafka</span> <span class="kn">import</span> <span class="n">KafkaBroker</span>
+
+
+<span class="k">class</span> <span class="nc">ActionHandler</span><span class="p">(</span><span class="n">KafkaBroker</span><span class="p">):</span>
+
+    <span class="n">consumer_channel</span> <span class="o">=</span> <span class="s1">&#39;myEvents&#39;</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="s1">&#39;localhost:9092&#39;</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;recieved action with type: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action_type</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;and payload: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">payload</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.ask">
+<code class="descname">ask</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.ask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.ask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.consumer_channel">
+<code class="descname">consumer_channel</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.consumer_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern">
+<code class="descname">consumer_pattern</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.handle_message">
+<code class="descname">handle_message</code><span class="sig-paren">(</span><em>props</em>, <em>action_type=None</em>, <em>payload=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.handle_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.handle_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.initial_offset">
+<code class="descname">initial_offset</code><em class="property"> = 'latest'</em><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.initial_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.loop">
+<code class="descname">loop</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.loop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.producer_channel">
+<code class="descname">producer_channel</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.producer_channel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.send">
+<code class="descname">send</code><span class="sig-paren">(</span><em>payload=''</em>, <em>action_type=''</em>, <em>channel=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.send"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method sends a message over the kafka stream.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.server">
+<code class="descname">server</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.server" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function starts the brokers interaction with the kafka stream</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.network.events.consumers.kafka.KafkaBroker.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method stops the brokers interaction with the kafka stream</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.network.events.consumers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.network.events.consumers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.4.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

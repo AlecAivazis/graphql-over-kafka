@@ -30,10 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/>
-        <link rel="up" title="nautilus.auth package" href="nautilus.auth.html"/>
-        <link rel="next" title="nautilus.auth.requestHandlers.forms package" href="nautilus.auth.requestHandlers.forms.html"/>
-        <link rel="prev" title="nautilus.auth.primitives package" href="nautilus.auth.primitives.html"/> 
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,36 +79,12 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="nautilus.auth.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth.decorators">nautilus.auth.decorators module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nautilus.auth.html#module-nautilus.auth">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.conventions.html">nautilus.conventions package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus.database">nautilus.database module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
-</ul>
-</li>
 </ul>
 
             
@@ -141,10 +114,6 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
-      
-          <li><a href="index.html">Module Index</a> &raquo;</li>
-      
-          <li><a href="nautilus.auth.html">nautilus.auth package</a> &raquo;</li>
       
     <li>nautilus.auth.requestHandlers package</li>
       <li class="wy-breadcrumbs-aside">
@@ -185,29 +154,23 @@
 <span id="nautilus-auth-requesthandlers-base-module"></span><h2>nautilus.auth.requestHandlers.base module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.auth.requestHandlers.base.AuthRequestHandler">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.base.</code><code class="descname">AuthRequestHandler</code><span class="sig-paren">(</span><em>application</em>, <em>request</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.base.</code><code class="descname">AuthRequestHandler</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler" title="nautilus.network.http.requestHandler.RequestHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.network.http.requestHandler.RequestHandler</span></code></a></p>
 <dl class="method">
 <dt id="nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">
-<code class="descname">get_current_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.get_current_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function retrieves the user identifier from the request</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="nautilus.auth.requestHandlers.base.AuthRequestHandler.get_login_url">
-<code class="descname">get_login_url</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.get_login_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_login_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method returns the url that handles logging-in.</p>
+<code class="descname">get_current_user</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.get_current_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function logs the given user in on the request request.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">
-<code class="descname">login_user</code><span class="sig-paren">(</span><em>user</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.login_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user" title="Permalink to this definition">¶</a></dt>
+<code class="descname">login_user</code><span class="sig-paren">(</span><em>user</em>, <em>response</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.login_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function logs the given user in on the request request.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user">
-<code class="descname">logout_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.logout_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logout_user</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/base.html#AuthRequestHandler.logout_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method logs the current user out by clearing the cookie.</p>
 </dd></dl>
 
@@ -218,7 +181,7 @@
 <span id="nautilus-auth-requesthandlers-login-module"></span><h2>nautilus.auth.requestHandlers.login module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.login" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.auth.requestHandlers.login.LoginHandler">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.login.</code><code class="descname">LoginHandler</code><span class="sig-paren">(</span><em>application</em>, <em>request</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/login.html#LoginHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.login.LoginHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.login.</code><code class="descname">LoginHandler</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/login.html#LoginHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.login.LoginHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler" title="nautilus.auth.requestHandlers.base.AuthRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.auth.requestHandlers.base.AuthRequestHandler</span></code></a></p>
 <p>This class handles the basic login form.</p>
 <dl class="method">
@@ -238,7 +201,7 @@
 <span id="nautilus-auth-requesthandlers-logout-module"></span><h2>nautilus.auth.requestHandlers.logout module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.logout" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.auth.requestHandlers.logout.LogoutHandler">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.logout.</code><code class="descname">LogoutHandler</code><span class="sig-paren">(</span><em>application</em>, <em>request</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/logout.html#LogoutHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.logout.LogoutHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.logout.</code><code class="descname">LogoutHandler</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/logout.html#LogoutHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.logout.LogoutHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler" title="nautilus.auth.requestHandlers.base.AuthRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.auth.requestHandlers.base.AuthRequestHandler</span></code></a></p>
 <p>This class handles the basic login form.</p>
 <dl class="method">
@@ -253,7 +216,7 @@
 <span id="nautilus-auth-requesthandlers-register-module"></span><h2>nautilus.auth.requestHandlers.register module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.register" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nautilus.auth.requestHandlers.register.RegisterHandler">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.register.</code><code class="descname">RegisterHandler</code><span class="sig-paren">(</span><em>application</em>, <em>request</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/register.html#RegisterHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.register.RegisterHandler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.register.</code><code class="descname">RegisterHandler</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/register.html#RegisterHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.register.RegisterHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nautilus.auth.requestHandlers.base.AuthRequestHandler" title="nautilus.auth.requestHandlers.base.AuthRequestHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.auth.requestHandlers.base.AuthRequestHandler</span></code></a></p>
 <p>This class handles the basic login form.</p>
 <dl class="method">
@@ -278,15 +241,6 @@
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="nautilus.auth.requestHandlers.forms.html" class="btn btn-neutral float-right" title="nautilus.auth.requestHandlers.forms package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="nautilus.auth.primitives.html" class="btn btn-neutral" title="nautilus.auth.primitives package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

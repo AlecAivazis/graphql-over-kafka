@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -132,10 +131,19 @@
            <div itemprop="articleBody">
             
   <h1>Source code for nautilus.services.apiGateway</h1><div class="highlight"><pre>
-<span></span><span class="c1"># local imports</span>
+<span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">aiohttp_cors</span>
+<span class="c1"># local imports</span>
+<span class="kn">import</span> <span class="nn">nautilus.api.endpoints.requestHandlers.apiQuery</span> <span class="kn">as</span> <span class="nn">api_query</span>
+<span class="kn">import</span> <span class="nn">nautilus.network.events.consumers.api</span> <span class="kn">as</span> <span class="nn">api_handler</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">api_gateway_name</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">roll_call_type</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">static_dir</span> <span class="k">as</span> <span class="n">api_endpoint_static</span>
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">APIQueryHandler</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GraphiQLRequestHandler</span><span class="p">,</span>
+    <span class="n">GraphQLRequestHandler</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="APIGateway"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.apiGateway.APIGateway">[docs]</a><span class="k">class</span> <span class="nc">APIGateway</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
@@ -166,11 +174,58 @@
 <span class="sd">                    schema = schema</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">api_gateway_name</span><span class="p">()</span>
+    <span class="n">api_request_handler_class</span> <span class="o">=</span> <span class="n">api_query</span><span class="o">.</span><span class="n">APIQueryHandler</span>
+    <span class="n">action_handler</span> <span class="o">=</span> <span class="n">api_handler</span><span class="o">.</span><span class="n">APIActionHandler</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="c1"># bubble up</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="c1"># attach this service to the action handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_handler</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span>
 
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_api_request_handler_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">APIQueryHandler</span></div>
+    <span class="c1"># when its time for the service to announce itself</span>
+<div class="viewcode-block" id="APIGateway.announce"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.announce">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">announce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># bubble up</span>
+        <span class="n">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">announce</span><span class="p">()</span>
+        <span class="c1"># ask for rollcall aswell</span>
+        <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="n">roll_call_type</span><span class="p">(),</span>
+            <span class="n">payload</span><span class="o">=</span><span class="s1">&#39;please report yourself&#39;</span>
+        <span class="p">)</span></div>
+        <span class="c1"># print(&#39;sent &#39; + roll_call_type())</span>
+
+
+<div class="viewcode-block" id="APIGateway.init_routes"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.init_routes">[docs]</a>    <span class="k">def</span> <span class="nf">init_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># add the cors handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cors</span> <span class="o">=</span> <span class="n">aiohttp_cors</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+
+        <span class="c1"># for each route that was registered</span>
+        <span class="k">for</span> <span class="n">route</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routes</span><span class="p">:</span>
+            <span class="c1"># add the corresponding http endpoint</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="o">**</span><span class="n">route</span><span class="p">)</span>
+
+        <span class="c1"># add the schema reference to graphql handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_request_handler_class</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="c1"># add a cors resource</span>
+        <span class="n">api_resource</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">))</span>
+        <span class="c1"># add the root api handler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cors</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+            <span class="n">api_resource</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_request_handler_class</span><span class="p">),</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">aiohttp_cors</span><span class="o">.</span><span class="n">ResourceOptions</span><span class="p">(</span>
+                    <span class="n">allow_credentials</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                    <span class="n">expose_headers</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;X-Custom-Server-Header&quot;</span><span class="p">,),</span>
+                    <span class="n">allow_headers</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;X-Requested-With&quot;</span><span class="p">,</span> <span class="s2">&quot;Content-Type&quot;</span><span class="p">),</span>
+                    <span class="n">max_age</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="c1"># add the static file urls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_static</span><span class="p">(</span><span class="s1">&#39;/graphiql/static/&#39;</span><span class="p">,</span> <span class="n">api_endpoint_static</span><span class="p">)</span>
+        <span class="c1"># add the graphiql endpoint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="s1">&#39;/graphiql&#39;</span><span class="p">,</span> <span class="n">GraphiQLRequestHandler</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

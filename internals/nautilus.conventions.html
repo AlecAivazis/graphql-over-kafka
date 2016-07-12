@@ -30,10 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/>
-        <link rel="up" title="Module Index" href="index.html"/>
-        <link rel="next" title="nautilus.management package" href="nautilus.management.html"/>
-        <link rel="prev" title="nautilus.contrib.graphene_peewee package" href="nautilus.contrib.graphene_peewee.html"/> 
+    <link rel="top" title="nautilus v0.4.1 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -82,38 +79,12 @@
           
             
             
-                <ul class="current">
+                <ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="nautilus.api.html">nautilus.api package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.auth.html">nautilus.auth package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.config.html">nautilus.config package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.contrib.html">nautilus.contrib package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.conventions package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.actions">nautilus.conventions.actions module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.models">nautilus.conventions.models module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.schema">nautilus.conventions.schema module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions.services">nautilus.conventions.services module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.conventions">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.management.html">nautilus.management package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.models.html">nautilus.models package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.network.html">nautilus.network package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nautilus.services.html">nautilus.services package</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus.database">nautilus.database module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#module-nautilus">Module contents</a></li>
-</ul>
-</li>
 </ul>
 
             
@@ -144,8 +115,6 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-          <li><a href="index.html">Module Index</a> &raquo;</li>
-      
     <li>nautilus.conventions package</li>
       <li class="wy-breadcrumbs-aside">
         
@@ -175,8 +144,64 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="nautilus.conventions.actions.error_status">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">error_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#error_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.error_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="nautilus.conventions.actions.get_crud_action">
-<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">get_crud_action</code><span class="sig-paren">(</span><em>method</em>, <em>model</em>, <em>status='pending'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#get_crud_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.get_crud_action" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">get_crud_action</code><span class="sig-paren">(</span><em>method</em>, <em>model</em>, <em>status='pending'</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#get_crud_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.get_crud_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.hydrate_action">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">hydrate_action</code><span class="sig-paren">(</span><em>serialized</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#hydrate_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.hydrate_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function takes a serialized action and provides the primitive
+data structure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.intialize_service_action">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">intialize_service_action</code><span class="sig-paren">(</span><em>all_services=False</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#intialize_service_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.intialize_service_action" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.pending_status">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">pending_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#pending_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.pending_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.roll_call_type">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">roll_call_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#roll_call_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.roll_call_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.serialize_action">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">serialize_action</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em>, <em>**extra_fields</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#serialize_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.serialize_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the conventional form of the actions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.actions.success_status">
+<code class="descclassname">nautilus.conventions.actions.</code><code class="descname">success_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/actions.html#success_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.actions.success_status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.conventions.api">
+<span id="nautilus-conventions-api-module"></span><h2>nautilus.conventions.api module<a class="headerlink" href="#module-nautilus.conventions.api" title="Permalink to this headline">¶</a></h2>
+<p>This file is responsible for centralizing the schema conventions used in nautilus.</p>
+<dl class="function">
+<dt id="nautilus.conventions.api.root_query">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">root_query</code><span class="sig-paren">(</span><em>*service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#root_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.root_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the name of the root query for a model service.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nautilus.conventions.auth">
+<span id="nautilus-conventions-auth-module"></span><h2>nautilus.conventions.auth module<a class="headerlink" href="#module-nautilus.conventions.auth" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nautilus.conventions.auth.cookie_name">
+<code class="descclassname">nautilus.conventions.auth.</code><code class="descname">cookie_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/auth.html#cookie_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.auth.cookie_name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -189,15 +214,10 @@
 <dd><p>This function returns the conventional action designator for a given model.</p>
 </dd></dl>
 
-</div>
-<div class="section" id="module-nautilus.conventions.schema">
-<span id="nautilus-conventions-schema-module"></span><h2>nautilus.conventions.schema module<a class="headerlink" href="#module-nautilus.conventions.schema" title="Permalink to this headline">¶</a></h2>
-<p>This file is responsible for centralizing the schema conventions used in nautilus.</p>
 <dl class="function">
-<dt id="nautilus.conventions.schema.root_query">
-<code class="descclassname">nautilus.conventions.schema.</code><code class="descname">root_query</code><span class="sig-paren">(</span><em>*service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/schema.html#root_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.schema.root_query" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function returns the name of the root query for a model service.</p>
-</dd></dl>
+<dt id="nautilus.conventions.models.normalize_string">
+<code class="descclassname">nautilus.conventions.models.</code><code class="descname">normalize_string</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/models.html#normalize_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.models.normalize_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-nautilus.conventions.services">
@@ -216,7 +236,7 @@
 
 <dl class="function">
 <dt id="nautilus.conventions.services.connection_service_name">
-<code class="descclassname">nautilus.conventions.services.</code><code class="descname">connection_service_name</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/services.html#connection_service_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.services.connection_service_name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nautilus.conventions.services.</code><code class="descname">connection_service_name</code><span class="sig-paren">(</span><em>service</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/services.html#connection_service_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.services.connection_service_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>the name of a service that manages the connection between services</p>
 </dd></dl>
 
@@ -236,15 +256,6 @@
            </div>
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="nautilus.management.html" class="btn btn-neutral float-right" title="nautilus.management package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="nautilus.contrib.graphene_peewee.html" class="btn btn-neutral" title="nautilus.contrib.graphene_peewee package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

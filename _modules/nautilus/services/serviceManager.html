@@ -86,7 +86,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
 
             
@@ -147,7 +146,6 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">service</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_running_service</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="nd">@click.group</span><span class="p">()</span>
         <span class="k">def</span> <span class="nf">group</span><span class="p">():</span>
@@ -158,8 +156,6 @@
         <span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--host&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The host for the http server.&quot;</span><span class="p">)</span>
         <span class="nd">@click.option</span><span class="p">(</span><span class="s1">&#39;--debug&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run the service in debug mode.&quot;</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">runserver</span><span class="p">(</span><span class="n">port</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">debug</span><span class="p">):</span>
-            <span class="c1"># make sure we clean up the service later on</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_running_service</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="c1"># the service configuration based on cli args</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
                 <span class="n">debug</span><span class="o">=</span><span class="n">debug</span>
@@ -232,10 +228,6 @@
         <span class="c1"># if there is a normal exception</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Closing due to error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">err</span><span class="p">)</span>
-            <span class="c1"># if the service is running</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_service</span><span class="p">:</span>
-                <span class="c1"># stop the service and clean up</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">service_instance</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
             <span class="c1"># bubble up the exception for someone else</span>
             <span class="k">raise</span> <span class="n">err</span></div></div>
 </pre></div>
