@@ -10,3 +10,4 @@ Full documentation is hosted [here](http://alecaivazis.github.io/nautilus/).
 
 ## Requirements
 * > Python 3.5
+* Kafka
