@@ -6,6 +6,8 @@ from .recipes import RecipeService
 class ServiceConfig:
     database_url = 'sqlite:///ingredientRecipeConnections.db'
 
-class RecipeIngredientConnection(ConnectionService):
-    services = [IngredientService, RecipeService],
+class Ingredients(ConnectionService):
+    to_serivce = ('Ingredient',)
+    from_service = ('Recipe',)
+
     config = ServiceConfig
