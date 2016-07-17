@@ -9,7 +9,7 @@ from nautilus.api.util import parse_string
 from .graphql import GraphQLRequestHandler
 
 
-class APIQueryHandler(nautilus.api.endpoints.GraphQLRequestHandler):
+class APIQueryHandler(GraphQLRequestHandler):
     """
         The api query handler parses and executes the query by hand,
         requesting the appropriate data over the action system. Queries
