@@ -34,7 +34,7 @@ defined, creating a service to manage the data is relatively easy:
 
 
     class ServiceConfig:
-        database_url = 'sqlite:///ingredients.db'
+        database_url = 'sqlite:///catPhotos.db'
 
     class CatPhotoService(nautilus.ModelService):
         model = CatPhoto
