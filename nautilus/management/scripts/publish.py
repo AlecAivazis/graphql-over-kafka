@@ -9,8 +9,8 @@ import asyncio
 import json
 from aiokafka import AIOKafkaProducer
 
-@click.option('--type', default='cli', help="The action type of the action to publish.")
-@click.option('--payload', help="The payload of the message")
+@click.option('--type', '-t', default='cli', help="The action type of the action to publish.")
+@click.option('--payload', '-p', required=True, help="The payload of the message")
 @click.command()
 def publish(type, payload):
     """
