@@ -58,7 +58,8 @@ columns do not necessarily have to be unique. If there was a second ingredient
 with id 2 that is also a part of the recipe, there would be a second entry in
 the connection service that has a 1 in the recipe column but this time there
 would be a 2 in the ingredient column. This relationship is called
-"many-to-many" because a recipe can have many ingredients and an ingredient can be a member of many recipes (neither column is unique). Relationships can also be
+"many-to-many" because a recipe can have many ingredients and an ingredient can
+be a member of many recipes (neither column is unique). Relationships can also be
 classified as "one-to-one" and "one-to-many".
 
 Make a new file called ``comments.py`` next to the previously created
@@ -74,8 +75,8 @@ recipes and ingredients:
         database_url = 'sqlite:///commentConnections.db'
 
     class Comments(ConnectionService):
-        from_service = ('Recipe',)
-        to_service = ('Ingredient',)
+        from_service = ('CatPhoto',)
+        to_service = ('Comment',)
 
         config = ServiceConfig
 
