@@ -17,10 +17,9 @@ class APIActionHandler(ActionHandler):
     consumer_pattern = '(.*\..*\.(?!(pending)))|init'
 
     async def handle_action(self, action_type, payload, props, **kwds):
-        print(action_type)
-
         # the treat the payload like json if its a string
         model = json.loads(payload) if isinstance(payload, str) else payload
+
         # if the model is a connection
         if 'connection' in model:
             # if we haven't seen the connection before

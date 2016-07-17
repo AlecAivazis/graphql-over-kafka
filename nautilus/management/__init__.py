@@ -3,7 +3,7 @@
 # external imports
 import click
 # local imports
-from .scripts.create import create
+from .scripts import create, publish
 
 @click.group()
 def cli():
@@ -14,3 +14,4 @@ def cli():
 
 # add the various sub commands to the manager
 cli.add_command(create)
+cli.add_command(publish)
