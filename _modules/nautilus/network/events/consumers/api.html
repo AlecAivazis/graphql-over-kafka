@@ -151,10 +151,9 @@
     <span class="n">consumer_pattern</span> <span class="o">=</span> <span class="s1">&#39;(.*\..*\.(?!(pending)))|init&#39;</span>
 
 <div class="viewcode-block" id="APIActionHandler.handle_action"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.api.APIActionHandler.handle_action">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">action_type</span><span class="p">)</span>
-
         <span class="c1"># the treat the payload like json if its a string</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">payload</span>
+
         <span class="c1"># if the model is a connection</span>
         <span class="k">if</span> <span class="s1">&#39;connection&#39;</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
             <span class="c1"># if we haven&#39;t seen the connection before</span>

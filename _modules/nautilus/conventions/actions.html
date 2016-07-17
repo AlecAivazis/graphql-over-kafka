@@ -177,7 +177,13 @@
 <span class="sd">        This function takes a serialized action and provides the primitive</span>
 <span class="sd">        data structure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">serialized</span><span class="p">)</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">serialized</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;action_type&#39;</span><span class="p">:</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;payload&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">serialized</span><span class="p">)</span>
+        <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="intialize_service_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.intialize_service_action">[docs]</a><span class="k">def</span> <span class="nf">intialize_service_action</span><span class="p">(</span><span class="n">all_services</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>

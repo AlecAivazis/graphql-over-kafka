@@ -60,7 +60,7 @@ a class record that holds the event configuration as well as its behavior:
 .. code-block:: python
     from nautilus.network import ActionHandler
 
-    class RecipeActionHandler(ActionHandler):
+    class PrintService(ActionHandler):
 
         async def handle_action(self, action_type, payload, props):
             print('hello world!')
@@ -68,10 +68,18 @@ a class record that holds the event configuration as well as its behavior:
 
 The primary method of an ActionHandler takes three parameters: ``actiontype``,
  ``payload``, and ``props``. Ignore ``props`` for now. ``Type`` identifies
-the event and  ``Payload`` provides the associated data. For example, if you had
+the event and ``Payload`` provides the associated data. Go ahead and test
+your service by opening up a new terminal and use the nautilus cli to publish
+an action to the messaging system:
+
+.. code-block:: bash
+    naut publish -p "hello world"
+
+You should see the message in your running service's console. This pattern
+can be made to acommodate almost any situation. For example, if you had
 some special behavior that you wanted your service to do (like send an email),
-you would triger that behavior by firing a "send_email" action type and responding
-appropriately:
+you would triger that behavior by firing a "send_email" action type and
+responding appropriately:
 
 .. code-block:: python
     from nautilus.network import ActionHandler
