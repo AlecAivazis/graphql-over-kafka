@@ -53,21 +53,22 @@ so we can store our records somewhere:
 Querying for data
 ------------------
 
-You should now see a file called `nautilus.db` in your directory. Run the model service
-by executing `python3 ./catPhoto.py runserver` and navigate to
-`http://localhost:8000/graphiql` (notice the i).
+You should now see a file called ``nautilus.db`` in your directory. Run the model service
+by executing ``python3 ./catPhoto.py runserver`` and navigate to
+``http://localhost:8000/graphiql`` (notice the i).
 
 Model services automatically generate a graphql (no i) api for the model.
 Graphiql (with i) is a standard user interface for interacting with these sorts
 APIs. For more information on graphql visit
-[here](https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html).
-Try creating a cat photo record with a `photo_location` of "foo" in the
-database either via the `sqlite` cli or an app like [Sqlitebrowser](https://github.com/sqlitebrowser/sqlitebrowser).
+`here <https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html>`_.
+Try creating a cat photo record with a ``photo_location`` of "foo" in the
+database either via the ``sqlite`` cli or an app like `SQLiteBrowser <https://github.com/sqlitebrowser/sqlitebrowser>`_.
 
 Once you've done that, try executing the following query by entering it in the left panel
 of `graphiql`:
 
 .. code-block:: graphql
+
     {
         all_models {
             photo_location
@@ -77,6 +78,7 @@ of `graphiql`:
 You should see a json reply that looks like:
 
 .. code-block:: json
+
     {
         data: [{
             photo_location: 'foo'

@@ -187,18 +187,33 @@ so we can store our records somewhere:</p>
 </div>
 <div class="section" id="querying-for-data">
 <h2>Querying for data<a class="headerlink" href="#querying-for-data" title="Permalink to this headline">¶</a></h2>
-<p>You should now see a file called <cite>nautilus.db</cite> in your directory. Run the model service
-by executing <cite>python3 ./catPhoto.py runserver</cite> and navigate to
-<cite>http://localhost:8000/graphiql</cite> (notice the i).</p>
+<p>You should now see a file called <code class="docutils literal"><span class="pre">nautilus.db</span></code> in your directory. Run the model service
+by executing <code class="docutils literal"><span class="pre">python3</span> <span class="pre">./catPhoto.py</span> <span class="pre">runserver</span></code> and navigate to
+<code class="docutils literal"><span class="pre">http://localhost:8000/graphiql</span></code> (notice the i).</p>
 <p>Model services automatically generate a graphql (no i) api for the model.
 Graphiql (with i) is a standard user interface for interacting with these sorts
 APIs. For more information on graphql visit
-[here](<a class="reference external" href="https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html">https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html</a>).
-Try creating a cat photo record with a <cite>photo_location</cite> of &#8220;foo&#8221; in the
-database either via the <cite>sqlite</cite> cli or an app like [Sqlitebrowser](<a class="reference external" href="https://github.com/sqlitebrowser/sqlitebrowser">https://github.com/sqlitebrowser/sqlitebrowser</a>).</p>
+<a class="reference external" href="https://facebook.github.io/react/blog/2015/05/01/graphql-introduction.html">here</a>.
+Try creating a cat photo record with a <code class="docutils literal"><span class="pre">photo_location</span></code> of &#8220;foo&#8221; in the
+database either via the <code class="docutils literal"><span class="pre">sqlite</span></code> cli or an app like <a class="reference external" href="https://github.com/sqlitebrowser/sqlitebrowser">SQLiteBrowser</a>.</p>
 <p>Once you&#8217;ve done that, try executing the following query by entering it in the left panel
 of <cite>graphiql</cite>:</p>
+<div class="highlight-graphql"><div class="highlight"><pre><span></span>{
+    all_models {
+        photo_location
+    }
+}
+</pre></div>
+</div>
 <p>You should see a json reply that looks like:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+    data: [{
+        photo_location: &#39;foo&#39;
+    }],
+    errors: []
+}
+</pre></div>
+</div>
 </div>
 </div>
 

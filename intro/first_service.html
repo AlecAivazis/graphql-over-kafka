@@ -189,24 +189,22 @@ anything for another service to use - let&#8217;s change that.</p>
 <p>Now that we have a service, we can start adding some functionality to it. In the
 nautilus architecture, services are triggered to perform certain actions by
 events. We describe how the service responds to those events through
-the &#8220;action handler&#8221;, a class record that holds the event configuration
+the <code class="docutils literal"><span class="pre">Action</span> <span class="pre">Handler</span></code>, a class record that holds the event configuration
 as well as its behavior:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
 
-<span class="k">class</span> <span class="nc">PrintService</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PrintHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
 
     <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;hello world!&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>The primary method of an ActionHandler takes three parameters: <code class="docutils literal"><span class="pre">actiontype</span></code>,</dt>
-<dd><code class="docutils literal"><span class="pre">payload</span></code>, and <code class="docutils literal"><span class="pre">props</span></code>. Ignore <code class="docutils literal"><span class="pre">props</span></code> for now. <code class="docutils literal"><span class="pre">Type</span></code> identifies</dd>
-</dl>
-<p>the event and <code class="docutils literal"><span class="pre">Payload</span></code> provides the associated data. Go ahead and test
-your service by opening up a new terminal and use the nautilus cli to publish
-an action to the messaging system:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>naut publish -p <span class="s2">&quot;hello world&quot;</span>
+<p>The primary method of an ActionHandler takes three arguments: <code class="docutils literal"><span class="pre">action_type</span></code>,
+<code class="docutils literal"><span class="pre">payload</span></code>, and <code class="docutils literal"><span class="pre">props</span></code>. <code class="docutils literal"><span class="pre">Action_type</span></code> identifies the event and
+<code class="docutils literal"><span class="pre">payload</span></code> provides the associated data. Ignore <code class="docutils literal"><span class="pre">props</span></code> for now. Let&#8217;s test
+your service using the command line interface provided by nautilus. Open up a
+new terminal and execute:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ naut publish -p <span class="s2">&quot;hello world&quot;</span>
 </pre></div>
 </div>
 <p>You should see the message in your running service&#8217;s console. This pattern
@@ -236,7 +234,7 @@ responding appropriately:</p>
         <span class="k">print</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">RecipeService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MyService</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="n">action_handler</span> <span class="o">=</span> <span class="n">PrintHandler</span>
 
 
@@ -247,11 +245,8 @@ responding appropriately:</p>
 </pre></div>
 </div>
 <p>Congratulations! You have finally pieced together a complete nautilus service.
-Now other entities in your cloud (like another service or even a javascript
-client) can create, persist, and retrieve recipes without maintaining the data
-themselves. In the next section you will learn how to create services that
-manage a database as well as relationships between various services in
-our system.</p>
+In the next section you will learn how to create services that
+manage and persist database entries for your application.</p>
 </div>
 </div>
 
