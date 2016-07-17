@@ -52,28 +52,30 @@ Responding to Actions
 -----------------------
 
 Now that we have a service, we can start adding some functionality to it. In the
-nautilus architecture, services are triggered to perform certain actions by events.
-We describe how the service responds to those events through the "action handler",
-a class record that holds the event configuration as well as its behavior:
+nautilus architecture, services are triggered to perform certain actions by
+events. We describe how the service responds to those events through
+the ``Action Handler``, a class record that holds the event configuration
+as well as its behavior:
 
 
 .. code-block:: python
+
     from nautilus.network import ActionHandler
 
-    class PrintService(ActionHandler):
+    class PrintHandler(ActionHandler):
 
         async def handle_action(self, action_type, payload, props):
             print('hello world!')
 
-
-The primary method of an ActionHandler takes three parameters: ``actiontype``,
- ``payload``, and ``props``. Ignore ``props`` for now. ``Type`` identifies
-the event and ``Payload`` provides the associated data. Go ahead and test
-your service by opening up a new terminal and use the nautilus cli to publish
-an action to the messaging system:
+The primary method of an ActionHandler takes three arguments: ``action_type``,
+``payload``, and ``props``. ``Action_type`` identifies the event and
+``payload`` provides the associated data. Ignore ``props`` for now. Let's test
+your service using the command line interface provided by nautilus. Open up a
+new terminal and execute:
 
 .. code-block:: bash
-    naut publish -p "hello world"
+
+    $ naut publish -p "hello world"
 
 You should see the message in your running service's console. This pattern
 can be made to acommodate almost any situation. For example, if you had
@@ -82,6 +84,7 @@ you would triger that behavior by firing a "send_email" action type and
 responding appropriately:
 
 .. code-block:: python
+
     from nautilus.network import ActionHandler
 
     class EmailActionHandler(ActionHandler):
@@ -101,14 +104,14 @@ Passing the Action handler to the service takes a single line:
     from nautilus.network import ActionHandler
 
 
-    class RecipeActionHandler(ActionHandler):
+    class PrintHandler(ActionHandler):
 
         async def handle_action(self, action_type, payload, props):
             print(action_type, payload)
 
 
-    class RecipeService(Service):
-        action_handler = RecipeActionHandler
+    class MyService(Service):
+        action_handler = PrintHandler
 
 
     manager = ServiceManager(RecipeService)
@@ -118,7 +121,5 @@ Passing the Action handler to the service takes a single line:
 
 
 Congratulations! You have finally pieced together a complete nautilus service.
-Now other entities in your cloud (like another service or even a javascript
-client) can create, persist, and retrieve recipes without maintaining the data
-themselves. In the next section you will learn how to create services that manage
-a database as well as relationships between various services in our system.
+In the next section you will learn how to create services that
+manage and persist database entries for your application.
