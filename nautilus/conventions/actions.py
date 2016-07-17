@@ -43,7 +43,13 @@ def hydrate_action(serialized):
         This function takes a serialized action and provides the primitive
         data structure.
     """
-    return json.loads(serialized)
+    try:
+        return json.loads(serialized)
+    except:
+        return {
+            'action_type': 'unknown',
+            'payload': str(serialized)
+        }
 
 
 def intialize_service_action(all_services=False, **kwds):
