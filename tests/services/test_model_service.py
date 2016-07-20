@@ -90,10 +90,28 @@ class TestUtil(unittest.TestCase):
                 {
                     'name': 'name',
                     'type': 'String'
-                }, {
+                },
+                {
                     'name': 'id',
                     'type': 'ID',
                 }
+            ],
+            'mutations': [
+                {
+                    'name': 'create_testModelService',
+                    'event': conventions.get_crud_action('create', self.model),
+                    'async': False
+                },
+                {
+                    'name': 'update_testModelService',
+                    'event': conventions.get_crud_action('update', self.model),
+                    'async': False
+                },
+                {
+                    'name': 'delete_testModelService',
+                    'event': conventions.get_crud_action('delete', self.model),
+                    'async': False
+                },
             ]
         }
         # summarize the service
@@ -107,6 +125,7 @@ class TestUtil(unittest.TestCase):
         assert len(target['fields']) == len(summarized['fields']), (
             "Summarized service did not have the right number of fields."
         )
+
         # make sure the fields match
         for field in target['fields']:
             # grab the matching fields
@@ -116,6 +135,20 @@ class TestUtil(unittest.TestCase):
             assert equiv == field, (
                 "Associated fields did not match"
             )
+
+        # make sure the mutations match
+        assert len(target['mutations']) == len(summarized['mutations']), (
+            "Inocrrect number of mutations in summary."
+        )
+        # go over every mutation in the
+        for summarized_mutation in summarized['mutations']:
+            # grab the corresponding entry in the target
+            equiv = [mut for mut in target['mutations'] \
+                                if mut['name'] == summarized_mutation['name']][0]
+
+        assert set(target['mutations']) == set(summarized['mutations']), (
+            "Summary did not contain the correct mutations"
+        )
 
 
     @async_test
