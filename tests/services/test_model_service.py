@@ -99,18 +99,18 @@ class TestUtil(unittest.TestCase):
             'mutations': [
                 {
                     'name': 'create_testModelService',
-                    'event': conventions.get_crud_action('create', self.model),
-                    'async': False
+                    'event': conventions.get_crud_action(method='create', model=self.model),
+                    'isAsync': False
                 },
                 {
                     'name': 'update_testModelService',
-                    'event': conventions.get_crud_action('update', self.model),
-                    'async': False
+                    'event': conventions.get_crud_action(method='update', model=self.model),
+                    'isAsync': False
                 },
                 {
                     'name': 'delete_testModelService',
-                    'event': conventions.get_crud_action('delete', self.model),
-                    'async': False
+                    'event': conventions.get_crud_action(method='delete', model=self.model),
+                    'isAsync': False
                 },
             ]
         }
@@ -145,10 +145,13 @@ class TestUtil(unittest.TestCase):
             # grab the corresponding entry in the target
             equiv = [mut for mut in target['mutations'] \
                                 if mut['name'] == summarized_mutation['name']][0]
-
-        assert set(target['mutations']) == set(summarized['mutations']), (
-            "Summary did not contain the correct mutations"
-        )
+            # make sure the fields match up
+            assert equiv['event'] == summarized_mutation['event'], (
+                "Summarized mutation has the wrong event value"
+            )
+            assert equiv['isAsync'] == summarized_mutation['isAsync'], (
+                "Summarized mutation has the wrong isAsync value"
+            )
 
 
     @async_test

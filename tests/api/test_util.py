@@ -1,16 +1,21 @@
 # external imports
 import unittest
 import graphene
+import json
 # local imports
 import nautilus
 import nautilus.models as models
 from ..util import MockModel, async_test, MockModelService, MockConnectionService
+from nautilus.conventions.api import crud_mutation_name
+from nautilus.conventions.actions import get_crud_action
 from nautilus.api.util import (
     create_model_schema,
     fields_for_model,
     parse_string,
     graphql_type_from_summary,
-    generate_api_schema
+    generate_api_schema,
+    summarize_mutation,
+    summarize_crud_mutation
 )
 
 class TestUtil(unittest.TestCase):
@@ -132,3 +137,57 @@ class TestUtil(unittest.TestCase):
         assert isinstance(fields['date'], graphene.String) , (
             "Field summary did not have the correct type"
         )
+
+    def test_can_summarize_mutation(self):
+        # summarize a mock mutation
+        summarized = summarize_mutation('test_mutation', 'foo.bar')
+        # check that it matches what we expect
+        expected = {
+            'name': 'test_mutation',
+            'event': 'foo.bar',
+            'isAsync': False
+        }
+        # make sure the two match
+        assert summarized == expected, (
+            "Summarized mutation did not match expectation."
+        )
+
+
+    def test_can_summarize_async_mutation(self):
+        # summarize a mock mutation
+        summarized = summarize_mutation('test_mutation', 'foo.bar', isAsync=True)
+        # check that it matches what we expect
+        expected = {
+            'name': 'test_mutation',
+            'event': 'foo.bar',
+            'isAsync': True
+        }
+        # make sure the two match
+        assert summarized == expected, (
+            "Summarized async mutation did not match expectation."
+        )
+
+
+    def test_can_summarize_crud_mutation(self):
+        # a model service to test with
+        mock = MockModelService()
+        # make sure we can generate a mutation for each crud verb
+        self._verify_crud_mutation(mock, 'create')
+        self._verify_crud_mutation(mock, 'update')
+        self._verify_crud_mutation(mock, 'delete')
+
+
+    ## Utilities
+
+    def _verify_crud_mutation(self, model, action):
+        # create the mutation
+        summarized = summarize_crud_mutation(model=model, method=action)
+        # make sure the name matches the convention
+        assert summarized['name'] == crud_mutation_name(model=model, action=action), (
+            "Summarized %s mutation did not have the right name" % action
+        )
+        # make sure the event is what we expect
+        assert summarized['event'] == get_crud_action(model=model, method=action), (
+            "Summarized %s mutation did not have the right event type" % action
+        )
+
