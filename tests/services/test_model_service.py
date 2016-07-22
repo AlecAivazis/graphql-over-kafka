@@ -81,21 +81,12 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_can_summarize(self):
+    def test_can_summarize_model_mutations(self):
+        # summarize the service
+        summarized = self.service.summarize()
 
         # the target summary
         target = {
-            'name': 'testModelService',
-            'fields': [
-                {
-                    'name': 'name',
-                    'type': 'String'
-                },
-                {
-                    'name': 'id',
-                    'type': 'ID',
-                }
-            ],
             'mutations': [
                 {
                     'name': 'create_testModelService',
@@ -113,6 +104,41 @@ class TestUtil(unittest.TestCase):
                     'isAsync': False
                 },
             ]
+        }
+
+        # make sure the mutations match
+        assert len(target['mutations']) == len(summarized['mutations']), (
+            "Inocrrect number of mutations in summary."
+        )
+        # go over every mutation in the
+        for summarized_mutation in summarized['mutations']:
+            # grab the corresponding entry in the target
+            equiv = [mut for mut in target['mutations'] \
+                                if mut['name'] == summarized_mutation['name']][0]
+            # make sure the fields match up
+            assert equiv['event'] == summarized_mutation['event'], (
+                "Summarized mutation has the wrong event value"
+            )
+            assert equiv['isAsync'] == summarized_mutation['isAsync'], (
+                "Summarized mutation has the wrong isAsync value"
+            )
+
+
+    def test_can_summarize_model_fields(self):
+
+        # the target summary
+        target = {
+            'name': 'testModelService',
+            'fields': [
+                {
+                    'name': 'name',
+                    'type': 'String'
+                },
+                {
+                    'name': 'id',
+                    'type': 'ID',
+                }
+            ],
         }
         # summarize the service
         summarized = self.service.summarize()
@@ -134,23 +160,6 @@ class TestUtil(unittest.TestCase):
             # make sure the two fields match
             assert equiv == field, (
                 "Associated fields did not match"
-            )
-
-        # make sure the mutations match
-        assert len(target['mutations']) == len(summarized['mutations']), (
-            "Inocrrect number of mutations in summary."
-        )
-        # go over every mutation in the
-        for summarized_mutation in summarized['mutations']:
-            # grab the corresponding entry in the target
-            equiv = [mut for mut in target['mutations'] \
-                                if mut['name'] == summarized_mutation['name']][0]
-            # make sure the fields match up
-            assert equiv['event'] == summarized_mutation['event'], (
-                "Summarized mutation has the wrong event value"
-            )
-            assert equiv['isAsync'] == summarized_mutation['isAsync'], (
-                "Summarized mutation has the wrong isAsync value"
             )
 
 
