@@ -13,8 +13,10 @@ from nautilus.api.util import (
     fields_for_model,
     parse_string,
     graphql_type_from_summary,
+    graphql_mutation_from_summary,
     generate_api_schema,
     summarize_mutation,
+    summarize_mutation_io,
     summarize_crud_mutation
 )
 
@@ -92,6 +94,14 @@ class TestUtil(unittest.TestCase):
         )
 
 
+    def test_graphql_mutation_from_summary(self):
+        # create a mock mutation summary
+         mock_summary = summarize_crud_mutation(model=MockModelService(), method="create")
+         # create the mutation
+         mutation = graphql_mutation_from_summary(mock_summary)
+
+         print(mutation)
+
 
     def test_walk_query(self): pass
 
@@ -138,14 +148,22 @@ class TestUtil(unittest.TestCase):
             "Field summary did not have the correct type"
         )
 
+
     def test_can_summarize_mutation(self):
         # summarize a mock mutation
-        summarized = summarize_mutation('test_mutation', 'foo.bar')
+        summarized = summarize_mutation(
+            mutation_name='test_mutation',
+            event='foo.bar',
+            inputs=['foo','bar'],
+            outputs=['bar','baz']
+        )
         # check that it matches what we expect
         expected = {
             'name': 'test_mutation',
             'event': 'foo.bar',
-            'isAsync': False
+            'isAsync': False,
+            'input': ['foo','bar'],
+            'output': ['bar','baz']
         }
         # make sure the two match
         assert summarized == expected, (
@@ -155,12 +173,20 @@ class TestUtil(unittest.TestCase):
 
     def test_can_summarize_async_mutation(self):
         # summarize a mock mutation
-        summarized = summarize_mutation('test_mutation', 'foo.bar', isAsync=True)
+        summarized = summarize_mutation(
+            'test_mutation',
+            'foo.bar',
+            isAsync=True,
+            inputs=['foo','bar'],
+            outputs=['bar','baz']
+        )
         # check that it matches what we expect
         expected = {
             'name': 'test_mutation',
             'event': 'foo.bar',
-            'isAsync': True
+            'isAsync': True,
+            'input':['foo','bar'],
+            'output': ['bar','baz']
         }
         # make sure the two match
         assert summarized == expected, (
@@ -168,13 +194,53 @@ class TestUtil(unittest.TestCase):
         )
 
 
+    def test_mutation_io_summary(self):
+        # make sure we can summary a mutation io
+        summarized = summarize_mutation_io(name="foo", type="bar")
+        # make sure its a string
+        assert summarized == {
+            "name": "foo",
+            "type": "bar",
+            "required": False
+        }, (
+            "Summarized mutation io did not have the correct form."
+        )
+
+
+    def test_mutation_required_io_summary(self):
+        # make sure we can summary a mutation io
+        summarized = summarize_mutation_io(name="foo", type="bar", required=True)
+        # make sure its a string
+        assert summarized == {
+            "name": "foo",
+            "type": "bar",
+            "required": True
+        }, (
+            "Required summarized mutation io did not have the correct form."
+        )
+
+
     def test_can_summarize_crud_mutation(self):
         # a model service to test with
         mock = MockModelService()
-        # make sure we can generate a mutation for each crud verb
-        self._verify_crud_mutation(mock, 'create')
-        self._verify_crud_mutation(mock, 'update')
-        self._verify_crud_mutation(mock, 'delete')
+        # make sure we can generate a create mutation
+        self._verify_crud_mutation(model=mock, action='create')
+
+
+
+    def test_can_summarize_crud_mutation(self):
+        # a model service to test with
+        mock = MockModelService()
+        # make sure we can generate a delete mutation
+        self._verify_crud_mutation(model=mock, action='delete')
+
+
+
+    def test_can_summarize_crud_mutation(self):
+        # a model service to test with
+        mock = MockModelService()
+        # make sure we can generate a update mutation
+        self._verify_crud_mutation(model=mock, action='update')
 
 
     ## Utilities
