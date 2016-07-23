@@ -12,7 +12,8 @@ from nautilus.conventions.api import (
     update_mutation_outputs,
     delete_mutation_inputs,
     delete_mutation_outputs,
-    _summarize_object_type
+    _summarize_object_type,
+    _summarize_o_mutation_type
 )
 
 
@@ -70,13 +71,13 @@ class TestUtil(unittest.TestCase):
 
     def test_create_mutation_outputs(self):
         # create the list of inputs
-        inputs = create_mutation_outputs(self.model_service)
+        outputs = create_mutation_outputs(self.model_service)
 
         # the output of a create mutation should be the object corresponding
         # to the model created
 
-        assert inputs == [_summarize_object_type(self.model_service.model)], (
-            "Update mutation output was not correct."
+        assert outputs == [_summarize_o_mutation_type(self.model_service.model)], (
+            "Create mutation output was not correct."
         )
 
 
@@ -113,7 +114,7 @@ class TestUtil(unittest.TestCase):
 
         # the output of an update mutation should be a graphql object corresponding
         # to the newly updated object
-        assert inputs == [_summarize_object_type(self.model_service.model)], (
+        assert inputs == [_summarize_o_mutation_type(self.model_service.model)], (
             "Update mutation output was not correct."
         )
 
@@ -152,11 +153,12 @@ class TestUtil(unittest.TestCase):
 
 
     def test__summarize_object_type(self):
+        from nautilus.api.util import summarize_mutation_io
+
         # summarize the model of the test service
         summarized = _summarize_object_type(self.model_service.model)
 
         target = {
-            'name': 'testModel',
             'fields': [
                 {'type': 'String', 'name': 'date'},
                 {'type': 'String', 'name': 'name'},
@@ -164,10 +166,10 @@ class TestUtil(unittest.TestCase):
             ]
         }
 
-        assert target['name'] == summarized['name'] and \
-                 set(_stringify_dicts(target['fields'])) == set(_stringify_dicts(summarized['fields'])), (
+        assert _stringify_dicts(target['fields']) == _stringify_dicts(summarized['fields']), (
             "Internal summary utility did not return the right object"
         )
+
 
 
 def _graphql_type_string(value):
@@ -176,4 +178,4 @@ def _graphql_type_string(value):
 
 def _stringify_dicts(list_of_dicts):
     import json
-    return [json.dumps(obj) for obj in list_of_dicts]
+    return {json.dumps(obj) for obj in list_of_dicts}

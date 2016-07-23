@@ -45,7 +45,7 @@ def create_mutation_outputs(service):
             (list of single dict): A single output representing the object type
                 for the service record that was created.
     """
-    return [_summarize_object_type(service.model)]
+    return [_summarize_o_mutation_type(service.model)]
 
 
 
@@ -84,7 +84,7 @@ def update_mutation_outputs(service):
             (list of single dict): A single output representing the object type
                 for the service record that was updated.
     """
-    return [_summarize_object_type(service.model)]
+    return [_summarize_o_mutation_type(service.model)]
 
 
 
@@ -115,26 +115,34 @@ def delete_mutation_outputs(service):
 
 
 def _service_mutation_summaries(service):
-    from nautilus.api.util import summarize_mutation_io
+    from nautilus.api.util import summarize_mutation_io, serialize_native_type
     # the dictionary of fields corresponding to the service record
     field_dict = service.model._meta.fields
 
-    def _graphql_type_string(value):
-        return type(convert_peewee_field(value)).__name__
-
     # mutation io summaries
-    inputs = [summarize_mutation_io(name=key, type=_graphql_type_string(value), required=(not value.null)) \
+    inputs = [summarize_mutation_io(name=key, type=serialize_native_type(value), required=(not value.null)) \
                     for key,value in field_dict.items()]
 
     return inputs
 
+
+def _summarize_o_mutation_type(model):
+    from nautilus.api.util import summarize_mutation_io
+    # compute the appropriate name for the object
+    object_type_name = get_model_string(model)
+
+    # return a mutation io object
+    return summarize_mutation_io(
+        name=object_type_name,
+        type=_summarize_object_type(model),
+        required=False
+    )
 
 def _summarize_object_type(model):
     # the fields for the service's model
     model_fields = {field.name: field for field in list(model.fields())}
     # summarize the model
     return {
-        'name': get_model_string(model),
         'fields': [{
             'name': key,
             'type': type(convert_peewee_field(value)).__name__

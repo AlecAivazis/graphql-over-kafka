@@ -17,7 +17,10 @@ from nautilus.api.util import (
     generate_api_schema,
     summarize_mutation,
     summarize_mutation_io,
-    summarize_crud_mutation
+    summarize_crud_mutation,
+    convert_typestring_to_api_native,
+    build_native_type_dictionary,
+    serialize_native_type
 )
 
 class TestUtil(unittest.TestCase):
@@ -101,6 +104,8 @@ class TestUtil(unittest.TestCase):
          mutation = graphql_mutation_from_summary(mock_summary)
 
          print(mutation)
+         # make sure the mutation has the correct name
+         # assert mutation.
 
 
     def test_walk_query(self): pass
@@ -243,6 +248,22 @@ class TestUtil(unittest.TestCase):
         mock = MockModelService()
         # make sure we can generate a update mutation
         self._verify_crud_mutation(model=mock, action='update')
+
+
+    def test_convert_typestring_to_api_native(self):
+        # make sure it converts String to the correct class
+        assert convert_typestring_to_api_native('String') == graphene.String, (
+            "Could not convert String to native representation."
+        )
+
+    def test_serialize_native_type(self):
+        # make sure it converts a native string to 'String'
+        import nautilus.models.fields as fields
+        assert serialize_native_type(fields.CharField()) == 'String', (
+            "Could not serialize native type"
+        )
+
+    def test_build_native_type_dictionary(self): pass
 
 
     ## Utilities
