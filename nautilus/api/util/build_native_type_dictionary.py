@@ -35,7 +35,7 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
             # add the dictionary to the parent as a graphql object type
             input_fields[field_name] = graphql_type_from_summary(
                 summary={
-                    'name': field_name,
+                    'name': field_name+"ArgType",
                     'fields': object_fields
                 }
             )

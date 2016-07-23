@@ -65,6 +65,24 @@ class TestUtil(unittest.TestCase):
             "No object type added to api schema"
         )
 
+    def test_generate_api_schema_with_mutation(self):
+        model_service = MockModelService()()
+        # create mock summaries
+        model_summary = model_service.summarize()
+        mutation_summary = summarize_crud_mutation(model=model_service, method='create')
+
+        # create the graphql schema
+        schema = generate_api_schema(
+            models=[model_summary],
+            mutations=[mutation_summary]
+        )
+
+        # the list of mutations in the schema
+        schema_mutations = [field.default_name for field in schema.mutation._meta.local_fields]
+        # make sure the schema has the correct mutation list
+        assert schema_mutations == ['create_testModel'], (
+            "Generated schema did not have the correct mutations"
+        )
 
     def test_graphql_type_from_summary(self):
         # a mock model service summary
