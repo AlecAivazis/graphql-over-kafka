@@ -1,8 +1,10 @@
+# external imports
+import graphene
 # local imports
 from .convert_typestring_to_api_native import convert_typestring_to_api_native
 from .graphql_type_from_summary import graphql_type_from_summary
 
-def build_native_type_dictionary(fields, respect_required=False):
+def build_native_type_dictionary(fields, respect_required=False, wrap_field=True):
     """
         This function takes a list of type summaries and builds a dictionary
         with native representations of each entry. Useful for dynamically
@@ -19,7 +21,9 @@ def build_native_type_dictionary(fields, respect_required=False):
         # if the type field is a string
         if isinstance(field_type, str):
             # compute the native api type for the field
-            field_type = convert_typestring_to_api_native(field_type)()
+            field_type = convert_typestring_to_api_native(field_type)(
+                # required=respect_required and field['required']
+            )
             # add an entry in the attributes
             input_fields[field_name] = field_type
 
@@ -35,6 +39,12 @@ def build_native_type_dictionary(fields, respect_required=False):
                     'fields': object_fields
                 }
             )
+
+            # if we are supposed to wrap the object in a field
+            if wrap_field:
+                # then wrap the value we just added
+                input_fields[field_name] = graphene.Field(input_fields[field_name])
+
 
     # we're done
     return input_fields

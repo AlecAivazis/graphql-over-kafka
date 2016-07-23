@@ -99,13 +99,43 @@ class TestUtil(unittest.TestCase):
 
     def test_graphql_mutation_from_summary(self):
         # create a mock mutation summary
-         mock_summary = summarize_crud_mutation(model=MockModelService(), method="create")
-         # create the mutation
-         mutation = graphql_mutation_from_summary(mock_summary)
+        mock_summary = summarize_crud_mutation(model=MockModelService(), method="delete")
+        # create the mutation
+        mutation = graphql_mutation_from_summary(mock_summary)
 
-         print(mutation)
-         # make sure the mutation has the correct name
-         # assert mutation.
+        # create a schema to test the mutation
+        mock_schema = graphene.Schema()
+        # get the corresponding object type
+        mutation_object = mock_schema.T(mutation)
+        mutation_fields = list(mutation_object.get_fields().keys())
+
+        # there should be one field named status
+        assert mutation_fields == ['status'], (
+            "Delete mutation did not have correct output"
+        )
+
+
+    def test_graphql_mutation_with_object_io_from_summary(self):
+        # create a mock mutation summary with a io that's an object
+        mock_summary = summarize_crud_mutation(model=MockModelService(), method="create")
+        # create the mutation
+        mutation = graphql_mutation_from_summary(mock_summary)
+
+        # create a schema to test the mutation
+        mock_schema = graphene.Schema()
+        # get the corresponding object type
+        mutation_object = mock_schema.T(mutation)
+
+        # make sure there is a resulting 'testModel' in the mutation
+        assert 'testModel' in mutation_object.get_fields(), (
+            "Generated create mutation  from summary does not have a service record in its output."
+        )
+        # the fields of the mutation result
+        output_fields = set(mutation_object.get_fields()['testModel'].type.get_fields().keys())
+        # make sure the object has the right types
+        assert output_fields == {'date', 'name', 'id'}, (
+            "Mutation output did not have the correct fields."
+        )
 
 
     def test_walk_query(self): pass

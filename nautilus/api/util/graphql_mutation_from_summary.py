@@ -20,15 +20,19 @@ def graphql_mutation_from_summary(summary):
     inputs = type('Input', (object,), input_fields)
 
     # the outputs for the mutation are attributes to the class record
-    outputs = build_native_type_dictionary(summary['outputs'], respect_required=False)
-
-    # create the output type
+    outputs = build_native_type_dictionary(summary['outputs'])
 
     # create the appropriate mutation class record
     mutation = type(mutation_name, (graphene.Mutation,), {
         'Input': inputs,
         **outputs
     })
+
+    class TestMutation(graphene.Mutation):
+        class Input:
+            foo = graphene.String()
+
+        name = graphene.String()
 
     # return the newly created mutation record
     return mutation
