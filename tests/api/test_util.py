@@ -143,7 +143,7 @@ class TestUtil(unittest.TestCase):
         mock_schema = graphene.Schema()
         # get the corresponding object type
         mutation_object = mock_schema.T(mutation)
-
+        print(mutation_object.get_fields())
         # make sure there is a resulting 'testModel' in the mutation
         assert 'testModel' in mutation_object.get_fields(), (
             "Generated create mutation  from summary does not have a service record in its output."

@@ -15,6 +15,7 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
     # go over every input in the summary
     for field in fields:
         field_name = name + field['name']
+        print(field_name)
         field_type = field['type']
 
         # if the type field is a string
@@ -24,7 +25,7 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
                 # required=respect_required and field['required']
             )
             # add an entry in the attributes
-            input_fields[field_name] = field_type
+            input_fields[field['name']] = field_type
 
         # we could also be looking at a dictionary
         elif isinstance(field_type, dict):
@@ -32,7 +33,7 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
             object_fields = field_type['fields']
 
             # add the dictionary to the parent as a graphql object type
-            input_fields[field_name] = graphql_type_from_summary(
+            input_fields[field['name']] = graphql_type_from_summary(
                 summary={
                     'name': field_name+"ArgType",
                     'fields': object_fields
@@ -42,7 +43,7 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
             # if we are supposed to wrap the object in a field
             if wrap_field:
                 # then wrap the value we just added
-                input_fields[field_name] = graphene.Field(input_fields[field_name])
+                input_fields[field['name']] = graphene.Field(input_fields[field['name']])
 
 
     # we're done
