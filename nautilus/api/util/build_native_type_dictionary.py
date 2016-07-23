@@ -4,7 +4,7 @@ import graphene
 from .convert_typestring_to_api_native import convert_typestring_to_api_native
 from .graphql_type_from_summary import graphql_type_from_summary
 
-def build_native_type_dictionary(fields, respect_required=False, wrap_field=True):
+def build_native_type_dictionary(fields, respect_required=False, wrap_field=True, name=''):
     """
         This function takes a list of type summaries and builds a dictionary
         with native representations of each entry. Useful for dynamically
@@ -14,8 +14,7 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
     input_fields = {}
     # go over every input in the summary
     for field in fields:
-
-        field_name = field['name']
+        field_name = name + field['name']
         field_type = field['type']
 
         # if the type field is a string

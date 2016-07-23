@@ -14,13 +14,15 @@ def graphql_mutation_from_summary(summary):
     # print(summary)
 
     # the treat the "type" string as a gra
-    input_fields = build_native_type_dictionary(summary['inputs'], respect_required=True)
+    input_name = mutation_name + "Input"
+    input_fields = build_native_type_dictionary(summary['inputs'], name=input_name, respect_required=True)
 
     # the inputs for the mutation are defined by a class record
     inputs = type('Input', (object,), input_fields)
 
     # the outputs for the mutation are attributes to the class record
-    outputs = build_native_type_dictionary(summary['outputs'])
+    output_name = mutation_name + "Output"
+    outputs = build_native_type_dictionary(summary['outputs'], name=output_name)
 
     # a no-op in order to satisfy the introspection query
     mutate = classmethod(lambda *_, **__ : 'hello')

@@ -41,7 +41,7 @@ def generate_api_schema(models, connections=[], mutations=[], **schema_args):
         # build the schema with the query object
         schema = graphene.Schema(
             query=query,
-            mutation=mutations,
+            # mutation=mutations,
             **schema_args
         )
 
