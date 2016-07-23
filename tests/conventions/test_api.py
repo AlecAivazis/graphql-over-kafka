@@ -16,6 +16,7 @@ from nautilus.conventions.api import (
 )
 
 
+
 class TestUtil(unittest.TestCase):
     """
         This test suite looks at the various utilities for manipulating
@@ -55,9 +56,6 @@ class TestUtil(unittest.TestCase):
         # the dictionary of fields corresponding to the service record
         field_dict = self.model_service.model._meta.fields
 
-        def _graphql_type_string(value):
-            return type(convert_peewee_field(value)).__name__
-
         # the expected values
         expected = [summarize_mutation_io(name=key, type=_graphql_type_string(value), required=(not value.null)) \
                         for key,value in field_dict.items()]
@@ -89,16 +87,20 @@ class TestUtil(unittest.TestCase):
         # the inputs of an update mutation should be the fieldsof the object
         # no required args except pk to identify the target
         # make sure the inputs match the model
+
         from nautilus.api.util import summarize_mutation_io
         # the dictionary of fields corresponding to the service record
         field_dict = self.model_service.model._meta.fields
 
-        def _graphql_type_string(value):
-            return type(convert_peewee_field(value)).__name__
-
         # the expected values
         expected = [summarize_mutation_io(name=key, type=_graphql_type_string(value), required=(not value.null)) \
                         for key,value in field_dict.items()]
+        # make sure only the pk is required
+        for field in expected:
+            if field['name'] == 'id':
+                field['required'] = True
+            else:
+                field['required'] = False
 
         assert inputs == expected, (
             "Update mutation inputs did not match expecttations"
@@ -154,7 +156,7 @@ class TestUtil(unittest.TestCase):
         summarized = _summarize_object_type(self.model_service.model)
 
         target = {
-            'name': 'testmodel',
+            'name': 'testModel',
             'fields': [
                 {'type': 'String', 'name': 'date'},
                 {'type': 'String', 'name': 'name'},
@@ -162,12 +164,16 @@ class TestUtil(unittest.TestCase):
             ]
         }
 
-        def stringify_dicts(list_of_dicts):
-            import json
-            return [json.dumps(obj) for obj in list_of_dicts]
-
-
         assert target['name'] == summarized['name'] and \
-                 set(stringify_dicts(target['fields'])) == set(stringify_dicts(summarized['fields'])), (
+                 set(_stringify_dicts(target['fields'])) == set(_stringify_dicts(summarized['fields'])), (
             "Internal summary utility did not return the right object"
         )
+
+
+def _graphql_type_string(value):
+    return type(convert_peewee_field(value)).__name__
+
+
+def _stringify_dicts(list_of_dicts):
+    import json
+    return [json.dumps(obj) for obj in list_of_dicts]

@@ -162,8 +162,8 @@ class TestUtil(unittest.TestCase):
             'name': 'test_mutation',
             'event': 'foo.bar',
             'isAsync': False,
-            'input': ['foo','bar'],
-            'output': ['bar','baz']
+            'inputs': ['foo','bar'],
+            'outputs': ['bar','baz']
         }
         # make sure the two match
         assert summarized == expected, (
@@ -180,17 +180,19 @@ class TestUtil(unittest.TestCase):
             inputs=['foo','bar'],
             outputs=['bar','baz']
         )
+
         # check that it matches what we expect
         expected = {
             'name': 'test_mutation',
             'event': 'foo.bar',
             'isAsync': True,
-            'input':['foo','bar'],
-            'output': ['bar','baz']
+            'inputs':['foo','bar'],
+            'outputs': ['bar','baz']
         }
         # make sure the two match
         assert summarized == expected, (
-            "Summarized async mutation did not match expectation."
+            "Summarized async mutation did not match expectation. Found {}, expected {}"\
+                .format(summarized, expected)
         )
 
 

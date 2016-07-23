@@ -12,7 +12,6 @@ def root_query(*service):
     ''' This function returns the name of the root query for a model service. '''
     return 'all_models'
 
-
 def crud_mutation_name(action, model):
     """
         This function returns the name of a mutation that performs the specified
@@ -60,6 +59,17 @@ def update_mutation_inputs(service):
     """
     # grab the default list of field summaries
     inputs = _service_mutation_summaries(service)
+
+    # visit each field
+    for field in inputs:
+        # if we're looking at the id field
+        if field['name'] == 'id':
+            # make sure its required
+            field['required'] = True
+        # but no other field
+        else:
+            # is required
+            field['required'] = False
 
     # return the final list
     return inputs
@@ -124,7 +134,7 @@ def _summarize_object_type(model):
     model_fields = {field.name: field for field in list(model.fields())}
     # summarize the model
     return {
-        'name': model._meta.name,
+        'name': get_model_string(model),
         'fields': [{
             'name': key,
             'type': type(convert_peewee_field(value)).__name__
