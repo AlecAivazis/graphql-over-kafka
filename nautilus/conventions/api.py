@@ -132,6 +132,9 @@ def _service_mutation_summaries(service):
 
 
 def _summarize_o_mutation_type(model):
+    """
+        This function create the actual mutation io summary corresponding to the model
+    """
     from nautilus.api.util import summarize_mutation_io
     # compute the appropriate name for the object
     object_type_name = get_model_string(model)
@@ -144,6 +147,9 @@ def _summarize_o_mutation_type(model):
     )
 
 def _summarize_object_type(model):
+    """
+        This function returns the summary for a given model
+    """
     # the fields for the service's model
     model_fields = {field.name: field for field in list(model.fields())}
     # summarize the model

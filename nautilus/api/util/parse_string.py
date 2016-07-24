@@ -47,16 +47,32 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver):
             # the args of the query
             mutation_args = {arg.name.value: arg.value.value for arg in mutation.arguments}
             # the requested fields
-            mutation_fields = [field.name.value for field in mutation.selection_set.selections]
+            mutation_selections = mutation.selection_set.selections
+            # the fields are treated as a list of fields to be passed along
+            mutation_fields = [field.name.value for field in mutation_selections]
 
             # pass the necessary information to the mutation resolver
             try:
-                mutations_result[mutation_name] = await mutation_resolver(
+                mut_result = await mutation_resolver(
                     mutation_name,
                     mutation_args,
                     mutation_fields
                 )
+
+                # if there is only one field and it is an object
+                if len(mutation_selections) == 1 and \
+                        mutation_selections[0].selection_set and \
+                        len(mutation_selections[0].selection_set.selections) > 0:
+                    # grab the only mutation field so we can nest appropriately
+                    mutations_result[mutation_name] = {
+                        mutation_selections[0].name.value: mut_result
+                    }
+                # otherwise
+                else:
+                    mutations_result[mutation_name] = mut_result
+            # if something goes wrong
             except Exception as e :
+                # add the error to the list
                 errors.append(str(e))
 
 
