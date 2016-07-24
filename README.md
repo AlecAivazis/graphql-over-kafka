@@ -1,8 +1,8 @@
 # nautilus
 
-[![Join the chat at https://gitter.im/nautilus/nautilus](https://badges.gitter.im/AlecAivazis/nautilus.svg)](https://gitter.im/AlecAivazis/nautilus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/nautilus/nautilus.svg?branch=master)](https://travis-ci.org/AlecAivazis/nautilus)
-[![Coverage Status](https://coveralls.io/repos/github/AlecAivazis/nautilus/badge.svg?branch=master)](https://coveralls.io/github/nautilus/nautilus?branch=master)
+[![Join the chat at https://gitter.im/nautilus/nautilus](https://badges.gitter.im/nautilus/nautilus.svg)](https://gitter.im/nautilus/nautilus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/nautilus/nautilus.svg?branch=master)](https://travis-ci.org/nautilus/nautilus)
+[![Coverage Status](https://coveralls.io/repos/github/nautilus/nautilus/badge.svg?branch=master)](https://coveralls.io/github/nautilus/nautilus?branch=master)
 
 A framework for building event-driven microservice applications.
 
