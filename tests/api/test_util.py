@@ -143,7 +143,6 @@ class TestUtil(unittest.TestCase):
         mock_schema = graphene.Schema()
         # get the corresponding object type
         mutation_object = mock_schema.T(mutation)
-        print(mutation_object.get_fields())
         # make sure there is a resulting 'testModel' in the mutation
         assert 'testModel' in mutation_object.get_fields(), (
             "Generated create mutation  from summary does not have a service record in its output."
@@ -157,6 +156,39 @@ class TestUtil(unittest.TestCase):
 
 
     def test_walk_query(self): pass
+
+    @async_test
+    async def test_parse_mutat_string(self):
+        # the query to parse
+        query = """
+            mutation {
+                myMutation {
+                    name
+                }
+            }
+        """
+        # the resolver for models
+        async def model_resolver(object_name, fields, **filters):
+            return {field: 'hello' for field in fields}
+
+        async def connection_resolver(connection_name, object):
+            return 'hello'
+
+        async def mutation_resolver(mutation_name, args, fields):
+            return {
+                field: mutation_name for field in fields
+            }
+
+        # parse the string with the query
+        result = await parse_string(query, model_resolver, connection_resolver, mutation_resolver)
+
+        # make sure the value is correct
+        assert result == {
+            'errors': [],
+            'mutation': {'myMutation': {'name': 'myMutation'}},
+        }, (
+            "Could not parse mutation string correctly."
+        )
 
 
     @async_test
@@ -176,8 +208,11 @@ class TestUtil(unittest.TestCase):
         async def connection_resolver(connection_name, object):
             return 'hello'
 
+        async def mutation_resolver(mutation_name, args, fields):
+            return 'hello'
+
         # parse the string with the query
-        result = await parse_string(query, model_resolver, connection_resolver)
+        result = await parse_string(query, model_resolver, connection_resolver, mutation_resolver)
 
         # make sure the value is correct
         assert result == {

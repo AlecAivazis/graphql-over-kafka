@@ -15,7 +15,6 @@ def build_native_type_dictionary(fields, respect_required=False, wrap_field=True
     # go over every input in the summary
     for field in fields:
         field_name = name + field['name']
-        print(field_name)
         field_type = field['type']
 
         # if the type field is a string

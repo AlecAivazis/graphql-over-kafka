@@ -124,6 +124,11 @@ class APIQueryHandler(GraphQLRequestHandler):
             # the question for connected nodes
             return ids, to_service
 
+
+        async def mutation_resolver(mutation_name):
+            pass
+
+
         # if there hasn't been a schema generated yet
         if not self.schema:
             # yell loudly
@@ -157,7 +162,7 @@ class APIQueryHandler(GraphQLRequestHandler):
         # otherwise its a normal query/mutation
 
         # walk the query
-        response = await parse_string(query, object_resolver, connection_resolver)
+        response = await parse_string(query, object_resolver, connection_resolver, mutation_resolver)
 
         # pass the result to the request
         return Response(body=json.dumps(response).encode())
