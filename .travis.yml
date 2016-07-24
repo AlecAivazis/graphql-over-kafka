@@ -10,7 +10,6 @@ install:
 # command to run tests
 script:
   - nose2 --with-coverage
-  - cd docs && make gh-pages
 
 after_success:
   coveralls
