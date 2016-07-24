@@ -42,4 +42,5 @@ passing a different port:
     python3 api.py runserver --port 8001
 
 And visit the `/graphiql` endpoint like before. You should be able to see your other services
-as queryable nodes in the api.
+as queryable nodes in the api as well as some mutations to handle the internal
+state of our model services.
