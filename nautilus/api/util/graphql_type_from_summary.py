@@ -1,7 +1,7 @@
 # third party imports
 import graphene
 
-def graphql_type_from_summary(summary, connections):
+def graphql_type_from_summary(summary, connections=[]):
     # the name of the type
     name = summary['name']
     # the fields of the type

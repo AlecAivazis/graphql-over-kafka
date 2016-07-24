@@ -29,7 +29,6 @@ async def walk_query(obj, object_resolver, connection_resolver, errors, __naut_n
         # stop here
         return None
 
-    # print(models)
     # add connections to each matching model
     for model in models:
         # if is an id for the model

@@ -27,7 +27,7 @@ class APIQueryHandler(GraphQLRequestHandler):
 
             try:
                 # check if an object with that name has been registered
-                registered = [model for model in self.service._connection_data['models'] \
+                registered = [model for model in self.service._external_service_data['models'] \
                                     if model['name']==object_name][0]
             # if there is no connection data yet
             except AttributeError:
@@ -85,9 +85,9 @@ class APIQueryHandler(GraphQLRequestHandler):
 
             try:
                 # grab the recorded data for this connection
-                expected = [ conn for conn in self.service._connection_data['connections']\
+                expected = [ conn for conn in self.service._external_service_data['connections']\
                                   if conn['name'] == connection_name][0]
-                                              # if there is no connection data yet
+            # if there is no connection data yet
             except AttributeError:
                 raise ValueError("No objects are registered with this schema yet.")
             # if we dont recognize the model that was requested
@@ -124,6 +124,45 @@ class APIQueryHandler(GraphQLRequestHandler):
             # the question for connected nodes
             return ids, to_service
 
+
+        async def mutation_resolver(mutation_name, args, fields):
+            """
+                the default behavior for mutations is to look up the event,
+                publish the correct event type with the args as the body,
+                and return the fields contained in the result
+            """
+
+            try:
+                # make sure we can identify the mutation
+                mutation_summary = [mutation for mutation in \
+                                                self.service._external_service_data['mutations'] \
+                                                if mutation['name'] == mutation_name][0]
+            # if we couldn't get the first entry in the list
+            except KeyError as e:
+                # make sure the error is reported
+                raise ValueError("Could not execute mutation named: " + mutation_name)
+
+
+            # the function to use for running the mutation depends on its schronicity
+            # event_function = self.service.event_broker.ask \
+            #                     if mutation_summary['isAsync'] else self.service.event_broker.send
+            event_function = self.service.event_broker.ask
+
+            # send the event and wait for a response
+            value =  await event_function(
+                action_type=mutation_summary['event'],
+                payload=args
+            )
+            try:
+                # return a dictionary with the values we asked for
+                return json.loads(value)
+
+            # if the result was not valid json
+            except json.decoder.JSONDecodeError:
+                # just throw the value
+                raise RuntimeError(value)
+
+
         # if there hasn't been a schema generated yet
         if not self.schema:
             # yell loudly
@@ -157,7 +196,7 @@ class APIQueryHandler(GraphQLRequestHandler):
         # otherwise its a normal query/mutation
 
         # walk the query
-        response = await parse_string(query, object_resolver, connection_resolver)
+        response = await parse_string(query, object_resolver, connection_resolver, mutation_resolver)
 
         # pass the result to the request
         return Response(body=json.dumps(response).encode())

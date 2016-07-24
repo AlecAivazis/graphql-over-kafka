@@ -5,6 +5,7 @@ from nautilus.conventions.services import model_service_name
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.network.events.consumers import ActionHandler
 from nautilus.contrib.graphene_peewee import convert_peewee_field
+from nautilus.api.util.summarize_crud_mutation import summarize_crud_mutation
 from .service import Service
 
 
@@ -122,6 +123,11 @@ class ModelService(Service):
                     'type': type(convert_peewee_field(value)).__name__
                     } for key, value in model_fields.items()
                    ],
+            mutations=[
+                summarize_crud_mutation(model=self, method='create'),
+                summarize_crud_mutation(model=self, method='update'),
+                summarize_crud_mutation(model=self, method='delete'),
+            ],
             **extra_fields
         )
 

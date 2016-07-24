@@ -22,6 +22,7 @@ def change_action_status(action_type, new_status):
 def roll_call_type():
     return "roll_call"
 
+
 # TODO: check that it the args actually implement Serializable
 def serialize_action(action_type, payload, **extra_fields):
     """
@@ -29,11 +30,9 @@ def serialize_action(action_type, payload, **extra_fields):
     """
     action_dict =  dict(
         action_type=action_type,
-        payload=payload
+        payload=payload,
+        **extra_fields
     )
-
-    # add the extra fields
-    action_dict.update(extra_fields)
     # return a serializable version
     return json.dumps(action_dict)
 

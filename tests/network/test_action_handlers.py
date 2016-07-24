@@ -61,7 +61,7 @@ class TestUtil(unittest.TestCase):
         # the action type to fire the
         action_type = nautilus.conventions.get_crud_action('delete', self.model)
         # the attributes for the new Model
-        payload = record.id
+        payload = dict(id=record.id)
 
         # the query for the number of matching records
         record_query = self.model.select().where(self.model.id==record.id)

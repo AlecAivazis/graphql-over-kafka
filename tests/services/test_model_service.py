@@ -7,6 +7,7 @@ from nautilus import conventions
 from nautilus.conventions import services as service_conventions
 import nautilus.models as models
 import nautilus.network.events.actionHandlers as action_handlers
+import nautilus.conventions.api as api_conventions
 from ..util import async_test, Mock
 
 class TestUtil(unittest.TestCase):
@@ -81,7 +82,60 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_can_summarize(self):
+    def test_can_summarize_model_mutations(self):
+
+
+        # summarize the service
+        summarized = self.service.summarize()
+
+        # the target summary
+        target = {
+            'mutations': [
+                {
+                    'name': api_conventions.crud_mutation_name(action='create', model=self.model),
+                    'event': conventions.get_crud_action(method='create', model=self.model),
+                    'isAsync': False,
+                    'inputs': api_conventions.create_mutation_inputs(self),
+                    'outputs': api_conventions.create_mutation_outputs(self),
+                },
+                {
+                    'name': api_conventions.crud_mutation_name(action='update', model=self.model),
+                    'event': conventions.get_crud_action(method='update', model=self.model),
+                    'isAsync': False,
+                    'inputs': api_conventions.update_mutation_inputs(self),
+                    'outputs': api_conventions.update_mutation_outputs(self),
+                },
+                {
+                    'name': api_conventions.crud_mutation_name(action='delete', model=self.model),
+                    'event': conventions.get_crud_action(method='delete', model=self.model),
+                    'isAsync': False,
+                    'inputs': api_conventions.delete_mutation_inputs(self),
+                    'outputs': api_conventions.delete_mutation_outputs(self),
+                },
+            ]
+        }
+
+        # make sure the mutations match
+        assert len(target['mutations']) == len(summarized['mutations']), (
+            "Incorrect number of mutations in summary."
+        )
+
+        # go over every mutation in the
+        for summarized_mutation in summarized['mutations']:
+
+            # grab the corresponding entry in the target
+            equiv = [mut for mut in target['mutations'] \
+                                if mut['name'] == summarized_mutation['name']][0]
+            # make sure the fields match up
+            assert equiv['event'] == summarized_mutation['event'], (
+                "Summarized mutation has the wrong event value"
+            )
+            assert equiv['isAsync'] == summarized_mutation['isAsync'], (
+                "Summarized mutation has the wrong isAsync value"
+            )
+
+
+    def test_can_summarize_model_fields(self):
 
         # the target summary
         target = {
@@ -90,11 +144,12 @@ class TestUtil(unittest.TestCase):
                 {
                     'name': 'name',
                     'type': 'String'
-                }, {
+                },
+                {
                     'name': 'id',
                     'type': 'ID',
                 }
-            ]
+            ],
         }
         # summarize the service
         summarized = self.service.summarize()
@@ -107,6 +162,7 @@ class TestUtil(unittest.TestCase):
         assert len(target['fields']) == len(summarized['fields']), (
             "Summarized service did not have the right number of fields."
         )
+
         # make sure the fields match
         for field in target['fields']:
             # grab the matching fields
@@ -154,7 +210,7 @@ class TestUtil(unittest.TestCase):
         # fire a delete action
         await self.action_handler.handle_action(
             action_type=conventions.get_crud_action('delete', self.model),
-            payload=model_id,
+            payload=dict(id=model_id),
             props={},
             notify=False
         )

@@ -226,7 +226,7 @@ class TestUtil(unittest.TestCase):
         # call the service action handler
         await handler.handle_action(
             action_type=conventions.get_crud_action('delete', self.model),
-            payload=self.model_id,
+            payload=dict(id=self.model_id),
             props={},
             notify=False
         )
