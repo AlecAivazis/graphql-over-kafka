@@ -14,6 +14,25 @@ async def walk_query(obj, object_resolver, connection_resolver, errors, __naut_n
     # the selected fields
     selection_set = obj.selection_set.selections
 
+    def _build_arg_tree(arg):
+        """
+            This function recursively builds the arguments for lists and single values
+        """
+        # TODO: what about object arguments??
+
+        # if there is a single value
+        if hasattr(arg, 'value'):
+            # assign the value to the filter
+            return arg.value
+        # otherwise if there are multiple values for the argument
+        elif hasattr(arg, 'values'):
+            return [_build_arg_tree(node) for node in arg.values]
+
+    # for each argument on this node
+    for arg in obj.arguments:
+        # add it to the query filters
+        filters[arg.name.value] = _build_arg_tree(arg.value)
+
     # the fields we have to ask for
     fields = [field for field in selection_set if not field.selection_set]
     # the links between objects

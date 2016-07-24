@@ -60,6 +60,8 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver):
                 )
 
                 # if there is only one field and it is an object
+                # TODO: clean this up!!!!
+                #       support more than just one nested object (see GH for discussion)
                 if len(mutation_selections) == 1 and \
                         mutation_selections[0].selection_set and \
                         len(mutation_selections[0].selection_set.selections) > 0:

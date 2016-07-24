@@ -206,7 +206,7 @@ class APIQueryHandler(GraphQLRequestHandler):
         # if there are filters
         if filters:
             # the string for the filters
-            filter_string = "(%s)" % ",".join("{}: {!r}".format(key, value) for key,value in filters.items())
+            filter_string = "(%s)" % ",".join("{}: {}".format(key, json.dumps(value)) for key,value in filters.items())
         else:
             filter_string = ''
 
