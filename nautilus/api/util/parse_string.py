@@ -50,11 +50,14 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver):
             mutation_fields = [field.name.value for field in mutation.selection_set.selections]
 
             # pass the necessary information to the mutation resolver
-            mutations_result[mutation_name] = await mutation_resolver(
-                mutation_name,
-                mutation_args,
-                mutation_fields
-            )
+            try:
+                mutations_result[mutation_name] = await mutation_resolver(
+                    mutation_name,
+                    mutation_args,
+                    mutation_fields
+                )
+            except Exception as e :
+                errors.append(str(e))
 
 
     # if any mutations were performed

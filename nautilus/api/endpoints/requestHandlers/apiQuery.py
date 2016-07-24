@@ -153,8 +153,14 @@ class APIQueryHandler(GraphQLRequestHandler):
                 action_type=mutation_summary['event'],
                 payload=args
             )
-            # return a dictionary with the values we asked for
-            return json.loads(value)
+            try:
+                # return a dictionary with the values we asked for
+                return json.loads(value)
+
+            # if the result was not valid json
+            except json.decoder.JSONDecodeError:
+                # just throw the value
+                raise RuntimeError(value)
 
 
         # if there hasn't been a schema generated yet
