@@ -210,7 +210,7 @@ class TestUtil(unittest.TestCase):
         # fire a delete action
         await self.action_handler.handle_action(
             action_type=conventions.get_crud_action('delete', self.model),
-            payload=model_id,
+            payload=dict(id=model_id),
             props={},
             notify=False
         )

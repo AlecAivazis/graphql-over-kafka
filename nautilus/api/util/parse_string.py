@@ -45,7 +45,7 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver):
             # the name of the mutation
             mutation_name = mutation.name.value
             # the args of the query
-            mutation_args = {}
+            mutation_args = {arg.name.value: arg.value.value for arg in mutation.arguments}
             # the requested fields
             mutation_fields = [field.name.value for field in mutation.selection_set.selections]
 

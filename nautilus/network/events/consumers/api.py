@@ -50,7 +50,8 @@ class APIActionHandler(ActionHandler):
                 connections=self._connections,
                 mutations=self._mutations,
             )
-            self.service._connection_data = {
+            self.service._external_service_data = {
                 'models': self._models,
-                'connections': self._connections
+                'connections': self._connections,
+                'mutations': self._mutations
             }

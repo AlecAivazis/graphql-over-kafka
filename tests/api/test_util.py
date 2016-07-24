@@ -79,8 +79,9 @@ class TestUtil(unittest.TestCase):
 
         # the list of mutations in the schema
         schema_mutations = [field.default_name for field in schema.mutation._meta.local_fields]
+
         # make sure the schema has the correct mutation list
-        assert schema_mutations == ['create_testModel'], (
+        assert schema_mutations == ['createTestModel'], (
             "Generated schema did not have the correct mutations"
         )
 
@@ -155,10 +156,13 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_walk_query(self): pass
+    def test_walk_query(self):
+        """
+            This function is implicitly tested when checking parse_string
+        """
 
     @async_test
-    async def test_parse_mutat_string(self):
+    async def test_parse_mutation_string(self):
         # the query to parse
         query = """
             mutation {

@@ -17,7 +17,7 @@ def crud_mutation_name(action, model):
         This function returns the name of a mutation that performs the specified
         crud action on the given model service
     """
-    return "{}_{}".format(action, get_model_string(model))
+    return "{}{}".format(action, get_model_string(model).title())
 
 
 def create_mutation_inputs(service):

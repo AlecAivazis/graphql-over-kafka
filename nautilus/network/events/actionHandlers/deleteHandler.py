@@ -33,17 +33,20 @@ def delete_handler(Model, name=None, **kwds):
                 if 'correlation_id' in props:
                     # make sure it ends up in the reply
                     message_props['correlation_id'] = props['correlation_id']
-
+                # the id in the payload representing the record to delete
+                record_id = payload['id'] if 'id' in payload else payload['pk']
                 # get the model matching the payload
-                model_query = Model.select().where(Model.primary_key() == payload)
+                try:
+                    model_query = Model.select().where(Model.primary_key() == record_id)
+                except KeyError:
+                    raise RuntimeError("Could not find appropriate id to remove service record.")
                 # remove the model instance
                 model_query.get().delete_instance()
-
                 # if we need to tell someone about what happened
                 if notify:
                     # publish the success event
                     await service.event_broker.send(
-                        payload=response,
+                        payload='{"status":"ok"}',
                         action_type=change_action_status(action_type, success_status()),
                         **message_props
                     )

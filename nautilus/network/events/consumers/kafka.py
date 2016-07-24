@@ -133,6 +133,7 @@ class KafkaBroker:
             correlation_id = uuid.uuid4()
         # use the integer form of the uuid
         correlation_id = correlation_id.int
+
         # create a future to wait on before we ask the question
         question_future = asyncio.Future()
         # register the future's callback with the request handler

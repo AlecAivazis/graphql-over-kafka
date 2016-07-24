@@ -46,12 +46,13 @@ def create_handler(Model, name=None, **kwds):
                         raise ValueError(
                             "Required field not found in payload: %s" %field_name
                         )
-                # print("attemptingt to create %s" % Model)
+
                 # create a new model
                 new_model = Model(**payload)
 
                 # save the new model instance
                 new_model.save()
+
 
                 # if we need to tell someone about what happened
                 if notify:
