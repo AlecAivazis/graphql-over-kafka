@@ -147,6 +147,7 @@
 
     <span class="n">_models</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">_connections</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_mutations</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">consumer_pattern</span> <span class="o">=</span> <span class="s1">&#39;(.*\..*\.(?!(pending)))|init&#39;</span>
 
@@ -166,16 +167,27 @@
             <span class="c1"># add it to the model list</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
+        <span class="c1"># the service could provide mutations as well as affect the topology</span>
+        <span class="k">if</span> <span class="s1">&#39;mutations&#39;</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
+            <span class="c1"># go over each mutation announce</span>
+            <span class="k">for</span> <span class="n">mutation</span> <span class="ow">in</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;mutations&#39;</span><span class="p">]:</span>
+                <span class="c1"># if there isn&#39;t a mutation by the same name in the local cache</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">[</span><span class="n">mut</span> <span class="k">for</span> <span class="n">mut</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mutations</span> <span class="k">if</span> <span class="n">mut</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mutation</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]:</span>
+                    <span class="c1"># add it to the local cache</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_mutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mutation</span><span class="p">)</span>
+
         <span class="c1"># if there are models</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">:</span>
             <span class="c1"># create a new schema corresponding to the models and connections</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">generate_api_schema</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span>
+                <span class="n">models</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">,</span>
+                <span class="n">connections</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">,</span>
+                <span class="n">mutations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mutations</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_connection_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_external_service_data</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s1">&#39;models&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">,</span>
-                <span class="s1">&#39;connections&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span>
+                <span class="s1">&#39;connections&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">,</span>
+                <span class="s1">&#39;mutations&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mutations</span>
             <span class="p">}</span></div></div>
 </pre></div>
 

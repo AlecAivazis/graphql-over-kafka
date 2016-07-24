@@ -182,12 +182,13 @@
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                             <span class="s2">&quot;Required field not found in payload: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">field_name</span>
                         <span class="p">)</span>
-                <span class="c1"># print(&quot;attemptingt to create %s&quot; % Model)</span>
+
                 <span class="c1"># create a new model</span>
                 <span class="n">new_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">**</span><span class="n">payload</span><span class="p">)</span>
 
                 <span class="c1"># save the new model instance</span>
                 <span class="n">new_model</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
 
                 <span class="c1"># if we need to tell someone about what happened</span>
                 <span class="k">if</span> <span class="n">notify</span><span class="p">:</span>

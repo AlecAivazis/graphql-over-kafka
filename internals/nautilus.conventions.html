@@ -223,9 +223,122 @@ data structure.</p>
 <span id="nautilus-conventions-api-module"></span><h2>nautilus.conventions.api module<a class="headerlink" href="#module-nautilus.conventions.api" title="Permalink to this headline">¶</a></h2>
 <p>This file is responsible for centralizing the schema conventions used in nautilus.</p>
 <dl class="function">
+<dt id="nautilus.conventions.api.create_mutation_inputs">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">create_mutation_inputs</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#create_mutation_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.create_mutation_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service</strong> &#8211; The service being created by the mutation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of all of the fields availible for the service,
+with the required ones respected.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.api.create_mutation_outputs">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">create_mutation_outputs</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#create_mutation_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.create_mutation_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service</strong> &#8211; The service being created by the mutation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A single output representing the object type
+for the service record that was created.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(list of single dict)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.api.crud_mutation_name">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">crud_mutation_name</code><span class="sig-paren">(</span><em>action</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#crud_mutation_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.crud_mutation_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns the name of a mutation that performs the specified
+crud action on the given model service</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.api.delete_mutation_inputs">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">delete_mutation_inputs</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#delete_mutation_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.delete_mutation_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service</strong> &#8211; The service being deleted by the mutation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the only input for delete is the pk of the service.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">([str])</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.api.delete_mutation_outputs">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">delete_mutation_outputs</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#delete_mutation_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.delete_mutation_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service</strong> &#8211; The service being deleted by the mutation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A string providing a status message</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="nautilus.conventions.api.root_query">
 <code class="descclassname">nautilus.conventions.api.</code><code class="descname">root_query</code><span class="sig-paren">(</span><em>*service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#root_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.root_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the name of the root query for a model service.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.api.update_mutation_inputs">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">update_mutation_inputs</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#update_mutation_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.update_mutation_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service</strong> &#8211; The service being updated by the mutation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of all of the fields availible for the service. Pk
+is a required field in order to filter the results</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nautilus.conventions.api.update_mutation_outputs">
+<code class="descclassname">nautilus.conventions.api.</code><code class="descname">update_mutation_outputs</code><span class="sig-paren">(</span><em>service</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/conventions/api.html#update_mutation_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.conventions.api.update_mutation_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>service</strong> &#8211; The service being updated by the mutation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A single output representing the object type
+for the service record that was updated.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(list of single dict)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

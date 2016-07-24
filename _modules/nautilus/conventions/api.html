@@ -137,12 +137,157 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">singledispatch</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">normalize_string</span>
+<span class="c1"># local imports</span>
 <span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">normalize_string</span><span class="p">,</span> <span class="n">get_model_string</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">convert_peewee_field</span>
 
 <div class="viewcode-block" id="root_query"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.root_query">[docs]</a><span class="k">def</span> <span class="nf">root_query</span><span class="p">(</span><span class="o">*</span><span class="n">service</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; This function returns the name of the root query for a model service. &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="s1">&#39;all_models&#39;</span></div>
+
+<div class="viewcode-block" id="crud_mutation_name"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.crud_mutation_name">[docs]</a><span class="k">def</span> <span class="nf">crud_mutation_name</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function returns the name of a mutation that performs the specified</span>
+<span class="sd">        crud action on the given model service</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_string</span> <span class="o">=</span> <span class="n">get_model_string</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="c1"># make sure the mutation name is correctly camelcases</span>
+    <span class="n">model_string</span> <span class="o">=</span> <span class="n">model_string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">model_string</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="c1"># return the mutation name</span>
+    <span class="k">return</span> <span class="s2">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">model_string</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_mutation_inputs"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.create_mutation_inputs">[docs]</a><span class="k">def</span> <span class="nf">create_mutation_inputs</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            service : The service being created by the mutation</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (list) : a list of all of the fields availible for the service,</span>
+<span class="sd">                with the required ones respected.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># grab the default list of field summaries</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">_service_mutation_summaries</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+    <span class="c1"># make sure the pk isn&#39;t in the list</span>
+    <span class="n">inputs</span><span class="o">.</span><span class="n">remove</span><span class="p">([</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">inputs</span> <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c1"># return the final list</span>
+    <span class="k">return</span> <span class="n">inputs</span></div>
+
+
+<div class="viewcode-block" id="create_mutation_outputs"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.create_mutation_outputs">[docs]</a><span class="k">def</span> <span class="nf">create_mutation_outputs</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            service : The service being created by the mutation</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (list of single dict): A single output representing the object type</span>
+<span class="sd">                for the service record that was created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_summarize_o_mutation_type</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">model</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="update_mutation_inputs"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.update_mutation_inputs">[docs]</a><span class="k">def</span> <span class="nf">update_mutation_inputs</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            service : The service being updated by the mutation</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (list) : a list of all of the fields availible for the service. Pk</span>
+<span class="sd">                is a required field in order to filter the results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># grab the default list of field summaries</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">_service_mutation_summaries</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
+
+    <span class="c1"># visit each field</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+        <span class="c1"># if we&#39;re looking at the id field</span>
+        <span class="k">if</span> <span class="n">field</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
+            <span class="c1"># make sure its required</span>
+            <span class="n">field</span><span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="c1"># but no other field</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># is required</span>
+            <span class="n">field</span><span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c1"># return the final list</span>
+    <span class="k">return</span> <span class="n">inputs</span></div>
+
+
+
+<div class="viewcode-block" id="update_mutation_outputs"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.update_mutation_outputs">[docs]</a><span class="k">def</span> <span class="nf">update_mutation_outputs</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            service : The service being updated by the mutation</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (list of single dict): A single output representing the object type</span>
+<span class="sd">                for the service record that was updated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_summarize_o_mutation_type</span><span class="p">(</span><span class="n">service</span><span class="o">.</span><span class="n">model</span><span class="p">)]</span></div>
+
+
+
+<div class="viewcode-block" id="delete_mutation_inputs"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.delete_mutation_inputs">[docs]</a><span class="k">def</span> <span class="nf">delete_mutation_inputs</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            service : The service being deleted by the mutation</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ([str]):  the only input for delete is the pk of the service.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">summarize_mutation_io</span>
+
+    <span class="c1"># the only input for delete events is the pk of the service record</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">summarize_mutation_io</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;pk&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="delete_mutation_outputs"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.api.delete_mutation_outputs">[docs]</a><span class="k">def</span> <span class="nf">delete_mutation_outputs</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            service : The service being deleted by the mutation</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (str): A string providing a status message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">summarize_mutation_io</span>
+
+    <span class="c1"># the only input for delete events is the pk of the service record</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">summarize_mutation_io</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;String&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_service_mutation_summaries</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">summarize_mutation_io</span><span class="p">,</span> <span class="n">serialize_native_type</span>
+    <span class="c1"># the dictionary of fields corresponding to the service record</span>
+    <span class="n">field_dict</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">fields</span>
+
+    <span class="c1"># mutation io summaries</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">summarize_mutation_io</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">serialize_native_type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">required</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">null</span><span class="p">))</span> \
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">field_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+    <span class="k">return</span> <span class="n">inputs</span>
+
+
+<span class="k">def</span> <span class="nf">_summarize_o_mutation_type</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">summarize_mutation_io</span>
+    <span class="c1"># compute the appropriate name for the object</span>
+    <span class="n">object_type_name</span> <span class="o">=</span> <span class="n">get_model_string</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># return a mutation io object</span>
+    <span class="k">return</span> <span class="n">summarize_mutation_io</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">object_type_name</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">_summarize_object_type</span><span class="p">(</span><span class="n">model</span><span class="p">),</span>
+        <span class="n">required</span><span class="o">=</span><span class="bp">False</span>
+    <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_summarize_object_type</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="c1"># the fields for the service&#39;s model</span>
+    <span class="n">model_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">fields</span><span class="p">())}</span>
+    <span class="c1"># summarize the model</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;fields&#39;</span><span class="p">:</span> <span class="p">[{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">convert_peewee_field</span><span class="p">(</span><span class="n">value</span><span class="p">))</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="p">}</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
 </pre></div>
 
            </div>

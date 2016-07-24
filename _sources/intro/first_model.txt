@@ -85,3 +85,11 @@ You should see a json reply that looks like:
         }],
         errors: []
     }
+
+It's useful to know that you can have graphiql provide an auto-complete by pressing
+``alt+space`` allowing you to discover availble queries, fields, and mutations
+without looking at a single line of source code! Give it a try.
+
+In the next section you'll learn about how Nautilus helps you join data across
+services to create very powerful applications out of highly reusable parts.
+

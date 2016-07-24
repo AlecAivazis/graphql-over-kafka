@@ -169,17 +169,20 @@
                 <span class="k">if</span> <span class="s1">&#39;correlation_id&#39;</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
                     <span class="c1"># make sure it ends up in the reply</span>
                     <span class="n">message_props</span><span class="p">[</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">]</span>
-
+                <span class="c1"># the id in the payload representing the record to delete</span>
+                <span class="n">record_id</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">payload</span> <span class="k">else</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span>
                 <span class="c1"># get the model matching the payload</span>
-                <span class="n">model_query</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span> <span class="o">==</span> <span class="n">payload</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">model_query</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Model</span><span class="o">.</span><span class="n">primary_key</span><span class="p">()</span> <span class="o">==</span> <span class="n">record_id</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Could not find appropriate id to remove service record.&quot;</span><span class="p">)</span>
                 <span class="c1"># remove the model instance</span>
                 <span class="n">model_query</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">delete_instance</span><span class="p">()</span>
-
                 <span class="c1"># if we need to tell someone about what happened</span>
                 <span class="k">if</span> <span class="n">notify</span><span class="p">:</span>
                     <span class="c1"># publish the success event</span>
                     <span class="n">await</span> <span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-                        <span class="n">payload</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                        <span class="n">payload</span><span class="o">=</span><span class="s1">&#39;{&quot;status&quot;:&quot;ok&quot;}&#39;</span><span class="p">,</span>
                         <span class="n">action_type</span><span class="o">=</span><span class="n">change_action_status</span><span class="p">(</span><span class="n">action_type</span><span class="p">,</span> <span class="n">success_status</span><span class="p">()),</span>
                         <span class="o">**</span><span class="n">message_props</span>
                     <span class="p">)</span>
