@@ -9,7 +9,7 @@
     intro/index
     services/index
     handlers/index
-    schema/index
+    api/index
     utilities/index
     internals/index
 

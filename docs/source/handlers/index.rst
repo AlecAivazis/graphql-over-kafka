@@ -46,7 +46,7 @@ separate functions which each get called with the given arguments. It can get te
 to pass the arguments to every function so Nautilus provides a function called
 ``combine_action_handlers`` which serves just this purpose:
 
-.. autofunction:: nautilus.network.amqp.combine_action_handlers
+.. autofunction:: nautilus.network.events.combine_action_handlers
 
 .. code-block:: python
 
