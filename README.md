@@ -4,7 +4,16 @@
 [![Build Status](https://travis-ci.org/nautilus/nautilus.svg?branch=master)](https://travis-ci.org/nautilus/nautilus)
 [![Coverage Status](https://coveralls.io/repos/github/nautilus/nautilus/badge.svg?branch=master)](https://coveralls.io/github/nautilus/nautilus?branch=master)
 
-A framework for building event-driven microservice applications.
+Nautilus is a framework for event-driven microservices that attempts to provide
+extendible implementations of common aspects of a cloud so that you can focus
+on what you do best: building massively scalable web applications. Some of these features include:
+
+* Distributed authentication
+* Message passing
+* Service joins
+* Service API versioning (coming)
+* API gateway construction
+* Distributed/remote database administration (coming)
 
 Full documentation is hosted [here](http://nautilus.github.io/nautilus/).
 
