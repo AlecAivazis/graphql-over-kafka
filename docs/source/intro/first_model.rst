@@ -80,10 +80,10 @@ You should see a json reply that looks like:
 .. code-block:: json
 
     {
-        data: [{
-            photo_location: 'foo'
+        "data": [{
+            "photo_location": "foo"
         }],
-        errors: []
+        "errors": []
     }
 
 It's useful to know that you can have graphiql provide an auto-complete by pressing

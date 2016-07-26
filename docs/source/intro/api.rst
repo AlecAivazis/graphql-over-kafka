@@ -44,3 +44,6 @@ passing a different port:
 And visit the `/graphiql` endpoint like before. You should be able to see your other services
 as queryable nodes in the api as well as some mutations to handle the internal
 state of our model services.
+
+Out of the box, nautilus provides a few filters for graphql nodes based on ModelServices, for
+more information visit the `APIGateway Documentation <http://nautilus.github.io/nautilus/schema/index.html#filtering-the-api>`_.
