@@ -5,8 +5,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/nautilus/nautilus/badge.svg?branch=master)](https://coveralls.io/github/nautilus/nautilus?branch=master)
 
 Nautilus is a framework for event-driven microservices that attempts to provide
-extendible implementations of common aspects of a cloud so that you can focus
-on what you do best: building massively scalable web applications. Some of these features include:
+extendible implementations of common aspects of a moden web application so that you can focus
+on what you do best: building awesome, scalable services. Some of these features include:
 
 * Distributed authentication
 * Message passing
