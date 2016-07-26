@@ -84,7 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -147,7 +147,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="APIGateway"><a class="viewcode-back" href="../../../services/index.html#nautilus.services.apiGateway.APIGateway">[docs]</a><span class="k">class</span> <span class="nc">APIGateway</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
+<div class="viewcode-block" id="APIGateway"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway">[docs]</a><span class="k">class</span> <span class="nc">APIGateway</span><span class="p">(</span><span class="n">Service</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This provides a single endpoint that other services and clients can</span>
 <span class="sd">        use to query the cloud without worrying about the distributed nature</span>
@@ -186,7 +186,7 @@
 
 
     <span class="c1"># when its time for the service to announce itself</span>
-<div class="viewcode-block" id="APIGateway.announce"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.announce">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">announce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="APIGateway.announce"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.APIGateway.announce">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">announce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># bubble up</span>
         <span class="n">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">announce</span><span class="p">()</span>
         <span class="c1"># ask for rollcall aswell</span>
@@ -197,7 +197,7 @@
         <span class="c1"># print(&#39;sent &#39; + roll_call_type())</span>
 
 
-<div class="viewcode-block" id="APIGateway.init_routes"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.init_routes">[docs]</a>    <span class="k">def</span> <span class="nf">init_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="APIGateway.init_routes"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.APIGateway.init_routes">[docs]</a>    <span class="k">def</span> <span class="nf">init_routes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># add the cors handler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cors</span> <span class="o">=</span> <span class="n">aiohttp_cors</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
 

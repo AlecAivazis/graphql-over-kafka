@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Gateway &mdash; nautilus v0.5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+        <link rel="next" title="Utilities" href="../utilities/index.html"/>
+        <link rel="prev" title="Action Handlers" href="../handlers/index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Gateway</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#filtering-the-api">Filtering the API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#designating-a-graphql-equivalent-of-a-nautilus-field">Designating a GraphQL Equivalent of a Nautilus Field</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>API Gateway</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-gateway">
+<h1>API Gateway<a class="headerlink" href="#api-gateway" title="Permalink to this headline">¶</a></h1>
+<p>In order to reduce coupling between the individual services that make up
+your application, the api provided by an APIGateway service builds its
+graphql schema by waiting for services annouce their contributions
+when starting up and piecing together the complete summary of data
+availible from the backend services.</p>
+<dl class="class">
+<dt id="nautilus.APIGateway">
+<em class="property">class </em><code class="descclassname">nautilus.</code><code class="descname">APIGateway</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway" title="Permalink to this definition">¶</a></dt>
+<dd><p>This provides a single endpoint that other services and clients can
+use to query the cloud without worrying about the distributed nature
+of the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>schema</strong> (<em>graphql.type.GraphQLSchema</em>) &#8211; The schema to use that
+encapsultes the overall topology of the cloud.</li>
+<li><strong>action_handler</strong> (<em>optional, function</em>) &#8211; The callback function fired
+when an action is recieved. If None, the service does not
+connect to the action queue.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># external imports</span>
+<span class="kn">import</span> <span class="nn">nautilus</span>
+
+<span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">.schema</span> <span class="kn">import</span> <span class="n">schema</span>
+
+<span class="k">class</span> <span class="nc">MyAPIGateway</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">APIGateway</span><span class="p">):</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="nautilus.APIGateway.action_handler">
+<code class="descname">action_handler</code><a class="headerlink" href="#nautilus.APIGateway.action_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">APIActionHandler</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.APIGateway.api_request_handler_class">
+<code class="descname">api_request_handler_class</code><a class="headerlink" href="#nautilus.APIGateway.api_request_handler_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">APIQueryHandler</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="filtering-the-api">
+<h2>Filtering the API<a class="headerlink" href="#filtering-the-api" title="Permalink to this headline">¶</a></h2>
+<p>The API for <code class="docutils literal"><span class="pre">ModelService</span></code> s (and other services based on them like <code class="docutils literal"><span class="pre">ConnectionService</span></code>) have a few different filter arguments depending on the
+type of the attribute. The following filters show on both the API gateway as
+well as the inidividual service apis:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="18%" />
+<col width="20%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Filter</td>
+<td>Value type</td>
+<td>Attribute type</td>
+<td>Returns</td>
+</tr>
+<tr class="row-even"><td>&lt;attr&gt;</td>
+<td>attribute_type</td>
+<td>literal</td>
+<td>all records with the matching attribute value</td>
+</tr>
+<tr class="row-odd"><td>&lt;attr&gt;_in</td>
+<td>[attribute_type]</td>
+<td>literal</td>
+<td>all records with a value in the specified list</td>
+</tr>
+<tr class="row-even"><td>first</td>
+<td>integer</td>
+<td>any</td>
+<td>return the first N records</td>
+</tr>
+<tr class="row-odd"><td>last</td>
+<td>integer</td>
+<td>any</td>
+<td>return the last N records</td>
+</tr>
+<tr class="row-even"><td>offset</td>
+<td>integer</td>
+<td>any</td>
+<td>start the count filters at a given offset</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="designating-a-graphql-equivalent-of-a-nautilus-field">
+<h2>Designating a GraphQL Equivalent of a Nautilus Field<a class="headerlink" href="#designating-a-graphql-equivalent-of-a-nautilus-field" title="Permalink to this headline">¶</a></h2>
+<p>If you create (or find) a custom field that is compatible with peewee, the ORM
+used by nautilus internally, you might find the need to provide a custom handler
+in order for the schema generator to be able to convert it to the correct GraphQL
+type.</p>
+<dl class="function">
+<dt id="nautilus.contrib.graphene_peewee.converter">
+<code class="descclassname">nautilus.contrib.graphene_peewee.</code><code class="descname">converter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nautilus.contrib.graphene_peewee.converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This module defines various patches for peewee to easily interact with
+graphene.</p>
+</dd></dl>
+
+<p>This function follows the [singledispatch] pattern. Registering a new type looks
+something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">awesomepackage</span> <span class="kn">import</span> <span class="n">AwesomeField</span>
+<span class="kn">from</span> <span class="nn">nautilus.contrib.graphene_peewee</span> <span class="kn">import</span> <span class="n">converter</span>
+
+<span class="nd">@converter.register</span><span class="p">(</span><span class="n">AwesomeField</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">convert_column_to_string</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">column</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../utilities/index.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../handlers/index.html" class="btn btn-neutral" title="Action Handlers" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

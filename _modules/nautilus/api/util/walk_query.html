@@ -84,7 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../schema/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Gateway</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -147,6 +147,25 @@
 
     <span class="c1"># the selected fields</span>
     <span class="n">selection_set</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">selection_set</span><span class="o">.</span><span class="n">selections</span>
+
+    <span class="k">def</span> <span class="nf">_build_arg_tree</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function recursively builds the arguments for lists and single values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: what about object arguments??</span>
+
+        <span class="c1"># if there is a single value</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">):</span>
+            <span class="c1"># assign the value to the filter</span>
+            <span class="k">return</span> <span class="n">arg</span><span class="o">.</span><span class="n">value</span>
+        <span class="c1"># otherwise if there are multiple values for the argument</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s1">&#39;values&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">_build_arg_tree</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+
+    <span class="c1"># for each argument on this node</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">arguments</span><span class="p">:</span>
+        <span class="c1"># add it to the query filters</span>
+        <span class="n">filters</span><span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_arg_tree</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
     <span class="c1"># the fields we have to ask for</span>
     <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">selection_set</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">selection_set</span><span class="p">]</span>
