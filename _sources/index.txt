@@ -7,6 +7,7 @@
     :hidden:
 
     intro/index
+    architecture/index
     services/index
     handlers/index
     api/index

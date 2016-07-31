@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Architecture &mdash; nautilus v0.5.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+        <link rel="next" title="Services" href="../services/index.html"/>
+        <link rel="prev" title="Authentication" href="../intro/auth.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nautilus
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-s-wrong-with-http-for-inter-service-communication">What&#8217;s Wrong With HTTP For Inter-Service Communication?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-does-nautilus-do-differently">What Does Nautilus Do Differently?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">nautilus</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Architecture</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/architecture/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<p>Nautilus uses an event-based (also referred to as &#8220;event-sourced&#8221;) architure
+that relies on a central messaging system through which all service communicate.</p>
+<div class="section" id="what-s-wrong-with-http-for-inter-service-communication">
+<h2>What&#8217;s Wrong With HTTP For Inter-Service Communication?<a class="headerlink" href="#what-s-wrong-with-http-for-inter-service-communication" title="Permalink to this headline">¶</a></h2>
+<p>Nothing. However, When one tries to apply it to a large, distributed application
+as is common today a few issues start to surface concerning its directed
+semantics. To Illustrate this, imagine that we had two services behind our
+API gateway:</p>
+<img alt="../_images/layout.png" src="../_images/layout.png" />
+<p>Now, if a client wants to send a request to the API in order to delete
+a particular user record, they would tradditionally send a <code class="docutils literal"><span class="pre">DELETE</span></code> (or the
+equivalent graphql query) to a specific url</p>
+<img alt="../_images/http_request.png" src="../_images/http_request.png" />
+<p>This request is then routed to a separate backend service which is responsible
+for handling the actual logic to be performed.</p>
+<p>The question is - How do we tell the other service to remove entries
+corresponding to the user we just deleted? One way would be to have that
+service keep track of which services are connected to those user, and
+send a request to that service to remove them.</p>
+<img alt="../_images/http_single_cascade.png" src="../_images/http_single_cascade.png" />
+<p>This has a few issues. The first of which is that our services are now very
+tighly coupled with each other. If something were to change in the target
+service (say the format of record&#8217;s unique id), without updating the user service,
+our system would no longer be able to perform the complete action. By &#8220;polluting&#8221;
+our service with assumptions of another, we force ourselves to slow down in order
+to ensure our changes aren&#8217;t going to have un-forseen consequences.</p>
+</div>
+<div class="section" id="what-does-nautilus-do-differently">
+<h2>What Does Nautilus Do Differently?<a class="headerlink" href="#what-does-nautilus-do-differently" title="Permalink to this headline">¶</a></h2>
+<p>If you think about the problem presented, the core issues stems from the
+client/server paradigm of http communication. Because there can only be one
+recipient (the server), there can only be a single reponse to any given action.
+If you wanted to have many different services to react to the same event, one
+must imploy an event-system. While this idea is not new, Nautilus uses this
+line of thinking for not just asynchronous tasks but all inter-service communication,
+wether it is synchronous or not.</p>
+<p>To see how this looks, consider the situation from before:</p>
+<img alt="../_images/event_based_layout.png" src="../_images/event_based_layout.png" />
+<p>Now, when the api recieves the request, rather than redirecting the request to the
+appropriate service, the API fires an event that will cause the intended behavior
+on the backend service.</p>
+<img alt="../_images/kafka_api_event.png" src="../_images/kafka_api_event.png" />
+<p>This action gets sent to all services however, the only one we are interested in
+at the moment is the user service so we will just draw that for now.</p>
+<img alt="../_images/kafka_internal_comm.png" src="../_images/kafka_internal_comm.png" />
+<p>After performing the specific action, the server responds with an event, indicating
+wether it was successful or not. After recieving this event, the API replies to the
+user, terminating the original request.</p>
+<img alt="../_images/kafka_reply.png" src="../_images/kafka_reply.png" />
+<p>While this seems very similar to the interaction we looked at earlier, there is
+a key difference - by performing the synchronous communication over a globally
+accessible event system, other services can respond to the successfull event
+notifacation to &#8220;tidy up&#8221; the rest of the system, garunteeing an
+eventually-consistent picture across all of our services.</p>
+<img alt="../_images/kafka_final_cascade.png" src="../_images/kafka_final_cascade.png" />
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../services/index.html" class="btn btn-neutral float-right" title="Services" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../intro/auth.html" class="btn btn-neutral" title="Authentication" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alec Aivazis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'v0.5.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
