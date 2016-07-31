@@ -16,24 +16,30 @@ API gateway:
 
 Now, if a client wants to send a request to the API in order to delete
 a particular user record, they would tradditionally send a ``DELETE`` (or the
-equivalent graphql query) to a specific url which would be redirected to the
-appropriate backend service.
+equivalent graphql query) to a specific url
 
 .. image:: http_request.png
+
+This request is then routed to a separate backend service which is responsible
+for handling the actual logic to be performed.
+
+.. iamge:: http_internal.png
 
 The question is - How do we tell the other service to remove entries
 corresponding to the user we just deleted? One way would be to have that
 service keep track of which services are connected to those user, and
 send a request to that service to remove them.
 
-.. image:: http_cascade.png
+.. image:: http_single_cascade.png
 
-This has a few issues but most importantly, our service is now very tighly coupled with
-the other. If something were to change in the target service (say the format of
-record's unique id), without updating the user service, our system would
-no longer be able to perform the complete action. By "polluting" our service with
-assumptions of another, we force ourselves to slow down in order to ensure our changes
-aren't going to have un-forseen consequences.
+This has a few issues. The first of which is that our services are now very
+tighly coupled with each other. If something were to change in the target
+service (say the format of record's unique id), without updating the user service,
+our system would no longer be able to perform the complete action. By "polluting"
+our service with assumptions of another, we force ourselves to slow down in order
+to ensure our changes aren't going to have un-forseen consequences.
+
+
 
 What Does Nautilus Do Differently?
 -----------------------------------
@@ -48,13 +54,18 @@ wether it is synchronous or not.
 
 To see how this looks, consider the situation from before:
 
-.. image:: layout.png
+.. image:: event_based_layout.png
 
 Now, when the api recieves the request, rather than redirecting the request to the
 appropriate service, the API fires an event that will cause the intended behavior
 on the backend service.
 
-.. image:: kafka_event.png
+.. image:: kafka_api_event.png
+
+This action gets sent to all services however, the only one we are interested in
+at the moment is the user service so we will just draw that for now.
+
+.. image:: kafka_internal_comm.png
 
 After performing the specific action, the server responds with an event, indicating
 wether it was successful or not. After recieving this event, the API replies to the
@@ -68,13 +79,4 @@ accessible event system, other services can respond to the successfull event
 notifacation to "tidy up" the rest of the system, garunteeing an
 eventually-consistent picture across all of our services.
 
-.. image:: kafka_cascade.png
-
-Key-Ideas
-------------------------
-
-When building a nautilus application, there are a few keys things to keep in mind:
-
-    * There is a globally accessible event system
-    * Services should do one thing, and do it well
-    * Services should be as de-coupled as conceptually possible
+.. image:: kafka_final_cascade.png
