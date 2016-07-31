@@ -84,7 +84,10 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro/index.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Architecture</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#what-s-wrong-with-http-for-inter-service-communication">What&#8217;s Wrong With HTTP For Inter-Service Communication?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#motivation">Motivation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#what-s-wrong-with-http-for-inter-service-communication">What&#8217;s Wrong With HTTP For Inter-Service Communication?</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#what-does-nautilus-do-differently">What Does Nautilus Do Differently?</a></li>
 </ul>
 </li>
@@ -141,8 +144,10 @@
 <h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
 <p>Nautilus uses an event-based (also referred to as &#8220;event-sourced&#8221;) architure
 that relies on a central messaging system through which all service communicate.</p>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="what-s-wrong-with-http-for-inter-service-communication">
-<h2>What&#8217;s Wrong With HTTP For Inter-Service Communication?<a class="headerlink" href="#what-s-wrong-with-http-for-inter-service-communication" title="Permalink to this headline">¶</a></h2>
+<h3>What&#8217;s Wrong With HTTP For Inter-Service Communication?<a class="headerlink" href="#what-s-wrong-with-http-for-inter-service-communication" title="Permalink to this headline">¶</a></h3>
 <p>Nothing. However, When one tries to apply it to a large, distributed application
 as is common today a few issues start to surface concerning its directed
 semantics. To Illustrate this, imagine that we had two services behind our
@@ -164,7 +169,15 @@ tighly coupled with each other. If something were to change in the target
 service (say the format of record&#8217;s unique id), without updating the user service,
 our system would no longer be able to perform the complete action. By &#8220;polluting&#8221;
 our service with assumptions of another, we force ourselves to slow down in order
-to ensure our changes aren&#8217;t going to have un-forseen consequences.</p>
+to ensure our changes aren&#8217;t going to have un-forseen consequences. This is somewhat
+alleviated by the introduction of services that maintain a very small association
+between service records - similar to how a join table works in a relational database.</p>
+<img alt="../_images/http_related_cascade.png" src="../_images/http_related_cascade.png" />
+<p>However, this does not fix all of the issues associated with handling related data
+stored across many services. In order to pull this off, the user service needs to
+maintain a list of all related services so that it can make sure the related records
+are also removed.</p>
+</div>
 </div>
 <div class="section" id="what-does-nautilus-do-differently">
 <h2>What Does Nautilus Do Differently?<a class="headerlink" href="#what-does-nautilus-do-differently" title="Permalink to this headline">¶</a></h2>
@@ -183,7 +196,7 @@ on the backend service.</p>
 <img alt="../_images/kafka_api_event.png" src="../_images/kafka_api_event.png" />
 <p>This action gets sent to all services however, the only one we are interested in
 at the moment is the user service so we will just draw that for now.</p>
-<img alt="../_images/kafka_internal_comm.png" src="../_images/kafka_internal_comm.png" />
+<img alt="../_images/kafka_first_pending_simple.png" src="../_images/kafka_first_pending_simple.png" />
 <p>After performing the specific action, the server responds with an event, indicating
 wether it was successful or not. After recieving this event, the API replies to the
 user, terminating the original request.</p>
