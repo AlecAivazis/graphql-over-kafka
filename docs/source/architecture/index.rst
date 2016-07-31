@@ -4,9 +4,11 @@ Architecture
 Nautilus uses an event-based (also referred to as "event-sourced") architure
 that relies on a central messaging system through which all service communicate.
 
+Motivation
+-----------
 
 What's Wrong With HTTP For Inter-Service Communication?
---------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Nothing. However, When one tries to apply it to a large, distributed application
 as is common today a few issues start to surface concerning its directed
 semantics. To Illustrate this, imagine that we had two services behind our
@@ -37,7 +39,16 @@ tighly coupled with each other. If something were to change in the target
 service (say the format of record's unique id), without updating the user service,
 our system would no longer be able to perform the complete action. By "polluting"
 our service with assumptions of another, we force ourselves to slow down in order
-to ensure our changes aren't going to have un-forseen consequences.
+to ensure our changes aren't going to have un-forseen consequences. This is somewhat
+alleviated by the introduction of services that maintain a very small association
+between service records - similar to how a join table works in a relational database.
+
+.. image:: http_related_cascade.png
+
+However, this does not fix all of the issues associated with handling related data
+stored across many services. In order to pull this off, the user service needs to
+maintain a list of all related services so that it can make sure the related records
+are also removed.
 
 
 
@@ -65,7 +76,7 @@ on the backend service.
 This action gets sent to all services however, the only one we are interested in
 at the moment is the user service so we will just draw that for now.
 
-.. image:: kafka_internal_comm.png
+.. image:: kafka_first_pending_simple.png
 
 After performing the specific action, the server responds with an event, indicating
 wether it was successful or not. After recieving this event, the API replies to the
