@@ -53,7 +53,6 @@ def create_handler(Model, name=None, **kwds):
                 # save the new model instance
                 new_model.save()
 
-
                 # if we need to tell someone about what happened
                 if notify:
                     # publish the scucess event
