@@ -9,9 +9,9 @@ class RequestHandler(web.View):
             import nautilus
             from nautilus.network.http import RequestHandler, Response
 
-            service = nautilus.Service(...)
+            class MyService(nautilus.Service): pass
 
-            @service.route('/')
+            @MyService.route('/')
             class MyRequestHandler(RequestHandler):
                 async def get(self):
                     self.finish('hello')

@@ -25,7 +25,7 @@ equivalent graphql query) to a specific url
 This request is then routed to a separate backend service which is responsible
 for handling the actual logic to be performed.
 
-.. iamge:: http_internal.png
+.. image:: http_internal.png
 
 The question is - How do we tell the other service to remove entries
 corresponding to the user we just deleted? One way would be to have that
