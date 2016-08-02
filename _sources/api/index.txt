@@ -20,19 +20,19 @@ The API for ``ModelService`` s (and other services based on them like ``Connecti
 type of the attribute. The following filters show on both the API gateway as
 well as the inidividual service apis:
 
-+-----------+------------------+--------------------+-------------------------------------------------+
-| Filter    |   Value type     |   Attribute type   |  Returns                                        |
-+-----------+------------------+--------------------+-------------------------------------------------+
-| <attr>    |  attribute_type  |    literal         |  all records with the matching attribute value  |
-+-----------+------------------+--------------------+-------------------------------------------------+
-| <attr>_in | [attribute_type] |    literal         |  all records with a value in the specified list |
-+-----------+------------------+--------------------+-------------------------------------------------+
-| first     | integer          |    any             |  return the first N records                     |
-+-----------+------------------+--------------------+-------------------------------------------------+
-| last      | integer          |    any             |  return the last N records                      |
-+-----------+------------------+--------------------+-------------------------------------------------+
-| offset    | integer          |    any             |  start the count filters at a given offset      |
-+-----------+------------------+--------------------+-------------------------------------------------+
++-----------+-------------------------+--------------------+-------------------------------------------------+
+| Filter    |   Value type            |   Attribute type   |  Returns                                        |
++-----------+-------------------------+--------------------+-------------------------------------------------+
+| <attr>    |  same as attribute      |    literal         |  all records with the matching attribute value  |
++-----------+-------------------------+--------------------+-------------------------------------------------+
+| <attr>_in | list of attribute type  |    literal         |  all records with a value in the specified list |
++-----------+-------------------------+--------------------+-------------------------------------------------+
+| first     | integer                 |    any             |  return the first N records                     |
++-----------+-------------------------+--------------------+-------------------------------------------------+
+| last      | integer                 |    any             |  return the last N records                      |
++-----------+-------------------------+--------------------+-------------------------------------------------+
+| offset    | integer                 |    any             |  start the count filters at a given offset      |
++-----------+-------------------------+--------------------+-------------------------------------------------+
 
 
 Designating a GraphQL Equivalent of a Nautilus Field
@@ -55,5 +55,5 @@ something like:
     from nautilus.contrib.graphene_peewee import converter
 
     @converter.register(AwesomeField)
-    def convert_column_to_string(type, column):
-        return String(description = column.doc)
+    def convert_field_to_string(field):
+        return String(description = field.doc)

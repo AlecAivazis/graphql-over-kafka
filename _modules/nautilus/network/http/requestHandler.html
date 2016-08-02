@@ -144,9 +144,9 @@
 <span class="sd">            import nautilus</span>
 <span class="sd">            from nautilus.network.http import RequestHandler, Response</span>
 
-<span class="sd">            service = nautilus.Service(...)</span>
+<span class="sd">            class MyService(nautilus.Service): pass</span>
 
-<span class="sd">            @service.route(&#39;/&#39;)</span>
+<span class="sd">            @MyService.route(&#39;/&#39;)</span>
 <span class="sd">            class MyRequestHandler(RequestHandler):</span>
 <span class="sd">                async def get(self):</span>
 <span class="sd">                    self.finish(&#39;hello&#39;)</span>
