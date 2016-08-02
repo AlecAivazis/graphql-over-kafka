@@ -3,12 +3,13 @@ Architecture
 
 Nautilus uses an event-based (also referred to as "event-sourced") architure
 that relies on a central messaging system through which all service communicate.
+This includes mutations of their various internal states as well as data-retrieval
+by the API gateway.
 
-Motivation
------------
 
 What's Wrong With HTTP For Inter-Service Communication?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------------------------------
+
 Nothing. However, When one tries to apply it to a large, distributed application
 as is common today a few issues start to surface concerning its directed
 semantics. To Illustrate this, imagine that we had two services behind our
