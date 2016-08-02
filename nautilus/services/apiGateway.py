@@ -19,12 +19,6 @@ class APIGateway(Service):
         use to query the cloud without worrying about the distributed nature
         of the system.
 
-        Args:
-
-            action_handler (optional, function): The callback function fired
-                when an action is recieved. If None, the service does not
-                connect to the action queue.
-
         Example:
 
             .. code-block:: python
