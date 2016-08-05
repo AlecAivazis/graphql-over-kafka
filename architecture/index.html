@@ -146,7 +146,7 @@ by the API gateway.</p>
 <div class="section" id="what-s-wrong-with-http-for-inter-service-communication">
 <h2>What&#8217;s Wrong With HTTP For Inter-Service Communication?<a class="headerlink" href="#what-s-wrong-with-http-for-inter-service-communication" title="Permalink to this headline">¶</a></h2>
 <p>Nothing. However, When one tries to apply it to a large, distributed application
-as is common today a few issues start to surface concerning its directed
+(as is common today) a few issues start to surface concerning its directed
 semantics. To Illustrate this, imagine that we had two services behind our
 API gateway:</p>
 <img alt="../_images/layout.png" src="../_images/layout.png" />
@@ -201,7 +201,7 @@ user, terminating the original request.</p>
 <p>While this seems very similar to the interaction we looked at earlier, there is
 a key difference - by performing the synchronous communication over a globally
 accessible event system, other services can respond to the successfull event
-notifacation to &#8220;tidy up&#8221; the rest of the system, garunteeing an
+notifacation to &#8220;tidy up&#8221; the rest of the system, guaranteeing an
 eventually-consistent picture across all of our services.</p>
 <img alt="../_images/kafka_final_cascade.png" src="../_images/kafka_final_cascade.png" />
 </div>
