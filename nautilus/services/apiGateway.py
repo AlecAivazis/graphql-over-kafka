@@ -52,7 +52,6 @@ class APIGateway(Service):
             action_type=roll_call_type(),
             payload='please report yourself'
         )
-        # print('sent ' + roll_call_type())
 
 
     def init_routes(self):

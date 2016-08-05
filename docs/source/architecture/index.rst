@@ -11,7 +11,7 @@ What's Wrong With HTTP For Inter-Service Communication?
 --------------------------------------------------------
 
 Nothing. However, When one tries to apply it to a large, distributed application
-as is common today a few issues start to surface concerning its directed
+(as is common today) a few issues start to surface concerning its directed
 semantics. To Illustrate this, imagine that we had two services behind our
 API gateway:
 
@@ -88,7 +88,7 @@ user, terminating the original request.
 While this seems very similar to the interaction we looked at earlier, there is
 a key difference - by performing the synchronous communication over a globally
 accessible event system, other services can respond to the successfull event
-notifacation to "tidy up" the rest of the system, garunteeing an
+notifacation to "tidy up" the rest of the system, guaranteeing an
 eventually-consistent picture across all of our services.
 
 .. image:: kafka_final_cascade.png
