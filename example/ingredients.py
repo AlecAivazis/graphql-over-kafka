@@ -16,3 +16,9 @@ class ServiceConfig:
 class IngredientService(ModelService):
     model = Ingredient,
     config = ServiceConfig
+
+# create a service manager to run the service
+manager = ServiceManager(IngredientService)
+
+if __name__ == '__main__':
+    manager.run()
