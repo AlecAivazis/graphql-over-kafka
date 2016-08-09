@@ -3,8 +3,8 @@ import aiohttp_jinja2
 # local imports
 # from nautilus.network.util import query_service
 from .base import AuthRequestHandler
-from ..models import UserPassword
 from .forms import LoginForm
+from ..models import UserPassword
 
 class LoginHandler(AuthRequestHandler):
     """
