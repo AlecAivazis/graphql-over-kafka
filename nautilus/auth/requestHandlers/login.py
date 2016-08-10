@@ -1,7 +1,9 @@
 # external imports
 import aiohttp_jinja2
+import json
 # local imports
-# from nautilus.network.util import query_service
+from nautilus.conventions.api import root_query
+from nautilus.conventions.actions import get_crud_action
 from .base import AuthRequestHandler
 from .forms import LoginForm
 from ..models import UserPassword
@@ -22,27 +24,22 @@ class LoginHandler(AuthRequestHandler):
         from nautilus.network.http.responses import HTTPUnauthorized, HTTPFound
         # make sure we do anything important
         await super().post()
+
+        # grab the post data from the request
+        post_data = await self.request.post()
         # createa a form from the request parameters
-        form = LoginForm(**self.request.arguments)
+        form = LoginForm(**post_data)
+
         # if we recieved valid information
         if form.validate():
             # the form data
             data = form.data
             # grab the given email
-            supplied_email = data['email'][0].decode('utf-8')
-            supplied_password = data['password'][0].decode('utf-8')
+            supplied_email = data['email']
+            supplied_password = data['password']
 
-            # get the user with matching email
-            user_data = query_service(
-                service='user',
-                fields=[
-                    'id',
-                    'email',
-                ],
-                filters={
-                    'email': supplied_email
-                }
-            )[0]
+            # find the matching user with the given email
+            user_data = await self._get_matching_user(supplied_email)
 
             # look for a matching entry in the local database
             passwordEntry = UserPassword.select().where(
@@ -52,11 +49,11 @@ class LoginHandler(AuthRequestHandler):
             # if the given password matches the stored hash
             if passwordEntry and passwordEntry.password == supplied_password:
                 # grab the redirect url from the url arguments
-                redirect_url = self.request.arguments.get('next', ['/'])[0]
+                redirect_url = self.request.GET.get('next', '/')
                 # redirect the user to the url parameter
                 response = HTTPFound(location=redirect_url)
                 # log in the user
-                await self.login_user(user_data, response)
+                await self.login_user(user_data)
                 # return the response
                 return response
 
@@ -64,3 +61,32 @@ class LoginHandler(AuthRequestHandler):
         return HTTPUnauthorized(
             body="Sorry, the username/password combination do not match."
         )
+
+
+    async def _get_matching_user(self, uid):
+        # the action type for a remote query
+        read_action = get_crud_action(method='read', model='user')
+        # the query for matching entries
+        payload = """
+            query {
+                %s(email: "%s") {
+                    id
+                    email
+                }
+            }
+        """ % (root_query(), uid)
+
+        # perform the query
+        user_data = json.loads(await self.service.event_broker.ask(
+            action_type=read_action,
+            payload=payload
+        ))
+
+        # if there are errors or no matching user
+        if user_data['errors'] or len(user_data['data'][root_query()]) != 1:
+            # yell loudly
+            raise ValueError("Could not find matching user")
+        # otherwise there was a matching user
+        else:
+            # return the matching user record
+            return user_data['data'][root_query()][0]

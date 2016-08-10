@@ -11,6 +11,7 @@ class LogoutHandler(AuthRequestHandler):
         from nautilus.network.http.responses import HTTPFound
         # the response object
         response = HTTPFound(location='/')
+        print(await self.get_current_user())
         # log the current user out
         await self.logout_user(response)
         # redirect the user to root

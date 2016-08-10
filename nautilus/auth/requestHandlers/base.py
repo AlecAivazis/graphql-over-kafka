@@ -7,7 +7,7 @@ from nautilus.conventions.auth import cookie_name as auth_cookie_name
 
 class AuthRequestHandler(RequestHandler):
 
-    async def get_current_user(self, response):
+    async def get_current_user(self):
         """
             This function logs the given user in on the request request.
         """
@@ -32,7 +32,8 @@ class AuthRequestHandler(RequestHandler):
         """
             This method logs the current user out by clearing the cookie.
         """
-        response.del_cookie(self._token_name)
+        # grab the current session
+        session = await get_session(self.request)
         # remove entry in the session
         del session[self._token_name]
 
