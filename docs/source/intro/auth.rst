@@ -15,19 +15,36 @@ called ``auth.py`` with the following contents:
     class RecipeBookAuth(AuthService):
         config = ServiceConfig
 
+We'll also need a service to maintain user information (like their e-mails). So
+make a second file called ``user.py`` that resembles our other model services:
 
-This service provides basic user authentication and registration. When a user
-interacts with a service like the API gateway or a client, they a bit of
-information with every request that identifies them and indicates they are
-logged in. If a service requires authentication and it cannot be found, the
-user is redirected to this service to obtain such credentials. As such, this
-service needs to only be responsible for maintaining user passwords. Other
-bits of user information can be stored in another, less protected service.
+.. code-block:: python
 
-Go ahead and run this service (remember to create the database). Navigate
-to the ``/register`` endpoint and register an account for us to use. Log into
-the account you just made by entering the same credentials into the ``/login``
-endpoint.
+    import nautilus
+    from nautilus.models import BaseModel, fields
+
+    class User(BaseModel):
+        email = fields.CharField()
+
+    class ServiceConfig:
+        database_url = 'sqlite:///user.db'
+
+    class UserService(nautilus.ModelService):
+        model = User
+        config = ServiceConfig
+
+
+These services provide what's necessary for basic user authentication and
+registration. When a user interacts with a service like the API gateway or a
+client, they send a bit of information with every request that identifies
+them and indicates they are logged in. Therefore, the auth service needs to only
+be responsible for maintaining user passwords. Other bits of user information
+are stored in the other, less protected service.
+
+Go ahead and start both services (remember to create the databases). Navigate
+to the ``/register`` endpoint of the auth service and register an account for
+us to use. Log into the account you just made by entering the same credentials
+into the ``/login`` endpoint.
 
 Now we are ready to protect our data!
 
@@ -39,8 +56,8 @@ Regardless of your application, not all bits of information are inteded for
 everyone to see. Eventually you'll want to be able to specify which users are
 able to see which entries in our api. Thankfully, hiding pieces of data based
 on the current user is easy in nautilus. Simply, add a function to the api
-named to match the service record that takes the user as an argument and
-returns true if the user can see the object and false if not. For example, say
+decorated to match the service record. This function takes the user as an argument
+and returns true if the user can see the object and false if not. For example, say
 we had set up a relationship between recipes and users through another
 connection service. We could limit the results in the recipe query to only
 those written by the current user by changing our api service to
@@ -50,7 +67,7 @@ look something like:
 
     class API(nautilus.APIGateway):
 
-        @nautilus.auth_criteria('catPhoto')
+        @nautilus.auth_criteria('CatPhoto')
         def auth_catPhoto(self, model, user):
             """
                 This function returns True if the given user is able to view
