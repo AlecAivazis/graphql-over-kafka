@@ -71,6 +71,6 @@ look something like:
         def auth_catPhoto(self, model, user):
             """
                 This function returns True if the given user is able to view
-                this recipe.
+                this photo.
             """
             return model.owner == user

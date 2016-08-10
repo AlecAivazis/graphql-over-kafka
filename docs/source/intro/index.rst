@@ -9,5 +9,3 @@ Getting Started
     connecting_services
     api
     auth
-
-the rest coming soon!
