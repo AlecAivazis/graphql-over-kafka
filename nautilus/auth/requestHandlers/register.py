@@ -1,7 +1,9 @@
 # external imports
 import aiohttp_jinja2
+import json
 # local imports
-# from nautilus.network.util import query_service
+from nautilus.conventions.actions import get_crud_action
+from nautilus.conventions.api import root_query
 from .base import AuthRequestHandler
 from ..models import UserPassword
 from .forms import RegistrationForm
@@ -19,14 +21,17 @@ class RegisterHandler(AuthRequestHandler):
 
     async def post(self):
         # the used responses
-        from nautilus.network.http.responses import HTTPForbidden, HTTPFound
+        from nautilus.network.http.responses import HTTPForbidden, HTTPFound, HTTPOk
 
         # bubble up
         await super().post()
 
+        # grab the post data from the request
+        post_data = await self.request.post()
+
         form_args = {
-            'email': self.request.GET['email'][0].decode('utf-8'),
-            'password': self.request.GET['password'][0].decode('utf-8'),
+            'email': post_data['email'],
+            'password': post_data['password'],
         }
 
         # create a form from the request parameters
@@ -37,44 +42,93 @@ class RegisterHandler(AuthRequestHandler):
             # the form data
             data = form.data
 
-            try:
-                # get the user with matching email
-                user_data = query_service(
-                    service='user',
-                    fields=[
-                        'id',
-                        'email',
-                    ],
-                    filters={
-                        'email': data['email']
-                    }
-                )[0]
-            # if there wasn't a matching user
-            except IndexError:
+            # if there is a matching user
+            if await self._check_for_matching_user(uid=post_data['email']):
+                # that user has already been registered
                 return HTTPForbidden(
-                    body='Could not find corresponding user in remote service'
+                    body=b"Sorry, that user has already been registered."
                 )
 
-            # the query to find a matching query
-            match_query = UserPassword.user == user_data['id']
+            # otherwise there is no matching user
+            else:
+                # so make one
+                response_data = await self._create_remote_user(uid=post_data['email'])
 
-            # if the user has already been registered
-            if UserPassword.select().where(match_query).count() > 0:
-                # yell loudly
-                raise ValueError("The user is already registered.")
-            # create an entry in the user password table
-            password = UserPassword(user=user_data['id'], **data)
-            # save it to the database
-            password.save()
+                # the query to find a matching query
+                match_query = UserPassword.user == response_data['id']
 
-            # the response object
-            response = HTTPFound(location=self.request.GET.get('next', '/'))
-            # log in the user we just authorized
-            await self.login_user(user_data, response)
-            # move the user along
-            return response
+                # if the user has already been registered
+                if UserPassword.select().where(match_query).count() > 0:
+                    # yell loudly
+                    raise ValueError("The user is already registered.")
+                # create an entry in the user password table
+                password = UserPassword(user=response_data['id'], **data)
+                # save it to the database
+                password.save()
+
+                # the response object
+                response = HTTPFound(location=self.request.GET.get('next', '/'))
+                # log in the user we just authorized
+                await self.login_user(response_data)
+                # move the user along
+                return response
 
         # the username and password do not match
         return HTTPForbidden(
             body="Sorry, could not register that username/password."
         )
+
+
+    async def _check_for_matching_user(self, uid):
+        """
+            This function checks if there is a user with the same uid in the
+            remote user service
+
+            Args:
+                uid (string): the identifier of the user to check for
+
+            Returns:
+                (bool): wether or not there is a matching user
+        """
+        # the action type for a remote query
+        read_action = get_crud_action(method='read', model='user')
+        # the query for matching entries
+        payload = """
+            query {
+                %s(email: "%s") {
+                    pk
+                }
+            }
+        """ % (root_query(), uid)
+        # perform the query
+        user_data = json.loads(await self.service.event_broker.ask(
+            action_type=read_action,
+            payload=payload
+        ))
+        # there is a matching user if there are no errors and no results from
+        # the remote query
+        return not user_data['errors'] and len(user_data['data'][root_query()])
+
+
+    async def _create_remote_user(self, uid):
+        """
+            This method creates a service record in the remote user service
+            with the given email.
+
+            Args:
+                uid (str): the user identifier to create
+
+            Returns:
+                (dict): a summary of the user that was created
+        """
+        # the action for reading user entries
+        read_action = get_crud_action(method='create', model='user')
+        payload = {"email": uid}
+
+        # see if there is a matching user
+        user_data = await self.service.event_broker.ask(
+            action_type=read_action,
+            payload=payload
+        )
+        # treat the reply like a json object
+        return json.loads(user_data)

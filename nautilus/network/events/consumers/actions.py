@@ -12,6 +12,7 @@ class ActionHandler(KafkaBroker):
 
 
     async def handle_action(self, action_type, payload, props, **kwds):
+        print(action_type, payload)
         raise NotImplementedError()
 
 

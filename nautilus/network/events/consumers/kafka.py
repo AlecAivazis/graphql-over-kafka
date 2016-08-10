@@ -66,6 +66,7 @@ class KafkaBroker:
     def __init__(self):
         # a dictionary to keep the question/answer correlation ids
         self._request_handlers = {}
+        self._pending_outbound = {}
         # if there is no loop assigned
         if not self.loop:
             # use the current one
@@ -124,7 +125,7 @@ class KafkaBroker:
         return await self._producer.send(channel, message.encode())
 
 
-    async def ask(self, **kwds):
+    async def ask(self, action_type, **kwds):
         # create a correlation id for the question
         correlation_id = uuid.uuid4()
         # make sure its unique
@@ -138,9 +139,15 @@ class KafkaBroker:
         question_future = asyncio.Future()
         # register the future's callback with the request handler
         self._request_handlers[correlation_id] = question_future.set_result
+        # add the entry to the outbound dictionary
+        self._pending_outbound[correlation_id] = action_type
 
         # publish the question
-        await self.send(correlation_id=correlation_id, **kwds)
+        await self.send(
+            correlation_id=correlation_id,
+            action_type=action_type,
+            **kwds
+        )
 
         # return the response
         return await question_future
@@ -164,6 +171,8 @@ class KafkaBroker:
             message = hydrate_action(msg.value.decode())
             # the correlation_id associated with this message
             correlation_id = message.get('correlation_id')
+            # the action type of the message
+            action_type = message['action_type']
 
             # if there is a consumer pattern
             if self.consumer_pattern:
@@ -173,11 +182,14 @@ class KafkaBroker:
                     continue
 
             # if we know how to respond to this message
-            if correlation_id and correlation_id in self._request_handlers:
+            if correlation_id and correlation_id in self._request_handlers \
+                and action_type != self._pending_outbound[correlation_id]:
+
                 # pass the message to the handler
                 self._request_handlers[correlation_id](message['payload'])
                 # remove the entry in the handler dict
                 del self._request_handlers[correlation_id]
+                del self._pending_outbound[correlation_id]
 
             # otherwise there was no correlation id, pass it along to the general handlers
             else:

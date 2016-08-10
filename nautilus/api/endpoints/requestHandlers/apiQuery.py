@@ -1,10 +1,12 @@
 # external imports
 import json
 import graphql
+import functools
 # local imports
 import nautilus
 from nautilus.network.http import Response
 from nautilus.conventions.actions import get_crud_action
+from nautilus.conventions.api import root_query
 from nautilus.api.util import parse_string
 from .graphql import GraphQLRequestHandler
 
@@ -77,9 +79,21 @@ class APIQueryHandler(GraphQLRequestHandler):
                 # return an empty response
                 raise ValueError(','.join(response_data['errors']))
 
-            # otherwise it was a successful query so return the result
-            return response_data['data']['all_models']
+            # grab the valid list of matches
+            result = response_data['data'][root_query()]
 
+            # grab the auth handler for the object
+            auth_criteria = self.service.auth_criteria.get(object_name, lambda **_: True)
+
+            # the current user
+            # user = await self.get_current_user()
+            user = 'hello'
+            # partially assign the user to the auth handler
+            auth_handler = functools.partial(auth_criteria, user=user)
+
+            # otherwise it was a successful query so return the result
+            # return filter(auth_handler, result)
+            return result
 
         async def connection_resolver(connection_name, object):
 

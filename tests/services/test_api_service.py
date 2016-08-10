@@ -1,5 +1,6 @@
 # external imports
 import unittest
+from collections.abc import Callable
 # local imports
 import nautilus
 
@@ -7,7 +8,13 @@ class TestUtil(unittest.TestCase):
 
     def setUp(self):
         # create a service without an explict name
-        class MyService(nautilus.APIGateway): pass
+        class MyService(nautilus.APIGateway):
+
+            @nautilus.auth_criteria('TestService')
+            def test_auth(self, model, user):
+                pass
+
+
         # save the service record to the test suite
         self.service = MyService
 
@@ -36,3 +43,19 @@ class TestUtil(unittest.TestCase):
     def test_views_have_proper_cors_headers(self): pass
 
 
+    def test_can_find_service_auth_criteria(self):
+        # the auth criteria of the mocked service
+        auth_criteria = self.service().auth_criteria
+
+        # and it's the only one
+        assert len(auth_criteria) == 1, (
+            "There is an incorrect number of entries in the auth criteria map"
+        )
+        # check that the target service is in the dictionary
+        assert 'TestService' in auth_criteria, (
+            "Could not find service auth criteria in service dictionary"
+        )
+        # and that it's callable
+        assert isinstance(auth_criteria['TestService'], Callable), (
+            "Auth criteria handler was not callable."
+        )

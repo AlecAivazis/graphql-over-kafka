@@ -10,7 +10,7 @@ called ``auth.py`` with the following contents:
     from nautilus import AuthService
 
     class ServiceConfig:
-        database_url = 'sqlite:////tmp/passwords.db'
+        database_url = 'sqlite:///passwords.db'
 
     class RecipeBookAuth(AuthService):
         config = ServiceConfig

@@ -12,17 +12,17 @@ class AuthRequestHandler(RequestHandler):
             This function logs the given user in on the request request.
         """
         # grab the current session
-        session = await get_session(request)
+        session = await get_session(self.request)
         # add the user to the session
         return session[self._token_name]
 
 
-    async def login_user(self, user, response):
+    async def login_user(self, user):
         """
             This function logs the given user in on the request request.
         """
         # grab the current session
-        session = await get_session(request)
+        session = await get_session(self.request)
         # add the user to the session
         session[self._token_name] = self._token_contents(user)
 

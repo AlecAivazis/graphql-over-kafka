@@ -53,7 +53,6 @@ class AuthService(Service):
     def get_models(self):
         return [nautilus.auth.models.UserPassword]
 
-
 @AuthService.route('/login')
 class Login(LoginHandler): pass
 
