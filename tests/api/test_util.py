@@ -1,6 +1,7 @@
 # external imports
 import unittest
 import graphene
+import graphql
 import json
 # local imports
 import nautilus
@@ -20,7 +21,8 @@ from nautilus.api.util import (
     summarize_crud_mutation,
     convert_typestring_to_api_native,
     build_native_type_dictionary,
-    serialize_native_type
+    serialize_native_type,
+    GraphEntity
 )
 
 class TestUtil(unittest.TestCase):
@@ -343,14 +345,111 @@ class TestUtil(unittest.TestCase):
             "Could not convert String to native representation."
         )
 
+
     def test_serialize_native_type(self):
         # make sure it converts a native string to 'String'
         import nautilus.models.fields as fields
         assert serialize_native_type(fields.CharField()) == 'String', (
-            "Could not serialize native type"
+            "Could not serialize native type."
         )
 
     def test_build_native_type_dictionary(self): pass
+
+
+    def test_graph_entity_needs_to_start_somewhere(self):
+        # make sure an exception is raised
+        try:
+            # try to make an empty one
+            GraphEntity()
+            # if we got here then we failed
+            raise AssertionError("GraphEntity did not require a starting point.")
+        # if an exception is raised
+        except ValueError:
+            # then we pass
+            pass
+
+
+    def test_graph_entity_maintains_source(self):
+        # create a graph entity to test
+        entity = GraphEntity(model_type='user', id=1)
+        # check that the source values match up
+        assert entity._api_path == [{"name": "user", "args": {"id": 1}}], (
+            "The source node of the graph entity did not match constructor arguments."
+        )
+
+
+    def test_graph_entity_can_build_path(self):
+        # create a graph entity to test
+        entity = GraphEntity(model_type='user', id=1)
+        # build a path to test
+        assert entity.foo.bar._api_path == [
+            {"name": "user", "args": {"id": 1}},
+            {"name": "foo", "args": {}},
+            {"name": "bar", "args": {}}
+        ], "Internal api without args path did not match expectation."
+
+
+    def test_graph_entity_can_build_path_with_args(self):
+        # create a graph entity to test
+        entity = GraphEntity(model_type='user', id=1)
+        # build a path to test
+        assert entity.foo(bar="baz").bar._api_path == [
+            {"name": "user", "args": {"id": 1}},
+            {"name": "foo", "args": {"bar": "baz"}},
+            {"name": "bar", "args": {}}
+        ], "Internal api with args path did not match expectation."
+
+
+    def test_graph_entity_query(self):
+        # the graph entity to test against
+        entity = GraphEntity(model_type="user", id=1).foo.bar(arg="2")
+        # parse the associated query
+        parsed = graphql.parse(entity._query)
+
+        # make sure there is a single root query definted
+        assert len(parsed.definitions) == 1 and parsed.definitions[0].operation == "query", (
+            "Graph entity parsed query did not have a single definition."
+        )
+
+        top_selection = parsed.definitions[0].selection_set.selections
+        # make sure there is a single selection with the right name
+        assert len(top_selection) == 1 and top_selection[0].name.value == 'user', (
+            "Top selection does not have the right name."
+        )
+        # pull out the first and only selection
+        top_selection = top_selection[0]
+
+        top_args = top_selection.arguments
+        # verify the arguments of the top selection
+        assert len(top_args) == 1 and top_args[0].name.value == 'id' and top_args[0].value.value == '1', (
+            "Top selection did not have the right arguments."
+        )
+
+        # the first level deep selection
+        second_selection_set = top_selection.selection_set.selections
+        # make sure there is only one and it has no arguments
+        assert len(second_selection_set) == 1 and second_selection_set[0].name.value == 'foo' \
+                                                and len(second_selection_set[0].arguments) == 0, (
+            "Second selection did not have the right characteristics."
+        )
+        second_selection = second_selection_set[0]
+
+        # the third level of the selection
+        third_selection_set = second_selection.selection_set.selections
+        # make sure the third level has the correct name and arguments
+        assert len(third_selection_set) == 1 and third_selection_set[0].name.value == 'bar' \
+                                             and len(third_selection_set[0].arguments) == 1 \
+                                             and third_selection_set[0].arguments[0].name.value == 'arg' \
+                                             and third_selection_set[0].arguments[0].value.value == '2', (
+            "Third selection did not have the right requirements."
+        )
+        third_selection = third_selection_set[0]
+
+        fourth_selection_set = third_selection.selection_set.selections
+        # make sure we are asking for the id of the final select
+        assert len(fourth_selection_set) == 1 and fourth_selection_set[0].name.value == 'id', (
+            "Final selection was incorrect."
+        )
 
 
     ## Utilities
@@ -360,10 +459,9 @@ class TestUtil(unittest.TestCase):
         summarized = summarize_crud_mutation(model=model, method=action)
         # make sure the name matches the convention
         assert summarized['name'] == crud_mutation_name(model=model, action=action), (
-            "Summarized %s mutation did not have the right name" % action
+            "Summarized %s mutation did not have the right name." % action
         )
         # make sure the event is what we expect
         assert summarized['event'] == get_crud_action(model=model, method=action), (
-            "Summarized %s mutation did not have the right event type" % action
+            "Summarized %s mutation did not have the right event type." % action
         )
-
