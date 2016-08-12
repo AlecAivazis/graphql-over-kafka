@@ -13,6 +13,7 @@ from nautilus.conventions.api import root_query
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.api.util import query_for_model
 from .service import Service
+from nautilus.api.util import parse_string
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
     GraphQLRequestHandler
@@ -116,12 +117,6 @@ class APIGateway(Service):
         self.app.router.add_static('/graphiql/static/', api_endpoint_static)
         # add the graphiql endpoint
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
-
-
-    def handle_query(self, query):
-        """
-            This method performs the query over the event system.
-        """
 
 
     async def object_resolver(self, object_name, fields, **filters):

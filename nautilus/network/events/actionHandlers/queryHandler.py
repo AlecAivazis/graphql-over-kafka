@@ -1,5 +1,5 @@
 # local imports
-from nautilus.conventions.actions import query_action_type
+from nautilus.conventions.actions import query_action_type, change_action_status, success_status
 
 def query_handler(service, action_type, payload, props, **kwds):
     """
@@ -8,4 +8,20 @@ def query_handler(service, action_type, payload, props, **kwds):
     """
     # check that the action type indicates a query
     if action_type == query_action_type():
-        pass
+        # perform the query
+        result = parse_string(payload,
+            service.object_resolver,
+            service.connection_resolver,
+            service.mutation_resolver
+        )
+
+        # the props for the reply message
+        reply_props = {'correlation_id': props['correlation_id']} if 'correlation_id' in props else {}
+
+        # publish the success event
+        await service.event_broker.send(
+            payload=result,
+            action_type=change_action_status(action_type, success_status()),
+            **reply_props
+        )
+

@@ -3,6 +3,7 @@ import json
 # local imports
 from nautilus.api.util import generate_api_schema
 from .actions import ActionHandler
+from ..actionHandlers import query_handler
 
 class APIActionHandler(ActionHandler):
     """
@@ -18,6 +19,10 @@ class APIActionHandler(ActionHandler):
     consumer_pattern = '(.*\..*\.(?!(pending)))|init'
 
     async def handle_action(self, action_type, payload, props, **kwds):
+        # handle incoming queries
+        query_handler(self, action_type, payload, props, **kwds)
+
+
         # the treat the payload like json if its a string
         model = json.loads(payload) if isinstance(payload, str) else payload
 
