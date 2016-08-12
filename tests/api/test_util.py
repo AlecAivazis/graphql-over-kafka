@@ -406,6 +406,19 @@ class TestUtil(unittest.TestCase):
         # parse the associated query
         parsed = graphql.parse(entity._query)
 
+        # the target query
+        target = """
+            query {
+                user(id:1) {
+                    foo {
+                        bar(arg:2) {
+                            id
+                        }
+                    }
+                }
+            }
+        """
+
         # make sure there is a single root query definted
         assert len(parsed.definitions) == 1 and parsed.definitions[0].operation == "query", (
             "Graph entity parsed query did not have a single definition."

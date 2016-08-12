@@ -9,6 +9,7 @@ from nautilus.conventions.actions import (
     success_status,
     error_status,
     pending_status,
+    query_action_type,
 )
 from ..util import MockModel
 
@@ -102,6 +103,12 @@ class TestUtil(unittest.TestCase):
         assert hydrate_action(serialized) == target, (
             "Could not hydrate action with extra fields."
         )
+
+    def test_query_action(self):
+        # create the default action type
+        action_type = query_action_type()
+        # make sure we got a string back
+        assert isinstance(action_type, str)
 
 
     def test_has_success_status(self):

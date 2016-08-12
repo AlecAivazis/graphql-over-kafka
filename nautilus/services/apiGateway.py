@@ -111,3 +111,10 @@ class APIGateway(Service):
         self.app.router.add_static('/graphiql/static/', api_endpoint_static)
         # add the graphiql endpoint
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
+
+
+    def handle_query(self, query):
+        """
+            This method performs the query over the event system.
+        """
+

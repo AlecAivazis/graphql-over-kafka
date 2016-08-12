@@ -87,6 +87,7 @@ class APIQueryHandler(GraphQLRequestHandler):
 
             # the current user
             # user = await self.get_current_user()
+
             user = 'hello'
             # partially assign the user to the auth handler
             auth_handler = functools.partial(auth_criteria, user=user)

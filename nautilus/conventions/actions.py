@@ -50,6 +50,12 @@ def hydrate_action(serialized):
             'payload': str(serialized)
         }
 
+def query_action_type():
+    """
+        This action type corresponds to an api query performed over the event system
+    """
+    return get_crud_action(model='api', method='query')
+
 
 def intialize_service_action(all_services=False, **kwds):
     # get the name of the service

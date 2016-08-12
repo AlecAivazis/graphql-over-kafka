@@ -18,5 +18,5 @@ on what you do best: building awesome, scalable services. Some of these features
 Full documentation is hosted [here](http://nautilus.github.io/nautilus/).
 
 ## Requirements
-* > Python 3.5
+* >= Python 3.5
 * Kafka

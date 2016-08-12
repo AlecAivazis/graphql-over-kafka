@@ -81,8 +81,6 @@ class GraphEntity:
         return "%s %s { %s }" % (node['name'], arg_string, self._summarize_node(node_list))
 
 
-
-
     def __call__(self, **kwds):
         """
             Calling the entity adds the arguments to the head of its path.
