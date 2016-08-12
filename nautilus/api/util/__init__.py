@@ -10,3 +10,4 @@ from .summarize_mutation_io import summarize_mutation_io
 from .convert_typestring_to_api_native import convert_typestring_to_api_native
 from .serialize_native_type import serialize_native_type
 from .graph_entity import GraphEntity
+from .query_for_model import query_for_model
