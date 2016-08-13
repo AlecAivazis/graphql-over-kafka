@@ -1,4 +1,9 @@
+# external imports
 import json
+import asyncio
+# from collections.abc import Iterable
+# local imports
+from nautilus.conventions.actions import query_action_type
 
 class GraphEntity:
     """
@@ -16,7 +21,10 @@ class GraphEntity:
                 assert source.owner.foo(arg=2) == 5
     """
 
-    def __init__(self, model_type=None, id=None, _api_path=None):
+    def __init__(self, event_broker, model_type=None, id=None, _api_path=None):
+        # save the event broker reference
+        self.event_broker = event_broker
+
         # if there is a source specification
         if model_type and id:
             # the internal api needs to start at the appropriate node
@@ -41,7 +49,7 @@ class GraphEntity:
             "args": {},
         })
         # return the entity so we can continue building the path
-        return GraphEntity(_api_path=self._api_path)
+        return GraphEntity(event_broker=self.event_broker, _api_path=self._api_path)
 
 
     @property
@@ -88,7 +96,7 @@ class GraphEntity:
         # set the args of the tail of the path to the given keywords
         self._api_path[-1]['args'] = kwds
         # return the entity so we can continue building the path
-        return GraphEntity(_api_path=self._api_path)
+        return GraphEntity(event_broker=self.event_broker, _api_path=self._api_path)
 
 
     def __eq__(self, other):
@@ -96,3 +104,40 @@ class GraphEntity:
             Equality checks are overwitten to perform the actual check in a
             semantic way.
         """
+        # the current event loop
+        event_loop = asyncio.get_event_loop()
+        # first perform the query associated with the entity
+        result = event_loop.run_until_complete(self.event_broker.ask(
+            action_type=query_action_type(),
+            payload=self._query,
+        ))
+        # go to the bottom of the result for the list of matching ids
+        return self._find_id(result, other)
+
+
+    def _find_id(self, result, uid):
+        """
+            This method performs a depth-first search for the given uid in the dictionary of results.
+        """
+        # if we've found the result
+        if result == uid:
+            # we're done
+            return True
+
+        # otherwise if there is a list to traverse
+        elif isinstance(result, list):
+            # go over the entries in the list and return true if there is a match
+            return any([self._find_id(item, uid) for item in result])
+
+        # otherwise the entry could be a dictionary
+        elif isinstance(result, dict):
+            # go over every item
+            for key, value in result.items():
+                # if the value is a match
+                if self._find_id(value, uid):
+                    # we're done
+                    return True
+
+        # we didn't find the result
+        return False
+

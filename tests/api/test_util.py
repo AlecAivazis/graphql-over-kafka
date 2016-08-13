@@ -6,7 +6,7 @@ import json
 # local imports
 import nautilus
 import nautilus.models as models
-from ..util import MockModel, async_test, MockModelService, MockConnectionService
+from ..util import MockModel, async_test, MockModelService, MockConnectionService, Mock
 from nautilus.conventions.api import crud_mutation_name
 from nautilus.conventions.actions import get_crud_action
 from nautilus.api.util import (
@@ -360,7 +360,7 @@ class TestUtil(unittest.TestCase):
         # make sure an exception is raised
         try:
             # try to make an empty one
-            GraphEntity()
+            GraphEntity(event_broker=Mock())
             # if we got here then we failed
             raise AssertionError("GraphEntity did not require a starting point.")
         # if an exception is raised
@@ -371,7 +371,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_maintains_source(self):
         # create a graph entity to test
-        entity = GraphEntity(model_type='user', id=1)
+        entity = GraphEntity(event_broker=Mock(), model_type='user', id=1)
         # check that the source values match up
         assert entity._api_path == [{"name": "user", "args": {"id": 1}}], (
             "The source node of the graph entity did not match constructor arguments."
@@ -380,7 +380,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_can_build_path(self):
         # create a graph entity to test
-        entity = GraphEntity(model_type='user', id=1)
+        entity = GraphEntity(event_broker=Mock(), model_type='user', id=1)
         # build a path to test
         assert entity.foo.bar._api_path == [
             {"name": "user", "args": {"id": 1}},
@@ -391,7 +391,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_can_build_path_with_args(self):
         # create a graph entity to test
-        entity = GraphEntity(model_type='user', id=1)
+        entity = GraphEntity(event_broker=Mock(), model_type='user', id=1)
         # build a path to test
         assert entity.foo(bar="baz").bar._api_path == [
             {"name": "user", "args": {"id": 1}},
@@ -402,7 +402,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_query(self):
         # the graph entity to test against
-        entity = GraphEntity(model_type="user", id=1).foo.bar(arg="2")
+        entity = GraphEntity(event_broker=Mock(), model_type="user", id=1).foo.bar(arg="2")
         # parse the associated query
         parsed = graphql.parse(entity._query)
 
@@ -462,6 +462,34 @@ class TestUtil(unittest.TestCase):
         # make sure we are asking for the id of the final select
         assert len(fourth_selection_set) == 1 and fourth_selection_set[0].name.value == 'id', (
             "Final selection was incorrect."
+        )
+
+
+    def test_graph_entity__find_id(self):
+        # a graph entity to test with
+        entity = GraphEntity(event_broker=Mock(), model_type="user", id=1)
+        # the result to test against
+        result = {
+            'user': {
+                'foo': {
+                    'bar': [1,2,3]
+                },
+                'baz': 6
+            }
+        }
+        # make sure it can find the number 1 in the list
+        assert entity._find_id(result, 1), (
+            "Could not find id in GraphEntity list result."
+        )
+
+        # make sure it can find the number 6 as a key value
+        assert entity._find_id(result, 6), (
+            "Could not find id in GraphEntity dict result."
+        )
+
+        # make sure we don't have any false positives
+        assert not entity._find_id(result, 7), (
+            "Encountered false positive in GraphEntity._find_id."
         )
 
 
