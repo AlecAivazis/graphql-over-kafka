@@ -119,7 +119,7 @@ class APIGateway(Service):
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
 
 
-    async def object_resolver(self, object_name, fields, object_auth=False, **filters):
+    async def object_resolver(self, object_name, fields, obey_auth=False, **filters):
         """
             This function resolves a given object in the remote backend services
         """
@@ -185,9 +185,9 @@ class APIGateway(Service):
         # the current user
         # user = await self.get_current_user()
 
-        user = 'hello'
-        # partially assign the user to the auth handler
-        auth_handler = functools.partial(auth_criteria, user=user)
+        # user = 'hello'
+        # # partially assign the user to the auth handler
+        # auth_handler = functools.partial(auth_criteria, user=user)
 
         # otherwise it was a successful query so return the result
         # return filter(auth_handler, result)

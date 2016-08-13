@@ -49,7 +49,6 @@ class APIQueryHandler(GraphQLRequestHandler):
             # send the result of the introspection to the user
             return Response(body=result.encode())
 
-
         # otherwise its a normal query/mutation
 
         # walk the query

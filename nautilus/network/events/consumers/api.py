@@ -20,8 +20,7 @@ class APIActionHandler(ActionHandler):
 
     async def handle_action(self, action_type, payload, props, **kwds):
         # handle incoming queries
-        query_handler(self, action_type, payload, props, **kwds)
-
+        await query_handler(self, action_type, payload, props, **kwds)
 
         # the treat the payload like json if its a string
         model = json.loads(payload) if isinstance(payload, str) else payload
