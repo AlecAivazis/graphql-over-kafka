@@ -1,7 +1,7 @@
 # local imports
 from nautilus.conventions.actions import query_action_type, change_action_status, success_status
 
-def query_handler(service, action_type, payload, props, **kwds):
+async def query_handler(service, action_type, payload, props, **kwds):
     """
         This action handler interprets the payload as a query to be executed
         by the api gateway service.
@@ -12,7 +12,8 @@ def query_handler(service, action_type, payload, props, **kwds):
         result = parse_string(payload,
             service.object_resolver,
             service.connection_resolver,
-            service.mutation_resolver
+            service.mutation_resolver,
+            obey_auth=False
         )
 
         # the props for the reply message
@@ -24,4 +25,3 @@ def query_handler(service, action_type, payload, props, **kwds):
             action_type=change_action_status(action_type, success_status()),
             **reply_props
         )
-

@@ -119,7 +119,7 @@ class APIGateway(Service):
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
 
 
-    async def object_resolver(self, object_name, fields, **filters):
+    async def object_resolver(self, object_name, fields, object_auth=False, **filters):
         """
             This function resolves a given object in the remote backend services
         """

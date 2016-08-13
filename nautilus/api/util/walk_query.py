@@ -1,4 +1,4 @@
-async def walk_query(obj, object_resolver, connection_resolver, errors, __naut_name=None, **filters):
+async def walk_query(obj, object_resolver, connection_resolver, errors, __naut_name=None, obey_auth=True, **filters):
     """
         This function traverses a query and collects the corresponding
         information in a dictionary.
@@ -40,7 +40,7 @@ async def walk_query(obj, object_resolver, connection_resolver, errors, __naut_n
 
     try:
         # resolve the model with the given fields
-        models = await object_resolver(node_name, [field.name.value for field in fields], **filters)
+        models = await object_resolver(node_name, [field.name.value for field in fields], obey_auth=obey_auth, **filters)
     # if something went wrong resolving the object
     except Exception as e:
         # add the error as a string
@@ -80,6 +80,7 @@ async def walk_query(obj, object_resolver, connection_resolver, errors, __naut_n
                             object_resolver,
                             connection_resolver,
                             errors,
+                            obey_auth=obey_auth,
                             __naut_name=next_target,
                             **filters
                         )
