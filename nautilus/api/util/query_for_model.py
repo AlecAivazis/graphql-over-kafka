@@ -1,3 +1,5 @@
+import json
+
 def query_for_model(fields, **filters):
     # if there are filters
     if filters:
@@ -7,10 +9,4 @@ def query_for_model(fields, **filters):
         filter_string = ''
 
     # the query for the requested data
-    return """
-        query {
-            all_models%s {
-                %s
-            }
-        }
-    """ % (filter_string, ', '.join(fields))
+    return "query { all_models%s { %s } }" % (filter_string, ', '.join(fields))

@@ -22,6 +22,7 @@ from nautilus.api.util import (
     convert_typestring_to_api_native,
     build_native_type_dictionary,
     serialize_native_type,
+    query_for_model,
     GraphEntity
 )
 
@@ -353,7 +354,27 @@ class TestUtil(unittest.TestCase):
             "Could not serialize native type."
         )
 
+
     def test_build_native_type_dictionary(self): pass
+
+
+    def test_query_for_model_with_filters(self):
+        # create a query with filters to test
+        query = query_for_model(['hello'], world=1)
+        # make sure it matches expectations
+        assert query == "query { all_models(world: 1) { hello } }", (
+            "Could not generate query for model with filters."
+        )
+
+
+    def test_query_for_model_without_filters(self):
+        # create a query with filters to test
+        query = query_for_model(['hello'])
+        # make sure it matches expectations
+        assert query == "query { all_models { hello } }", (
+            "Could not generate query for model without filters."
+        )
+
 
 
     def test_graph_entity_needs_to_start_somewhere(self):
