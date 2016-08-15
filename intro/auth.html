@@ -208,7 +208,7 @@ service to look something like:</p>
 <span class="sd">            This function returns True if the given user is able to view</span>
 <span class="sd">            this photo.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">_has_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">await</span> <span class="n">model</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">_has_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
