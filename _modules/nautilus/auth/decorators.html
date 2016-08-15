@@ -165,6 +165,24 @@
 
 
     <span class="k">return</span> <span class="n">require_auth</span></div>
+
+
+<div class="viewcode-block" id="auth_criteria"><a class="viewcode-back" href="../../../internals/nautilus.auth.html#nautilus.auth.decorators.auth_criteria">[docs]</a><span class="k">def</span> <span class="nf">auth_criteria</span><span class="p">(</span><span class="n">service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This decorator marks the function as the auth specifacation for a</span>
+<span class="sd">        particular service.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            service (str): The service that the function authorizes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">decorate</span><span class="p">(</span><span class="n">handler</span><span class="p">):</span>
+        <span class="c1"># add the flag that marks this function for a service</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">_service_auth</span> <span class="o">=</span> <span class="n">service</span>
+
+        <span class="c1"># return the decorated function</span>
+        <span class="k">return</span> <span class="n">handler</span>
+
+    <span class="k">return</span> <span class="n">decorate</span></div>
 </pre></div>
 
            </div>

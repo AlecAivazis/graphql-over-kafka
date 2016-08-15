@@ -211,12 +211,12 @@ of the underlying services as they announce their existence over
 the action system.</p>
 <dl class="attribute">
 <dt id="nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern">
-<code class="descname">consumer_pattern</code><em class="property"> = '(.*\\..*\\.(?!(pending)))|init'</em><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern" title="Permalink to this definition">¶</a></dt>
+<code class="descname">consumer_pattern</code><em class="property"> = '(.*\\..*\\.(?!(pending)))|init|query'</em><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="nautilus.network.events.consumers.api.APIActionHandler.handle_action">
-<code class="descname">handle_action</code><span class="sig-paren">(</span><em>action_type</em>, <em>payload</em>, <em>props</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/api.html#APIActionHandler.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler.handle_action" title="Permalink to this definition">¶</a></dt>
+<code class="descname">handle_action</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/api.html#APIActionHandler.handle_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.api.APIActionHandler.handle_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -236,7 +236,7 @@ over the kafka stream.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>= None</strong> (<a class="reference internal" href="#nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern" title="nautilus.network.events.consumers.kafka.KafkaBroker.consumer_pattern"><em>consumer_pattern</em></a>) &#8211; </li>
+<li><strong>= None</strong> (<a class="reference internal" href="#nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern" title="nautilus.network.events.consumers.api.APIActionHandler.consumer_pattern"><em>consumer_pattern</em></a>) &#8211; </li>
 <li><strong>server</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The location of the kafka stream.</li>
 <li><strong>consumer_channel</strong> (<em>optional, str</em>) &#8211; The channel to listen for events
 on.</li>
@@ -271,7 +271,7 @@ run on.</li>
 </div>
 <dl class="method">
 <dt id="nautilus.network.events.consumers.kafka.KafkaBroker.ask">
-<code class="descname">ask</code><span class="sig-paren">(</span><em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.ask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.ask" title="Permalink to this definition">¶</a></dt>
+<code class="descname">ask</code><span class="sig-paren">(</span><em>action_type</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/network/events/consumers/kafka.html#KafkaBroker.ask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.network.events.consumers.kafka.KafkaBroker.ask" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

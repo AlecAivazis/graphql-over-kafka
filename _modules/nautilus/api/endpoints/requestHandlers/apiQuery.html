@@ -136,10 +136,10 @@
 <span></span><span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">graphql</span>
+<span class="kn">import</span> <span class="nn">functools</span>
 <span class="c1"># local imports</span>
 <span class="kn">import</span> <span class="nn">nautilus</span>
 <span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">Response</span>
-<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">get_crud_action</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">parse_string</span>
 <span class="kn">from</span> <span class="nn">.graphql</span> <span class="kn">import</span> <span class="n">GraphQLRequestHandler</span>
 
@@ -153,149 +153,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">async</span> <span class="k">def</span> <span class="nf">_handle_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
-
-        <span class="n">async</span> <span class="k">def</span> <span class="nf">object_resolver</span><span class="p">(</span><span class="n">object_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                This function performs the actual query for the given</span>
-<span class="sd">                object and fields. Returns the</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># check if an object with that name has been registered</span>
-                <span class="n">registered</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_external_service_data</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span> \
-                                    <span class="k">if</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">object_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># if there is no connection data yet</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No objects are registered with this schema yet.&quot;</span><span class="p">)</span>
-            <span class="c1"># if we dont recognize the model that was requested</span>
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot query for object {} on this service.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">object_name</span><span class="p">))</span>
-
-            <span class="c1"># the valid fields for this object</span>
-            <span class="n">valid_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">registered</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]]</span>
-
-            <span class="c1"># figure out if any invalid fields were requested</span>
-            <span class="n">invalid_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_fields</span><span class="p">]</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># make sure we never treat pk as invalid</span>
-                <span class="n">invalid_fields</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
-            <span class="c1"># if they weren&#39;t asking for pk as a field</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="k">pass</span>
-
-            <span class="c1"># if there were</span>
-            <span class="k">if</span> <span class="n">invalid_fields</span><span class="p">:</span>
-                <span class="c1"># yell loudly</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot query for fields {!r} on {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">invalid_fields</span><span class="p">,</span> <span class="n">registered</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
-                <span class="p">))</span>
-
-            <span class="c1"># make sure we include the id in the request</span>
-            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
-
-            <span class="c1"># the query for model records</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_for_model</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">)</span>
-
-            <span class="c1"># the action type for the question</span>
-            <span class="n">action_type</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">object_name</span><span class="p">)</span>
-
-            <span class="c1"># query the appropriate stream for the information</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
-                <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
-                <span class="n">payload</span><span class="o">=</span><span class="n">query</span>
-            <span class="p">)</span>
-            <span class="c1"># treat the reply like a json object</span>
-            <span class="n">response_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-
-            <span class="c1"># if something went wrong</span>
-            <span class="k">if</span> <span class="s1">&#39;errors&#39;</span> <span class="ow">in</span> <span class="n">response_data</span> <span class="ow">and</span> <span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]:</span>
-                <span class="c1"># return an empty response</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]))</span>
-
-            <span class="c1"># otherwise it was a successful query so return the result</span>
-            <span class="k">return</span> <span class="n">response_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_models&#39;</span><span class="p">]</span>
-
-
-        <span class="n">async</span> <span class="k">def</span> <span class="nf">connection_resolver</span><span class="p">(</span><span class="n">connection_name</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># grab the recorded data for this connection</span>
-                <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span> <span class="n">conn</span> <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_external_service_data</span><span class="p">[</span><span class="s1">&#39;connections&#39;</span><span class="p">]</span>\
-                                  <span class="k">if</span> <span class="n">conn</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">connection_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># if there is no connection data yet</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No objects are registered with this schema yet.&quot;</span><span class="p">)</span>
-            <span class="c1"># if we dont recognize the model that was requested</span>
-            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot query for {} on {}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">connection_name</span><span class="p">,</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
-
-            <span class="c1"># the target of the connection</span>
-            <span class="n">to_service</span> <span class="o">=</span> <span class="n">expected</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">][</span><span class="s1">&#39;to&#39;</span><span class="p">][</span><span class="s1">&#39;service&#39;</span><span class="p">]</span>
-
-            <span class="c1"># ask for only the entries connected to the object</span>
-            <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span><span class="nb">object</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span> <span class="nb">object</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]}</span>
-            <span class="c1"># the field of the connection is the model name</span>
-            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">to_service</span><span class="p">]</span>
-
-            <span class="c1"># the query for model records</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_for_model</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
-
-            <span class="c1"># the action type for the question</span>
-            <span class="n">action_type</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">connection_name</span><span class="p">)</span>
-
-            <span class="c1"># get the service name for the connection</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
-                <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
-                <span class="n">payload</span><span class="o">=</span><span class="n">query</span>
-            <span class="p">))</span>
-
-            <span class="k">if</span> <span class="s1">&#39;errors&#39;</span> <span class="ow">in</span> <span class="n">response</span> <span class="ow">and</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]:</span>
-                <span class="c1"># return an empty response</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]))</span>
-
-            <span class="c1"># grab the ids from the response</span>
-            <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="n">to_service</span><span class="p">])</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_models&#39;</span><span class="p">]]</span>
-
-            <span class="c1"># the question for connected nodes</span>
-            <span class="k">return</span> <span class="n">ids</span><span class="p">,</span> <span class="n">to_service</span>
-
-
-        <span class="n">async</span> <span class="k">def</span> <span class="nf">mutation_resolver</span><span class="p">(</span><span class="n">mutation_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">fields</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                the default behavior for mutations is to look up the event,</span>
-<span class="sd">                publish the correct event type with the args as the body,</span>
-<span class="sd">                and return the fields contained in the result</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># make sure we can identify the mutation</span>
-                <span class="n">mutation_summary</span> <span class="o">=</span> <span class="p">[</span><span class="n">mutation</span> <span class="k">for</span> <span class="n">mutation</span> <span class="ow">in</span> \
-                                                <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_external_service_data</span><span class="p">[</span><span class="s1">&#39;mutations&#39;</span><span class="p">]</span> \
-                                                <span class="k">if</span> <span class="n">mutation</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">mutation_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="c1"># if we couldn&#39;t get the first entry in the list</span>
-            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="c1"># make sure the error is reported</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not execute mutation named: &quot;</span> <span class="o">+</span> <span class="n">mutation_name</span><span class="p">)</span>
-
-
-            <span class="c1"># the function to use for running the mutation depends on its schronicity</span>
-            <span class="c1"># event_function = self.service.event_broker.ask \</span>
-            <span class="c1">#                     if mutation_summary[&#39;isAsync&#39;] else self.service.event_broker.send</span>
-            <span class="n">event_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span>
-
-            <span class="c1"># send the event and wait for a response</span>
-            <span class="n">value</span> <span class="o">=</span>  <span class="n">await</span> <span class="n">event_function</span><span class="p">(</span>
-                <span class="n">action_type</span><span class="o">=</span><span class="n">mutation_summary</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">],</span>
-                <span class="n">payload</span><span class="o">=</span><span class="n">args</span>
-            <span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># return a dictionary with the values we asked for</span>
-                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
-            <span class="c1"># if the result was not valid json</span>
-            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
-                <span class="c1"># just throw the value</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
         <span class="c1"># if there hasn&#39;t been a schema generated yet</span>
@@ -327,32 +184,17 @@
             <span class="c1"># send the result of the introspection to the user</span>
             <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 
-
-        <span class="c1"># otherwise its a normal query/mutation</span>
-
-        <span class="c1"># walk the query</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="n">parse_string</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">object_resolver</span><span class="p">,</span> <span class="n">connection_resolver</span><span class="p">,</span> <span class="n">mutation_resolver</span><span class="p">)</span>
+        <span class="c1"># otherwise its a normal query/mutation so walk it like normal</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="n">parse_string</span><span class="p">(</span>
+            <span class="n">query</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">object_resolver</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">connection_resolver</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">mutation_resolver</span><span class="p">,</span>
+            <span class="n">current_user</span><span class="o">=</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">(),</span>
+        <span class="p">)</span>
 
         <span class="c1"># pass the result to the request</span>
-        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
-
-
-    <span class="k">def</span> <span class="nf">_query_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
-        <span class="c1"># if there are filters</span>
-        <span class="k">if</span> <span class="n">filters</span><span class="p">:</span>
-            <span class="c1"># the string for the filters</span>
-            <span class="n">filter_string</span> <span class="o">=</span> <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;{}: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">filter_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-
-        <span class="c1"># the query for the requested data</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            query {</span>
-<span class="s2">                all_models</span><span class="si">%s</span><span class="s2"> {</span>
-<span class="s2">                    </span><span class="si">%s</span><span class="s2"></span>
-<span class="s2">                }</span>
-<span class="s2">            }</span>
-<span class="s2">        &quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filter_string</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
 </pre></div>
 
            </div>

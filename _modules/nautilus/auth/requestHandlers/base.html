@@ -144,22 +144,28 @@
 
 <div class="viewcode-block" id="AuthRequestHandler"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler">[docs]</a><span class="k">class</span> <span class="nc">AuthRequestHandler</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
 
-<div class="viewcode-block" id="AuthRequestHandler.get_current_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthRequestHandler.get_current_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This function logs the given user in on the request request.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># grab the current session</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-        <span class="c1"># add the user to the session</span>
-        <span class="k">return</span> <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span></div>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># add the user to the session</span>
+            <span class="k">return</span> <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span>
+        <span class="c1"># if the user is not logged in yet</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="c1"># there isn&#39;t a current user</span>
+            <span class="k">return</span> <span class="bp">None</span></div>
 
 
-<div class="viewcode-block" id="AuthRequestHandler.login_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+<div class="viewcode-block" id="AuthRequestHandler.login_user"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This function logs the given user in on the request request.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># grab the current session</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
         <span class="c1"># add the user to the session</span>
         <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token_contents</span><span class="p">(</span><span class="n">user</span><span class="p">)</span></div>
 
@@ -169,7 +175,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            This method logs the current user out by clearing the cookie.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span><span class="o">.</span><span class="n">del_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">)</span>
+        <span class="c1"># grab the current session</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">await</span> <span class="n">get_session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
         <span class="c1"># remove entry in the session</span>
         <span class="k">del</span> <span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_token_name</span><span class="p">]</span></div>
 

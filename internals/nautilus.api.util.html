@@ -219,7 +219,7 @@ graphql types</td>
 <span id="nautilus-api-util-parse-string-module"></span><h2>nautilus.api.util.parse_string module<a class="headerlink" href="#module-nautilus.api.util.parse_string" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="nautilus.api.util.parse_string.parse_string">
-<code class="descclassname">nautilus.api.util.parse_string.</code><code class="descname">parse_string</code><span class="sig-paren">(</span><em>query</em>, <em>resolver</em>, <em>connection_resolver</em>, <em>mutation_resolver</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/util/parse_string.html#parse_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.util.parse_string.parse_string" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nautilus.api.util.parse_string.</code><code class="descname">parse_string</code><span class="sig-paren">(</span><em>query</em>, <em>resolver</em>, <em>connection_resolver</em>, <em>mutation_resolver</em>, <em>current_user=None</em>, <em>obey_auth=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/util/parse_string.html#parse_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.util.parse_string.parse_string" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -227,7 +227,7 @@ graphql types</td>
 <span id="nautilus-api-util-walk-query-module"></span><h2>nautilus.api.util.walk_query module<a class="headerlink" href="#module-nautilus.api.util.walk_query" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="nautilus.api.util.walk_query.walk_query">
-<code class="descclassname">nautilus.api.util.walk_query.</code><code class="descname">walk_query</code><span class="sig-paren">(</span><em>obj</em>, <em>object_resolver</em>, <em>connection_resolver</em>, <em>errors</em>, <em>__naut_name=None</em>, <em>**filters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/util/walk_query.html#walk_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.util.walk_query.walk_query" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">nautilus.api.util.walk_query.</code><code class="descname">walk_query</code><span class="sig-paren">(</span><em>obj</em>, <em>object_resolver</em>, <em>connection_resolver</em>, <em>errors</em>, <em>current_user=None</em>, <em>__naut_name=None</em>, <em>obey_auth=True</em>, <em>**filters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/api/util/walk_query.html#walk_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.api.util.walk_query.walk_query" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function traverses a query and collects the corresponding
 information in a dictionary.</p>
 </dd></dl>

@@ -185,6 +185,12 @@
             <span class="s1">&#39;payload&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">serialized</span><span class="p">)</span>
         <span class="p">}</span></div>
 
+<div class="viewcode-block" id="query_action_type"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.query_action_type">[docs]</a><span class="k">def</span> <span class="nf">query_action_type</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This action type corresponds to an api query performed over the event system</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s1">&#39;api&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;query&#39;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="intialize_service_action"><a class="viewcode-back" href="../../../internals/nautilus.conventions.html#nautilus.conventions.actions.intialize_service_action">[docs]</a><span class="k">def</span> <span class="nf">intialize_service_action</span><span class="p">(</span><span class="n">all_services</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
     <span class="c1"># get the name of the service</span>

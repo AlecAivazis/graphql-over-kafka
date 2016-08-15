@@ -153,7 +153,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RequestHandler.post"><a class="viewcode-back" href="../../../../internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler.post">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_xsrf_cookie</span><span class="p">()</span></div>
+        <span class="c1"># self.check_xsrf_cookie()</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RequestHandler.options"><a class="viewcode-back" href="../../../../internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler.options">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">204</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div></div>

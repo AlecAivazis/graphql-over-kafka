@@ -204,15 +204,50 @@ of the system.</p>
 <dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">APIQueryHandler</span></code></p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="nautilus.services.apiGateway.APIGateway.auth_criteria">
+<code class="descname">auth_criteria</code><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.auth_criteria" title="Permalink to this definition">¶</a></dt>
+<dd><p>This attribute provides the mapping of services to their auth requirement</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the mapping from services to their auth requirements.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(dict)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.connection_resolver">
+<code class="descname">connection_resolver</code><span class="sig-paren">(</span><em>connection_name</em>, <em>object</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.connection_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.connection_resolver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="nautilus.services.apiGateway.APIGateway.init_routes">
 <code class="descname">init_routes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.init_routes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.init_routes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.mutation_resolver">
+<code class="descname">mutation_resolver</code><span class="sig-paren">(</span><em>mutation_name</em>, <em>args</em>, <em>fields</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.mutation_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.mutation_resolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>the default behavior for mutations is to look up the event,
+publish the correct event type with the args as the body,
+and return the fields contained in the result</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="nautilus.services.apiGateway.APIGateway.name">
 <code class="descname">name</code><em class="property"> = 'api'</em><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.object_resolver">
+<code class="descname">object_resolver</code><span class="sig-paren">(</span><em>object_name</em>, <em>fields</em>, <em>obey_auth=False</em>, <em>current_user=None</em>, <em>**filters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.object_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.object_resolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function resolves a given object in the remote backend services</p>
+</dd></dl>
 
 </dd></dl>
 

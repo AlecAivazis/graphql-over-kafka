@@ -89,7 +89,10 @@
 <li class="toctree-l2"><a class="reference internal" href="first_model.html">Keeping Track of Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Authentication</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authorizing-users-for-particular-pieces-of-data">Authorizing Users for Particular Pieces of Data</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture/index.html">Architecture</a></li>
@@ -146,7 +149,69 @@
             
   <div class="section" id="authentication">
 <h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>coming soon</p>
+<p>Like usual, the bulk of our cloud&#8217;s authentication logic lives within a
+separate service. Let&#8217;s begin by adding a new file to our directory
+called <code class="docutils literal"><span class="pre">auth.py</span></code> with the following contents:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">AuthService</span>
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:///passwords.db&#39;</span>
+
+<span class="k">class</span> <span class="nc">RecipeBookAuth</span><span class="p">(</span><span class="n">AuthService</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+</pre></div>
+</div>
+<p>We&#8217;ll also need a service to maintain user information (like their e-mails). So
+make a second file called <code class="docutils literal"><span class="pre">user.py</span></code> that resembles our other model services:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
+    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:///user.db&#39;</span>
+
+<span class="k">class</span> <span class="nc">UserService</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">ModelService</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">User</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
+</pre></div>
+</div>
+<p>These services provide what&#8217;s necessary for basic user authentication and
+registration. When a user interacts with a service like the API gateway or a
+client, they send a bit of information with every request that identifies
+them and indicates they are logged in. Therefore, the auth service needs to only
+be responsible for maintaining user passwords. Other bits of user information
+are stored in the other, less protected service.</p>
+<p>Go ahead and start both services (remember to create the databases). Navigate
+to the <code class="docutils literal"><span class="pre">/register</span></code> endpoint of the auth service and register an account for
+us to use. Log into the account you just made by entering the same credentials
+into the <code class="docutils literal"><span class="pre">/login</span></code> endpoint.</p>
+<p>Now we are ready to protect our data!</p>
+<div class="section" id="authorizing-users-for-particular-pieces-of-data">
+<h2>Authorizing Users for Particular Pieces of Data<a class="headerlink" href="#authorizing-users-for-particular-pieces-of-data" title="Permalink to this headline">¶</a></h2>
+<p>Regardless of your application, not all bits of information are inteded for
+everyone to see. Eventually you&#8217;ll want to be able to specify which users are
+able to see which entries in our api. Thankfully, hiding pieces of data based
+on the current user is easy in nautilus. Simply, add a function to the api
+decorated to match the service record. This function takes the user as an argument
+and returns true if the user can see the object and false if not. For example, say
+we had set up a relationship between recipes and users through another
+connection service with a relationship named &#8220;owner&#8221;. We could limit the results
+in the recipe query to only those written by the current user by changing our api
+service to look something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">API</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">APIGateway</span><span class="p">):</span>
+
+    <span class="nd">@nautilus.auth_criteria</span><span class="p">(</span><span class="s1">&#39;catPhoto&#39;</span><span class="p">)</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">auth_catPhoto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function returns True if the given user is able to view</span>
+<span class="sd">            this photo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">_has_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

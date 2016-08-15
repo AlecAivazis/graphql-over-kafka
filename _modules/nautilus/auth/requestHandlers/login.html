@@ -137,11 +137,13 @@
   <h1>Source code for nautilus.auth.requestHandlers.login</h1><div class="highlight"><pre>
 <span></span><span class="c1"># external imports</span>
 <span class="kn">import</span> <span class="nn">aiohttp_jinja2</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="c1"># local imports</span>
-<span class="c1"># from nautilus.network.util import query_service</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.api</span> <span class="kn">import</span> <span class="n">root_query</span>
+<span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">get_crud_action</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">AuthRequestHandler</span>
-<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">UserPassword</span>
 <span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">LoginForm</span>
+<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">UserPassword</span>
 
 <div class="viewcode-block" id="LoginHandler"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.login.LoginHandler">[docs]</a><span class="k">class</span> <span class="nc">LoginHandler</span><span class="p">(</span><span class="n">AuthRequestHandler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -150,6 +152,7 @@
 
     <span class="nd">@aiohttp_jinja2.template</span><span class="p">(</span><span class="s1">&#39;login.html&#39;</span><span class="p">)</span>
 <div class="viewcode-block" id="LoginHandler.get"><a class="viewcode-back" href="../../../../internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.login.LoginHandler.get">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">())</span>
         <span class="c1"># render an empty login form to the view</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">form</span><span class="o">=</span><span class="n">LoginForm</span><span class="p">())</span></div>
 
@@ -159,27 +162,22 @@
         <span class="kn">from</span> <span class="nn">nautilus.network.http.responses</span> <span class="kn">import</span> <span class="n">HTTPUnauthorized</span><span class="p">,</span> <span class="n">HTTPFound</span>
         <span class="c1"># make sure we do anything important</span>
         <span class="n">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
+
+        <span class="c1"># grab the post data from the request</span>
+        <span class="n">post_data</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">post</span><span class="p">()</span>
         <span class="c1"># createa a form from the request parameters</span>
-        <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">LoginForm</span><span class="p">(</span><span class="o">**</span><span class="n">post_data</span><span class="p">)</span>
+
         <span class="c1"># if we recieved valid information</span>
         <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate</span><span class="p">():</span>
             <span class="c1"># the form data</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">data</span>
             <span class="c1"># grab the given email</span>
-            <span class="n">supplied_email</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
-            <span class="n">supplied_password</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">supplied_email</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+            <span class="n">supplied_password</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
 
-            <span class="c1"># get the user with matching email</span>
-            <span class="n">user_data</span> <span class="o">=</span> <span class="n">query_service</span><span class="p">(</span>
-                <span class="n">service</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
-                <span class="n">fields</span><span class="o">=</span><span class="p">[</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;email&#39;</span><span class="p">,</span>
-                <span class="p">],</span>
-                <span class="n">filters</span><span class="o">=</span><span class="p">{</span>
-                    <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">supplied_email</span>
-                <span class="p">}</span>
-            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># find the matching user with the given email</span>
+            <span class="n">user_data</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matching_user</span><span class="p">(</span><span class="n">supplied_email</span><span class="p">)</span>
 
             <span class="c1"># look for a matching entry in the local database</span>
             <span class="n">passwordEntry</span> <span class="o">=</span> <span class="n">UserPassword</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
@@ -189,18 +187,47 @@
             <span class="c1"># if the given password matches the stored hash</span>
             <span class="k">if</span> <span class="n">passwordEntry</span> <span class="ow">and</span> <span class="n">passwordEntry</span><span class="o">.</span><span class="n">password</span> <span class="o">==</span> <span class="n">supplied_password</span><span class="p">:</span>
                 <span class="c1"># grab the redirect url from the url arguments</span>
-                <span class="n">redirect_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">arguments</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;next&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;/&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">redirect_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;next&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
                 <span class="c1"># redirect the user to the url parameter</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">HTTPFound</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">redirect_url</span><span class="p">)</span>
                 <span class="c1"># log in the user</span>
-                <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_user</span><span class="p">(</span><span class="n">user_data</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+                <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">login_user</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
                 <span class="c1"># return the response</span>
                 <span class="k">return</span> <span class="n">response</span>
 
         <span class="c1"># the username and password do not match</span>
         <span class="k">return</span> <span class="n">HTTPUnauthorized</span><span class="p">(</span>
             <span class="n">body</span><span class="o">=</span><span class="s2">&quot;Sorry, the username/password combination do not match.&quot;</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_get_matching_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">):</span>
+        <span class="c1"># the action type for a remote query</span>
+        <span class="n">read_action</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+        <span class="c1"># the query for matching entries</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            query {</span>
+<span class="s2">                </span><span class="si">%s</span><span class="s2">(email: &quot;</span><span class="si">%s</span><span class="s2">&quot;) {</span>
+<span class="s2">                    id</span>
+<span class="s2">                    email</span>
+<span class="s2">                }</span>
+<span class="s2">            }</span>
+<span class="s2">        &quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">root_query</span><span class="p">(),</span> <span class="n">uid</span><span class="p">)</span>
+
+        <span class="c1"># perform the query</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="n">read_action</span><span class="p">,</span>
+            <span class="n">payload</span><span class="o">=</span><span class="n">payload</span>
+        <span class="p">))</span>
+
+        <span class="c1"># if there are errors or no matching user</span>
+        <span class="k">if</span> <span class="n">user_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">root_query</span><span class="p">()])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># yell loudly</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not find matching user&quot;</span><span class="p">)</span>
+        <span class="c1"># otherwise there was a matching user</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># return the matching user record</span>
+            <span class="k">return</span> <span class="n">user_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">root_query</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span></div>
 </pre></div>
 
            </div>

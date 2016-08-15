@@ -201,6 +201,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># a dictionary to keep the question/answer correlation ids</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_outbound</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># if there is no loop assigned</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">:</span>
             <span class="c1"># use the current one</span>
@@ -254,12 +255,11 @@
 
         <span class="c1"># serialize the action type for the</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">serialize_action</span><span class="p">(</span><span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-
         <span class="c1"># send the message</span>
         <span class="k">return</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">channel</span><span class="p">,</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="KafkaBroker.ask"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.ask">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<div class="viewcode-block" id="KafkaBroker.ask"><a class="viewcode-back" href="../../../../../internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.ask">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># create a correlation id for the question</span>
         <span class="n">correlation_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span>
         <span class="c1"># make sure its unique</span>
@@ -273,9 +273,15 @@
         <span class="n">question_future</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">()</span>
         <span class="c1"># register the future&#39;s callback with the request handler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">question_future</span><span class="o">.</span><span class="n">set_result</span>
+        <span class="c1"># add the entry to the outbound dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pending_outbound</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_type</span>
 
         <span class="c1"># publish the question</span>
-        <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">correlation_id</span><span class="o">=</span><span class="n">correlation_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+            <span class="n">correlation_id</span><span class="o">=</span><span class="n">correlation_id</span><span class="p">,</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="n">action_type</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwds</span>
+        <span class="p">)</span>
 
         <span class="c1"># return the response</span>
         <span class="k">return</span> <span class="n">await</span> <span class="n">question_future</span></div>
@@ -294,12 +300,12 @@
 
             <span class="c1"># grab the next message</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="o">.</span><span class="n">getone</span><span class="p">()</span>
-
             <span class="c1"># parse the message as json</span>
             <span class="n">message</span> <span class="o">=</span> <span class="n">hydrate_action</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
             <span class="c1"># the correlation_id associated with this message</span>
             <span class="n">correlation_id</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">)</span>
-
+            <span class="c1"># the action type of the message</span>
+            <span class="n">action_type</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;action_type&#39;</span><span class="p">]</span>
             <span class="c1"># if there is a consumer pattern</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumer_pattern</span><span class="p">:</span>
                 <span class="c1"># if the action_type does not satisfy the pattern</span>
@@ -308,11 +314,14 @@
                     <span class="k">continue</span>
 
             <span class="c1"># if we know how to respond to this message</span>
-            <span class="k">if</span> <span class="n">correlation_id</span> <span class="ow">and</span> <span class="n">correlation_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">correlation_id</span> <span class="ow">and</span> <span class="n">correlation_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span> \
+                <span class="ow">and</span> <span class="n">action_type</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_outbound</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]:</span>
+
                 <span class="c1"># pass the message to the handler</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">](</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">])</span>
                 <span class="c1"># remove the entry in the handler dict</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request_handlers</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_outbound</span><span class="p">[</span><span class="n">correlation_id</span><span class="p">]</span>
 
             <span class="c1"># otherwise there was no correlation id, pass it along to the general handlers</span>
             <span class="k">else</span><span class="p">:</span>
@@ -326,7 +335,6 @@
                     <span class="n">props</span><span class="o">=</span><span class="n">message_props</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">message</span>
                 <span class="p">)</span></div>
-
 </pre></div>
 
            </div>
