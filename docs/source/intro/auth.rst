@@ -73,4 +73,4 @@ service to look something like:
                 This function returns True if the given user is able to view
                 this photo.
             """
-            return model.owner._has_id(user_id)
+            return await model.owner._has_id(user_id)
