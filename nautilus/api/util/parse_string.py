@@ -24,7 +24,6 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver, 
         # grab the first query with no name
         query = [query for query in queries if not query.name][0]
 
-
         # go to each selection set of the query
         for selection in query.selection_set.selections:
             # walk the selection and add it to the result
@@ -32,7 +31,6 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver, 
                 selection,
                 resolver,
                 connection_resolver,
-                mutation_resolver,
                 errors,
                 obey_auth=obey_auth,
             )

@@ -1,8 +1,8 @@
 # external imports
 import json
 import asyncio
-# from collections.abc import Iterable
 # local imports
+from nautilus.api.util import parse_string
 from nautilus.conventions.actions import query_action_type
 
 class GraphEntity:
@@ -18,12 +18,12 @@ class GraphEntity:
                 source = GraphEntity(model_type='CatPhoto', id=1)
 
                 # check if there is a user with id 5 associated with the photo
-                assert source.owner.foo(arg=2) == 5
+                assert 5 in source.owner.foo(arg=2)
     """
 
-    def __init__(self, event_broker, model_type=None, id=None, _api_path=None):
+    def __init__(self, service, model_type=None, id=None, _api_path=None):
         # save the event broker reference
-        self.event_broker = event_broker
+        self.service = service
 
         # if there is a source specification
         if model_type and id:
@@ -49,7 +49,7 @@ class GraphEntity:
             "args": {},
         })
         # return the entity so we can continue building the path
-        return GraphEntity(event_broker=self.event_broker, _api_path=self._api_path)
+        return GraphEntity(service=self.service, _api_path=self._api_path)
 
 
     @property
@@ -96,47 +96,67 @@ class GraphEntity:
         # set the args of the tail of the path to the given keywords
         self._api_path[-1]['args'] = kwds
         # return the entity so we can continue building the path
-        return GraphEntity(event_broker=self.event_broker, _api_path=self._api_path)
+        return GraphEntity(service=self.service, _api_path=self._api_path)
 
 
-    def __eq__(self, other):
+    async def _contains(self, entry):
         """
             Equality checks are overwitten to perform the actual check in a
             semantic way.
         """
-        # the current event loop
-        event_loop = asyncio.get_event_loop()
         # first perform the query associated with the entity
-        result = event_loop.run_until_complete(self.event_broker.ask(
-            action_type=query_action_type(),
-            payload=self._query,
-        ))
+        # result = await self.service.ask(
+        #     action_type=query_action_type(),
+        #     payload=self._query,
+        # )
+        result = await parse_string(
+            self._query,
+            self.service.object_resolver,
+            self.service.connection_resolver,
+            self.service.mutation_resolver,
+            obey_auth=False
+        )
         # go to the bottom of the result for the list of matching ids
-        return self._find_id(result, other)
+        return self._find_id(result['data'], entry)
 
 
     def _find_id(self, result, uid):
         """
             This method performs a depth-first search for the given uid in the dictionary of results.
         """
-        # if we've found the result
-        if result == uid:
-            # we're done
-            return True
+        # if the result is a list
+        if isinstance(result, list):
+            # if the list has a valid entry
+            if any([self._find_id(value, uid) for value in result]):
+                # then we're done
+                return True
 
-        # otherwise if there is a list to traverse
-        elif isinstance(result, list):
-            # go over the entries in the list and return true if there is a match
-            return any([self._find_id(item, uid) for item in result])
+        # otherwise results could be dictionaries
+        if isinstance(result, dict):
+            # the children of the result that are lists
+            list_children = [value for value in result.values() if isinstance(value, list)]
 
-        # otherwise the entry could be a dictionary
-        elif isinstance(result, dict):
-            # go over every item
-            for key, value in result.items():
+            # go to every value that is a list
+            for value in list_children:
                 # if the value is a match
                 if self._find_id(value, uid):
                     # we're done
                     return True
+
+            # the children of the result that are dicts
+            dict_children = [value for value in result.values() if isinstance(value, dict)]
+
+            # perform the check on every child that is a dict
+            for value in dict_children:
+                # if the child is a match
+                if self._find_id(value, uid):
+                    # we're done
+                    return True
+
+            # if there are no values that are lists and there is an id key
+            if not list_children and not dict_children and 'id' in result:
+                # we've found a match if the id field matches
+                return result['id'] == uid
 
         # we didn't find the result
         return False

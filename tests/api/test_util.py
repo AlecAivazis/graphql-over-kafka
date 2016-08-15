@@ -381,7 +381,7 @@ class TestUtil(unittest.TestCase):
         # make sure an exception is raised
         try:
             # try to make an empty one
-            GraphEntity(event_broker=Mock())
+            GraphEntity(service=Mock())
             # if we got here then we failed
             raise AssertionError("GraphEntity did not require a starting point.")
         # if an exception is raised
@@ -392,7 +392,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_maintains_source(self):
         # create a graph entity to test
-        entity = GraphEntity(event_broker=Mock(), model_type='user', id=1)
+        entity = GraphEntity(service=Mock(), model_type='user', id=1)
         # check that the source values match up
         assert entity._api_path == [{"name": "user", "args": {"id": 1}}], (
             "The source node of the graph entity did not match constructor arguments."
@@ -401,7 +401,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_can_build_path(self):
         # create a graph entity to test
-        entity = GraphEntity(event_broker=Mock(), model_type='user', id=1)
+        entity = GraphEntity(service=Mock(), model_type='user', id=1)
         # build a path to test
         assert entity.foo.bar._api_path == [
             {"name": "user", "args": {"id": 1}},
@@ -412,7 +412,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_can_build_path_with_args(self):
         # create a graph entity to test
-        entity = GraphEntity(event_broker=Mock(), model_type='user', id=1)
+        entity = GraphEntity(service=Mock(), model_type='user', id=1)
         # build a path to test
         assert entity.foo(bar="baz").bar._api_path == [
             {"name": "user", "args": {"id": 1}},
@@ -423,7 +423,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity_query(self):
         # the graph entity to test against
-        entity = GraphEntity(event_broker=Mock(), model_type="user", id=1).foo.bar(arg="2")
+        entity = GraphEntity(service=Mock(), model_type="user", id=1).foo.bar(arg="2")
         # parse the associated query
         parsed = graphql.parse(entity._query)
 
@@ -488,29 +488,42 @@ class TestUtil(unittest.TestCase):
 
     def test_graph_entity__find_id(self):
         # a graph entity to test with
-        entity = GraphEntity(event_broker=Mock(), model_type="user", id=1)
+        entity = GraphEntity(service=Mock(), model_type="user", id=1)
         # the result to test against
         result = {
             'user': {
-                'foo': {
-                    'bar': [1,2,3]
+                'foo': [
+                    {'id': 1}
+                ],
+                'bar': {
+                    'id': 7,
+                    'baz': [
+                        {'id': 5}
+                    ]
                 },
-                'baz': 6
+                'baz': {
+                    'id': 8,
+                    'bing': []
+                }
             }
         }
         # make sure it can find the number 1 in the list
         assert entity._find_id(result, 1), (
-            "Could not find id in GraphEntity list result."
+            "Could not find id in GraphEntity result."
         )
-
-        # make sure it can find the number 6 as a key value
-        assert entity._find_id(result, 6), (
-            "Could not find id in GraphEntity dict result."
+        # make sure it can find the number 1 in the list
+        assert entity._find_id(result, 5), (
+            "Could not find id in GraphEntity result."
         )
 
         # make sure we don't have any false positives
         assert not entity._find_id(result, 7), (
             "Encountered false positive in GraphEntity._find_id."
+        )
+
+        # make sure we don't have any false positives
+        assert not entity._find_id(result, 8), (
+            "Encountered a complicated false positive in GraphEntity._find_id."
         )
 
 

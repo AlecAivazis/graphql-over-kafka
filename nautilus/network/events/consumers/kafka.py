@@ -120,7 +120,6 @@ class KafkaBroker:
 
         # serialize the action type for the
         message = serialize_action(action_type=action_type, payload=payload, **kwds)
-
         # send the message
         return await self._producer.send(channel, message.encode())
 
@@ -166,14 +165,12 @@ class KafkaBroker:
 
             # grab the next message
             msg = await self._consumer.getone()
-
             # parse the message as json
             message = hydrate_action(msg.value.decode())
             # the correlation_id associated with this message
             correlation_id = message.get('correlation_id')
             # the action type of the message
             action_type = message['action_type']
-
             # if there is a consumer pattern
             if self.consumer_pattern:
                 # if the action_type does not satisfy the pattern
@@ -203,4 +200,3 @@ class KafkaBroker:
                     props=message_props,
                     **message
                 )
-

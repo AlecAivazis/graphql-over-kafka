@@ -19,7 +19,7 @@ class APIActionHandler(ActionHandler):
         # the combined handler
         handler = combine_action_handlers(
             # handle event-based queries
-            query_handler,
+            # query_handler,
             # build the schema of possible services
             flexible_api_handler
         )

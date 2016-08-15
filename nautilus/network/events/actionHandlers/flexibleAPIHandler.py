@@ -22,7 +22,6 @@ async def flexible_api_handler(service, action_type, payload, props, **kwds):
 
         # if the model is a connection
         if 'connection' in model:
-
             # if we haven't seen the connection before
             if not [conn for conn in connections if conn['name'] == model['name']]:
                 # add it to the list

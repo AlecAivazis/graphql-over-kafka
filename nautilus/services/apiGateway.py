@@ -1,6 +1,7 @@
 # external imports
 import aiohttp_cors
 from collections.abc import Callable
+from collections import defaultdict
 import json
 import functools
 # local imports
@@ -13,6 +14,7 @@ from nautilus.conventions.api import root_query
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.api.util import query_for_model
 from .service import Service
+from nautilus.api.util import GraphEntity
 from nautilus.api.util import parse_string
 from nautilus.api.endpoints import (
     GraphiQLRequestHandler,
@@ -42,6 +44,7 @@ class APIGateway(Service):
     name = api_gateway_name()
     api_request_handler_class = api_query.APIQueryHandler
     action_handler = api_handler.APIActionHandler
+    _external_service_data = defaultdict(list)
 
     def __init__(self, *args, **kwds):
         # bubble up
@@ -168,6 +171,7 @@ class APIGateway(Service):
             action_type=action_type,
             payload=query
         )
+
         # treat the reply like a json object
         response_data = json.loads(response)
 
@@ -180,17 +184,29 @@ class APIGateway(Service):
         result = response_data['data'][root_query()]
 
         # grab the auth handler for the object
-        auth_criteria = self.auth_criteria.get(object_name, lambda **_: True)
+        auth_criteria = self.auth_criteria.get(object_name)
 
-        # the current user
-        # user = await self.get_current_user()
+        # if we care about auth requirements and there is one for this object
+        if obey_auth and auth_criteria:
+            # build a second list of authorized entries
+            authorized_results = []
 
-        # user = 'hello'
-        # # partially assign the user to the auth handler
-        # auth_handler = functools.partial(auth_criteria, user=user)
+            # get the current user
+            user = 1
 
-        # otherwise it was a successful query so return the result
-        # return filter(auth_handler, result)
+            # for each query result
+            for query_result in result:
+                # create a graph entity for the model
+                graph_entity = GraphEntity(self, model_type=object_name, id=query_result['pk'])
+                # if the auth handler passes
+                if await auth_criteria(model=graph_entity, user_id=user):
+                    # add the result to the final list
+                    authorized_results.append(query_result)
+
+            # overwrite the query result
+            result = authorized_results
+
+        # apply the auth handler to the result
         return result
 
 
