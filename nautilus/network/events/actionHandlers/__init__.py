@@ -5,6 +5,7 @@ from .deleteHandler import delete_handler
 from .readHandler import read_handler
 from .rollCallHandler import roll_call_handler
 from .queryHandler import query_handler
+from .flexibleAPIHandler import flexible_api_handler
 
 async def noop_handler(action_type, payload, dispatcher=None):
     return
