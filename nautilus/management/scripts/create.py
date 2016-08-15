@@ -30,6 +30,7 @@ def model(model_names):
         render_template(template='common', context=context)
         render_template(template='model', context=context)
 
+
 @click.command()
 def api():
     """
@@ -42,6 +43,21 @@ def api():
 
     render_template(template='common', context=context)
     render_template(template='api', context=context)
+
+
+@click.command()
+def auth():
+    """
+        Create the folder/directories for an Auth service.
+    """
+    # the template context
+    context = {
+        'name': 'auth',
+    }
+
+    render_template(template='common', context=context)
+    render_template(template='auth', context=context)
+
 
 @click.command()
 @click.argument('model_connections', nargs=-1)
@@ -74,3 +90,4 @@ def connection(model_connections):
 create.add_command(api)
 create.add_command(connection)
 create.add_command(model)
+create.add_command(auth)

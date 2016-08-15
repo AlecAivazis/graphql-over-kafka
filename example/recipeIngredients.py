@@ -11,3 +11,9 @@ class Ingredients(ConnectionService):
     from_service = ('Recipe',)
 
     config = ServiceConfig
+
+# create a service manager to run the service
+manager = ServiceManager(Ingredients)
+
+if __name__ == '__main__':
+    manager.run()

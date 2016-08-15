@@ -1,5 +1,4 @@
 # external imports
 import nautilus
 
-class {{name.title()}}(nautilus.APIGateway):
-    schema = schema
+class {{name.title()}}Service(nautilus.APIGateway): pass

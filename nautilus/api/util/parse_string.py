@@ -3,7 +3,7 @@ from graphql import parse
 # local imports
 from .walk_query import walk_query
 
-async def parse_string(query, resolver, connection_resolver, mutation_resolver):
+async def parse_string(query, resolver, connection_resolver, mutation_resolver, current_user=None, obey_auth=True):
     # start off with an empty dictionary
     result = {}
     # collect the errors in a list
@@ -24,11 +24,17 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver):
         # grab the first query with no name
         query = [query for query in queries if not query.name][0]
 
-
         # go to each selection set of the query
         for selection in query.selection_set.selections:
             # walk the selection and add it to the result
-            query_result[selection.name.value] = await walk_query(selection, resolver, connection_resolver, mutation_resolver, errors)
+            query_result[selection.name.value] = await walk_query(
+                selection,
+                resolver,
+                connection_resolver,
+                errors,
+                obey_auth=obey_auth,
+                current_user=current_user
+            )
 
         # add the query result to the final result
         result['data'] = query_result

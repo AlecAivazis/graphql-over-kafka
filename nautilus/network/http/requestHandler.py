@@ -18,7 +18,8 @@ class RequestHandler(web.View):
     """
 
     async def post(self):
-        self.check_xsrf_cookie()
+        # self.check_xsrf_cookie()
+        pass
 
     async def options(self):
         return web.Response(status=204, body=b'')

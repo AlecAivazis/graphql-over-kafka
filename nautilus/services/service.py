@@ -20,7 +20,7 @@ from nautilus.conventions.actions import intialize_service_action
 
 # enable uvloop for increased performance
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
+# asyncio.get_event_loop().set_debug(True)
 
 class ServiceMetaClass(type):
     def __init__(cls, name, bases, attributes):
@@ -142,7 +142,7 @@ class Service(metaclass=ServiceMetaClass):
         self.app = aiohttp.web.Application(
             middlewares=[
                 session_middleware(
-                    EncryptedCookieStorage(secret_key)
+                    EncryptedCookieStorage(secret_key, secure=True, domain='*')
                 )
             ]
         )
@@ -181,6 +181,8 @@ class Service(metaclass=ServiceMetaClass):
     def init_routes(self):
         # for each route that was registered
         for route in self._routes:
+            # add the service instance to the route handler
+            route['request_handler'].service = self
             # add the corresponding http endpoint
             self.add_http_endpoint(**route)
 
@@ -196,12 +198,10 @@ class Service(metaclass=ServiceMetaClass):
 
 
     def init_action_handler(self):
-        # if the service was provided an action handler
-        if self.action_handler:
-            # create a wrapper for it
-            self.event_broker = self.action_handler()
-            # pass the service to the event broker
-            self.event_broker.service = self
+        # create a wrapper for it
+        self.event_broker = self.action_handler()
+        # pass the service to the event broker
+        self.event_broker.service = self
 
 
     def run(self, host="localhost", port=8000, shutdown_timeout=60.0, **kwargs):
@@ -321,6 +321,7 @@ class Service(metaclass=ServiceMetaClass):
                             return self.finish('hello world')
         """
         def decorator(wrapped_class, **kwds):
+
             # add the endpoint at the given route
             cls._routes.append(
                 dict(url=route, request_handler=wrapped_class)

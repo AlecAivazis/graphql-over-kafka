@@ -7,6 +7,6 @@ from ..{{service}} import {{service.title()}}Service{% endfor %}
 class ServiceConfig:
     database_url = 'sqlite:////tmp/{{name}}.db'
 
-class {{name.title()}}(nautilus.ConnectionService):
+class {{name.title()}}Service(nautilus.ConnectionService):
     services = [{% for service in services %}{{service}}_service,{% endfor %}]
     config = ServiceConfig

@@ -29,7 +29,6 @@ def read_handler(Model, name=None, **kwds):
 
                 # resolve the query using the service schema
                 resolved = service.schema.execute(payload)
-
                 # create the string response
                 response = json.dumps({
                     'data': {key:value for key,value in resolved.data.items()},
