@@ -142,7 +142,7 @@ class Service(metaclass=ServiceMetaClass):
         self.app = aiohttp.web.Application(
             middlewares=[
                 session_middleware(
-                    EncryptedCookieStorage(secret_key)
+                    EncryptedCookieStorage(secret_key, secure=True, domain='*')
                 )
             ]
         )

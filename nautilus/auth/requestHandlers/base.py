@@ -13,8 +13,14 @@ class AuthRequestHandler(RequestHandler):
         """
         # grab the current session
         session = await get_session(self.request)
-        # add the user to the session
-        return session[self._token_name]
+
+        try:
+            # add the user to the session
+            return session[self._token_name]
+        # if the user is not logged in yet
+        except KeyError:
+            # there isn't a current user
+            return None
 
 
     async def login_user(self, user):

@@ -122,7 +122,7 @@ class APIGateway(Service):
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
 
 
-    async def object_resolver(self, object_name, fields, obey_auth=False, **filters):
+    async def object_resolver(self, object_name, fields, obey_auth=False, current_user=None, **filters):
         """
             This function resolves a given object in the remote backend services
         """
@@ -188,18 +188,16 @@ class APIGateway(Service):
 
         # if we care about auth requirements and there is one for this object
         if obey_auth and auth_criteria:
+
             # build a second list of authorized entries
             authorized_results = []
-
-            # get the current user
-            user = 1
 
             # for each query result
             for query_result in result:
                 # create a graph entity for the model
                 graph_entity = GraphEntity(self, model_type=object_name, id=query_result['pk'])
                 # if the auth handler passes
-                if await auth_criteria(model=graph_entity, user_id=user):
+                if await auth_criteria(model=graph_entity, user_id=current_user):
                     # add the result to the final list
                     authorized_results.append(query_result)
 

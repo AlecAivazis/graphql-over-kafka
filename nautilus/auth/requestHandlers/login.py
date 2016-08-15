@@ -15,6 +15,7 @@ class LoginHandler(AuthRequestHandler):
 
     @aiohttp_jinja2.template('login.html')
     async def get(self):
+        print(await self.get_current_user())
         # render an empty login form to the view
         return dict(form=LoginForm())
 

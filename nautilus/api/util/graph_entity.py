@@ -99,25 +99,28 @@ class GraphEntity:
         return GraphEntity(service=self.service, _api_path=self._api_path)
 
 
-    async def _contains(self, entry):
+    async def _has_id(self, *args, **kwds):
         """
             Equality checks are overwitten to perform the actual check in a
             semantic way.
         """
-        # first perform the query associated with the entity
-        # result = await self.service.ask(
-        #     action_type=query_action_type(),
-        #     payload=self._query,
-        # )
-        result = await parse_string(
-            self._query,
-            self.service.object_resolver,
-            self.service.connection_resolver,
-            self.service.mutation_resolver,
-            obey_auth=False
-        )
-        # go to the bottom of the result for the list of matching ids
-        return self._find_id(result['data'], entry)
+        # if there is only one positional argument
+        if len(args) == 1:
+            # parse the appropriate query
+            result = await parse_string(
+                self._query,
+                self.service.object_resolver,
+                self.service.connection_resolver,
+                self.service.mutation_resolver,
+                obey_auth=False
+            )
+            # go to the bottom of the result for the list of matching ids
+            return self._find_id(result['data'], args[0])
+        # otherwise
+        else:
+            # treat the attribute like a normal filter
+            return self._has_id(**kwds)
+
 
 
     def _find_id(self, result, uid):
@@ -155,8 +158,10 @@ class GraphEntity:
 
             # if there are no values that are lists and there is an id key
             if not list_children and not dict_children and 'id' in result:
-                # we've found a match if the id field matches
-                return result['id'] == uid
+                # the value of the remote id field
+                result_id = result['id']
+                # we've found a match if the id field matches (cast to match type)
+                return result_id == type(result_id)(uid)
 
         # we didn't find the result
         return False

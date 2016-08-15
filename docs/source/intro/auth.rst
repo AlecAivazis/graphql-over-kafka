@@ -59,18 +59,18 @@ on the current user is easy in nautilus. Simply, add a function to the api
 decorated to match the service record. This function takes the user as an argument
 and returns true if the user can see the object and false if not. For example, say
 we had set up a relationship between recipes and users through another
-connection service. We could limit the results in the recipe query to only
-those written by the current user by changing our api service to
-look something like:
+connection service with a relationship named "owner". We could limit the results
+in the recipe query to only those written by the current user by changing our api
+service to look something like:
 
 .. code-block:: python
 
     class API(nautilus.APIGateway):
 
-        @nautilus.auth_criteria('CatPhoto')
-        def auth_catPhoto(self, model, user):
+        @nautilus.auth_criteria('catPhoto')
+        async def auth_catPhoto(self, model, user_id):
             """
                 This function returns True if the given user is able to view
                 this photo.
             """
-            return model.owner == user
+            return model.owner._has_id(user_id)

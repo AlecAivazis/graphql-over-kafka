@@ -3,7 +3,7 @@ from graphql import parse
 # local imports
 from .walk_query import walk_query
 
-async def parse_string(query, resolver, connection_resolver, mutation_resolver, obey_auth=True):
+async def parse_string(query, resolver, connection_resolver, mutation_resolver, current_user=None, obey_auth=True):
     # start off with an empty dictionary
     result = {}
     # collect the errors in a list
@@ -33,6 +33,7 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver, 
                 connection_resolver,
                 errors,
                 obey_auth=obey_auth,
+                current_user=current_user
             )
 
         # add the query result to the final result

@@ -54,7 +54,8 @@ class APIQueryHandler(GraphQLRequestHandler):
             query,
             self.service.object_resolver,
             self.service.connection_resolver,
-            self.service.mutation_resolver
+            self.service.mutation_resolver,
+            current_user=await self.get_current_user(),
         )
 
         # pass the result to the request
