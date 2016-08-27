@@ -59,7 +59,7 @@ class APIQueryHandler(GraphQLRequestHandler):
                 'loginUser': self.service.login_user,
                 'registerUser': self.service.register_user
             },
-            current_user=await self.get_current_user(),
+            # current_user=await self.get_current_user(),
         )
 
         # pass the result to the request

@@ -348,17 +348,6 @@ class TestUtil(unittest.TestCase):
         )
 
 
-    def test_arg_string_from_dict(self):
-        # the filters to test
-        filters = {
-            'foo': 1,
-            'bar': '2'
-        }
-        assert arg_string_from_dict(filters) == 'foo: 1, bar: "2"', (
-            "Could not compute arg string from dict"
-        )
-
-
     def test_serialize_native_type(self):
         # make sure it converts a native string to 'String'
         import nautilus.models.fields as fields

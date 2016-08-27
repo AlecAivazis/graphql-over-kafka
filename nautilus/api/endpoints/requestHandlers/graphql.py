@@ -1,10 +1,9 @@
 import json
 from graphql.error import format_error as format_graphql_error
 # local imports
-from nautilus.auth import AuthRequestHandler
-from nautilus.network.http import Response
+from nautilus.network.http import Response, RequestHandler
 
-class GraphQLRequestHandler(AuthRequestHandler):
+class GraphQLRequestHandler(RequestHandler):
 
     async def get(self):
 

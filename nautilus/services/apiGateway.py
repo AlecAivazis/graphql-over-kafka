@@ -13,6 +13,7 @@ from nautilus.conventions.services import api_gateway_name
 from nautilus.conventions.actions import roll_call_type
 from nautilus.conventions.actions import get_crud_action
 from nautilus.conventions.api import root_query
+from nautilus.auth.util import generate_session_token, read_session_token
 from nautilus.api.endpoints import static_dir as api_endpoint_static
 from nautilus.api.util import query_for_model, arg_string_from_dict
 from .service import Service
@@ -58,7 +59,6 @@ class APIGateway(Service):
         # do any sort of database setup
         self.init_db()
         # make sure there is a valid secret key
-        # self.validate_secret_key()
 
 
     def init_db(self):
@@ -160,10 +160,12 @@ class APIGateway(Service):
 
         # if the given password matches the stored hash
         if passwordEntry and passwordEntry.password == password:
+            # the remote entry for the user
+            user = user_data[root_query()][0]
             # then return a dictionary with the user and sessionToken
             return {
-                'user': user_data[root_query()][0],
-                'sessionToken': None
+                'user': user,
+                'sessionToken': self._user_session_token(user)
             }
 
         # otherwise the passwords don't match
@@ -178,9 +180,9 @@ class APIGateway(Service):
                 uid (str): The
         """
         # so make one
-        response_data = await self._create_remote_user(password=password, **kwds)
+        user = await self._create_remote_user(password=password, **kwds)
         # the query to find a matching query
-        match_query = self.model.user == response_data['id']
+        match_query = self.model.user == user['id']
 
         # if the user has already been registered
         if self.model.select().where(match_query).count() > 0:
@@ -188,15 +190,15 @@ class APIGateway(Service):
             raise RuntimeError('The user is already registered.')
 
         # create an entry in the user password table
-        password = self.model(user=response_data['id'], password=password)
+        password = self.model(user=user['id'], password=password)
 
         # save it to the database
         password.save()
 
         # return a dictionary with the user we created and a session token for later use
         return {
-            'user': response_data,
-            'sessionToken': None
+            'user': user,
+            'sessionToken': self._user_session_token(user)
         }
 
 
@@ -284,6 +286,16 @@ class APIGateway(Service):
 
         # apply the auth handler to the result
         return result
+
+
+    def user_session(self, user):
+        """
+            This method handles what information the api gateway stores about
+            a particular user in their session.
+        """
+        return {
+            'id': user['pk']
+        }
 
 
     async def connection_resolver(self, connection_name, object):
@@ -378,6 +390,17 @@ class APIGateway(Service):
         return [self.model]
 
     ## internal utilities
+
+    def _user_session_token(self, user):
+        # grab the session for this particular user
+        user_session = self.user_session(user)
+        # return the token signed by the services secret key
+        return generate_session_token(self.secret_key, **user_session)
+
+    def _read_session_token(self, token):
+        # make sure the token is valid while we're at it
+        return read_session_token(self.secret_key)
+
 
     async def _get_matching_user(self, fields=[], **filters):
         # the action type for a remote query

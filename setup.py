@@ -27,15 +27,13 @@ setup(
         'bcrypt',
         'click',
         'cryptography',
-        'tornado',
         'peewee',
         'graphene',
         'jinja2',
         'nose2',
-        'pika',
         'python-consul',
         'pytest',
+        'PyJWT',
         'uvloop',
-        'wtforms',
     ]
 )
