@@ -2,11 +2,7 @@
 from .service import Service
 import nautilus
 from nautilus.conventions.services import auth_service_name
-from nautilus.auth.requestHandlers import (
-    LoginHandler,
-    LogoutHandler,
-    RegisterHandler,
-)
+
 
 
 class AuthService(Service):
@@ -53,11 +49,3 @@ class AuthService(Service):
     def get_models(self):
         return [nautilus.auth.models.UserPassword]
 
-@AuthService.route('/login')
-class Login(LoginHandler): pass
-
-@AuthService.route('/logout')
-class Logout(LogoutHandler): pass
-
-@AuthService.route('/register')
-class Register(RegisterHandler): pass
