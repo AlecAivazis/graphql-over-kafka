@@ -23,6 +23,7 @@ from nautilus.api.util import (
     build_native_type_dictionary,
     serialize_native_type,
     query_for_model,
+    arg_string_from_dict,
     GraphEntity
 )
 
@@ -344,6 +345,17 @@ class TestUtil(unittest.TestCase):
         # make sure it converts String to the correct class
         assert convert_typestring_to_api_native('String') == graphene.String, (
             "Could not convert String to native representation."
+        )
+
+
+    def test_arg_string_from_dict(self):
+        # the filters to test
+        filters = {
+            'foo': 1,
+            'bar': '2'
+        }
+        assert arg_string_from_dict(filters) == 'foo: 1, bar: "2"', (
+            "Could not compute arg string from dict"
         )
 
 

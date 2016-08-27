@@ -24,8 +24,10 @@ following contents:
 
     # external imports
     from nautilus import APIGateway, ServiceManager
+    from nauitilus.auth.util import generate_secret_key
 
-    class CatPhotoAPI(APIGateway): pass
+    class CatPhotoAPI(APIGateway):
+        secret_key = generate_secret_key()
 
     manager = ServiceManager(service)
 

@@ -1,22 +1,9 @@
 Authentication
 ===============
 
-Like usual, the bulk of our cloud's authentication logic lives within a
-separate service. Let's begin by adding a new file to our directory
-called ``auth.py`` with the following contents:
-
-.. code-block:: python
-
-    from nautilus import AuthService
-
-    class ServiceConfig:
-        database_url = 'sqlite:///passwords.db'
-
-    class RecipeBookAuth(AuthService):
-        config = ServiceConfig
-
-We'll also need a service to maintain user information (like their e-mails). So
-make a second file called ``user.py`` that resembles our other model services:
+Before we begin restricting bits of our api to particular users, we  need a service to
+maintain user information (like their e-mails). So make a second file called ``user.py``
+that resembles our other model services:
 
 .. code-block:: python
 
@@ -34,17 +21,43 @@ make a second file called ``user.py`` that resembles our other model services:
         config = ServiceConfig
 
 
-These services provide what's necessary for basic user authentication and
-registration. When a user interacts with a service like the API gateway or a
-client, they send a bit of information with every request that identifies
-them and indicates they are logged in. Therefore, the auth service needs to only
-be responsible for maintaining user passwords. Other bits of user information
-are stored in the other, less protected service.
+Validating / Providing Credentials
+-----------------------------------
 
-Go ahead and start both services (remember to create the databases). Navigate
-to the ``/register`` endpoint of the auth service and register an account for
-us to use. Log into the account you just made by entering the same credentials
-into the ``/login`` endpoint.
+Along with queries and mutations corresponding to our remote services, the api
+gateway also provides a few mutations for validating user credentials and
+registering new users. In order to register a user, visit a running api gateway
+and send the following query:
+
+.. code-block::
+
+    mutation {
+        registerUser(email:"foo", password:"bar") {
+            user {
+                id
+            }
+            sessionToken
+        }
+    }
+
+Assuming the user information is valid, the gateway should reply with the requested
+information of the new user as well as a token that reqeusts that require authentication
+provide.
+
+The next time the user tries to access your application, they will probably need to
+provide their credentials a second time. In order to validate those, the api
+gateway provides another mutation for logging users in:
+
+..code-block::
+
+    mutation {
+        loginUser(email:"foo", password:"bar") {
+            user {
+                id
+            }
+            sessionToken
+        }
+    }
 
 Now we are ready to protect our data!
 

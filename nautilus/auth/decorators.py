@@ -1,7 +1,6 @@
 # internal imports
 from nautilus.conventions.auth import cookie_name # this fixes a circular reference......
 
-
 def auth_criteria(service):
     """
         This decorator marks the function as the auth specifacation for a

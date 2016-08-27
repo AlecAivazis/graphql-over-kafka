@@ -55,6 +55,10 @@ class APIQueryHandler(GraphQLRequestHandler):
             self.service.object_resolver,
             self.service.connection_resolver,
             self.service.mutation_resolver,
+            extra_mutations={
+                'loginUser': self.service.login_user,
+                'registerUser': self.service.register_user
+            },
             current_user=await self.get_current_user(),
         )
 

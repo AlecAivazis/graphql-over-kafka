@@ -1,10 +1,10 @@
-import json
+from .arg_string_from_dict import arg_string_from_dict
 
 def query_for_model(fields, **filters):
     # if there are filters
     if filters:
         # the string for the filters
-        filter_string = "(%s)" % ",".join("{}: {}".format(key, json.dumps(value)) for key,value in filters.items())
+        filter_string = "(%s)" % arg_string_from_dict(filters)
     else:
         filter_string = ''
 
