@@ -6,6 +6,7 @@
 import click
 # local imports
 from ..util import render_template
+from nautilus.auth.util import random_string
 
 
 @click.group()
@@ -39,6 +40,7 @@ def api():
     # the template context
     context = {
         'name': 'api',
+        'secret_key': random_string(32)
     }
 
     render_template(template='common', context=context)

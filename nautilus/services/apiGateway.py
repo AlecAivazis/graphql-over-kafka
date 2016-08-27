@@ -146,7 +146,7 @@ class APIGateway(Service):
             This function handles the registration of the given user credentials in the database
         """
         # find the matching user with the given email
-        user_data = (await self._get_matching_user(**kwds))['data']
+        user_data = (await self._get_matching_user(fields=list(kwds.keys()), **kwds))['data']
         try:
             # look for a matching entry in the local database
             passwordEntry = self.model.select().where(
@@ -181,6 +181,11 @@ class APIGateway(Service):
         """
         # so make one
         user = await self._create_remote_user(password=password, **kwds)
+        # if there is no pk field
+        if not 'pk' in user:
+            # make sure the user has a pk field
+            user['pk'] = user['id']
+
         # the query to find a matching query
         match_query = self.model.user == user['id']
 
@@ -397,9 +402,10 @@ class APIGateway(Service):
         # return the token signed by the services secret key
         return generate_session_token(self.secret_key, **user_session)
 
+
     def _read_session_token(self, token):
         # make sure the token is valid while we're at it
-        return read_session_token(self.secret_key)
+        return read_session_token(self.secret_key, token)
 
 
     async def _get_matching_user(self, fields=[], **filters):
