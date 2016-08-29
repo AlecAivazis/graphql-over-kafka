@@ -166,7 +166,7 @@ class TestUtil(unittest.TestCase):
             ]
         }
 
-        assert _stringify_dicts(target['fields']) == _stringify_dicts(summarized['fields']), (
+        assert sort_dict(target['fields']) == sort_dict(summarized['fields']), (
             "Internal summary utility did not return the right object"
         )
 
@@ -176,6 +176,5 @@ def _graphql_type_string(value):
     return type(convert_peewee_field(value)).__name__
 
 
-def _stringify_dicts(list_of_dicts):
-    import json
-    return {json.dumps(obj) for obj in sorted(list_of_dicts, key = lambda entry: entry['name'])}
+def sort_dict(list_of_dicts):
+    return sorted(list_of_dicts, key = lambda entry: entry['name'])
