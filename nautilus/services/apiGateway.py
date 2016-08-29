@@ -5,14 +5,17 @@ from collections import defaultdict
 import json
 import functools
 # local imports
+from nautilus.auth.models import UserPassword
+import nautilus.database
 import nautilus.api.endpoints.requestHandlers.apiQuery as api_query
 import nautilus.network.events.consumers.api as api_handler
 from nautilus.conventions.services import api_gateway_name
 from nautilus.conventions.actions import roll_call_type
 from nautilus.conventions.actions import get_crud_action
 from nautilus.conventions.api import root_query
+from nautilus.auth.util import generate_session_token, read_session_token
 from nautilus.api.endpoints import static_dir as api_endpoint_static
-from nautilus.api.util import query_for_model
+from nautilus.api.util import query_for_model, arg_string_from_dict
 from .service import Service
 from nautilus.api.util import GraphEntity
 from nautilus.api.util import parse_string
@@ -42,15 +45,31 @@ class APIGateway(Service):
                     schema = schema
     """
     name = api_gateway_name()
+    model = UserPassword
     api_request_handler_class = api_query.APIQueryHandler
     action_handler = api_handler.APIActionHandler
     _external_service_data = defaultdict(list)
+    secret_key = None
 
     def __init__(self, *args, **kwds):
         # bubble up
         super().__init__(*args, **kwds)
         # attach this service to the action handler
         self.action_handler.service = self
+        # do any sort of database setup
+        self.init_db()
+        # make sure there is a valid secret key
+
+
+    def init_db(self):
+        """
+            This function configures the database used for models to make
+            the configuration parameters.
+        """
+        # get the database url from the configuration
+        db_url = self.config.get('database_url', 'sqlite:///passwords.db')
+        # configure the nautilus database to the url
+        nautilus.database.init_db(db_url)
 
 
     # when its time for the service to announce itself
@@ -120,6 +139,72 @@ class APIGateway(Service):
         self.app.router.add_static('/graphiql/static/', api_endpoint_static)
         # add the graphiql endpoint
         self.add_http_endpoint('/graphiql', GraphiQLRequestHandler)
+
+
+    async def login_user(self, password, **kwds):
+        """
+            This function handles the registration of the given user credentials in the database
+        """
+        # find the matching user with the given email
+        user_data = (await self._get_matching_user(fields=list(kwds.keys()), **kwds))['data']
+        try:
+            # look for a matching entry in the local database
+            passwordEntry = self.model.select().where(
+                self.model.user == user_data[root_query()][0]['pk']
+            )[0]
+        # if we couldn't acess the id of the result
+        except (KeyError, IndexError) as e:
+            # yell loudly
+            raise RuntimeError('Could not find matching registered user')
+
+
+        # if the given password matches the stored hash
+        if passwordEntry and passwordEntry.password == password:
+            # the remote entry for the user
+            user = user_data[root_query()][0]
+            # then return a dictionary with the user and sessionToken
+            return {
+                'user': user,
+                'sessionToken': self._user_session_token(user)
+            }
+
+        # otherwise the passwords don't match
+        raise RuntimeError("Incorrect credentials")
+
+
+    async def register_user(self, password, **kwds):
+        """
+            This function is used to provide a sessionToken for later requests.
+
+            Args:
+                uid (str): The
+        """
+        # so make one
+        user = await self._create_remote_user(password=password, **kwds)
+        # if there is no pk field
+        if not 'pk' in user:
+            # make sure the user has a pk field
+            user['pk'] = user['id']
+
+        # the query to find a matching query
+        match_query = self.model.user == user['id']
+
+        # if the user has already been registered
+        if self.model.select().where(match_query).count() > 0:
+            # yell loudly
+            raise RuntimeError('The user is already registered.')
+
+        # create an entry in the user password table
+        password = self.model(user=user['id'], password=password)
+
+        # save it to the database
+        password.save()
+
+        # return a dictionary with the user we created and a session token for later use
+        return {
+            'user': user,
+            'sessionToken': self._user_session_token(user)
+        }
 
 
     async def object_resolver(self, object_name, fields, obey_auth=False, current_user=None, **filters):
@@ -208,6 +293,16 @@ class APIGateway(Service):
         return result
 
 
+    def user_session(self, user):
+        """
+            This method handles what information the api gateway stores about
+            a particular user in their session.
+        """
+        return {
+            'id': user['pk']
+        }
+
+
     async def connection_resolver(self, connection_name, object):
 
         try:
@@ -290,4 +385,84 @@ class APIGateway(Service):
             raise RuntimeError(value)
 
 
+    def get_models(self):
+        """
+            Returns the models managed by this service.
 
+            Returns:
+                (list): the models managed by the service
+        """
+        return [self.model]
+
+    ## internal utilities
+
+    def _user_session_token(self, user):
+        # grab the session for this particular user
+        user_session = self.user_session(user)
+        # return the token signed by the services secret key
+        return generate_session_token(self.secret_key, **user_session)
+
+
+    def _read_session_token(self, token):
+        # make sure the token is valid while we're at it
+        return read_session_token(self.secret_key, token)
+
+
+    async def _get_matching_user(self, fields=[], **filters):
+        # the action type for a remote query
+        read_action = get_crud_action(method='read', model='user')
+        # the fields of the user to ask for
+        user_fields = ['pk'] + fields
+
+        # the query for matching entries
+        payload = """
+            query {
+                %s(%s) {
+                    %s
+                }
+            }
+        """ % (root_query(), arg_string_from_dict(filters), '\n'.join(user_fields))
+
+        # perform the query and return the result
+        return json.loads(await self.event_broker.ask(
+            action_type=read_action,
+            payload=payload
+        ))
+
+
+
+    async def _check_for_matching_user(self, **user_filters):
+        """
+            This function checks if there is a user with the same uid in the
+            remote user service
+            Args:
+                **kwds : the filters of the user to check for
+            Returns:
+                (bool): wether or not there is a matching user
+        """
+        # there is a matching user if there are no errors and no results from
+        user_data = self._get_matching_user(user_filters)
+
+        # return true if there were no errors and at lease one  result
+        return not user_data['errors'] and len(user_data['data'][root_query()])
+
+
+    async def _create_remote_user(self, **payload):
+        """
+            This method creates a service record in the remote user service
+            with the given email.
+            Args:
+                uid (str): the user identifier to create
+            Returns:
+                (dict): a summary of the user that was created
+        """
+        # the action for reading user entries
+        read_action = get_crud_action(method='create', model='user')
+
+        # see if there is a matching user
+        user_data = await self.event_broker.ask(
+            action_type=read_action,
+            payload=payload
+        )
+        # treat the reply like a json object
+        return json.loads(user_data)

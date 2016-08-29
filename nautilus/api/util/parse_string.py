@@ -3,7 +3,7 @@ from graphql import parse
 # local imports
 from .walk_query import walk_query
 
-async def parse_string(query, resolver, connection_resolver, mutation_resolver, current_user=None, obey_auth=True):
+async def parse_string(query, resolver, connection_resolver, mutation_resolver, extra_mutations={}, current_user=None, obey_auth=True):
     # start off with an empty dictionary
     result = {}
     # collect the errors in a list
@@ -59,11 +59,21 @@ async def parse_string(query, resolver, connection_resolver, mutation_resolver, 
 
             # pass the necessary information to the mutation resolver
             try:
-                mut_result = await mutation_resolver(
-                    mutation_name,
-                    mutation_args,
-                    mutation_fields
-                )
+                # if the mutation is a custom one
+                if mutation_name in extra_mutations:
+                    # call the mutation
+                    custom_mut_result = await extra_mutations[mutation_name](**mutation_args)
+                    # build a dictionary of the fields we need
+                    mut_result = {field : custom_mut_result[field] for field in mutation_fields}
+
+                # otherwise its not a mutation with special handling
+                else:
+                    # pass the various mutation parameters to the resolver
+                    mut_result = await mutation_resolver(
+                        mutation_name,
+                        mutation_args,
+                        mutation_fields
+                    )
 
                 # if there is only one field and it is an object
                 # TODO: clean this up!!!!

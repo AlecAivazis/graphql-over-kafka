@@ -23,6 +23,7 @@ from nautilus.api.util import (
     build_native_type_dictionary,
     serialize_native_type,
     query_for_model,
+    arg_string_from_dict,
     GraphEntity
 )
 

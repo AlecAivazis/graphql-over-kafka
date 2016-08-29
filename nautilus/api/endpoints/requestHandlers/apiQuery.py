@@ -4,6 +4,7 @@ import graphql
 import functools
 # local imports
 import nautilus
+from nautilus.config import Config
 from nautilus.network.http import Response
 from nautilus.api.util import parse_string
 from .graphql import GraphQLRequestHandler
@@ -49,13 +50,33 @@ class APIQueryHandler(GraphQLRequestHandler):
             # send the result of the introspection to the user
             return Response(body=result.encode())
 
+        # by default there is no current user
+        current_user = None
+
+        # if there is an authorization header
+        if 'Authorization' in self.request.headers:
+            # the authorization header value
+            auth_header = self.request.headers['Authorization']
+            # the name of the token method
+            method = 'Bearer'
+            # only accept bearer tokens
+            if method in auth_header:
+                # pull the session token out from the header value
+                session_token = auth_header.replace(method, '').strip()
+                # create a config object from the current user session
+                current_user = Config(self.service._read_session_token(session_token))
+
         # otherwise its a normal query/mutation so walk it like normal
         response = await parse_string(
             query,
             self.service.object_resolver,
             self.service.connection_resolver,
             self.service.mutation_resolver,
-            current_user=await self.get_current_user(),
+            extra_mutations={
+                'loginUser': self.service.login_user,
+                'registerUser': self.service.register_user
+            },
+            current_user=current_user
         )
 
         # pass the result to the request

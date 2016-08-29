@@ -10,4 +10,4 @@ class User(BaseModel):
     """ The user model used by """
     firstname = CharField(null=True)
     lastname = CharField(null=True)
-    email = CharField(null=False)
+    email = CharField(null=False, unique=True)

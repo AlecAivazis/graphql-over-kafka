@@ -24,6 +24,12 @@ class TestUtil(unittest.TestCase):
             "APIGateway did not have a name matching the convention."
         )
 
+    def test_has_user_password_as_model(self):
+        # make sure the service model is the correct on
+        assert self.service().model == nautilus.auth.models.UserPassword, (
+            "APIGateway did not have the correct underlying model"
+        )
+
     def test_has_custom_request_handler(self):
         # import the module to test
         from nautilus.api.endpoints.requestHandlers.apiQuery import APIQueryHandler
@@ -38,6 +44,12 @@ class TestUtil(unittest.TestCase):
         assert self.service().action_handler == api_handler.APIActionHandler, (
             "APIGateway did not have the right action handler class"
         )
+
+
+    def test_requires_valid_secret_key(self): pass
+
+
+    def test_raises_error_for_invalid_secret_key(self): pass
 
 
     def test_views_have_proper_cors_headers(self): pass

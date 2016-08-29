@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nautilus',
-    version='0.5.1',
+    version='0.5.2',
     description='A library for creating event-driven microservice applications',
     author='Alec Aivazis',
     author_email='alec@aivazis.com',
@@ -27,15 +27,13 @@ setup(
         'bcrypt',
         'click',
         'cryptography',
-        'tornado',
         'peewee',
         'graphene',
         'jinja2',
         'nose2',
-        'pika',
         'python-consul',
         'pytest',
+        'PyJWT',
         'uvloop',
-        'wtforms',
     ]
 )

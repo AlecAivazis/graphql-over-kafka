@@ -20,7 +20,7 @@ from nautilus.conventions.actions import intialize_service_action
 
 # enable uvloop for increased performance
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-# asyncio.get_event_loop().set_debug(True)
+
 
 class ServiceMetaClass(type):
     def __init__(cls, name, bases, attributes):
@@ -40,6 +40,7 @@ class ServiceMetaClass(type):
         if not cls.name or cls.name in base_strings:
             # use the name of the class record
             cls.name = normalize_string(name)
+
 
 class ServiceActionHandler(ActionHandler):
 

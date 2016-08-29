@@ -19,14 +19,14 @@ def read_handler(Model, name=None, **kwds):
     async def action_handler(service, action_type, payload, props, **kwds):
         # if the payload represents a new instance of `model`
         if action_type == get_crud_action('read', name or Model):
-            try:
-                # the props of the message
-                message_props = {}
-                # if there was a correlation id in the request
-                if 'correlation_id' in props:
-                    # make sure it ends up in the reply
-                    message_props['correlation_id'] = props['correlation_id']
+            # the props of the message
+            message_props = {}
+            # if there was a correlation id in the request
+            if 'correlation_id' in props:
+                # make sure it ends up in the reply
+                message_props['correlation_id'] = props['correlation_id']
 
+            try:
                 # resolve the query using the service schema
                 resolved = service.schema.execute(payload)
                 # create the string response
