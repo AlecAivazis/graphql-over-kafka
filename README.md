@@ -10,10 +10,10 @@ on what you do best: building awesome, scalable services. Some of these features
 
 * Distributed authentication
 * Message passing
-* Service joins
-* Service API versioning (coming)
-* API gateway construction
-* Distributed/remote database administration (coming)
+* Couple-free service joins
+* Service API versioning (coming soon!)
+* A flexible GraphQL API that adapts as services come online
+* Distributed/remote database administration (coming soon!)
 
 Full documentation is hosted [here](http://nautilus.github.io/nautilus/).
 
