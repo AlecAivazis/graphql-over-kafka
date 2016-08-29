@@ -20,3 +20,4 @@ requests==2.9.1
 uvloop==0.4.29
 wtf-peewee==0.2.6
 WTForms==2.1
+pyjwt
