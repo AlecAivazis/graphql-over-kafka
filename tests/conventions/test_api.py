@@ -178,4 +178,4 @@ def _graphql_type_string(value):
 
 def _stringify_dicts(list_of_dicts):
     import json
-    return {json.dumps(obj) for obj in list_of_dicts}
+    return {json.dumps(obj) for obj in sorted(list_of_dicts, lambda entry: entry['name'])}
