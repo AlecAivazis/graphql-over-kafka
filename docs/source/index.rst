@@ -11,20 +11,24 @@
     services/index
     handlers/index
     api/index
+    auth/index
     utilities/index
     internals/index
 
 Welcome to Nautilus!
 =====================
 
-Nautilus is a framework for event-driven microservices that attempts to provide extendible implementations of common aspects of a moden web application so that you can focus on what you do best: building awesome, scalable services. Some of these features include:
+Nautilus is a framework for building secure, event-driven microservices and
+attempts to provide extendible implementations of common aspects of a moden
+web application so that you can focus on what you do best: building awesome,
+scalable services. Some of these features include:
 
     * Distributed authentication
     * Message passing
     * Couple-free service joins
-    * Service API versioning (coming)
-    * API gateway construction
-    * Distributed/remote database administration (coming)
+    * Service API versioning (coming soon!)
+    * A flexible GraphQL API that adapts as services come online
+    * Distributed/remote database administration (coming soon!)
 
 
 At the moment, there is only a python implementation of the general architecture,

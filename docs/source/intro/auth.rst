@@ -21,7 +21,7 @@ that resembles our other model services:
         config = ServiceConfig
 
 
-Validating / Providing Credentials
+Registration and Logging Users In
 -----------------------------------
 
 Along with queries and mutations corresponding to our remote services, the api
@@ -29,7 +29,7 @@ gateway also provides a few mutations for validating user credentials and
 registering new users. In order to register a user, visit a running api gateway
 and send the following query:
 
-.. code-block::
+.. code-block:: text
 
     mutation {
         registerUser(email:"foo", password:"bar") {
@@ -48,7 +48,7 @@ The next time the user tries to access your application, they will probably need
 provide their credentials a second time. In order to validate those, the api
 gateway provides another mutation for logging users in:
 
-..code-block::
+.. code-block:: text
 
     mutation {
         loginUser(email:"foo", password:"bar") {
@@ -59,7 +59,8 @@ gateway provides another mutation for logging users in:
         }
     }
 
-Now we are ready to protect our data!
+Make sure to copy that ``sessionToken`` down somewhere. We'll use it to authenticate our
+requests later on.
 
 
 Authorizing Users for Particular Pieces of Data
@@ -87,3 +88,17 @@ service to look something like:
                 this photo.
             """
             return await model.owner._has_id(user_id)
+
+
+Providing Session Tokens to API Queries
+----------------------------------------
+
+In order to make an authenticated request to the API gateway, the request must contain
+the session token in the ``Authentication`` header as a ``Bearer`` roken. For example,
+say we logged in with a user and was given the session token ``foo``. Unfortunately,
+graphiql does not allow the user to specify specific headers on requests. In order
+to test authenticated route, we suggest you use a command utility like ``curl``:
+
+.. code-block:: bash
+
+    curl --header "Authentication: Bearer foo" localhost:8000

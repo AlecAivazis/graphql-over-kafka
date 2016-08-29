@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nautilus',
-    version='0.5.1',
+    version='0.5.2',
     description='A library for creating event-driven microservice applications',
     author='Alec Aivazis',
     author_email='alec@aivazis.com',
