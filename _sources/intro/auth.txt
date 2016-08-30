@@ -101,4 +101,4 @@ to test authenticated route, we suggest you use a command utility like ``curl``:
 
 .. code-block:: bash
 
-    curl --header "Authentication: Bearer foo" localhost:8000
+    curl --header "Authentication: Bearer foo" localhost:8000?query="{query { catPhoto { owner { id } } } }"

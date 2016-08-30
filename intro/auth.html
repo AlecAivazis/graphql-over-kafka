@@ -235,7 +235,7 @@ the session token in the <code class="docutils literal"><span class="pre">Authen
 say we logged in with a user and was given the session token <code class="docutils literal"><span class="pre">foo</span></code>. Unfortunately,
 graphiql does not allow the user to specify specific headers on requests. In order
 to test authenticated route, we suggest you use a command utility like <code class="docutils literal"><span class="pre">curl</span></code>:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>curl --header <span class="s2">&quot;Authentication: Bearer foo&quot;</span> localhost:8000
+<div class="highlight-bash"><div class="highlight"><pre><span></span>curl --header <span class="s2">&quot;Authentication: Bearer foo&quot;</span> localhost:8000?query<span class="o">=</span><span class="s2">&quot;{query { catPhoto { owner { id } } } }&quot;</span>
 </pre></div>
 </div>
 </div>
