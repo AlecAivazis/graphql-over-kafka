@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.api.endpoints.requestHandlers.apiQuery &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.api.endpoints.requestHandlers.apiQuery &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../../../../../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../../../../../index.html"/>
         <link rel="up" title="Module code" href="../../../../index.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -139,6 +140,7 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="c1"># local imports</span>
 <span class="kn">import</span> <span class="nn">nautilus</span>
+<span class="kn">from</span> <span class="nn">nautilus.config</span> <span class="kn">import</span> <span class="n">Config</span>
 <span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">Response</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">parse_string</span>
 <span class="kn">from</span> <span class="nn">.graphql</span> <span class="kn">import</span> <span class="n">GraphQLRequestHandler</span>
@@ -184,13 +186,33 @@
             <span class="c1"># send the result of the introspection to the user</span>
             <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 
+        <span class="c1"># by default there is no current user</span>
+        <span class="n">current_user</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c1"># if there is an authorization header</span>
+        <span class="k">if</span> <span class="s1">&#39;Authorization&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+            <span class="c1"># the authorization header value</span>
+            <span class="n">auth_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Authorization&#39;</span><span class="p">]</span>
+            <span class="c1"># the name of the token method</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Bearer&#39;</span>
+            <span class="c1"># only accept bearer tokens</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">auth_header</span><span class="p">:</span>
+                <span class="c1"># pull the session token out from the header value</span>
+                <span class="n">session_token</span> <span class="o">=</span> <span class="n">auth_header</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># create a config object from the current user session</span>
+                <span class="n">current_user</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_read_session_token</span><span class="p">(</span><span class="n">session_token</span><span class="p">))</span>
+
         <span class="c1"># otherwise its a normal query/mutation so walk it like normal</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">await</span> <span class="n">parse_string</span><span class="p">(</span>
             <span class="n">query</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">object_resolver</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">connection_resolver</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">mutation_resolver</span><span class="p">,</span>
-            <span class="n">current_user</span><span class="o">=</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_user</span><span class="p">(),</span>
+            <span class="n">extra_mutations</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;loginUser&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">login_user</span><span class="p">,</span>
+                <span class="s1">&#39;registerUser&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">register_user</span>
+            <span class="p">},</span>
+            <span class="n">current_user</span><span class="o">=</span><span class="n">current_user</span>
         <span class="p">)</span>
 
         <span class="c1"># pass the result to the request</span>
@@ -228,7 +250,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

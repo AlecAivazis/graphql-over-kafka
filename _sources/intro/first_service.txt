@@ -69,32 +69,7 @@ as well as its behavior:
 
 The primary method of an ActionHandler takes three arguments: ``action_type``,
 ``payload``, and ``props``. ``Action_type`` identifies the event and
-``payload`` provides the associated data. Ignore ``props`` for now. Let's test
-your service using the command line interface provided by nautilus. Open up a
-new terminal and execute:
-
-.. code-block:: bash
-
-    $ naut publish -p "hello world"
-
-You should see the message in your running service's console. This pattern
-can be made to acommodate almost any situation. For example, if you had
-some special behavior that you wanted your service to do (like send an email),
-you would triger that behavior by firing a "send_email" action type and
-responding appropriately:
-
-.. code-block:: python
-
-    from nautilus.network import ActionHandler
-
-    class EmailActionHandler(ActionHandler):
-
-        async def handle_action(self, action_type, payload, props):
-
-            if action_type == 'send_email':
-                # send the body of the action as the email
-                send_email(payload)
-
+``payload`` provides the associated data. Ignore ``props`` for now.
 
 Passing the Action handler to the service takes a single line:
 
@@ -118,6 +93,33 @@ Passing the Action handler to the service takes a single line:
 
     if __name__ == '__main__':
         manager.run()
+
+
+Let's test your service using the command line interface provided by nautilus.
+Open up a new terminal and execute:
+
+.. code-block:: bash
+
+    $ naut publish -p "hello world"
+
+You should see the message in your running service's console. This pattern
+can be made to acommodate most situations. For example, if you had
+some special behavior that you wanted your service to do (like send an email),
+you would triger that behavior by firing a "send_email" action type and
+responding appropriately:
+
+.. code-block:: python
+
+    from nautilus.network import ActionHandler
+
+    class EmailActionHandler(ActionHandler):
+
+        async def handle_action(self, action_type, payload, props):
+
+            if action_type == 'send_email':
+                # send the body of the action as the email
+                send_email(payload)
+
 
 
 Congratulations! You have finally pieced together a complete nautilus service.

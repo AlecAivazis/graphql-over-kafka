@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Querying The Distributed Structure &mdash; nautilus v0.5.1 documentation</title>
+  <title>Querying The Distributed Structure &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
         <link rel="next" title="Authentication" href="auth.html"/>
         <link rel="prev" title="Connecting Services Together" href="connecting_services.html"/> 
@@ -96,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
@@ -164,8 +165,10 @@ the entire cloud. This has a few major benefits that are worth pointing out:</p>
 following contents:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># external imports</span>
 <span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">APIGateway</span><span class="p">,</span> <span class="n">ServiceManager</span>
+<span class="kn">from</span> <span class="nn">nauitilus.auth.util</span> <span class="kn">import</span> <span class="n">generate_secret_key</span>
 
-<span class="k">class</span> <span class="nc">CatPhotoAPI</span><span class="p">(</span><span class="n">APIGateway</span><span class="p">):</span> <span class="k">pass</span>
+<span class="k">class</span> <span class="nc">CatPhotoAPI</span><span class="p">(</span><span class="n">APIGateway</span><span class="p">):</span>
+    <span class="n">secret_key</span> <span class="o">=</span> <span class="n">generate_secret_key</span><span class="p">()</span>
 
 <span class="n">manager</span> <span class="o">=</span> <span class="n">ServiceManager</span><span class="p">(</span><span class="n">service</span><span class="p">)</span>
 
@@ -228,7 +231,7 @@ more information visit the <a class="reference external" href="../api/index.html
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.api.util.parse_string &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.api.util.parse_string &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../../../../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../../../../index.html"/>
         <link rel="up" title="Module code" href="../../../index.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -138,7 +139,7 @@
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">.walk_query</span> <span class="kn">import</span> <span class="n">walk_query</span>
 
-<div class="viewcode-block" id="parse_string"><a class="viewcode-back" href="../../../../internals/nautilus.api.util.html#nautilus.api.util.parse_string.parse_string">[docs]</a><span class="n">async</span> <span class="k">def</span> <span class="nf">parse_string</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">resolver</span><span class="p">,</span> <span class="n">connection_resolver</span><span class="p">,</span> <span class="n">mutation_resolver</span><span class="p">,</span> <span class="n">current_user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">obey_auth</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_string"><a class="viewcode-back" href="../../../../internals/nautilus.api.util.html#nautilus.api.util.parse_string.parse_string">[docs]</a><span class="n">async</span> <span class="k">def</span> <span class="nf">parse_string</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">resolver</span><span class="p">,</span> <span class="n">connection_resolver</span><span class="p">,</span> <span class="n">mutation_resolver</span><span class="p">,</span> <span class="n">extra_mutations</span><span class="o">=</span><span class="p">{},</span> <span class="n">current_user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">obey_auth</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="c1"># start off with an empty dictionary</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># collect the errors in a list</span>
@@ -194,11 +195,21 @@
 
             <span class="c1"># pass the necessary information to the mutation resolver</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">mut_result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">mutation_resolver</span><span class="p">(</span>
-                    <span class="n">mutation_name</span><span class="p">,</span>
-                    <span class="n">mutation_args</span><span class="p">,</span>
-                    <span class="n">mutation_fields</span>
-                <span class="p">)</span>
+                <span class="c1"># if the mutation is a custom one</span>
+                <span class="k">if</span> <span class="n">mutation_name</span> <span class="ow">in</span> <span class="n">extra_mutations</span><span class="p">:</span>
+                    <span class="c1"># call the mutation</span>
+                    <span class="n">custom_mut_result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">extra_mutations</span><span class="p">[</span><span class="n">mutation_name</span><span class="p">](</span><span class="o">**</span><span class="n">mutation_args</span><span class="p">)</span>
+                    <span class="c1"># build a dictionary of the fields we need</span>
+                    <span class="n">mut_result</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span> <span class="p">:</span> <span class="n">custom_mut_result</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">mutation_fields</span><span class="p">}</span>
+
+                <span class="c1"># otherwise its not a mutation with special handling</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># pass the various mutation parameters to the resolver</span>
+                    <span class="n">mut_result</span> <span class="o">=</span> <span class="n">await</span> <span class="n">mutation_resolver</span><span class="p">(</span>
+                        <span class="n">mutation_name</span><span class="p">,</span>
+                        <span class="n">mutation_args</span><span class="p">,</span>
+                        <span class="n">mutation_fields</span>
+                    <span class="p">)</span>
 
                 <span class="c1"># if there is only one field and it is an object</span>
                 <span class="c1"># TODO: clean this up!!!!</span>
@@ -263,7 +274,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

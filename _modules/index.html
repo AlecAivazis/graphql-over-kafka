@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; nautilus v0.5.1 documentation</title>
+  <title>Overview: module code &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/> 
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
@@ -141,22 +142,13 @@
 <li><a href="nautilus/api/util/graphql_type_from_summary.html">nautilus.api.util.graphql_type_from_summary</a></li>
 <li><a href="nautilus/api/util/parse_string.html">nautilus.api.util.parse_string</a></li>
 <li><a href="nautilus/api/util/walk_query.html">nautilus.api.util.walk_query</a></li>
-<li><a href="nautilus/auth.html">nautilus.auth</a></li>
-<ul><li><a href="nautilus/auth/decorators.html">nautilus.auth.decorators</a></li>
+<li><a href="nautilus/auth/decorators.html">nautilus.auth.decorators</a></li>
 <li><a href="nautilus/auth/models/fields/password.html">nautilus.auth.models.fields.password</a></li>
 <li><a href="nautilus/auth/models/mixins/hasPassword.html">nautilus.auth.models.mixins.hasPassword</a></li>
 <li><a href="nautilus/auth/models/mixins/user.html">nautilus.auth.models.mixins.user</a></li>
 <li><a href="nautilus/auth/models/userPassword.html">nautilus.auth.models.userPassword</a></li>
 <li><a href="nautilus/auth/primitives/passwordHash.html">nautilus.auth.primitives.passwordHash</a></li>
-<li><a href="nautilus/auth/requestHandlers/base.html">nautilus.auth.requestHandlers.base</a></li>
-<li><a href="nautilus/auth/requestHandlers/forms/change.html">nautilus.auth.requestHandlers.forms.change</a></li>
-<li><a href="nautilus/auth/requestHandlers/forms/forgot.html">nautilus.auth.requestHandlers.forms.forgot</a></li>
-<li><a href="nautilus/auth/requestHandlers/forms/login.html">nautilus.auth.requestHandlers.forms.login</a></li>
-<li><a href="nautilus/auth/requestHandlers/forms/register.html">nautilus.auth.requestHandlers.forms.register</a></li>
-<li><a href="nautilus/auth/requestHandlers/login.html">nautilus.auth.requestHandlers.login</a></li>
-<li><a href="nautilus/auth/requestHandlers/logout.html">nautilus.auth.requestHandlers.logout</a></li>
-<li><a href="nautilus/auth/requestHandlers/register.html">nautilus.auth.requestHandlers.register</a></li>
-</ul><li><a href="nautilus/config/config.html">nautilus.config.config</a></li>
+<li><a href="nautilus/config/config.html">nautilus.config.config</a></li>
 <li><a href="nautilus/contrib/graphene_peewee/converter.html">nautilus.contrib.graphene_peewee.converter</a></li>
 <li><a href="nautilus/contrib/graphene_peewee/objectType.html">nautilus.contrib.graphene_peewee.objectType</a></li>
 <li><a href="nautilus/conventions/actions.html">nautilus.conventions.actions</a></li>
@@ -181,13 +173,11 @@
 <li><a href="nautilus/network/events/util.html">nautilus.network.events.util</a></li>
 <li><a href="nautilus/network/http/requestHandler.html">nautilus.network.http.requestHandler</a></li>
 <li><a href="nautilus/services/apiGateway.html">nautilus.services.apiGateway</a></li>
-<li><a href="nautilus/services/authService.html">nautilus.services.authService</a></li>
 <li><a href="nautilus/services/connectionService.html">nautilus.services.connectionService</a></li>
 <li><a href="nautilus/services/modelService.html">nautilus.services.modelService</a></li>
 <li><a href="nautilus/services/service.html">nautilus.services.service</a></li>
 <li><a href="nautilus/services/serviceManager.html">nautilus.services.serviceManager</a></li>
 <li><a href="peewee.html">peewee</a></li>
-<li><a href="wtforms/fields/core.html">wtforms.fields.core</a></li>
 </ul>
 
            </div>
@@ -221,7 +211,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

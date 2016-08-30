@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.services.service &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.services.service &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -155,7 +156,7 @@
 
 <span class="c1"># enable uvloop for increased performance</span>
 <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop_policy</span><span class="p">(</span><span class="n">uvloop</span><span class="o">.</span><span class="n">EventLoopPolicy</span><span class="p">())</span>
-<span class="c1"># asyncio.get_event_loop().set_debug(True)</span>
+
 
 <div class="viewcode-block" id="ServiceMetaClass"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.ServiceMetaClass">[docs]</a><span class="k">class</span> <span class="nc">ServiceMetaClass</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
@@ -175,6 +176,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">base_strings</span><span class="p">:</span>
             <span class="c1"># use the name of the class record</span>
             <span class="n">cls</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">normalize_string</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="ServiceActionHandler"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.services.service.ServiceActionHandler">[docs]</a><span class="k">class</span> <span class="nc">ServiceActionHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
 
@@ -505,7 +507,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

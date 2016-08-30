@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.api.endpoints.requestHandlers.graphql &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.api.endpoints.requestHandlers.graphql &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../../../../../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../../../../../index.html"/>
         <link rel="up" title="Module code" href="../../../../index.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -136,10 +137,9 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">graphql.error</span> <span class="kn">import</span> <span class="n">format_error</span> <span class="k">as</span> <span class="n">format_graphql_error</span>
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">nautilus.auth</span> <span class="kn">import</span> <span class="n">AuthRequestHandler</span>
-<span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">nautilus.network.http</span> <span class="kn">import</span> <span class="n">Response</span><span class="p">,</span> <span class="n">RequestHandler</span>
 
-<div class="viewcode-block" id="GraphQLRequestHandler"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler">[docs]</a><span class="k">class</span> <span class="nc">GraphQLRequestHandler</span><span class="p">(</span><span class="n">AuthRequestHandler</span><span class="p">):</span>
+<div class="viewcode-block" id="GraphQLRequestHandler"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler">[docs]</a><span class="k">class</span> <span class="nc">GraphQLRequestHandler</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
 
 <div class="viewcode-block" id="GraphQLRequestHandler.get"><a class="viewcode-back" href="../../../../../internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.get">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -237,7 +237,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

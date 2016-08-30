@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.network.events.actionHandlers.readHandler &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.network.events.actionHandlers.readHandler &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../../../../../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../../../../../index.html"/>
         <link rel="up" title="nautilus.network.events.actionHandlers" href="../actionHandlers.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -156,14 +157,14 @@
     <span class="n">async</span> <span class="k">def</span> <span class="nf">action_handler</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># if the payload represents a new instance of `model`</span>
         <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">Model</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># the props of the message</span>
-                <span class="n">message_props</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="c1"># if there was a correlation id in the request</span>
-                <span class="k">if</span> <span class="s1">&#39;correlation_id&#39;</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
-                    <span class="c1"># make sure it ends up in the reply</span>
-                    <span class="n">message_props</span><span class="p">[</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">]</span>
+            <span class="c1"># the props of the message</span>
+            <span class="n">message_props</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># if there was a correlation id in the request</span>
+            <span class="k">if</span> <span class="s1">&#39;correlation_id&#39;</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+                <span class="c1"># make sure it ends up in the reply</span>
+                <span class="n">message_props</span><span class="p">[</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s1">&#39;correlation_id&#39;</span><span class="p">]</span>
 
+            <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># resolve the query using the service schema</span>
                 <span class="n">resolved</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
                 <span class="c1"># create the string response</span>
@@ -224,7 +225,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

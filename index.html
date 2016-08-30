@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to Nautilus! &mdash; nautilus v0.5.1 documentation</title>
+  <title>Welcome to Nautilus! &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="#"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="#"/>
         <link rel="next" title="Getting Started" href="intro/index.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="internals/index.html">Module Index</a></li>
 </ul>
@@ -136,15 +137,18 @@
 </div>
 <div class="section" id="welcome-to-nautilus">
 <h1>Welcome to Nautilus!<a class="headerlink" href="#welcome-to-nautilus" title="Permalink to this headline">¶</a></h1>
-<p>Nautilus is a framework for event-driven microservices that attempts to provide extendible implementations of common aspects of a moden web application so that you can focus on what you do best: building awesome, scalable services. Some of these features include:</p>
+<p>Nautilus is a framework for building secure, event-driven microservices and
+attempts to provide extendible implementations of common aspects of a moden
+web application so that you can focus on what you do best: building awesome,
+scalable services. Some of these features include:</p>
 <blockquote>
 <div><ul class="simple">
 <li>Distributed authentication</li>
 <li>Message passing</li>
 <li>Couple-free service joins</li>
-<li>Service API versioning (coming)</li>
-<li>API gateway construction</li>
-<li>Distributed/remote database administration (coming)</li>
+<li>Service API versioning (coming soon!)</li>
+<li>A flexible GraphQL API that adapts as services come online</li>
+<li>Distributed/remote database administration (coming soon!)</li>
 </ul>
 </div></blockquote>
 <p>At the moment, there is only a python implementation of the general architecture,
@@ -190,7 +194,7 @@ but there are plans for more languages - stay tuned!</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

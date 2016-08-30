@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Gateway &mdash; nautilus v0.5.1 documentation</title>
+  <title>API Gateway &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
-        <link rel="next" title="Utilities" href="../utilities/index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
+        <link rel="next" title="Auth" href="../auth/index.html"/>
         <link rel="prev" title="Action Handlers" href="../handlers/index.html"/> 
 
   
@@ -91,6 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#designating-a-graphql-equivalent-of-a-nautilus-field">Designating a GraphQL Equivalent of a Nautilus Field</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
@@ -190,6 +191,35 @@ of the system.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="nautilus.APIGateway.get_models">
+<code class="descname">get_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.get_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.get_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the models managed by this service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the models managed by the service</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.APIGateway.init_db">
+<code class="descname">init_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.init_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function configures the database used for models to make
+the configuration parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.APIGateway.login_user">
+<code class="descname">login_user</code><span class="sig-paren">(</span><em>password</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.login_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.login_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function handles the registration of the given user credentials in the database</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="nautilus.APIGateway.mutation_resolver">
 <code class="descname">mutation_resolver</code><span class="sig-paren">(</span><em>mutation_name</em>, <em>args</em>, <em>fields</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.mutation_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.mutation_resolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>the default behavior for mutations is to look up the event,
@@ -201,6 +231,27 @@ and return the fields contained in the result</p>
 <dt id="nautilus.APIGateway.object_resolver">
 <code class="descname">object_resolver</code><span class="sig-paren">(</span><em>object_name</em>, <em>fields</em>, <em>obey_auth=False</em>, <em>current_user=None</em>, <em>**filters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.object_resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.object_resolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function resolves a given object in the remote backend services</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.APIGateway.register_user">
+<code class="descname">register_user</code><span class="sig-paren">(</span><em>password</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.register_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.register_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to provide a sessionToken for later requests.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.APIGateway.user_session">
+<code class="descname">user_session</code><span class="sig-paren">(</span><em>user</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.user_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.APIGateway.user_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method handles what information the api gateway stores about
+a particular user in their session.</p>
 </dd></dl>
 
 </dd></dl>
@@ -284,7 +335,7 @@ something like:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../utilities/index.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../auth/index.html" class="btn btn-neutral float-right" title="Auth" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../handlers/index.html" class="btn btn-neutral" title="Action Handlers" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -318,7 +369,7 @@ something like:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

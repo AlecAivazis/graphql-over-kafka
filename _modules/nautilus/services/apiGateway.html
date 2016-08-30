@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.services.apiGateway &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.services.apiGateway &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../internals/index.html">Module Index</a></li>
 </ul>
@@ -140,14 +141,17 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">nautilus.auth.models</span> <span class="kn">import</span> <span class="n">UserPassword</span>
+<span class="kn">import</span> <span class="nn">nautilus.database</span>
 <span class="kn">import</span> <span class="nn">nautilus.api.endpoints.requestHandlers.apiQuery</span> <span class="kn">as</span> <span class="nn">api_query</span>
 <span class="kn">import</span> <span class="nn">nautilus.network.events.consumers.api</span> <span class="kn">as</span> <span class="nn">api_handler</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.services</span> <span class="kn">import</span> <span class="n">api_gateway_name</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">roll_call_type</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.actions</span> <span class="kn">import</span> <span class="n">get_crud_action</span>
 <span class="kn">from</span> <span class="nn">nautilus.conventions.api</span> <span class="kn">import</span> <span class="n">root_query</span>
+<span class="kn">from</span> <span class="nn">nautilus.auth.util</span> <span class="kn">import</span> <span class="n">generate_session_token</span><span class="p">,</span> <span class="n">read_session_token</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.endpoints</span> <span class="kn">import</span> <span class="n">static_dir</span> <span class="k">as</span> <span class="n">api_endpoint_static</span>
-<span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">query_for_model</span>
+<span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">query_for_model</span><span class="p">,</span> <span class="n">arg_string_from_dict</span>
 <span class="kn">from</span> <span class="nn">.service</span> <span class="kn">import</span> <span class="n">Service</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">GraphEntity</span>
 <span class="kn">from</span> <span class="nn">nautilus.api.util</span> <span class="kn">import</span> <span class="n">parse_string</span>
@@ -177,15 +181,31 @@
 <span class="sd">                    schema = schema</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">api_gateway_name</span><span class="p">()</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">UserPassword</span>
     <span class="n">api_request_handler_class</span> <span class="o">=</span> <span class="n">api_query</span><span class="o">.</span><span class="n">APIQueryHandler</span>
     <span class="n">action_handler</span> <span class="o">=</span> <span class="n">api_handler</span><span class="o">.</span><span class="n">APIActionHandler</span>
     <span class="n">_external_service_data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">secret_key</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># bubble up</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
         <span class="c1"># attach this service to the action handler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_handler</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># do any sort of database setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_db</span><span class="p">()</span>
+        <span class="c1"># make sure there is a valid secret key</span>
+
+
+<div class="viewcode-block" id="APIGateway.init_db"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway.init_db">[docs]</a>    <span class="k">def</span> <span class="nf">init_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function configures the database used for models to make</span>
+<span class="sd">            the configuration parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get the database url from the configuration</span>
+        <span class="n">db_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;database_url&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlite:///passwords.db&#39;</span><span class="p">)</span>
+        <span class="c1"># configure the nautilus database to the url</span>
+        <span class="n">nautilus</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">init_db</span><span class="p">(</span><span class="n">db_url</span><span class="p">)</span></div>
 
 
     <span class="c1"># when its time for the service to announce itself</span>
@@ -255,6 +275,72 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">router</span><span class="o">.</span><span class="n">add_static</span><span class="p">(</span><span class="s1">&#39;/graphiql/static/&#39;</span><span class="p">,</span> <span class="n">api_endpoint_static</span><span class="p">)</span>
         <span class="c1"># add the graphiql endpoint</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_http_endpoint</span><span class="p">(</span><span class="s1">&#39;/graphiql&#39;</span><span class="p">,</span> <span class="n">GraphiQLRequestHandler</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="APIGateway.login_user"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway.login_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">login_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function handles the registration of the given user credentials in the database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># find the matching user with the given email</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matching_user</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">kwds</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="o">**</span><span class="n">kwds</span><span class="p">))[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># look for a matching entry in the local database</span>
+            <span class="n">passwordEntry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="n">user_data</span><span class="p">[</span><span class="n">root_query</span><span class="p">()][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># if we couldn&#39;t acess the id of the result</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># yell loudly</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find matching registered user&#39;</span><span class="p">)</span>
+
+
+        <span class="c1"># if the given password matches the stored hash</span>
+        <span class="k">if</span> <span class="n">passwordEntry</span> <span class="ow">and</span> <span class="n">passwordEntry</span><span class="o">.</span><span class="n">password</span> <span class="o">==</span> <span class="n">password</span><span class="p">:</span>
+            <span class="c1"># the remote entry for the user</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">user_data</span><span class="p">[</span><span class="n">root_query</span><span class="p">()][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># then return a dictionary with the user and sessionToken</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+                <span class="s1">&#39;sessionToken&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_session_token</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="p">}</span>
+
+        <span class="c1"># otherwise the passwords don&#39;t match</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Incorrect credentials&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="APIGateway.register_user"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway.register_user">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">register_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function is used to provide a sessionToken for later requests.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                uid (str): The</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># so make one</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_remote_user</span><span class="p">(</span><span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="c1"># if there is no pk field</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;pk&#39;</span> <span class="ow">in</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># make sure the user has a pk field</span>
+            <span class="n">user</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c1"># the query to find a matching query</span>
+        <span class="n">match_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c1"># if the user has already been registered</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">select</span><span class="p">()</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">match_query</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># yell loudly</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;The user is already registered.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># create an entry in the user password table</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+
+        <span class="c1"># save it to the database</span>
+        <span class="n">password</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="c1"># return a dictionary with the user we created and a session token for later use</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+            <span class="s1">&#39;sessionToken&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_session_token</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="APIGateway.object_resolver"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway.object_resolver">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">object_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">obey_auth</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">current_user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
@@ -343,6 +429,16 @@
         <span class="k">return</span> <span class="n">result</span></div>
 
 
+<div class="viewcode-block" id="APIGateway.user_session"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway.user_session">[docs]</a>    <span class="k">def</span> <span class="nf">user_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method handles what information the api gateway stores about</span>
+<span class="sd">            a particular user in their session.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span>
+        <span class="p">}</span></div>
+
+
 <div class="viewcode-block" id="APIGateway.connection_resolver"><a class="viewcode-back" href="../../../internals/nautilus.services.html#nautilus.APIGateway.connection_resolver">[docs]</a>    <span class="n">async</span> <span class="k">def</span> <span class="nf">connection_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection_name</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -422,10 +518,90 @@
         <span class="c1"># if the result was not valid json</span>
         <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
             <span class="c1"># just throw the value</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div></div>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="APIGateway.get_models"><a class="viewcode-back" href="../../../services/index.html#nautilus.APIGateway.get_models">[docs]</a>    <span class="k">def</span> <span class="nf">get_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the models managed by this service.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                (list): the models managed by the service</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">]</span></div>
+
+    <span class="c1">## internal utilities</span>
+
+    <span class="k">def</span> <span class="nf">_user_session_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="c1"># grab the session for this particular user</span>
+        <span class="n">user_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_session</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="c1"># return the token signed by the services secret key</span>
+        <span class="k">return</span> <span class="n">generate_session_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">,</span> <span class="o">**</span><span class="n">user_session</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_read_session_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="c1"># make sure the token is valid while we&#39;re at it</span>
+        <span class="k">return</span> <span class="n">read_session_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secret_key</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_get_matching_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+        <span class="c1"># the action type for a remote query</span>
+        <span class="n">read_action</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;read&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+        <span class="c1"># the fields of the user to ask for</span>
+        <span class="n">user_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">fields</span>
+
+        <span class="c1"># the query for matching entries</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            query {</span>
+<span class="s2">                </span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">) {</span>
+<span class="s2">                    </span><span class="si">%s</span><span class="s2"></span>
+<span class="s2">                }</span>
+<span class="s2">            }</span>
+<span class="s2">        &quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">root_query</span><span class="p">(),</span> <span class="n">arg_string_from_dict</span><span class="p">(</span><span class="n">filters</span><span class="p">),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">user_fields</span><span class="p">))</span>
+
+        <span class="c1"># perform the query and return the result</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="n">read_action</span><span class="p">,</span>
+            <span class="n">payload</span><span class="o">=</span><span class="n">payload</span>
+        <span class="p">))</span>
 
 
 
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_check_for_matching_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">user_filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function checks if there is a user with the same uid in the</span>
+<span class="sd">            remote user service</span>
+<span class="sd">            Args:</span>
+<span class="sd">                **kwds : the filters of the user to check for</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                (bool): wether or not there is a matching user</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># there is a matching user if there are no errors and no results from</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_matching_user</span><span class="p">(</span><span class="n">user_filters</span><span class="p">)</span>
+
+        <span class="c1"># return true if there were no errors and at lease one  result</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">user_data</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">root_query</span><span class="p">()])</span>
+
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">_create_remote_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">payload</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method creates a service record in the remote user service</span>
+<span class="sd">            with the given email.</span>
+<span class="sd">            Args:</span>
+<span class="sd">                uid (str): the user identifier to create</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                (dict): a summary of the user that was created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># the action for reading user entries</span>
+        <span class="n">read_action</span> <span class="o">=</span> <span class="n">get_crud_action</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;create&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+
+        <span class="c1"># see if there is a matching user</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="n">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_broker</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span>
+            <span class="n">action_type</span><span class="o">=</span><span class="n">read_action</span><span class="p">,</span>
+            <span class="n">payload</span><span class="o">=</span><span class="n">payload</span>
+        <span class="p">)</span>
+        <span class="c1"># treat the reply like a json object</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -459,7 +635,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

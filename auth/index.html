@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utilities &mdash; nautilus v0.5.2 documentation</title>
+  <title>Auth &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
-        <link rel="next" title="Module Index" href="../internals/index.html"/>
-        <link rel="prev" title="Auth" href="../auth/index.html"/> 
+        <link rel="next" title="Utilities" href="../utilities/index.html"/>
+        <link rel="prev" title="API Gateway" href="../api/index.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -87,8 +87,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Utilities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Auth</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#customizing-user-session">Customizing User Session</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
 
@@ -120,11 +123,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Utilities</li>
+    <li>Auth</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/utilities/index.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/auth/index.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -134,8 +137,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="utilities">
-<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="auth">
+<h1>Auth<a class="headerlink" href="#auth" title="Permalink to this headline">¶</a></h1>
+<p>This page summarizes points on authentication in nautilus apart from the basic
+workflow outlined in the <a class="reference external" href="../intro/auth.html">getting started guide</a>.</p>
+<div class="section" id="customizing-user-session">
+<h2>Customizing User Session<a class="headerlink" href="#customizing-user-session" title="Permalink to this headline">¶</a></h2>
+<p>Customizing the information stored in a user session (and therefore the criteria)
+by which you can authorize the user is easy. Simply define a method in your api
+gateway called <code class="docutils literal"><span class="pre">user_session</span></code> which takes the remote record of the user and
+returns a dictionary with that users sesstion:</p>
+<p>..code-block:: python</p>
+<p>class MyAPI(nautilus.APIGateway):</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>def user_session(user):</dt>
+<dd><dl class="first docutils">
+<dt>return {</dt>
+<dd>&#8216;id&#8217;: user[&#8216;id&#8217;],
+&#8216;name&#8217;: user[&#8216;name&#8217;]</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
 </div>
 
 
@@ -145,10 +171,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../internals/index.html" class="btn btn-neutral float-right" title="Module Index" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../utilities/index.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../auth/index.html" class="btn btn-neutral" title="Auth" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../api/index.html" class="btn btn-neutral" title="API Gateway" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Your First Service &mdash; nautilus v0.5.1 documentation</title>
+  <title>Your First Service &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
         <link rel="next" title="Keeping Track of Data" href="first_model.html"/>
         <link rel="prev" title="Installation / Setup" href="installation.html"/> 
@@ -99,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
@@ -202,28 +203,7 @@ as well as its behavior:</p>
 </div>
 <p>The primary method of an ActionHandler takes three arguments: <code class="docutils literal"><span class="pre">action_type</span></code>,
 <code class="docutils literal"><span class="pre">payload</span></code>, and <code class="docutils literal"><span class="pre">props</span></code>. <code class="docutils literal"><span class="pre">Action_type</span></code> identifies the event and
-<code class="docutils literal"><span class="pre">payload</span></code> provides the associated data. Ignore <code class="docutils literal"><span class="pre">props</span></code> for now. Let&#8217;s test
-your service using the command line interface provided by nautilus. Open up a
-new terminal and execute:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>$ naut publish -p <span class="s2">&quot;hello world&quot;</span>
-</pre></div>
-</div>
-<p>You should see the message in your running service&#8217;s console. This pattern
-can be made to acommodate almost any situation. For example, if you had
-some special behavior that you wanted your service to do (like send an email),
-you would triger that behavior by firing a &#8220;send_email&#8221; action type and
-responding appropriately:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
-
-<span class="k">class</span> <span class="nc">EmailActionHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
-
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;send_email&#39;</span><span class="p">:</span>
-            <span class="c1"># send the body of the action as the email</span>
-            <span class="n">send_email</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-</pre></div>
-</div>
+<code class="docutils literal"><span class="pre">payload</span></code> provides the associated data. Ignore <code class="docutils literal"><span class="pre">props</span></code> for now.</p>
 <p>Passing the Action handler to the service takes a single line:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">Service</span><span class="p">,</span> <span class="n">ServiceManager</span>
 <span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
@@ -243,6 +223,27 @@ responding appropriately:</p>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let&#8217;s test your service using the command line interface provided by nautilus.
+Open up a new terminal and execute:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ naut publish -p <span class="s2">&quot;hello world&quot;</span>
+</pre></div>
+</div>
+<p>You should see the message in your running service&#8217;s console. This pattern
+can be made to acommodate most situations. For example, if you had
+some special behavior that you wanted your service to do (like send an email),
+you would triger that behavior by firing a &#8220;send_email&#8221; action type and
+responding appropriately:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus.network</span> <span class="kn">import</span> <span class="n">ActionHandler</span>
+
+<span class="k">class</span> <span class="nc">EmailActionHandler</span><span class="p">(</span><span class="n">ActionHandler</span><span class="p">):</span>
+
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">handle_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">action_type</span> <span class="o">==</span> <span class="s1">&#39;send_email&#39;</span><span class="p">:</span>
+            <span class="c1"># send the body of the action as the email</span>
+            <span class="n">send_email</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Congratulations! You have finally pieced together a complete nautilus service.
@@ -292,7 +293,7 @@ manage and persist database entries for your application.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

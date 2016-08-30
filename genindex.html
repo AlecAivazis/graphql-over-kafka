@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; nautilus v0.5.1 documentation</title>
+  <title>Index &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="index.html"/> 
+    <link rel="top" title="nautilus v0.5.2 documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="internals/index.html">Module Index</a></li>
 </ul>
@@ -155,7 +156,6 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
- | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
 </div>
@@ -258,6 +258,8 @@
   <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.api.APIActionHandler">APIActionHandler (class in nautilus.network.events.consumers.api)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/index.html#nautilus.APIGateway">APIGateway (class in nautilus)</a>, <a href="services/index.html#nautilus.APIGateway">[1]</a>
   </dt>
@@ -268,8 +270,6 @@
   </dt>
 
       </dl></dd>
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.apiQuery.APIQueryHandler">APIQueryHandler (class in nautilus.api.endpoints.requestHandlers.apiQuery)</a>
   </dt>
@@ -300,20 +300,6 @@
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.services.auth_service_name">auth_service_name() (in module nautilus.conventions.services)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler">AuthRequestHandler (class in nautilus.auth.requestHandlers.base)</a>
-  </dt>
-
-      
-  <dt><a href="services/index.html#nautilus.AuthService">AuthService (class in nautilus)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.AuthService">(class in nautilus.services.authService)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -332,10 +318,6 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.change_action_status">change_action_status() (in module nautilus.conventions.actions)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm">ChangePasswordForm (class in nautilus.auth.requestHandlers.forms.change)</a>
   </dt>
 
       
@@ -556,20 +538,6 @@
   <dt><a href="internals/nautilus.auth.models.mixins.html#nautilus.auth.models.mixins.user.User.email">email (nautilus.auth.models.mixins.user.User attribute)</a>
   </dt>
 
-      <dd><dl>
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm.email">(nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm attribute)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.login.LoginForm.email">(nautilus.auth.requestHandlers.forms.login.LoginForm attribute)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.register.RegistrationForm.email">(nautilus.auth.requestHandlers.forms.register.RegistrationForm attribute)</a>
-  </dt>
-
-      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -601,10 +569,6 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm">ForgotPasswordForm (class in nautilus.auth.requestHandlers.forms.forgot)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.from_service">from_service (nautilus.services.connectionService.ConnectionService attribute)</a>
   </dt>
 
@@ -627,25 +591,9 @@
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.get">(nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler method)</a>
   </dt>
 
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.login.LoginHandler.get">(nautilus.auth.requestHandlers.login.LoginHandler method)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.logout.LogoutHandler.get">(nautilus.auth.requestHandlers.logout.LogoutHandler method)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.register.RegisterHandler.get">(nautilus.auth.requestHandlers.register.RegisterHandler method)</a>
-  </dt>
-
       </dl></dd>
       
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.actions.get_crud_action">get_crud_action() (in module nautilus.conventions.actions)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.get_current_user">get_current_user() (nautilus.auth.requestHandlers.base.AuthRequestHandler method)</a>
   </dt>
 
       
@@ -655,12 +603,16 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="services/index.html#nautilus.ModelService.get_models">get_models() (nautilus.ModelService method)</a>
+  <dt><a href="api/index.html#nautilus.APIGateway.get_models">get_models() (nautilus.APIGateway method)</a>, <a href="services/index.html#nautilus.APIGateway.get_models">[1]</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.AuthService.get_models">(nautilus.services.authService.AuthService method)</a>
+  <dt><a href="services/index.html#nautilus.ModelService.get_models">(nautilus.ModelService method)</a>
+  </dt>
+
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.get_models">(nautilus.services.apiGateway.APIGateway method)</a>
   </dt>
 
         
@@ -758,7 +710,7 @@
 
       <dd><dl>
         
-  <dt><a href="services/index.html#nautilus.AuthService.init_db">(nautilus.AuthService method)</a>
+  <dt><a href="api/index.html#nautilus.APIGateway.init_db">(nautilus.APIGateway method)</a>, <a href="services/index.html#nautilus.APIGateway.init_db">[1]</a>
   </dt>
 
         
@@ -766,7 +718,7 @@
   </dt>
 
         
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.AuthService.init_db">(nautilus.services.authService.AuthService method)</a>
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.init_db">(nautilus.services.apiGateway.APIGateway method)</a>
   </dt>
 
         
@@ -818,40 +770,18 @@
   <dt><a href="internals/nautilus.contrib.graphene_peewee.html#nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType.List">List (nautilus.contrib.graphene_peewee.objectType.PeeweeObjectType attribute)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.Login">Login (class in nautilus.services.authService)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.html#nautilus.auth.decorators.login_required">login_required() (in module nautilus.auth.decorators)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.login_user">login_user() (nautilus.auth.requestHandlers.base.AuthRequestHandler method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.login.LoginForm">LoginForm (class in nautilus.auth.requestHandlers.forms.login)</a>
-  </dt>
-
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.login.LoginHandler">LoginHandler (class in nautilus.auth.requestHandlers.login)</a>
+  <dt><a href="api/index.html#nautilus.APIGateway.login_user">login_user() (nautilus.APIGateway method)</a>, <a href="services/index.html#nautilus.APIGateway.login_user">[1]</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.Logout">Logout (class in nautilus.services.authService)</a>
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.login_user">(nautilus.services.apiGateway.APIGateway method)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.base.AuthRequestHandler.logout_user">logout_user() (nautilus.auth.requestHandlers.base.AuthRequestHandler method)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.logout.LogoutHandler">LogoutHandler (class in nautilus.auth.requestHandlers.logout)</a>
-  </dt>
-
+      </dl></dd>
       
   <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.loop">loop (nautilus.network.events.consumers.kafka.KafkaBroker attribute)</a>
   </dt>
@@ -867,6 +797,10 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.model">(nautilus.services.apiGateway.APIGateway attribute)</a>
+  </dt>
+
         
   <dt><a href="internals/nautilus.services.html#nautilus.services.modelService.ModelService.model">(nautilus.services.modelService.ModelService attribute)</a>
   </dt>
@@ -931,10 +865,6 @@
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.AuthService.name">(nautilus.services.authService.AuthService attribute)</a>
-  </dt>
-
         
   <dt><a href="internals/nautilus.services.html#nautilus.services.connectionService.ConnectionService.name">(nautilus.services.connectionService.ConnectionService attribute)</a>
   </dt>
@@ -1057,46 +987,6 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers">nautilus.auth.requestHandlers (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.base">nautilus.auth.requestHandlers.base (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms">nautilus.auth.requestHandlers.forms (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.change">nautilus.auth.requestHandlers.forms.change (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.forgot">nautilus.auth.requestHandlers.forms.forgot (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.login">nautilus.auth.requestHandlers.forms.login (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#module-nautilus.auth.requestHandlers.forms.register">nautilus.auth.requestHandlers.forms.register (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.login">nautilus.auth.requestHandlers.login (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.logout">nautilus.auth.requestHandlers.logout (module)</a>
-  </dt>
-
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#module-nautilus.auth.requestHandlers.register">nautilus.auth.requestHandlers.register (module)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.config.html#module-nautilus.config">nautilus.config (module)</a>
   </dt>
 
@@ -1120,8 +1010,6 @@
   <dt><a href="internals/nautilus.contrib.graphene_peewee.html#module-nautilus.contrib.graphene_peewee.objectType">nautilus.contrib.graphene_peewee.objectType (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions">nautilus.conventions (module)</a>
   </dt>
@@ -1142,6 +1030,8 @@
   <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.models">nautilus.conventions.models (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.conventions.html#module-nautilus.conventions.services">nautilus.conventions.services (module)</a>
   </dt>
@@ -1263,10 +1153,6 @@
   </dt>
 
       
-  <dt><a href="internals/nautilus.services.html#module-nautilus.services.authService">nautilus.services.authService (module)</a>
-  </dt>
-
-      
   <dt><a href="internals/nautilus.services.html#module-nautilus.services.connectionService">nautilus.services.connectionService (module)</a>
   </dt>
 
@@ -1343,23 +1229,7 @@
   <dt><a href="internals/nautilus.auth.models.html#nautilus.auth.models.userPassword.UserPassword.password">(nautilus.auth.models.userPassword.UserPassword attribute)</a>
   </dt>
 
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password">(nautilus.auth.requestHandlers.forms.change.ChangePasswordForm attribute)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.login.LoginForm.password">(nautilus.auth.requestHandlers.forms.login.LoginForm attribute)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.register.RegistrationForm.password">(nautilus.auth.requestHandlers.forms.register.RegistrationForm attribute)</a>
-  </dt>
-
       </dl></dd>
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password_again">password_again (nautilus.auth.requestHandlers.forms.change.ChangePasswordForm attribute)</a>
-  </dt>
-
       
   <dt><a href="internals/nautilus.auth.models.fields.html#nautilus.auth.models.fields.password.PasswordField">PasswordField (class in nautilus.auth.models.fields.password)</a>
   </dt>
@@ -1391,14 +1261,6 @@
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.login.LoginHandler.post">(nautilus.auth.requestHandlers.login.LoginHandler method)</a>
-  </dt>
-
-        
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.register.RegisterHandler.post">(nautilus.auth.requestHandlers.register.RegisterHandler method)</a>
-  </dt>
-
         
   <dt><a href="internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler.post">(nautilus.network.http.requestHandler.RequestHandler method)</a>
   </dt>
@@ -1439,10 +1301,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="internals/nautilus.auth.html#nautilus.auth.random_string">random_string() (in module nautilus.auth)</a>
-  </dt>
-
-      
   <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.read_handler">read_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
 
@@ -1453,17 +1311,15 @@
 
       </dl></dd>
       
-  <dt><a href="internals/nautilus.services.html#nautilus.services.authService.Register">Register (class in nautilus.services.authService)</a>
+  <dt><a href="api/index.html#nautilus.APIGateway.register_user">register_user() (nautilus.APIGateway method)</a>, <a href="services/index.html#nautilus.APIGateway.register_user">[1]</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.register.RegisterHandler">RegisterHandler (class in nautilus.auth.requestHandlers.register)</a>
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.register_user">(nautilus.services.apiGateway.APIGateway method)</a>
   </dt>
 
-      
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.register.RegistrationForm">RegistrationForm (class in nautilus.auth.requestHandlers.forms.register)</a>
-  </dt>
-
+      </dl></dd>
       
   <dt><a href="internals/nautilus.auth.primitives.html#nautilus.auth.primitives.passwordHash.PasswordHash.rehash">rehash() (nautilus.auth.primitives.passwordHash.PasswordHash method)</a>
   </dt>
@@ -1472,8 +1328,6 @@
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.request_context">request_context (nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler attribute)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.network.http.html#nautilus.network.http.requestHandler.RequestHandler">RequestHandler (class in nautilus.network.http.requestHandler)</a>
   </dt>
@@ -1482,6 +1336,8 @@
   <dt><a href="internals/nautilus.models.html#nautilus.models.base.BaseModel.required_fields">required_fields() (nautilus.models.base.BaseModel class method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="handlers/index.html#nautilus.network.events.actionHandlers.roll_call_handler">roll_call_handler() (in module nautilus.network.events.actionHandlers)</a>
   </dt>
@@ -1545,6 +1401,10 @@
 
       </dl></dd>
       
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.secret_key">secret_key (nautilus.services.apiGateway.APIGateway attribute)</a>
+  </dt>
+
+      
   <dt><a href="internals/nautilus.network.events.consumers.html#nautilus.network.events.consumers.kafka.KafkaBroker.send">send() (nautilus.network.events.consumers.kafka.KafkaBroker method)</a>
   </dt>
 
@@ -1576,12 +1436,12 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.api.endpoints.requestHandlers.html#nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler.service">service (nautilus.api.endpoints.requestHandlers.graphql.GraphQLRequestHandler attribute)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.services.html#nautilus.services.service.ServiceActionHandler">ServiceActionHandler (class in nautilus.services.service)</a>
   </dt>
@@ -1654,28 +1514,28 @@
   <dt><a href="internals/nautilus.conventions.html#nautilus.conventions.api.update_mutation_outputs">update_mutation_outputs() (in module nautilus.conventions.api)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.auth.models.mixins.html#nautilus.auth.models.mixins.user.User">User (class in nautilus.auth.models.mixins.user)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="internals/nautilus.auth.models.html#nautilus.auth.models.userPassword.UserPassword.user">user (nautilus.auth.models.userPassword.UserPassword attribute)</a>
   </dt>
 
       
-  <dt><a href="internals/nautilus.auth.models.html#nautilus.auth.models.userPassword.UserPassword">UserPassword (class in nautilus.auth.models.userPassword)</a>
+  <dt><a href="api/index.html#nautilus.APIGateway.user_session">user_session() (nautilus.APIGateway method)</a>, <a href="services/index.html#nautilus.APIGateway.user_session">[1]</a>
   </dt>
 
-  </dl></td>
-</tr></table>
+      <dd><dl>
+        
+  <dt><a href="internals/nautilus.services.html#nautilus.services.apiGateway.APIGateway.user_session">(nautilus.services.apiGateway.APIGateway method)</a>
+  </dt>
 
-<h2 id="V">V</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%" valign="top"><dl>
+      </dl></dd>
       
-  <dt><a href="internals/nautilus.auth.requestHandlers.forms.html#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.validate_password_again">validate_password_again() (nautilus.auth.requestHandlers.forms.change.ChangePasswordForm method)</a>
+  <dt><a href="internals/nautilus.auth.models.html#nautilus.auth.models.userPassword.UserPassword">UserPassword (class in nautilus.auth.models.userPassword)</a>
   </dt>
 
   </dl></td>
@@ -1724,7 +1584,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

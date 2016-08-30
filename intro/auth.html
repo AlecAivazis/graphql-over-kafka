@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Authentication &mdash; nautilus v0.5.1 documentation</title>
+  <title>Authentication &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
         <link rel="up" title="Getting Started" href="index.html"/>
         <link rel="next" title="Architecture" href="../architecture/index.html"/>
         <link rel="prev" title="Querying The Distributed Structure" href="api.html"/> 
@@ -90,7 +90,9 @@
 <li class="toctree-l2"><a class="reference internal" href="connecting_services.html">Connecting Services Together</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html">Querying The Distributed Structure</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#registration-and-logging-users-in">Registration and Logging Users In</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#authorizing-users-for-particular-pieces-of-data">Authorizing Users for Particular Pieces of Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#providing-session-tokens-to-api-queries">Providing Session Tokens to API Queries</a></li>
 </ul>
 </li>
 </ul>
@@ -99,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../internals/index.html">Module Index</a></li>
 </ul>
@@ -149,20 +152,9 @@
             
   <div class="section" id="authentication">
 <h1>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h1>
-<p>Like usual, the bulk of our cloud&#8217;s authentication logic lives within a
-separate service. Let&#8217;s begin by adding a new file to our directory
-called <code class="docutils literal"><span class="pre">auth.py</span></code> with the following contents:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nautilus</span> <span class="kn">import</span> <span class="n">AuthService</span>
-
-<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:///passwords.db&#39;</span>
-
-<span class="k">class</span> <span class="nc">RecipeBookAuth</span><span class="p">(</span><span class="n">AuthService</span><span class="p">):</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
-</pre></div>
-</div>
-<p>We&#8217;ll also need a service to maintain user information (like their e-mails). So
-make a second file called <code class="docutils literal"><span class="pre">user.py</span></code> that resembles our other model services:</p>
+<p>Before we begin restricting bits of our api to particular users, we  need a service to
+maintain user information (like their e-mails). So make a second file called <code class="docutils literal"><span class="pre">user.py</span></code>
+that resembles our other model services:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
 <span class="kn">from</span> <span class="nn">nautilus.models</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">fields</span>
 
@@ -177,17 +169,41 @@ make a second file called <code class="docutils literal"><span class="pre">user.
     <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
 </pre></div>
 </div>
-<p>These services provide what&#8217;s necessary for basic user authentication and
-registration. When a user interacts with a service like the API gateway or a
-client, they send a bit of information with every request that identifies
-them and indicates they are logged in. Therefore, the auth service needs to only
-be responsible for maintaining user passwords. Other bits of user information
-are stored in the other, less protected service.</p>
-<p>Go ahead and start both services (remember to create the databases). Navigate
-to the <code class="docutils literal"><span class="pre">/register</span></code> endpoint of the auth service and register an account for
-us to use. Log into the account you just made by entering the same credentials
-into the <code class="docutils literal"><span class="pre">/login</span></code> endpoint.</p>
-<p>Now we are ready to protect our data!</p>
+<div class="section" id="registration-and-logging-users-in">
+<h2>Registration and Logging Users In<a class="headerlink" href="#registration-and-logging-users-in" title="Permalink to this headline">¶</a></h2>
+<p>Along with queries and mutations corresponding to our remote services, the api
+gateway also provides a few mutations for validating user credentials and
+registering new users. In order to register a user, visit a running api gateway
+and send the following query:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>mutation {
+    registerUser(email:&quot;foo&quot;, password:&quot;bar&quot;) {
+        user {
+            id
+        }
+        sessionToken
+    }
+}
+</pre></div>
+</div>
+<p>Assuming the user information is valid, the gateway should reply with the requested
+information of the new user as well as a token that reqeusts that require authentication
+provide.</p>
+<p>The next time the user tries to access your application, they will probably need to
+provide their credentials a second time. In order to validate those, the api
+gateway provides another mutation for logging users in:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>mutation {
+    loginUser(email:&quot;foo&quot;, password:&quot;bar&quot;) {
+        user {
+            id
+        }
+        sessionToken
+    }
+}
+</pre></div>
+</div>
+<p>Make sure to copy that <code class="docutils literal"><span class="pre">sessionToken</span></code> down somewhere. We&#8217;ll use it to authenticate our
+requests later on.</p>
+</div>
 <div class="section" id="authorizing-users-for-particular-pieces-of-data">
 <h2>Authorizing Users for Particular Pieces of Data<a class="headerlink" href="#authorizing-users-for-particular-pieces-of-data" title="Permalink to this headline">¶</a></h2>
 <p>Regardless of your application, not all bits of information are inteded for
@@ -209,6 +225,17 @@ service to look something like:</p>
 <span class="sd">            this photo.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">await</span> <span class="n">model</span><span class="o">.</span><span class="n">owner</span><span class="o">.</span><span class="n">_has_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="providing-session-tokens-to-api-queries">
+<h2>Providing Session Tokens to API Queries<a class="headerlink" href="#providing-session-tokens-to-api-queries" title="Permalink to this headline">¶</a></h2>
+<p>In order to make an authenticated request to the API gateway, the request must contain
+the session token in the <code class="docutils literal"><span class="pre">Authentication</span></code> header as a <code class="docutils literal"><span class="pre">Bearer</span></code> roken. For example,
+say we logged in with a user and was given the session token <code class="docutils literal"><span class="pre">foo</span></code>. Unfortunately,
+graphiql does not allow the user to specify specific headers on requests. In order
+to test authenticated route, we suggest you use a command utility like <code class="docutils literal"><span class="pre">curl</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>curl --header <span class="s2">&quot;Authentication: Bearer foo&quot;</span> localhost:8000
 </pre></div>
 </div>
 </div>
@@ -255,7 +282,7 @@ service to look something like:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

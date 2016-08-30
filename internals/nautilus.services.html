@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.services package &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.services package &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
         <link rel="up" title="Module Index" href="index.html"/>
         <link rel="prev" title="nautilus.network.http package" href="nautilus.network.http.html"/> 
 
@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
@@ -101,7 +102,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="">nautilus.services package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.apiGateway">nautilus.services.apiGateway module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.authService">nautilus.services.authService module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nautilus-services-authservice-module">nautilus.services.authService module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.connectionService">nautilus.services.connectionService module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.modelService">nautilus.services.modelService module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-nautilus.services.service">nautilus.services.service module</a></li>
@@ -226,9 +227,44 @@ of the system.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.get_models">
+<code class="descname">get_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.get_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.get_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the models managed by this service.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the models managed by the service</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.init_db">
+<code class="descname">init_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.init_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function configures the database used for models to make
+the configuration parameters.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="nautilus.services.apiGateway.APIGateway.init_routes">
 <code class="descname">init_routes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.init_routes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.init_routes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.login_user">
+<code class="descname">login_user</code><span class="sig-paren">(</span><em>password</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.login_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.login_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function handles the registration of the given user credentials in the database</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nautilus.services.apiGateway.APIGateway.model">
+<code class="descname">model</code><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">UserPassword</span></code></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="nautilus.services.apiGateway.APIGateway.mutation_resolver">
@@ -249,68 +285,37 @@ and return the fields contained in the result</p>
 <dd><p>This function resolves a given object in the remote backend services</p>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-nautilus.services.authService">
-<span id="nautilus-services-authservice-module"></span><h2>nautilus.services.authService module<a class="headerlink" href="#module-nautilus.services.authService" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.services.authService.AuthService">
-<em class="property">class </em><code class="descclassname">nautilus.services.authService.</code><code class="descname">AuthService</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#AuthService"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.authService.AuthService" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#nautilus.services.service.Service" title="nautilus.services.service.Service"><code class="xref py py-class docutils literal"><span class="pre">nautilus.services.service.Service</span></code></a></p>
-<p>This service handles user authentication for the entire cloud and is
-the only service with access to the users passwords. As such, this
-service does not provide any sort of external schema, nor does it
-respond to actions by default. It&#8217;s sole purpose is to collect the
-necessary information from the user and provide that user with a way
-to provid valid credentials to other services.</p>
-<p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nautilus</span>
-
-<span class="k">class</span> <span class="nc">ServiceConfig</span><span class="p">:</span>
-    <span class="n">database_url</span> <span class="o">=</span> <span class="s1">&#39;sqlite:////tmp/models.db&#39;</span>
-
-<span class="k">class</span> <span class="nc">MyAuth</span><span class="p">(</span><span class="n">nautilus</span><span class="o">.</span><span class="n">AuthService</span><span class="p">):</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">ServiceConfig</span>
-</pre></div>
-</div>
 <dl class="method">
-<dt id="nautilus.services.authService.AuthService.get_models">
-<code class="descname">get_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#AuthService.get_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.authService.AuthService.get_models" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.services.authService.AuthService.init_db">
-<code class="descname">init_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#AuthService.init_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.authService.AuthService.init_db" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function configures the database used for models to make
-the configuration parameters.</p>
+<dt id="nautilus.services.apiGateway.APIGateway.register_user">
+<code class="descname">register_user</code><span class="sig-paren">(</span><em>password</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.register_user"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.register_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to provide a sessionToken for later requests.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>uid</strong> (<a class="reference external" href="https://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="nautilus.services.authService.AuthService.name">
-<code class="descname">name</code><em class="property"> = 'auth'</em><a class="headerlink" href="#nautilus.services.authService.AuthService.name" title="Permalink to this definition">¶</a></dt>
+<dt id="nautilus.services.apiGateway.APIGateway.secret_key">
+<code class="descname">secret_key</code><em class="property"> = None</em><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.secret_key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="nautilus.services.apiGateway.APIGateway.user_session">
+<code class="descname">user_session</code><span class="sig-paren">(</span><em>user</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/apiGateway.html#APIGateway.user_session"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.apiGateway.APIGateway.user_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method handles what information the api gateway stores about
+a particular user in their session.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="nautilus.services.authService.Login">
-<em class="property">class </em><code class="descclassname">nautilus.services.authService.</code><code class="descname">Login</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#Login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.authService.Login" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.login.LoginHandler" title="nautilus.auth.requestHandlers.login.LoginHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.auth.requestHandlers.login.LoginHandler</span></code></a></p>
 </dd></dl>
 
-<dl class="class">
-<dt id="nautilus.services.authService.Logout">
-<em class="property">class </em><code class="descclassname">nautilus.services.authService.</code><code class="descname">Logout</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#Logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.authService.Logout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.logout.LogoutHandler" title="nautilus.auth.requestHandlers.logout.LogoutHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.auth.requestHandlers.logout.LogoutHandler</span></code></a></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="nautilus.services.authService.Register">
-<em class="property">class </em><code class="descclassname">nautilus.services.authService.</code><code class="descname">Register</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/services/authService.html#Register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.services.authService.Register" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="nautilus.auth.requestHandlers.html#nautilus.auth.requestHandlers.register.RegisterHandler" title="nautilus.auth.requestHandlers.register.RegisterHandler"><code class="xref py py-class docutils literal"><span class="pre">nautilus.auth.requestHandlers.register.RegisterHandler</span></code></a></p>
-</dd></dl>
-
+</div>
+<div class="section" id="nautilus-services-authservice-module">
+<h2>nautilus.services.authService module<a class="headerlink" href="#nautilus-services-authservice-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-nautilus.services.connectionService">
 <span id="nautilus-services-connectionservice-module"></span><h2>nautilus.services.connectionService module<a class="headerlink" href="#module-nautilus.services.connectionService" title="Permalink to this headline">¶</a></h2>
@@ -707,7 +712,7 @@ context of the service.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

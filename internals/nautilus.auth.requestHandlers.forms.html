@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>nautilus.auth.requestHandlers.forms package &mdash; nautilus v0.5.1 documentation</title>
+  <title>nautilus.auth.requestHandlers.forms package &mdash; nautilus v0.5.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="nautilus v0.5.1 documentation" href="../index.html"/>
+    <link rel="top" title="nautilus v0.5.2 documentation" href="../index.html"/>
         <link rel="up" title="nautilus.auth.requestHandlers package" href="nautilus.auth.requestHandlers.html"/>
         <link rel="next" title="nautilus.config package" href="nautilus.config.html"/>
         <link rel="prev" title="nautilus.auth.requestHandlers package" href="nautilus.auth.requestHandlers.html"/> 
@@ -88,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../handlers/index.html">Action Handlers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/index.html">API Gateway</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auth/index.html">Auth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utilities/index.html">Utilities</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Module Index</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#subpackages">Subpackages</a><ul class="current">
@@ -168,94 +169,20 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.auth.requestHandlers.forms.change">
-<span id="nautilus-auth-requesthandlers-forms-change-module"></span><h2>nautilus.auth.requestHandlers.forms.change module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.change" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.change.</code><code class="descname">ChangePasswordForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/change.html#ChangePasswordForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
-<p>Change a user&#8217;s password.
-This class is used to retrieve a user&#8217;s password twice to ensure it&#8217;s valid
-before making a change.</p>
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password">
-<code class="descname">password</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password',), {'validators': [&lt;wtforms.validators.InputRequired object at 0x104042a90&gt;]})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password_again">
-<code class="descname">password_again</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password (again)',), {'validators': [&lt;wtforms.validators.InputRequired object at 0x104042b70&gt;]})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.password_again" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.validate_password_again">
-<code class="descname">validate_password_again</code><span class="sig-paren">(</span><em>field</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/change.html#ChangePasswordForm.validate_password_again"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.change.ChangePasswordForm.validate_password_again" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensure both password fields match, otherwise raise a ValidationError.
-:raises: ValidationError if passwords don&#8217;t match.</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-auth-requesthandlers-forms-change-module">
+<h2>nautilus.auth.requestHandlers.forms.change module<a class="headerlink" href="#nautilus-auth-requesthandlers-forms-change-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.auth.requestHandlers.forms.forgot">
-<span id="nautilus-auth-requesthandlers-forms-forgot-module"></span><h2>nautilus.auth.requestHandlers.forms.forgot module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.forgot" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.forgot.</code><code class="descname">ForgotPasswordForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/forgot.html#ForgotPasswordForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
-<p>Retrieve a user&#8217;s email address for initializing the password reset
-workflow.
-This class is used to retrieve a user&#8217;s email address.</p>
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm.email">
-<code class="descname">email</code><em class="property"> = &lt;UnboundField(StringField, ('Email',), {'validators': [&lt;wtforms.validators.InputRequired object at 0x104042cc0&gt;]})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.forgot.ForgotPasswordForm.email" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-auth-requesthandlers-forms-forgot-module">
+<h2>nautilus.auth.requestHandlers.forms.forgot module<a class="headerlink" href="#nautilus-auth-requesthandlers-forms-forgot-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.auth.requestHandlers.forms.login">
-<span id="nautilus-auth-requesthandlers-forms-login-module"></span><h2>nautilus.auth.requestHandlers.forms.login module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.login" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.auth.requestHandlers.forms.login.LoginForm">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.login.</code><code class="descname">LoginForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/login.html#LoginForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.login.LoginForm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
-<p>Log in an existing user.</p>
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.login.LoginForm.email">
-<code class="descname">email</code><em class="property"> = &lt;UnboundField(StringField, ('Login',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.login.LoginForm.email" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.login.LoginForm.password">
-<code class="descname">password</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.login.LoginForm.password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-auth-requesthandlers-forms-login-module">
+<h2>nautilus.auth.requestHandlers.forms.login module<a class="headerlink" href="#nautilus-auth-requesthandlers-forms-login-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.auth.requestHandlers.forms.register">
-<span id="nautilus-auth-requesthandlers-forms-register-module"></span><h2>nautilus.auth.requestHandlers.forms.register module<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms.register" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="nautilus.auth.requestHandlers.forms.register.RegistrationForm">
-<em class="property">class </em><code class="descclassname">nautilus.auth.requestHandlers.forms.register.</code><code class="descname">RegistrationForm</code><span class="sig-paren">(</span><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>data=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nautilus/auth/requestHandlers/forms/register.html#RegistrationForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.register.RegistrationForm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wtforms.form.Form</span></code></p>
-<p>Register a new user.</p>
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.register.RegistrationForm.email">
-<code class="descname">email</code><em class="property"> = &lt;UnboundField(StringField, ('Email',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.register.RegistrationForm.email" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="nautilus.auth.requestHandlers.forms.register.RegistrationForm.password">
-<code class="descname">password</code><em class="property"> = &lt;UnboundField(PasswordField, ('Password',), {})&gt;</em><a class="headerlink" href="#nautilus.auth.requestHandlers.forms.register.RegistrationForm.password" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="section" id="nautilus-auth-requesthandlers-forms-register-module">
+<h2>nautilus.auth.requestHandlers.forms.register module<a class="headerlink" href="#nautilus-auth-requesthandlers-forms-register-module" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nautilus.auth.requestHandlers.forms">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nautilus.auth.requestHandlers.forms" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -300,7 +227,7 @@ This class is used to retrieve a user&#8217;s email address.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'v0.5.1',
+            VERSION:'v0.5.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
