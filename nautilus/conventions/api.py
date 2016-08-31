@@ -8,7 +8,7 @@ import nautilus
 from .models import normalize_string, get_model_string
 from nautilus.contrib.graphene_peewee import convert_peewee_field
 
-def root_query(*service):
+def root_query(*model):
     ''' This function returns the name of the root query for a model service. '''
     return 'all_models'
 
@@ -25,16 +25,16 @@ def crud_mutation_name(action, model):
     return "{}{}".format(action, model_string)
 
 
-def create_mutation_inputs(service):
+def create_mutation_inputs(model):
     """
         Args:
-            service : The service being created by the mutation
+            model : The model being created by the mutation
         Returns:
-            (list) : a list of all of the fields availible for the service,
+            (list) : a list of all of the fields availible for the model,
                 with the required ones respected.
     """
     # grab the default list of field summaries
-    inputs = _service_mutation_summaries(service)
+    inputs = _model_mutation_summaries(model)
     # make sure the pk isn't in the list
     inputs.remove([field for field in inputs if field['name'] == 'id'][0])
 
@@ -42,28 +42,28 @@ def create_mutation_inputs(service):
     return inputs
 
 
-def create_mutation_outputs(service):
+def create_mutation_outputs(model):
     """
         Args:
-            service : The service being created by the mutation
+            model : The model being created by the mutation
         Returns:
             (list of single dict): A single output representing the object type
-                for the service record that was created.
+                for the model record that was created.
     """
-    return [_summarize_o_mutation_type(service.model)]
+    return [_summarize_o_mutation_type(model)]
 
 
 
-def update_mutation_inputs(service):
+def update_mutation_inputs(model):
     """
         Args:
-            service : The service being updated by the mutation
+            model : The model being updated by the mutation
         Returns:
-            (list) : a list of all of the fields availible for the service. Pk
+            (list) : a list of all of the fields availible for the model. Pk
                 is a required field in order to filter the results
     """
     # grab the default list of field summaries
-    inputs = _service_mutation_summaries(service)
+    inputs = _model_mutation_summaries(model)
 
     # visit each field
     for field in inputs:
@@ -81,48 +81,60 @@ def update_mutation_inputs(service):
 
 
 
-def update_mutation_outputs(service):
+def update_mutation_outputs(model):
     """
         Args:
-            service : The service being updated by the mutation
+            model : The model being updated by the mutation
         Returns:
             (list of single dict): A single output representing the object type
-                for the service record that was updated.
+                for the model record that was updated.
     """
-    return [_summarize_o_mutation_type(service.model)]
+    return [_summarize_o_mutation_type(model)]
 
 
 
-def delete_mutation_inputs(service):
+def delete_mutation_inputs(model):
     """
         Args:
-            service : The service being deleted by the mutation
+            model : The model being deleted by the mutation
         Returns:
-            ([str]):  the only input for delete is the pk of the service.
+            ([str]):  the only input for delete is the pk of the model.
     """
     from nautilus.api.util import summarize_mutation_io
 
-    # the only input for delete events is the pk of the service record
+    # the only input for delete events is the pk of the model record
     return [summarize_mutation_io(name='pk', type='ID', required=True)]
 
 
-def delete_mutation_outputs(service):
+def delete_mutation_outputs(model):
     """
         Args:
-            service : The service being deleted by the mutation
+            model : The model being deleted by the mutation
         Returns:
             (str): A string providing a status message
     """
     from nautilus.api.util import summarize_mutation_io
 
-    # the only input for delete events is the pk of the service record
+    # the only input for delete events is the pk of the model record
     return [summarize_mutation_io(name='status', type='String', required=True)]
 
+def mutations_for_model(model):
+    """
+        This function returns the mutations that a model get my default
+    """
+    from nautilus.api.util import summarize_crud_mutation
 
-def _service_mutation_summaries(service):
+    return [
+        summarize_crud_mutation(model=model, method='create'),
+        summarize_crud_mutation(model=model, method='update'),
+        summarize_crud_mutation(model=model, method='delete'),
+    ]
+
+
+def _model_mutation_summaries(model):
     from nautilus.api.util import summarize_mutation_io, serialize_native_type
-    # the dictionary of fields corresponding to the service record
-    field_dict = service.model._meta.fields
+    # the dictionary of fields corresponding to the model record
+    field_dict = model._meta.fields
 
     # mutation io summaries
     inputs = [summarize_mutation_io(name=key, type=serialize_native_type(value), required=(not value.null)) \
@@ -150,7 +162,7 @@ def _summarize_object_type(model):
     """
         This function returns the summary for a given model
     """
-    # the fields for the service's model
+    # the fields for the model's model
     model_fields = {field.name: field for field in list(model.fields())}
     # summarize the model
     return {

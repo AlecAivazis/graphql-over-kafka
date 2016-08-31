@@ -1,9 +1,11 @@
 # external imports
 import unittest
+import json
 # local imports
 import nautilus
 from ..util import MockModelService
 from nautilus.contrib.graphene_peewee import convert_peewee_field
+from nautilus.api.util.summarize_crud_mutation import summarize_crud_mutation
 from nautilus.conventions.api import (
     root_query,
     create_mutation_inputs,
@@ -12,6 +14,7 @@ from nautilus.conventions.api import (
     update_mutation_outputs,
     delete_mutation_inputs,
     delete_mutation_outputs,
+    mutations_for_model,
     _summarize_object_type,
     _summarize_o_mutation_type
 )
@@ -51,7 +54,7 @@ class TestUtil(unittest.TestCase):
 
     def test_create_mutation_inputs(self):
         # create the list of inputs
-        inputs = create_mutation_inputs(self.model_service)
+        inputs = create_mutation_inputs(self.model_service.model)
         # make sure the inputs match the model
         from nautilus.api.util import summarize_mutation_io
         # the dictionary of fields corresponding to the service record
@@ -71,7 +74,7 @@ class TestUtil(unittest.TestCase):
 
     def test_create_mutation_outputs(self):
         # create the list of inputs
-        outputs = create_mutation_outputs(self.model_service)
+        outputs = create_mutation_outputs(self.model_service.model)
 
         # the output of a create mutation should be the object corresponding
         # to the model created
@@ -83,7 +86,7 @@ class TestUtil(unittest.TestCase):
 
     def test_update_mutation_inputs(self):
         # create the list of inputs
-        inputs = update_mutation_inputs(self.model_service)
+        inputs = update_mutation_inputs(self.model_service.model)
 
         # the inputs of an update mutation should be the fieldsof the object
         # no required args except pk to identify the target
@@ -110,7 +113,7 @@ class TestUtil(unittest.TestCase):
 
     def test_update_mutation_outputs(self):
         # create the list of inputs
-        inputs = update_mutation_outputs(self.model_service)
+        inputs = update_mutation_outputs(self.model_service.model)
 
         # the output of an update mutation should be a graphql object corresponding
         # to the newly updated object
@@ -124,7 +127,7 @@ class TestUtil(unittest.TestCase):
         from nautilus.api.util import summarize_mutation_io
 
         # create the list of inputs
-        inputs = delete_mutation_inputs(self.model_service)
+        inputs = delete_mutation_inputs(self.model_service.model)
         # the only input for delete events is the pk of the service record
         expected = [summarize_mutation_io(name='pk', type='ID', required=True)]
 
@@ -136,7 +139,7 @@ class TestUtil(unittest.TestCase):
 
     def test_delete_mutation_outputs(self):
         # delete the list of inputs
-        inputs = delete_mutation_outputs(self.model_service)
+        inputs = delete_mutation_outputs(self.model_service.model)
 
         # the output of a delete mutation is a status message indicating wether or
         # not the mutation was successful
@@ -149,6 +152,25 @@ class TestUtil(unittest.TestCase):
         # make sure the result matches what we expected
         assert inputs == expected, (
             "Delete mutation outputs were incorrect"
+        )
+
+
+    def test_mutations_for_model(self):
+        # a model to compute the mutations from
+        model = self.model_service.model
+
+        # get the summary of mutations
+        summary = {json.dumps(mutation) for mutation in mutations_for_model(model)}
+
+        assert summary == {
+            json.dumps(mutation) for mutation in \
+                [
+                    summarize_crud_mutation('create', model),
+                    summarize_crud_mutation('update', model),
+                    summarize_crud_mutation('delete', model)
+                ]
+        }, (
+            "Could not generate mutations for model."
         )
 
 

@@ -118,15 +118,20 @@ class ModelService(Service):
         # add the model fields to the dictionary
         return dict(
             **super().summarize(),
+            # models=[
+            #     {
+            #         'name': model.name
+            #     } for model in filter(self.get_models())}
+            # ],
             fields=[{
                     'name': key,
                     'type': type(convert_peewee_field(value)).__name__
                     } for key, value in model_fields.items()
                    ],
             mutations=[
-                summarize_crud_mutation(model=self, method='create'),
-                summarize_crud_mutation(model=self, method='update'),
-                summarize_crud_mutation(model=self, method='delete'),
+                summarize_crud_mutation(model=self.model, method='create'),
+                summarize_crud_mutation(model=self.model, method='update'),
+                summarize_crud_mutation(model=self.model, method='delete'),
             ] if self.model else [],
             **extra_fields
         )

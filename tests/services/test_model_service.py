@@ -95,22 +95,22 @@ class TestUtil(unittest.TestCase):
                     'name': api_conventions.crud_mutation_name(action='create', model=self.model),
                     'event': conventions.get_crud_action(method='create', model=self.model),
                     'isAsync': False,
-                    'inputs': api_conventions.create_mutation_inputs(self),
-                    'outputs': api_conventions.create_mutation_outputs(self),
+                    'inputs': api_conventions.create_mutation_inputs(self.model),
+                    'outputs': api_conventions.create_mutation_outputs(self.model),
                 },
                 {
                     'name': api_conventions.crud_mutation_name(action='update', model=self.model),
                     'event': conventions.get_crud_action(method='update', model=self.model),
                     'isAsync': False,
-                    'inputs': api_conventions.update_mutation_inputs(self),
-                    'outputs': api_conventions.update_mutation_outputs(self),
+                    'inputs': api_conventions.update_mutation_inputs(self.model),
+                    'outputs': api_conventions.update_mutation_outputs(self.model),
                 },
                 {
                     'name': api_conventions.crud_mutation_name(action='delete', model=self.model),
                     'event': conventions.get_crud_action(method='delete', model=self.model),
                     'isAsync': False,
-                    'inputs': api_conventions.delete_mutation_inputs(self),
-                    'outputs': api_conventions.delete_mutation_outputs(self),
+                    'inputs': api_conventions.delete_mutation_inputs(self.model),
+                    'outputs': api_conventions.delete_mutation_outputs(self.model),
                 },
             ]
         }

@@ -73,7 +73,7 @@ class TestUtil(unittest.TestCase):
         model_service = MockModelService()()
         # create mock summaries
         model_summary = model_service.summarize()
-        mutation_summary = summarize_crud_mutation(model=model_service, method='create')
+        mutation_summary = summarize_crud_mutation(model=model_service.model, method='create')
 
         # create the graphql schema
         schema = generate_api_schema(
@@ -140,7 +140,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graphql_mutation_with_object_io_from_summary(self):
         # create a mock mutation summary with a io that's an object
-        mock_summary = summarize_crud_mutation(model=MockModelService(), method="create")
+        mock_summary = summarize_crud_mutation(model=MockModel(), method="create")
         # create the mutation
         mutation = graphql_mutation_from_summary(mock_summary)
 
@@ -336,7 +336,7 @@ class TestUtil(unittest.TestCase):
 
     def test_can_summarize_crud_mutation(self):
         # a model service to test with
-        mock = MockModelService()
+        mock = MockModel()
         # make sure we can generate a update mutation
         self._verify_crud_mutation(model=mock, action='update')
 
