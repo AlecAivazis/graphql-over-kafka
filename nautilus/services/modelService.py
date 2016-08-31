@@ -60,16 +60,16 @@ class ModelService(Service):
             self.model = model
 
         # if there is no model associated with this service
-        if not self.model:
+        if not (self.model or any(self.get_models())):
             # yell loudly
             raise ValueError("Please provide a model for the model service.")
 
         # pull the name of the service from kwargs if it was given
-        name = kwargs.pop('name', None) or model_service_name(self.model)
+        name = kwargs.pop('name', None) or model_service_name(*self.get_models())
 
         # create the service
         super().__init__(
-            schema=create_model_schema(self.model),
+            schema=create_model_schema(self.model) if self.model else None,
             name=name,
             **kwargs
         )
@@ -127,10 +127,9 @@ class ModelService(Service):
                 summarize_crud_mutation(model=self, method='create'),
                 summarize_crud_mutation(model=self, method='update'),
                 summarize_crud_mutation(model=self, method='delete'),
-            ],
+            ] if self.model else [],
             **extra_fields
         )
-
 
 
     def get_models(self):

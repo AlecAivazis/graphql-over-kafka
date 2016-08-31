@@ -5,9 +5,9 @@
 # local imports
 from .models import get_model_string, normalize_string
 
-def model_service_name(model):
+def model_service_name(*models):
     ''' the name of a service that manages a model '''
-    return get_model_string(model)
+    return ':'.join([get_model_string(model) for model in models])
 
 
 def auth_service_name():
