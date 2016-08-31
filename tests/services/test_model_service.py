@@ -115,6 +115,7 @@ class TestUtil(unittest.TestCase):
             ]
         }
 
+
         # make sure the mutations match
         assert len(target['mutations']) == len(summarized['mutations']), (
             "Incorrect number of mutations in summary."
@@ -140,16 +141,21 @@ class TestUtil(unittest.TestCase):
         # the target summary
         target = {
             'name': 'testModelService',
-            'fields': [
+            'models': [
                 {
-                    'name': 'name',
-                    'type': 'String'
-                },
-                {
-                    'name': 'id',
-                    'type': 'ID',
+                    'name': 'testModel',
+                    'fields': [
+                        {
+                            'name': 'name',
+                            'type': 'String'
+                        },
+                        {
+                            'name': 'id',
+                            'type': 'ID',
+                        }
+                    ],
                 }
-            ],
+            ]
         }
         # summarize the service
         summarized = self.service.summarize()
@@ -158,15 +164,24 @@ class TestUtil(unittest.TestCase):
         assert target['name'] == summarized['name'], (
             "Summarzied service did not have the right name."
         )
+
+        assert 'models' in summarized and summarized['models'], (
+            "Summarized model service did not have model records."
+        )
+
+        # grab the only model in the summary
+        summarized_model = summarized['models'][0]
+        # the target model
+        target_model = target['models'][0]
         # make sure the field entries have the same length
-        assert len(target['fields']) == len(summarized['fields']), (
+        assert len(target_model['fields']) == len(summarized_model['fields']), (
             "Summarized service did not have the right number of fields."
         )
 
         # make sure the fields match
-        for field in target['fields']:
+        for field in target_model['fields']:
             # grab the matching fields
-            equiv = [sumField for sumField in summarized['fields'] \
+            equiv = [sumField for sumField in summarized_model['fields'] \
                                     if sumField['name'] == field['name']][0]
             # make sure the two fields match
             assert equiv == field, (

@@ -1,11 +1,14 @@
+# external imports
+import itertools
 # local imports
 import nautilus
 from nautilus.network.events import crud_handler, combine_action_handlers
 from nautilus.conventions.services import model_service_name
 from nautilus.network.events.actionHandlers import noop_handler
 from nautilus.network.events.consumers import ActionHandler
-from nautilus.contrib.graphene_peewee import convert_peewee_field
 from nautilus.api.util.summarize_crud_mutation import summarize_crud_mutation
+from nautilus.api.util.summarize_model import summarize_model
+from nautilus.conventions.api import mutations_for_model
 from .service import Service
 
 
@@ -114,25 +117,21 @@ class ModelService(Service):
         model_fields = {field.name: field for field in list(self.model.fields())} \
                             if self.model \
                             else {}
+        # the valid models
+        models = [model for model in self.get_models() if model]
+
+        # collect the mutations in a flat map
+        mutations = []
+        # each model provides mutations
+        for model in models:
+            # add the mutations for the model to the list
+            mutations += mutations_for_model(model)
 
         # add the model fields to the dictionary
         return dict(
             **super().summarize(),
-            # models=[
-            #     {
-            #         'name': model.name
-            #     } for model in filter(self.get_models())}
-            # ],
-            fields=[{
-                    'name': key,
-                    'type': type(convert_peewee_field(value)).__name__
-                    } for key, value in model_fields.items()
-                   ],
-            mutations=[
-                summarize_crud_mutation(model=self.model, method='create'),
-                summarize_crud_mutation(model=self.model, method='update'),
-                summarize_crud_mutation(model=self.model, method='delete'),
-            ] if self.model else [],
+            models=[ summarize_model(model) for model in models],
+            mutations=mutations,
             **extra_fields
         )
 

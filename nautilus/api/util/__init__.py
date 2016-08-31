@@ -12,3 +12,4 @@ from .serialize_native_type import serialize_native_type
 from .graph_entity import GraphEntity
 from .query_for_model import query_for_model
 from .arg_string_from_dict import arg_string_from_dict
+from .summarize_model import summarize_model

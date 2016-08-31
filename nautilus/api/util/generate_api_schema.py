@@ -6,7 +6,6 @@ from .graphql_type_from_summary import graphql_type_from_summary
 from .graphql_mutation_from_summary import graphql_mutation_from_summary
 
 def generate_api_schema(models, connections=[], mutations=[], **schema_args):
-
     # collect the schema types
     schema_types = []
 

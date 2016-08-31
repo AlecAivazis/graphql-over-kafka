@@ -8,7 +8,7 @@ def MockConnectionService():
 
     class TestConnection(nautilus.ConnectionService):
         from_service = ('TestService',)
-        to_service = ('AnotherTestService')
+        to_service = ('AnotherTestService',)
 
     # return the mocked model
     return TestConnection

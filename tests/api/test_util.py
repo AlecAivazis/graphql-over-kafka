@@ -57,7 +57,7 @@ class TestUtil(unittest.TestCase):
 
     def test_generate_api_schema(self):
         # create mock summaries
-        model_summary = MockModelService()().summarize()
+        model_summary = MockModelService()().summarize()['models'][0]
         connection_summary = MockConnectionService()().summarize()
         # create the graphql schema
         schema = generate_api_schema([model_summary], [connection_summary])
@@ -72,7 +72,7 @@ class TestUtil(unittest.TestCase):
     def test_generate_api_schema_with_mutation(self):
         model_service = MockModelService()()
         # create mock summaries
-        model_summary = model_service.summarize()
+        model_summary = model_service.summarize()['models'][0]
         mutation_summary = summarize_crud_mutation(model=model_service.model, method='create')
 
         # create the graphql schema
@@ -91,7 +91,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graphql_type_from_summary(self):
         # a mock model service summary
-        summary = MockModelService()().summarize()
+        summary = MockModelService()().summarize()['models'][0]
 
         # create the graphql type from the summary
         graphql_type = graphql_type_from_summary(summary, [])
@@ -106,7 +106,7 @@ class TestUtil(unittest.TestCase):
 
     def test_graphql_type_from_summary_with_connections(self):
         # mock summaries
-        summary = MockModelService()().summarize()
+        summary = MockModelService()().summarize()['models'][0]
         connection_summary = MockConnectionService()().summarize()
 
         # create the graphql type from the summary
