@@ -11,7 +11,7 @@ async def flexible_api_handler(service, action_type, payload, props, **kwds):
     # if the action represents a new service
     if action_type == intialize_service_action():
         # the treat the payload like json if its a string
-        model = json.loads(payload) if isinstance(payload, str) else payload
+        payload = json.loads(payload) if isinstance(payload, str) else payload
 
         # the list of known models
         models = service._external_service_data['models']
@@ -20,20 +20,24 @@ async def flexible_api_handler(service, action_type, payload, props, **kwds):
         # the list of known mutations
         mutations = service._external_service_data['mutations']
 
-        # if the model is a connection
-        if 'connection' in model:
+        # if the payload is a connection
+        if 'connection' in payload:
             # if we haven't seen the connection before
             if not [conn for conn in connections if conn['name'] == model['name']]:
                 # add it to the list
-                connections.append(model)
+                connections.append(payload)
 
         # or if there are registered fields
-        elif 'fields' in model and not [mod for mod in models if mod['name'] == model['name']]:
-            # add it to the model list
-            models.append(model)
+        if 'models' in payload:
+            # go over each model in the payload
+            for model in payload['models']:
+                # if we haven't seen the model yet
+                if not [mod for mod in models if mod['name'] == model['name']]:
+                    # add it to the model list
+                    models.append(model)
 
         # the service could provide mutations as well as affect the topology
-        if 'mutations' in model:
+        if 'mutations' in payload:
             # go over each mutation announce
             for mutation in model['mutations']:
                 # if there isn't a mutation by the same name in the local cache

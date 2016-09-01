@@ -130,7 +130,7 @@ class ModelService(Service):
         # add the model fields to the dictionary
         return dict(
             **super().summarize(),
-            models=[ summarize_model(model) for model in models],
+            models=[summarize_model(model) for model in models],
             mutations=mutations,
             **extra_fields
         )
