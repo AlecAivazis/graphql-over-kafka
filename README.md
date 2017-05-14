@@ -1,7 +1,7 @@
 # nautilus
 
 [![Build Status](https://travis-ci.org/nautilus/nautilus.svg?branch=master)](https://travis-ci.org/nautilus/nautilus)
-[![Coverage Status](https://coveralls.io/repos/github/nautilus/nautilus/badge.svg?branch=master)](https://coveralls.io/github/nautilus/nautilus?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/nautilus/nautilus/badge.svg?branch=master)](https://coveralls.io/github/nautilus/python?branch=master)
 
 Nautilus is a framework for event-driven microservices. It attempts to provide extendible 
 answers to common questions when building a moden web application so that you can focus
