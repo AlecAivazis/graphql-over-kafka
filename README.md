@@ -14,7 +14,7 @@ on what you do best: building awesome, scalable services. Some of these features
 * A flexible GraphQL API that adapts as services come online 
 * Distributed/remote database administration (coming soon!)
 
-Full documentation is hosted [here](http://nautilus.github.io/python/).
+Full documentation is hosted [here](http://alecaivazis.github.io/graphql-over-kafka/).
 
 ***NOTE***: At the moment, this project should be considered an experiment using kafka to perform service joins across 
             very fine grain services. If you are interested in helping, please get in touch!
